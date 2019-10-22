@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "thread": "cpp",
+        "xstring": "cpp",
+        "vector": "cpp",
+        "memory": "cpp"
+    }
+}
