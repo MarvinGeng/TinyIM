@@ -52,6 +52,7 @@ SET(FLAMING_GO_CLIENT_SOURCE
 ./Source/Crash.cpp
 ./Source/UICommonDef.h
 ./Source/UIDefaultValue.h
+./Source/UICommonStruct.cpp
 ./Source/CreateNewGroupDlg.h ./Source/CreateNewGroupDlg.cpp
 ./Source/CriticalSection.h ./Source/CriticalSection.cpp
 ./Source/CriticalSection.h ./Source/ChangePicHeadDlg.cpp

@@ -1,6 +1,8 @@
 ﻿#ifndef _DENNIS_THINK_UI_COMMON_STRUCT_H_
 #define _DENNIS_THINK_UI_COMMON_STRUCT_H_
-
+#include "UICommonDef.h"
+#include "UICommonType.h"
+#include <vector>
 
 struct BuddyInfo
 {
@@ -90,5 +92,18 @@ struct FileProgress
 	long  nPercent;				//百分比，0～100之间(值为-1时，为获取文件md5值)
 	long  nVerificationPercent;	//获取md5值进度（0～100）
 };
+
+struct RichEditMsg_st
+{
+	E_RichEditType m_eType;
+	tstring m_strContext;
+	int m_nFaceId;
+	tstring m_strImageName;
+};
+
+using RichEditMsgList = std::vector<RichEditMsg_st>;
+
+std::string RichEditMsg(const RichEditMsgList& msgList);
+RichEditMsgList RichEditMsg(const std::string& strMsg);
 
 #endif

@@ -348,6 +348,8 @@ BOOL CGroupChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	//if(m_lpFMGClient->m_UserConfig.IsEnableShowLastMsgInChatDlg())
 		ShowLastMsgInRecvRichEdit();
 
+	
+	OnSizeNotShowMsgHistory();
 	return TRUE;
 }
 

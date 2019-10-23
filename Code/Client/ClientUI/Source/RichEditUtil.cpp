@@ -431,7 +431,82 @@ Ret0:
 
 	return SUCCEEDED(hr);
 }
+RichEditMsgList RichEdit_GetMsg(HWND hWnd)
+{
+	RichEditMsgList result;
+	REOBJECT reobject;
+	LONG nFaceId, nPos = 0;
+	tstring strOrgText, strTemp;
 
+	IRichEditOle* pRichEditOle = RichEdit_GetOleInterface(hWnd);
+	if (NULL == pRichEditOle)
+		return result;
+
+	CHARRANGE chrg = { 0, RichEdit_GetWindowTextLength(hWnd) };
+	RichEdit_GetTextRange(hWnd, &chrg, strOrgText);
+
+	for (LONG i = 0; i < (int)strOrgText.size(); i++)
+	{
+		memset(&reobject, 0, sizeof(REOBJECT));
+		reobject.cbStruct = sizeof(REOBJECT);
+		reobject.cp = i;
+		HRESULT hr = pRichEditOle->GetObject(REO_IOB_USE_CP, &reobject, REO_GETOBJ_POLEOBJ);
+		if (SUCCEEDED(hr))
+		{
+			if (reobject.cp > 0 && reobject.cp > nPos)
+			{
+				strTemp = strOrgText.substr(nPos, reobject.cp - nPos);
+				Replace(strTemp, _T("/"), _T("//"));
+				RichEditMsg_st  msgItem;
+				msgItem.m_eType = E_RichEditType::TEXT;
+				msgItem.m_strContext = strTemp;
+
+				result.push_back(msgItem);
+			}
+			nPos = reobject.cp + 1;
+
+			if (NULL == reobject.poleobj)
+				continue;
+
+			if (CLSID_ImageOle == reobject.clsid)
+			{
+				IImageOle* pImageOle = NULL;
+				hr = reobject.poleobj->QueryInterface(__uuidof(IImageOle), (void**)&pImageOle);
+				if (SUCCEEDED(hr))
+				{
+					pImageOle->GetFaceId(&nFaceId);
+					if (nFaceId != -1)
+					{
+						TCHAR cBuf[32] = { 0 };
+						wsprintf(cBuf, _T("%d"), nFaceId);
+						RichEditMsg_st  msgItem;
+						msgItem.m_eType = E_RichEditType::FACE;
+						msgItem.m_nFaceId = nFaceId;
+
+						result.push_back(msgItem);
+					}
+					else
+					{
+						BSTR bstrFileName = NULL;
+						pImageOle->GetFileName(&bstrFileName);
+						RichEditMsg_st  msgItem;
+						msgItem.m_eType = E_RichEditType::IMAGE;
+						msgItem.m_strImageName = bstrFileName;
+
+						result.push_back(msgItem);
+						::SysFreeString(bstrFileName);
+					}
+					pImageOle->Release();
+				}
+			}
+			reobject.poleobj->Release();
+		}
+	}
+
+	pRichEditOle->Release();
+
+	return result;
+}
 // 获取文本
 void RichEdit_GetText(HWND hWnd, tstring& strText)
 {

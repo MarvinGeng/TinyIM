@@ -13,6 +13,7 @@
 #define _DENNIS_THINK_RICH_EDIT_UTIL_H_
 
 #include <string>
+#include "UICommonStruct.h"
 #include "Utils.h"
 #include "IImageOle.h"
 
@@ -28,6 +29,7 @@ struct ImageInfo
 	long  nEndPos;
 	TCHAR szPath[MAX_PATH];
 };
+RichEditMsgList RichEdit_GetMsg(HWND hWnd);
 
 void RegisterCom_ImageOleCtrl();
 

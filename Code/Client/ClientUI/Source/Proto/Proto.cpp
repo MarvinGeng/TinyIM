@@ -1356,8 +1356,6 @@ void CMsgProto::HandleCreateGroupRspMsg(const std::shared_ptr<TransBaseMsg_t> pO
 		if (item != m_msgMap.end())
 		{
 			::PostMessage(item->second, FMG_MSG_CREATE_NEW_GROUP_RESULT, 0, (LPARAM)pResult);
-			//::PostMessage(item->second, FMG_MSG_CREATE_NEW_GROUP_RESULT, 0, (LPARAM)pResult);
-			//::PostMessage(item->second, FMG_MSG_CREATE_NEW_GROUP_RESULT, 0, (LPARAM)pResult);
 		}
 	}
 }

@@ -26,6 +26,7 @@
 #include "net/Msg.h"
 #include "UIText.h"
 #include "UIDefaultValue.h"
+#include "UICommonStruct.h"
 #include <time.h>
 #include <UtilTime.h>
 
@@ -1903,34 +1904,23 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 		::MessageBox(m_hWnd, _T("您发送的内容太长，请分条发送！"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
 		return;
 	}
-
-    //time_t nMsgTime = time(NULL);
-    //AddMsgToRecvEdit(nMsgTime, strText.c_str());
-
-	C_UI_FontInfo fontInfo = m_FontSelDlg.GetFontInfo();
-
-	TCHAR szColor[32] = {0};
-	RGBToHexStr(fontInfo.m_clrText, szColor, sizeof(szColor)/sizeof(TCHAR));
-
-	//字体信息格式是：/0["字体名,字号,颜色,粗体,斜体,下划线"]
-	//TCHAR szFontInfo[1024] = {0};
-	//LPCTSTR lpFontFmt = _T("/o[\"%s,%d,%s,%d,%d,%d\"]");
-	//wsprintf(szFontInfo, lpFontFmt, fontInfo.m_strName.c_str(), fontInfo.m_nSize, szColor, fontInfo.m_bBold, fontInfo.m_bItalic, fontInfo.m_bUnderLine);
-	//strText += szFontInfo;
-	
-	//将windows换行符\r\n换成\n
-	//\r 0x0A \n 0x0D
-    //m_lpFMGClient->SendBuddyMsg(m_LoginUserId, m_strUserName.GetString(), m_UserId, m_strBuddyName.GetString(), nMsgTime, strText.c_str(), m_hWnd);
-	
+	if(0)
 	{
 		std::string strSendText = EncodeUtil::UnicodeToAnsi(strText);
 		if (m_pSess) {
 			m_pSess->SendChatTxtMsg(m_strFriendId, strSendText,m_FontSelDlg.GetFontInfo());
 		}
 	}
+
+	{
+		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
+		std::string strSendText = RichEditMsg(msgList);
+		if (m_pSess) {
+			m_pSess->SendChatTxtMsg(m_strFriendId, strSendText, m_FontSelDlg.GetFontInfo());
+		}
+	}
 	m_richSend.SetWindowText(_T(""));
 	m_richSend.SetFocus();
-
 }
 
 
@@ -3273,24 +3263,38 @@ BOOL CBuddyChatDlg::InitTopToolBar()
  */
 BOOL CBuddyChatDlg::InitMidToolBar()
 {
+	int nIndex = 0;
 	{
-		int nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_FONT_BTN, STBI_STYLE_BUTTON | STBI_STYLE_CHECK);
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_FONT_BTN, STBI_STYLE_BUTTON | STBI_STYLE_CHECK);
 		m_tbMid.SetItemSize(nIndex, 30, 27);
 		m_tbMid.SetItemPadding(nIndex, 1);
 		m_tbMid.SetItemToolTipText(nIndex, _T("字体选择工具栏"));
 		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
 			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
 		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_font.png"));
+	}
+	{	
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_FACE_BTN, STBI_STYLE_BUTTON | STBI_STYLE_CHECK);
+		m_tbMid.SetItemSize(nIndex, 30, 27);
+		m_tbMid.SetItemPadding(nIndex, 1);
+		m_tbMid.SetItemToolTipText(nIndex, _T("选择表情"));
+		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_face.png"));
+	}
+	if(0)
+	{
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHAKE_WINDOW_BTN, STBI_STYLE_BUTTON);
+		m_tbMid.SetItemSize(nIndex, 30, 27);
+		m_tbMid.SetItemPadding(nIndex, 1);
+		m_tbMid.SetItemToolTipText(nIndex, _T("向好友发送窗口抖动"));
+		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_twitter.png"));
 
 	}
 
-	/*nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_FACE_BTN, STBI_STYLE_BUTTON|STBI_STYLE_CHECK);
-	m_tbMid.SetItemSize(nIndex, 30, 27);
-	m_tbMid.SetItemPadding(nIndex, 1);
-	m_tbMid.SetItemToolTipText(nIndex, _T("选择表情"));
-	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_face.png"));
+
 
 	//nIndex = m_tbMid.AddItem(203, STBI_STYLE_BUTTON);
 	//m_tbMid.SetItemSize(nIndex, 24, 20);
@@ -3300,13 +3304,7 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//	_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	//m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_richface.png"));
 
-	nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHAKE_WINDOW_BTN, STBI_STYLE_BUTTON);
-	m_tbMid.SetItemSize(nIndex, 30, 27);
-	m_tbMid.SetItemPadding(nIndex, 1);
-	m_tbMid.SetItemToolTipText(nIndex, _T("向好友发送窗口抖动"));
-	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_twitter.png"));
+
 
 	//nIndex = m_tbMid.AddItem(205, STBI_STYLE_BUTTON);
 	//m_tbMid.SetItemSize(nIndex, 24, 20);
@@ -3329,13 +3327,16 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//m_tbMid.SetItemPadding(nIndex, 1);
 	//m_tbMid.SetItemSepartorPic(nIndex, _T("aio_qzonecutline_normal.png"));
 
-	nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_IMAGE, STBI_STYLE_BUTTON);
-	m_tbMid.SetItemSize(nIndex, 30, 27);
-	m_tbMid.SetItemPadding(nIndex, 1);
-	m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
-	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
+	if (0)
+	{
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_IMAGE, STBI_STYLE_BUTTON);
+		m_tbMid.SetItemSize(nIndex, 30, 27);
+		m_tbMid.SetItemPadding(nIndex, 1);
+		m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
+		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
+	}
 
 
 	//nIndex = m_tbMid.AddItem(209, STBI_STYLE_BUTTON);
@@ -3354,13 +3355,16 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//	_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	//m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\present.png"));
 
-	nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SCREEN_SHOT_BTN, STBI_STYLE_BUTTON);
-	m_tbMid.SetItemSize(nIndex, 30, 27, 27, 0);
-	//m_tbMid.SetItemSize(nIndex, 30, 27);
-	m_tbMid.SetItemPadding(nIndex, 1);
-	m_tbMid.SetItemToolTipText(nIndex, _T("屏幕截图"));
-	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
+	if (0)
+	{
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SCREEN_SHOT_BTN, STBI_STYLE_BUTTON);
+		m_tbMid.SetItemSize(nIndex, 30, 27, 27, 0);
+		//m_tbMid.SetItemSize(nIndex, 30, 27);
+		m_tbMid.SetItemPadding(nIndex, 1);
+		m_tbMid.SetItemToolTipText(nIndex, _T("屏幕截图"));
+		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+	}
 	//m_tbMid.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"), 
 	//	_T("aio_toolbar_leftdown.png"), CRect(1,0,0,0));
 	//m_tbMid.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"), 
@@ -3385,9 +3389,8 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//m_tbMid.SetItemSize(nIndex, 4, 27);
 	//m_tbMid.SetItemPadding(nIndex, 1);
 	//m_tbMid.SetItemSepartorPic(nIndex, _T("aio_qzonecutline_normal.png"));
-	*/
 	{
-		int nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, STBI_STYLE_BUTTON);
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, STBI_STYLE_BUTTON);
 		m_nMsgLogIndexInToolbar = nIndex;
 		m_tbMid.SetItemSize(nIndex, 90, 27, 27, 0);
 		m_tbMid.SetItemPadding(nIndex, 1);

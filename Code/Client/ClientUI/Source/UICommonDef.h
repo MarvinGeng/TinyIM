@@ -242,4 +242,11 @@ enum class E_UI_NAME_STYLE
 	NAME_STYLE_SHOW_ACCOUNT						//显示账号
 };
 
+enum class E_RichEditType
+{
+	TEXT,
+	FACE,
+	IMAGE,
+};
+
 #endif
