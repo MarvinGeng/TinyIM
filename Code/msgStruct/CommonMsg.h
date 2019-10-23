@@ -1511,6 +1511,7 @@ class RecvGroupTextMsgReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;
+	std::string m_strUserId;
 	std::string m_strSenderId;
 	std::string m_strGroupId;
 	std::string m_strContext;
@@ -1533,6 +1534,7 @@ class RecvGroupTextMsgRspMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;
+	std::string m_strUserId;
 	std::string m_strSenderId;
 	std::string m_strGroupId;
 public:
@@ -1935,6 +1937,34 @@ public:
 	std::string m_strMsgId; //消息ID
 	std::string m_strUserId;//用户ID
 	UpdateFriendListNotifyRspMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+
+/*
+更新好友列表通知请求 [服务器]----->[客户端]
+*/
+class UpdateGroupListNotifyReqMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId; //消息ID
+	std::string m_strUserId;//用户ID
+	UpdateGroupListNotifyReqMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class UpdateGroupListNotifyRspMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId; //消息ID
+	std::string m_strUserId;//用户ID
+	UpdateGroupListNotifyRspMsg();
 
 	virtual std::string ToString() const override;
 

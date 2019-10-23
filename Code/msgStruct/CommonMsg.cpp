@@ -5088,6 +5088,7 @@ std::string RecvGroupTextMsgReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
+		{"UserId",m_strUserId},
         {"Sender", m_strSenderId},
         {"GroupId", m_strGroupId},
         {"Context", m_strContext},
@@ -5118,6 +5119,15 @@ bool RecvGroupTextMsgReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["MsgId"].is_string())
     {
@@ -5187,6 +5197,7 @@ std::string RecvGroupTextMsgRspMsg::ToString() const
     {
         {"MsgId", m_strMsgId},
         {"Sender", m_strSenderId},
+		{"UserId",m_strUserId},
         {"GroupId", m_strGroupId},
     });
     return clientObj.dump();
@@ -5213,6 +5224,15 @@ bool RecvGroupTextMsgRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["MsgId"].is_string())
     {
@@ -5797,6 +5817,7 @@ std::string GetGroupListRspMsg::ToString() const
                     {"BirthDate", userItem.m_strBirthDate},
                     {"Email", userItem.m_strEmail},
                     {"Gender", userItem.m_strGender},
+					{"UserId",userItem.m_strUserId},
                 });
                 memList.push_back(itemObj);
             }
@@ -5963,6 +5984,15 @@ bool GetGroupListRspMsg::FromString(const std::string &strJson)
                     {
                         return false;
                     }
+
+					if (memItem["UserId"].is_string())
+					{
+						info.m_strUserId = memItem["UserId"].string_value();
+					}
+					else
+					{
+						return false;
+					}
                     groupInfo.m_GroupUsers.push_back(info);
                 }
             }
@@ -6813,6 +6843,99 @@ std::string UpdateFriendListNotifyRspMsg::ToString() const {
 }
 
 bool UpdateFriendListNotifyRspMsg::FromString(const std::string& strJson) {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+UpdateGroupListNotifyReqMsg::UpdateGroupListNotifyReqMsg()
+{
+	m_type = MessageType::UpdateGroupListNotifyReq_Type;
+}
+
+std::string UpdateGroupListNotifyReqMsg::ToString() const {
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+		});
+
+	return clientObj.dump();
+}
+
+bool UpdateGroupListNotifyReqMsg::FromString(const std::string& strJson) {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+UpdateGroupListNotifyRspMsg::UpdateGroupListNotifyRspMsg()
+{
+	m_type = MessageType::UpdateGroupListNotifyRsp_Type;
+}
+
+std::string UpdateGroupListNotifyRspMsg::ToString() const {
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+		});
+
+	return clientObj.dump();
+}
+
+bool UpdateGroupListNotifyRspMsg::FromString(const std::string& strJson) {
 	std::string err;
 	using namespace json11;
 	auto json = Json::parse(strJson, err);

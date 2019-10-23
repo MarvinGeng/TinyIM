@@ -283,6 +283,12 @@ UpdateFriendListNotifyReq_Type,
 
 //更新好友通知回复
 UpdateFriendListNotifyRsp_Type,
+
+//群组更新通知
+UpdateGroupListNotifyReq_Type,
+
+//群组更新回复
+UpdateGroupListNotifyRsp_Type,
 };
 
 //客户端会话状态
