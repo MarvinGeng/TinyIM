@@ -1512,16 +1512,7 @@ void CChatServer::OnDispatchGroupMsg(const std::string strGroupId)
 	{
 		for (auto item : groupUsers)
 		{
-			T_GROUP_CHAT_MSG msgBean;
-			msgBean.m_strF_GROUP_ID = strGroupId;
-			msgBean.m_strF_MSG_ID = item.m_strF_LAST_READ_MSG_ID;
-			if (m_util.SelectGroupChatText(msgBean))
-			{
-				if (CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE == msgBean.m_eChatMsgType)
-				{
-					OnUserRecvGroupMsg(item.m_strF_USER_ID, msgBean);
-				}
-			}
+			OnUserRecvGroupMsg(item.m_strF_USER_ID);
 		}
 	}
 }

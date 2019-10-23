@@ -1289,7 +1289,7 @@ bool CMySqlConnect::SelectUserGroupRelation(const std::string strUserName, std::
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_GROUP_ID,F_ROLE_TYPE FROM T_GROUP_RELATION WHERE F_USER_ID='{0}';";
+	constexpr char * strTemplate2 = "SELECT F_GROUP_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1304,6 +1304,7 @@ bool CMySqlConnect::SelectUserGroupRelation(const std::string strUserName, std::
 			{
 				bean.m_strF_GROUP_ID = sql_row[0];
 				bean.m_eRole = MemberRole(sql_row[1]);
+				bean.m_strF_LAST_READ_MSG_ID = sql_row[2];
 				memBeans.push_back(bean);
 			}
 		}
