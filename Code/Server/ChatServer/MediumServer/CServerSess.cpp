@@ -298,6 +298,13 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 			m_server->HandleUpdateFriendListRsp(shared_from_this(), rspMsg);
 		}
 	}break;
+	case MessageType::UpdateGroupListNotifyRsp_Type:
+	{
+		UpdateGroupListNotifyRspMsg rspMsg;
+		if (rspMsg.FromString(hdr->to_string())) {
+			m_server->HandleUpdateGroupListRsp(shared_from_this(),rspMsg);
+		}
+	}break;
 	default:
 	{
 		LOG_ERR(ms_loger, "User:{} Unhandle MsgType:{} [ {} {} ]", UserId(), MsgType(hdr->GetType()), __FILENAME__, __LINE__);

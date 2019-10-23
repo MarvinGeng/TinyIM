@@ -406,6 +406,11 @@ void CChatServer::HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& 
 {
 	OnUserStateCheck(reqMsg.m_strUserId);
 }
+
+void CChatServer::HandleUpdateGroupListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateGroupListNotifyRspMsg& reqMsg)
+{
+	OnUserRecvGroupMsg(reqMsg.m_strUserId);
+}
 /**
  * @brief 处理获取好友列表请求
  * 
@@ -726,6 +731,7 @@ GetGroupListRspMsg CChatServer::DoGetGroupListReq(const GetGroupListReqMsg& reqM
 								baseInfo.m_strFaceId = userBean.m_strF_FACE_ID;
 								baseInfo.m_strNickName = userBean.m_strF_NICK_NAME;
 								baseInfo.m_strSignature = userBean.m_strF_SIGNATURE;
+								baseInfo.m_strUserId = userBean.m_strF_USER_ID;
 							}
 							groupInfo.m_GroupUsers.push_back(baseInfo);
 						}
@@ -1314,32 +1320,21 @@ FindGroupRspMsg CChatServer::DoFindGroupReq(const FindGroupReqMsg& reqMsg) {
  */
 bool CChatServer::OnUserRecvGroupMsg(const std::string strUser)
 {
-	/*T_USER_CHAT_MSG msgBean;
-	if (m_util.SelectUn(strUser, msgBean))
-	{
-		//m_util.UpdateFriendChatMsgState(msgBean.m_strF_MSG_ID, "SENDING");
-		{
-			FriendChatRecvTxtReqMsg reqMsg;
-			reqMsg.m_strMsgId = msgBean.m_strF_MSG_ID;
-			reqMsg.m_strFromUser = msgBean.m_strF_FROM_ID;
-			reqMsg.m_strToUser = msgBean.m_strF_TO_ID;
-			reqMsg.m_strContext = msgBean.m_strF_MSG_CONTEXT;
-
-			auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+	std::vector<T_GROUP_RELATION_BEAN> userGroups;
+	if (m_util.SelectUserGroupRelation(strUser, userGroups)) {
+		for (auto item : userGroups) {
+			T_GROUP_CHAT_MSG msgBean;
+			msgBean.m_strF_GROUP_ID = item.m_strF_GROUP_ID;
+			msgBean.m_strF_MSG_ID = item.m_strF_LAST_READ_MSG_ID;
+			if (m_util.SelectGroupChatText(msgBean))
 			{
-				auto item = m_UserSessVec.find(strUser);
-				if (item != m_UserSessVec.end() && item->second->IsConnected())
+				if (CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE == msgBean.m_eChatMsgType)
 				{
-					item->second->SendMsg(pSend);
+					OnUserRecvGroupMsg(item.m_strF_USER_ID, msgBean);
 				}
 			}
-
 		}
-		return true;
 	}
-	else {
-		return false;
-	}*/
 	return false;
 }
 
@@ -1540,6 +1535,7 @@ bool CChatServer::OnUserRecvGroupMsg(const std::string strUser, const T_GROUP_CH
 		{
 			RecvGroupTextMsgReqMsg reqMsg;
 			reqMsg.m_strGroupId = msg.m_strF_GROUP_ID;
+			reqMsg.m_strUserId = strUser;
 			reqMsg.m_strSenderId = msg.m_strF_SENDER_ID;
 			reqMsg.m_strContext = msg.m_strF_MSG_CONTEXT;
 			reqMsg.m_strMsgId = msg.m_strF_MSG_ID;
@@ -1643,7 +1639,7 @@ void CChatServer::HandleRecvGroupTextMsgRspMsg(const std::shared_ptr<CServerSess
 	{
 		if (CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE == msgBean.m_eChatMsgType)
 		{
-			OnUserRecvGroupMsg(reqMsg.m_strSenderId, msgBean);
+			OnUserRecvGroupMsg(pSess->UserId(), msgBean);
 			//OnUserRecvGroupMsg(reqMsg.m_strSenderId, msgBean.m_strF_MSG_ID, msgBean.m_strF_GROUP_ID, msgBean.m_strF_SENDER_ID, msgBean.m_strF_MSG_CONTEXT);
 		}
 	}
