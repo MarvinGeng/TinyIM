@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+bin
+Build64Bat
+/Code/Client/ClientUI/VS2017
