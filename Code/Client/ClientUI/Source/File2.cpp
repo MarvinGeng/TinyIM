@@ -114,7 +114,7 @@ E_UI_GET_FILE_MD5_RETCODE GetFileMd5ValueA(PCTSTR pszFileName, char* pszMd5, lon
 		memset(pFileProgress, 0, sizeof(FileProgress));
 		pFileProgress->nPercent = -1;
 		pFileProgress->nVerificationPercent = (long)((__int64)nFileOffset*100/nFileSize);
-		_tcscpy_s(pFileProgress->szDestPath, ARRAYSIZE(pFileProgress->szDestPath), pszFileName);
+		//_tcscpy_s(pFileProgress->szDestPath, ARRAYSIZE(pFileProgress->szDestPath), pszFileName);
 		::PostMessage(hwndReflection, FMG_MSG_SEND_FILE_PROGRESS, 0, (LPARAM)pFileProgress);
 
 		::Sleep(1);
@@ -140,7 +140,7 @@ E_UI_GET_FILE_MD5_RETCODE GetFileMd5ValueA(PCTSTR pszFileName, char* pszMd5, lon
 		memset(pFileProgress, 0, sizeof(FileProgress));
 		pFileProgress->nPercent = -1;
 		pFileProgress->nVerificationPercent = 100;
-		_tcscpy_s(pFileProgress->szDestPath, ARRAYSIZE(pFileProgress->szDestPath), pszFileName);
+		//_tcscpy_s(pFileProgress->szDestPath, ARRAYSIZE(pFileProgress->szDestPath), pszFileName);
 		::PostMessage(hwndReflection, FMG_MSG_SEND_FILE_PROGRESS, 0, (LPARAM)pFileProgress);
 	}
 

@@ -591,24 +591,52 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 
 		//处理内容部分
 		{
-
+			std::string strJson = EncodeUtil::UnicodeToAnsi(msg.m_strContent);
+			RichEditMsgList msgList = RichEditMsg(strJson);
 			RichEdit_SetSel(recvHandle, -1, -1);
-			RichEdit_ReplaceSel(recvHandle, msg.m_strContent.c_str(),
-				msg.m_stFontInfo.m_strName.c_str(),
-				msg.m_stFontInfo.m_nSize,
-				msg.m_stFontInfo.m_clrText,
-				msg.m_stFontInfo.m_bBold,
-				msg.m_stFontInfo.m_bItalic,
-				msg.m_stFontInfo.m_bUnderLine, 
-				FALSE, 
-				0);
+			for (const auto item : msgList)
+			{
+				switch (item.m_eType)
+				{
+				case E_RichEditType::TEXT:
+				{
+					RichEdit_ReplaceSel(recvHandle, item.m_strContext.c_str(),
+						msg.m_stFontInfo.m_strName.c_str(),
+						msg.m_stFontInfo.m_nSize,
+						msg.m_stFontInfo.m_clrText,
+						msg.m_stFontInfo.m_bBold,
+						msg.m_stFontInfo.m_bItalic,
+						msg.m_stFontInfo.m_bUnderLine,
+						FALSE,
+						0);
+				}break;
+				case E_RichEditType::FACE:
+				{
+					CFaceInfo* lpFaceInfo = m_lpFaceList->GetFaceInfoById(item.m_nFaceId);
+					if (lpFaceInfo != NULL)
+					{
+						_RichEdit_InsertFace(recvHandle,
+							lpFaceInfo->m_strFileName.c_str(),
+							lpFaceInfo->m_nId,
+							lpFaceInfo->m_nIndex);
+					}
+				}break;
+				case E_RichEditType::IMAGE:
+				{
 
-			RichEdit_ReplaceSel(recvHandle, _T("\r\n"));
-			RichEdit_SetStartIndent(recvHandle, 0);
-			::PostMessage(recvHandle, WM_VSCROLL, SB_BOTTOM, 0);
+				}break;
+				default:
+				{
+
+				}break;
+				}
+			}
+			
 			//m_richMsgLog.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
 		}
-
+		RichEdit_ReplaceSel(recvHandle, _T("\r\n"));
+		RichEdit_SetStartIndent(recvHandle, 0);
+		::PostMessage(recvHandle, WM_VSCROLL, SB_BOTTOM, 0);
 	}
 }
 

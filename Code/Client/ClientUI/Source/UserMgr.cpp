@@ -1117,8 +1117,8 @@ BOOL CUserMgr::LoadRecentList()
 		pRecentInfo->m_uFaceID = pRecentInfoFromFile[i].uFaceID;
 		pRecentInfo->m_nType = pRecentInfoFromFile[i].nType;
 		pRecentInfo->m_MsgTime = pRecentInfoFromFile[i].uMsgTime;
-		_tcscpy_s(pRecentInfo->m_szName, ARRAYSIZE(pRecentInfo->m_szName), pRecentInfoFromFile[i].szName);
-		_tcscpy_s(pRecentInfo->m_szLastMsgText, ARRAYSIZE(pRecentInfo->m_szLastMsgText), pRecentInfoFromFile[i].szLastMsgText);
+		//_tcscpy_s(pRecentInfo->m_szName, ARRAYSIZE(pRecentInfo->m_szName), pRecentInfoFromFile[i].szName);
+		//_tcscpy_s(pRecentInfo->m_szLastMsgText, ARRAYSIZE(pRecentInfo->m_szLastMsgText), pRecentInfoFromFile[i].szLastMsgText);
 		m_RecentList.m_arrRecentInfo.push_back(pRecentInfo);
 	}
 
@@ -1154,8 +1154,8 @@ BOOL CUserMgr::StoreRecentList()
 		pBufferToWrite[i].uUserID = pRecentInfo->m_uUserID;
 		pBufferToWrite[i].uFaceID = pRecentInfo->m_uFaceID;
 		pBufferToWrite[i].uMsgTime = pRecentInfo->m_MsgTime;
-		_tcscpy_s(pBufferToWrite[i].szName, ARRAYSIZE(pBufferToWrite[i].szName), pRecentInfo->m_szName);
-		_tcscpy_s(pBufferToWrite[i].szLastMsgText, ARRAYSIZE(pBufferToWrite[i].szLastMsgText), pRecentInfo->m_szLastMsgText);
+		//_tcscpy_s(pBufferToWrite[i].szName, ARRAYSIZE(pBufferToWrite[i].szName), pRecentInfo->m_szName);
+		//_tcscpy_s(pBufferToWrite[i].szLastMsgText, ARRAYSIZE(pBufferToWrite[i].szLastMsgText), pRecentInfo->m_szLastMsgText);
 	}
 
 	CFile RecentFile;
@@ -1237,7 +1237,7 @@ BOOL CUserMgr::LoadTeamInfo()
 		
 		pTeamInfo	= new C_UI_BuddyTeamInfo();
 		pTeamInfo->m_nIndex = pBuddyTeamInfo[i].nTeamIndex;
-		pTeamInfo->m_strName = pBuddyTeamInfo[i].szTeamName;
+		//pTeamInfo->m_strName = pBuddyTeamInfo[i].szTeamName;
 		m_BuddyList.m_arrBuddyTeamInfo.push_back(pTeamInfo);
 	}
 
@@ -1265,7 +1265,7 @@ BOOL CUserMgr::StoreTeamInfo()
 		if(pBuddyTeamInfo == NULL)
 			continue;
 		pBufferToWrite->nTeamIndex = pBuddyTeamInfo->m_nIndex;
-		_tcscpy_s(pBufferToWrite->szTeamName, ARRAYSIZE(pBufferToWrite->szTeamName), pBuddyTeamInfo->m_strName.c_str());
+		//_tcscpy_s(pBufferToWrite->szTeamName, ARRAYSIZE(pBufferToWrite->szTeamName), pBuddyTeamInfo->m_strName.c_str());
 
 		++pBufferToWrite;
 	}
@@ -1359,8 +1359,8 @@ BOOL CUserMgr::SaveBuddyInfo()
 				continue;
 
 			//bi[nIndex].uAccountID = pBuddyInfo->m_uUserID;
-			_tcscpy_s(bi[nIndex].szAccountName, ARRAYSIZE(bi[nIndex].szAccountName), pBuddyInfo->m_strAccount.c_str());
-			_tcscpy_s(bi[nIndex].szMarkName, ARRAYSIZE(bi[nIndex].szMarkName), pBuddyInfo->m_strMarkName.c_str());
+			//_tcscpy_s(bi[nIndex].szAccountName, ARRAYSIZE(bi[nIndex].szAccountName), pBuddyInfo->m_strAccount.c_str());
+			//_tcscpy_s(bi[nIndex].szMarkName, ARRAYSIZE(bi[nIndex].szMarkName), pBuddyInfo->m_strMarkName.c_str());
 			bi[nIndex].nTeamIndex = pBuddyInfo->m_nTeamIndex;
 			bi[nIndex].nGroupCount = 0;
 			memset(bi[nIndex].GroupID, 0, sizeof(bi[nIndex].GroupID));
@@ -1388,9 +1388,9 @@ BOOL CUserMgr::SaveBuddyInfo()
  */
 PCTSTR CUserMgr::GetMarkNameByAccountID(UINT uAccountID)
 {
-	std::map<UINT, BuddyInfo*>::iterator iter = m_mapLocalBuddyInfo.find(uAccountID);
-	if(iter != m_mapLocalBuddyInfo.end())
-		return iter->second->szMarkName;
+	//std::map<UINT, BuddyInfo*>::iterator iter = m_mapLocalBuddyInfo.find(uAccountID);
+	//if(iter != m_mapLocalBuddyInfo.end())
+	//	return iter->second->szMarkName;
 
 	return NULL;
 }

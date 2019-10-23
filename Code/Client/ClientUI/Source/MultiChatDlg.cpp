@@ -2297,7 +2297,7 @@ LRESULT CMultiChatDlg::OnSendFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CMultiChatDlg::OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	FileProgress* pFileProgress = (FileProgress*)lParam;
+	/*FileProgress* pFileProgress = (FileProgress*)lParam;
 	if(pFileProgress == NULL)
 		return 0;
 
@@ -2313,7 +2313,7 @@ LRESULT CMultiChatDlg::OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lPara
 	CString strProgressFile;
 	strProgressFile.Format(_T("%sImage\\FileProgress\\percent%d.png"), g_szHomePath, nIndex);
 	_RichEdit_InsertFace(m_richRecv.m_hWnd, strProgressFile, -1, -1);
-	
+	*/
 	return 1;
 }
 

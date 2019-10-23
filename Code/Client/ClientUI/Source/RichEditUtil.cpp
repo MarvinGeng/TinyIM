@@ -502,7 +502,16 @@ RichEditMsgList RichEdit_GetMsg(HWND hWnd)
 			reobject.poleobj->Release();
 		}
 	}
+	if (nPos < (int)strOrgText.size())
+	{
+		strTemp = strOrgText.substr(nPos);
+		Replace(strTemp, _T("/"), _T("//"));
+		RichEditMsg_st  msgItem;
+		msgItem.m_eType = E_RichEditType::TEXT;
+		msgItem.m_strContext = strTemp;
 
+		result.push_back(msgItem);
+	}
 	pRichEditOle->Release();
 
 	return result;

@@ -6048,7 +6048,7 @@ void CMainDlg::ShowAddFriendConfirmDlg()
 		AddFriendConfirmDlg.ShowRefuseButton(FALSE);
 		AddFriendConfirmDlg.ShowOKButton(TRUE);
 		
-		m_userMgr.AddFriend(pAddFriendInfo->uAccountID, pAddFriendInfo->szAccountName, pAddFriendInfo->szNickName);
+		//m_userMgr.AddFriend(pAddFriendInfo->uAccountID, pAddFriendInfo->szAccountName, pAddFriendInfo->szNickName);
 		//PostMessage(FMG_MSG_UPDATE_BUDDY_LIST, 0, 0);
 		//重新获取下好友列表并更新
         //m_FMGClient.GetFriendList();

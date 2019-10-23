@@ -3,22 +3,22 @@
 #include "UICommonDef.h"
 #include "UICommonType.h"
 #include <vector>
-
+const int MAX_PATH_LENGTH = 256;
 struct BuddyInfo
 {
-    UINT	uAccountID;
-    TCHAR	szAccountName[32];
-    TCHAR	szMarkName[32];
+	int	uAccountID;
+    unsigned short	szAccountName[32];
+    unsigned short	szMarkName[32];
     long	nTeamIndex;
     long	nGroupCount;		//群个数
-    UINT	GroupID[64];		//群号ID
+    int	GroupID[64];		//群号ID
 };
 
 //好友分组信息结构体
 struct BuddyTeamInfo
 {
     long	nTeamIndex;      //分组索引
-    TCHAR	szTeamName[16];  //分组名称
+    unsigned short	szTeamName[16];  //分组名称
 };
 
 #define MAX_LAST_MSG_TEXT_LENGTH 18
@@ -27,33 +27,33 @@ struct BuddyTeamInfo
 struct RecentInfo
 {
 	E_UI_CHAT_MSG_TYPE	nType;		//消息类型（好友聊天信息、群组、讨论组）
-    UINT	uUserID;
-    UINT	uFaceID;	//头像类型
-    UINT64  uMsgTime;
-    TCHAR   szName[MAX_RECENT_NAME_LENGTH];
-    TCHAR   szLastMsgText[MAX_LAST_MSG_TEXT_LENGTH];
+    int	uUserID;
+    int	uFaceID;	//头像类型
+	long  uMsgTime;
+    unsigned short   szName[MAX_RECENT_NAME_LENGTH];
+    unsigned short   szLastMsgText[MAX_LAST_MSG_TEXT_LENGTH];
 };
 
 //记录当前添加好友的状态信息
 struct AddFriendInfo_ST
 {
 	E_UI_OPERATE_FRIEND nCmd;				//操作类型（Apply/Agree/Refuse）
-	UINT	uAccountID;			//账户ID
-	TCHAR	szAccountName[32];	//账户名
-	TCHAR	szNickName[32];		//昵称
+	int	uAccountID;			//账户ID
+	unsigned short	szAccountName[32];	//账户名
+	unsigned short	szNickName[32];		//昵称
 };
 
 
 
 struct UserBasicInfo_ST
 {
-	UINT  uAccountID;
+	int  uAccountID;
 	char  szAccountName[32];
 	char  szNickName[64];
     char  szMarkName[64];
     char  szSignature[256];
     char  szAddress[51225];
-	UINT  uFaceID;
+	int  uFaceID;
     int   nStatus;              //在线状态
     int   clientType;           //客户端类型
     char  customFace[64];
@@ -65,12 +65,12 @@ struct UserBasicInfo_ST
 
 struct UserExtendInfo_ST
 {
-	UINT	uAccountID;
-	UINT	uGender;
-	UINT	uShengXiao;
-	UINT	uConstel;
-	UINT    uBlood;
-	UINT	uBirthday;
+	int	uAccountID;
+	int	uGender;
+	int	uShengXiao;
+	int	uConstel;
+	int    uBlood;
+	int	uBirthday;
 
 	char	szCountry[32];			// 国家
 	char	szProvince[32];			// 省份
@@ -83,12 +83,12 @@ struct UserExtendInfo_ST
 	char	szHomepage[64];			// 个人主页
 	char	szSignature[256];		// 个性签名
 	char	szPersonal[512];		// 个人说明	
-	char    szCustomFace[MAX_PATH];	// 自定义头像名
+	char    szCustomFace[MAX_PATH_LENGTH];	// 自定义头像名
 };
 
 struct FileProgress
 {
-	TCHAR szDestPath[MAX_PATH];
+	unsigned short szDestPath[MAX_PATH_LENGTH];
 	long  nPercent;				//百分比，0～100之间(值为-1时，为获取文件md5值)
 	long  nVerificationPercent;	//获取md5值进度（0～100）
 };
