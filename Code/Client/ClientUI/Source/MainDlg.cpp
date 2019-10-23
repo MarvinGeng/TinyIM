@@ -3087,6 +3087,7 @@ LRESULT CMainDlg::OnRecvGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (item != m_mapGroupChatDlg.end())
 		{
 			item->second->OnRecvGroupMsg(pGroupMsg);
+			item->second->ShowWindow(SW_SHOW);
 		}
 	}
 	else
