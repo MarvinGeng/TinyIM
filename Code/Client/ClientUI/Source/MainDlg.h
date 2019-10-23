@@ -588,5 +588,6 @@ private:
 	void ChangeTrayIconString(const CString strMsg);
 	void SetTrayIconOnLine();
 	void SetTrayIconOffLine();
+	bool CreateGroupChatDlg(const std::string strGroupId);
 };
 #endif

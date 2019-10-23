@@ -3082,15 +3082,53 @@ LRESULT CMainDlg::OnRecvGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	C_UI_GroupMessage * pGroupMsg = (C_UI_GroupMessage *)(lParam);
 	if (nullptr != pGroupMsg)
 	{
+		CreateGroupChatDlg(pGroupMsg->m_strGroupId);
 		auto item = m_mapGroupChatDlg.find(pGroupMsg->m_strGroupId);
 		if (item != m_mapGroupChatDlg.end())
 		{
 			item->second->OnRecvGroupMsg(pGroupMsg);
 		}
 	}
+	else
+	{
+		
+	}
 	return 1;
 }
 
+bool CMainDlg::CreateGroupChatDlg(const std::string strGroupId)
+{
+	if (m_mapGroupChatDlg.find(strGroupId) == m_mapGroupChatDlg.end())
+	{
+		CGroupChatDlg* lpGroupChatDlg = new CGroupChatDlg;
+		if (lpGroupChatDlg != NULL)
+		{
+			long nLastWidth = m_userCfg.GetGroupDlgWidth();
+			long nLastHeight = m_userCfg.GetGroupDlgHeight();
+			//lpGroupChatDlg->m_lpFMGClient = &m_FMGClient;
+			lpGroupChatDlg->m_lpFaceList = &m_FaceList;
+			lpGroupChatDlg->m_lpCascadeWinManager = &m_CascadeWinManager;
+			lpGroupChatDlg->m_hMainDlg = m_hWnd;
+			lpGroupChatDlg->m_strGroupId = strGroupId;
+			m_mapGroupChatDlg[strGroupId] = lpGroupChatDlg;
+			lpGroupChatDlg->m_netProto = m_netProto;
+			lpGroupChatDlg->Create(NULL);
+			lpGroupChatDlg->ShowWindow(SW_SHOW);
+			lpGroupChatDlg->SetWindowPos(NULL, 0, 0, nLastWidth, nLastHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
+			SendMessage(lpGroupChatDlg->m_hWnd, WM_SIZE, (WPARAM)SIZE_RESTORED, (LPARAM)MAKELONG(nLastWidth, nLastHeight));
+			::SetForegroundWindow(lpGroupChatDlg->m_hWnd);
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return true;
+	}
+}
 
 
 LRESULT CMainDlg::OnRecvFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)//收到的文件请求消息
