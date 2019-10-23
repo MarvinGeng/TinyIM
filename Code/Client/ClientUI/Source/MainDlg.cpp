@@ -151,6 +151,28 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
     m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
 	
 	m_nLoginTryTimes = 0;
+	{
+		std::string strServerIp = "127.0.0.1";
+		int serverPort = 9000;
+		{
+			CIniFile iniFile;
+			CString strIniPath(g_szHomePath);
+			strIniPath += _T("config\\flamingo.ini");
+			CString strTemp;
+			iniFile.ReadString(_T("server"), _T("server"), _T("flamingo.hootina.org"), strTemp.GetBuffer(64), 64, strIniPath);
+			strTemp.ReleaseBuffer();
+			strServerIp = EncodeUtil::UnicodeToUtf8(strTemp);
+			iniFile.ReadString(_T("server"), _T("port"), _T("20000"), strTemp.GetBuffer(32), 32, strIniPath);
+			strTemp.ReleaseBuffer();
+			serverPort = std::atoi(EncodeUtil::UnicodeToUtf8(strTemp));
+		}
+		auto pProto = CMsgProto::GetInstance();
+		if (pProto)
+		{
+			pProto->SetIpPort(strServerIp, serverPort);
+			pProto->StartConnect();
+		}
+	}
 
 }
 

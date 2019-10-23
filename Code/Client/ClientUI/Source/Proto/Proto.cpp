@@ -432,29 +432,29 @@ void CMsgProto::HandleRecvGroupTextMsgReq(const std::shared_ptr<TransBaseMsg_t> 
 	RecvGroupTextMsgReqMsg reqMsg;
 	if (reqMsg.FromString(pOrgMsg->to_string())) {
 
-
-		RecvGroupTextMsgRspMsg rspMsg;
-		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-		rspMsg.m_strGroupId = reqMsg.m_strGroupId;
-		rspMsg.m_strSenderId = reqMsg.m_strSenderId;
 		{
-			C_UI_GroupMessage* pResult = new C_UI_GroupMessage();
-			pResult->m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
-			pResult->m_strSenderId = EncodeUtil::AnsiToUnicode(reqMsg.m_strSenderId);
-			pResult->m_strContext = EncodeUtil::AnsiToUnicode(reqMsg.m_strContext);
-			pResult->m_strGroupId = reqMsg.m_strGroupId;
-			pResult->m_eType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-			pResult->m_stFontInfo = CoreToUi(reqMsg.m_stFontInfo);
-			pResult->m_strMsgTime = EncodeUtil::AnsiToUnicode(reqMsg.m_strMsgTime);
-			auto item = m_msgMap.find(reqMsg.GetMsgType());
-			if (item != m_msgMap.end())
 			{
-				::PostMessage(item->second, FMG_MSG_RECV_GROUP_MSG, 0, (LPARAM)(pResult));
+				C_UI_GroupMessage* pResult = new C_UI_GroupMessage();
+				pResult->m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
+				pResult->m_strSenderId = EncodeUtil::AnsiToUnicode(reqMsg.m_strSenderId);
+				pResult->m_strContext = EncodeUtil::AnsiToUnicode(reqMsg.m_strContext);
+				pResult->m_strGroupId = reqMsg.m_strGroupId;
+				pResult->m_eType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
+				pResult->m_stFontInfo = CoreToUi(reqMsg.m_stFontInfo);
+				pResult->m_strMsgTime = EncodeUtil::AnsiToUnicode(reqMsg.m_strMsgTime);
+				auto item = m_msgMap.find(reqMsg.GetMsgType());
+				if (item != m_msgMap.end())
+				{
+					::PostMessage(item->second, FMG_MSG_RECV_GROUP_MSG, 0, (LPARAM)(pResult));
+				}
 			}
 		}
-
-
 		{
+			RecvGroupTextMsgRspMsg rspMsg;
+			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+			rspMsg.m_strGroupId = reqMsg.m_strGroupId;
+			rspMsg.m_strSenderId = reqMsg.m_strSenderId;
+			rspMsg.m_strUserId = m_strUserId;
 			auto pSess = SourceServer::CSessManager::GetManager();
 			TransBaseMsg_t trans(rspMsg.GetMsgType(), rspMsg.ToString());
 			pSess->SendMsg(&trans);
@@ -1418,41 +1418,54 @@ bool CMsgProto::SendGroupChatTextMsg(const std::string strGroupId, const std::st
  */
 void CMsgProto::HandleGetGroupListRspMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
 {
-	GetGroupListRspMsg rspMsg;
-	m_GroupList.m_arrGroupInfo.clear();
-	int nIndex = 1;
-	if (rspMsg.FromString(pOrgMsg->to_string())) {
-		for (const auto groupItem : rspMsg.m_GroupList) {
-			auto pInfo = new C_UI_GroupInfo();
-			pInfo->m_strGroupId = groupItem.m_strGroupId;
-			pInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupId);
-			pInfo->m_strName = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupName);
-			{
-				C_UI_BuddyInfo buddyInfo;
-				for (const auto buddyItem : groupItem.m_GroupUsers) {
-					buddyInfo.m_nBirthday = std::atoi(buddyItem.m_strBirthDate.c_str());
-					buddyInfo.m_nFace = std::atoi(buddyItem.m_strFaceId.c_str());
-					buddyInfo.m_nGender = std::atoi(buddyItem.m_strGender.c_str());
+	{
+		GetGroupListRspMsg rspMsg;
+		m_GroupList.m_arrGroupInfo.clear();
+		int nIndex = 1;
+		if (rspMsg.FromString(pOrgMsg->to_string())) {
+			for (const auto groupItem : rspMsg.m_GroupList) {
+				auto pInfo = new C_UI_GroupInfo();
+				pInfo->m_strGroupId = groupItem.m_strGroupId;
+				pInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupId);
+				pInfo->m_strName = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupName);
+				{
+					C_UI_BuddyInfo buddyInfo;
+					for (const auto buddyItem : groupItem.m_GroupUsers) {
+						buddyInfo.m_nBirthday = std::atoi(buddyItem.m_strBirthDate.c_str());
+						buddyInfo.m_nFace = std::atoi(buddyItem.m_strFaceId.c_str());
+						buddyInfo.m_nGender = std::atoi(buddyItem.m_strGender.c_str());
 
-					buddyInfo.m_strUserId = buddyItem.m_strUserId;
-					buddyInfo.m_strUserName = buddyItem.m_strUserName;
+						buddyInfo.m_strUserId = buddyItem.m_strUserId;
+						buddyInfo.m_strUserName = buddyItem.m_strUserName;
 
-					buddyInfo.m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
-					buddyInfo.m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
+						buddyInfo.m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
+						buddyInfo.m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
 
-					buddyInfo.m_nTeamIndex = 0;
-					buddyInfo.m_uUserID = nIndex;
-					nIndex++;
-					pInfo->m_arrMember.push_back(new C_UI_BuddyInfo(buddyInfo));
+						buddyInfo.m_nTeamIndex = 0;
+						buddyInfo.m_uUserID = nIndex;
+						nIndex++;
+						pInfo->m_arrMember.push_back(new C_UI_BuddyInfo(buddyInfo));
+						{
+							m_friendInfoMap.erase(buddyItem.m_strUserId);
+							m_friendInfoMap.insert({ buddyItem.m_strUserId,buddyItem });
+						}
+					}
 				}
+				m_GroupList.m_arrGroupInfo.push_back(pInfo);
 			}
-			m_GroupList.m_arrGroupInfo.push_back(pInfo);
+		}
+
+		auto item = m_msgMap.find(rspMsg.GetMsgType());
+		if (item != m_msgMap.end()) {
+			::PostMessage(item->second, FMG_MSG_UPDATE_GROUP_LIST, 0, 0);
 		}
 	}
-	
-	auto item = m_msgMap.find(rspMsg.GetMsgType());
-	if (item != m_msgMap.end()) {
-		::PostMessage(item->second, FMG_MSG_UPDATE_GROUP_LIST, 0, 0);
+	{
+		UpdateGroupListNotifyRspMsg notifyRsp;
+		notifyRsp.m_strUserId = m_strUserId;
+		TransBaseMsg_t trans(notifyRsp.GetMsgType(), notifyRsp.ToString());
+		auto pSess = SourceServer::CSessManager::GetManager();
+		pSess->SendMsg(&trans);
 	}
 }
 
@@ -1486,7 +1499,7 @@ void CMsgProto::HandleSendGroupTextRspMsg(const std::shared_ptr<TransBaseMsg_t> 
 	if (rspMsg.FromString(pOrgMsg->to_string()))
 	{
 		C_UI_GroupMessage* pResult = new C_UI_GroupMessage();
-		pResult->m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(rspMsg.m_strSenderId));
+		pResult->m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(m_strUserId));
 		pResult->m_strSenderId = EncodeUtil::AnsiToUnicode(rspMsg.m_strSenderId);
 		pResult->m_strContext = EncodeUtil::AnsiToUnicode(rspMsg.m_strContext);
 		pResult->m_strGroupId = rspMsg.m_strGroupId;

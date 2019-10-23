@@ -152,10 +152,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	CMsgProto::Initialize();
 	SYSTEMTIME st = {0};
 	::GetLocalTime(&st);
-	TCHAR szLogFileName[MAX_PATH] = {0};
-	_stprintf_s(szLogFileName, MAX_PATH, _T("%s\\Logs\\%04d%02d%02d%02d%02d%02d.log"), g_szHomePath, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-	CIULog::Init(true, false, szLogFileName);
-
     //初始化性能计数器
     TCHAR szPerformanceFileName[MAX_PATH] = { 0 };
     _stprintf_s(szPerformanceFileName, MAX_PATH, _T("%s\\Logs\\%04d%02d%02d%02d%02d%02d.perf"), g_szHomePath, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
@@ -177,8 +173,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
     }
 
     //日志级别
-    int nLogLevel = iniFile.ReadInt(_T("app"), _T("loglevel"), 0, strIniFilePath);
-    CIULog::SetLevel((LOG_LEVEL)nLogLevel);
     
 	if(!InitSocket())
 		return 0;
@@ -228,7 +222,6 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 
 	UnInitSocket();
 
-	CIULog::Uninit();
 
 	CMsgProto::UnInstialize();
 	std::this_thread::sleep_for(std::chrono::seconds(2));
