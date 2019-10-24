@@ -377,6 +377,10 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	{
 		HandleSendChatTxtRsp(pOrgMsg);
 	}break;
+	case MessageType::UpdateFriendListNotifyReq_Type:
+	{
+		HandleUpdateFriendListNotifyReq(pOrgMsg);
+	}break;
 	default: {
 		
 	}break;
@@ -1045,6 +1049,10 @@ bool CMsgProto::SendRecvChatTxtRsp(const std::string strUserName, const std::str
 	return true;
 }
 
+void CMsgProto::HandleUpdateFriendListNotifyReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
+{
+	GetFriendList();
+}
 /**
  * @brief 处理发送文本回复消息
  * 
