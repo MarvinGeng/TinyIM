@@ -16,6 +16,12 @@
 #include "EncodingUtil.h"
 #include "UIWndMsgDef.h"
 
+/**
+ * @brief 将TCP消息中的字体结构体转为界面的字体结构体
+ * 
+ * @param font TCP消息的字体结构体
+ * @return C_UI_FontInfo 界面的字体结构体
+ */
 C_UI_FontInfo CoreToUi(const FontInfo_s font)
 {
 	C_UI_FontInfo result;
@@ -54,6 +60,12 @@ C_UI_FontInfo CoreToUi(const FontInfo_s font)
 	return result;
 }
 
+/**
+ * @brief 将界面的字体结构体转为TCP消息的字体结构体
+ * 
+ * @param font 界面字体结构体
+ * @return FontInfo_s TCP消息字体结构体
+ */
 FontInfo_s UiToCore(const C_UI_FontInfo font)
 {
 	FontInfo_s result;
@@ -90,7 +102,10 @@ CMsgProto::CMsgProto() {
 		m_eOnLineStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 }
 
-
+/**
+ * @brief 协议的初始化
+ * 
+ */
 void CMsgProto::Init() {
 		m_startTime = 0;
 		auto pSess = SourceServer::CSessManager::GetManager();
@@ -175,6 +190,10 @@ void CMsgProto::Init() {
 		return false;
 	}
 
+/**
+ * @brief 响应超时消息
+ * 
+ */
 void CMsgProto::OnTimeOut() {
 		if (m_startTime % 5 == 0 && 
 			(GetStatus() != E_UI_ONLINE_STATUS::STATUS_OFFLINE)) {
@@ -387,6 +406,12 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	}
 }
 
+/**
+ * @brief 获取和某个好友的聊天消息，显示历史消息记录的时候使用
+ * 
+ * @param strFriendId 好友ID
+ * @return CBuddyChatUiMsgVector 好友聊天消息数据
+ */
 CBuddyChatUiMsgVector CMsgProto::GetBuddyMsgList(const std::string strFriendId)
 {
 	auto item = m_friendMsgMap.find(strFriendId);
@@ -402,6 +427,12 @@ CBuddyChatUiMsgVector CMsgProto::GetBuddyMsgList(const std::string strFriendId)
 }
 
 //根据好友ID获取好友信息
+/**
+ * @brief 根据好友ID获取好友信息
+ * 
+ * @param strFriendId 好友ID
+ * @return UserBaseInfo 好友基础信息
+ */
 UserBaseInfo CMsgProto::GetFriendInfoById(const std::string strFriendId)
 {
 	auto item = m_friendInfoMap.find(strFriendId);
@@ -419,7 +450,7 @@ UserBaseInfo CMsgProto::GetFriendInfoById(const std::string strFriendId)
 /**
  * @brief 获取用户的登录状态
  * 
- * @return E_UI_ONLINE_STATUS 
+ * @return E_UI_ONLINE_STATUS 用户登录状态
  */
 E_UI_ONLINE_STATUS CMsgProto::GetStatus()
 {
@@ -465,6 +496,12 @@ void CMsgProto::HandleRecvGroupTextMsgReq(const std::shared_ptr<TransBaseMsg_t> 
 		}
 	}
 }
+
+/**
+ * @brief 处理未读消息通知
+ * 
+ * @param pOrgMsg 未读消息通知
+ */
 void CMsgProto::HandleFriendUnReadNotifyReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
 {
 	FriendUnReadNotifyReqMsg reqMsg;
@@ -479,17 +516,17 @@ void CMsgProto::HandleFriendUnReadNotifyReq(const std::shared_ptr<TransBaseMsg_t
 		pSess->SendMsg(&trans);
 	}
 }
+
 /**
  * @brief 处理获取好友列表的回复
  * 
- * @param pOrgMsg 
+ * @param pOrgMsg 好友列表回复
  */
 void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	GetFriendListRspMsg rspMsg;
 	{
 		m_BuddyList.m_arrBuddyTeamInfo.clear();
 	}
-	int n = 1;
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
 		
 		C_UI_BuddyTeamInfo * teamInfo = new C_UI_BuddyTeamInfo();
@@ -514,9 +551,6 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 				{
 					pBuddyInfo->m_nStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 				}
-		
-				//pBuddyInfo->m_uUserID = n;
-				n++;
 				pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
 				pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(item.m_strNickName);
 				pBuddyInfo->m_nTeamIndex = 0;
@@ -546,7 +580,7 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 /**
  * @brief 处理添加好友请求通知消息
  * 
- * @param pOrgMsg 
+ * @param pOrgMsg 添加好友通知请求
  */
 void CMsgProto::HandleAddFriendNotifyReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	AddFriendNotifyReqMsg reqMsg;
@@ -917,6 +951,13 @@ void CMsgProto::HandleLogoutRspMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg
 	}
 }
 
+
+/**
+ * @brief 设置服务器的IP和端口
+ * 
+ * @param strIp 服务器IP
+ * @param port 服务器端口
+ */
 void CMsgProto::SetIpPort(const std::string strIp, const int port)
 {
 	auto pManager = SourceServer::CSessManager::GetManager();
@@ -926,6 +967,10 @@ void CMsgProto::SetIpPort(const std::string strIp, const int port)
 	}
 }
 
+/**
+ * @brief 开始连接
+ * 
+ */
 void CMsgProto::StartConnect()
 {
 	auto pManager = SourceServer::CSessManager::GetManager();
@@ -934,6 +979,7 @@ void CMsgProto::StartConnect()
 		pManager->StartConnect();
 	}
 }
+
 /**
  * @brief 协议初始化
  * 
@@ -1131,6 +1177,12 @@ void CMsgProto::HandleNetFailedMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg
 }
 
 
+/**
+ * @brief 好友聊天消息转为界面可以显示的消息
+ * 
+ * @param reqMsg TCP好友聊天消息
+ * @return CBuddyChatUiMsg 界面好友聊天消息
+ */
 CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg)
 {
 	CBuddyChatUiMsg result;
@@ -1142,6 +1194,12 @@ CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg)
 	return result;
 }
 
+/**
+ * @brief 发送的聊天消息转为界面消息
+ * 
+ * @param reqMsg 
+ * @return CBuddyChatUiMsg 
+ */
 CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatSendTxtRspMsg reqMsg)
 {
 	CBuddyChatUiMsg result;
@@ -1160,6 +1218,12 @@ CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatSendTxtRspMsg reqMsg)
 	return result;
 }
 
+/**
+ * @brief 根据好友ID获取好友名称
+ * 
+ * @param strFriendId 
+ * @return std::string 
+ */
 std::string CMsgProto::GetFriendName(const std::string strFriendId)
 {
 	auto item = m_friendInfoMap.find(strFriendId);
@@ -1503,6 +1567,11 @@ void CMsgProto::HandleUserKickOffReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 	}
 }
 
+/**
+ * @brief 处理发送完群组消息的回复
+ * 
+ * @param pOrgMsg 
+ */
 void CMsgProto::HandleSendGroupTextRspMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
 {
 	SendGroupTextMsgRspMsg rspMsg;
