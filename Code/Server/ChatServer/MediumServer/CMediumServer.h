@@ -184,6 +184,7 @@ public:
 	void OnDispatchGroupMsg(const std::string strGroupId);
 
 	void OnUserStateCheck(const std::string strUserId);
+	void NotifyUserFriends(const std::string strUserId);
 private:
 	
    

@@ -294,6 +294,7 @@ void CChatServer::HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, 
 		HandleReLogin(rspMsg.m_strUserId, pSess);
 		//OnAddFriendRecvReqMsg(rspMsg.m_strUserId);
 		//OnAddFriendNotifyReqMsg(rspMsg.m_strUserId);
+		NotifyUserFriends(rspMsg.m_strUserId);
 	}
 }
 void CChatServer::HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg)
@@ -325,8 +326,10 @@ void CChatServer::HandleUserLogoutReq(const std::shared_ptr<CServerSess>& pSess,
 	{
 		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
 		pSess->SendMsg(pSend);
+		NotifyUserFriends(pSess->UserId());
+		OnSessClose(pSess);
 	}
-	OnSessClose(pSess);
+
 }
 
 /**
@@ -677,6 +680,26 @@ void CChatServer::HandleFriendNotifyFileRsp(const std::shared_ptr<CServerSess>& 
 
 }
 
+void CChatServer::NotifyUserFriends(const std::string strUserId)
+{
+	std::vector<std::string> strFriendIdList;
+	if (m_util.GetUserFriendList(strUserId, strFriendIdList))
+	{
+		for (auto item : strFriendIdList)
+		{
+			auto findItem = m_UserSessVec.find(item);
+			if (findItem != m_UserSessVec.end() && findItem->second->IsConnected())
+			{
+				UpdateFriendListNotifyReqMsg reqMsg;
+				reqMsg.m_strUserId = item;
+				reqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
+				auto trans = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+				findItem->second->SendMsg(trans);
+			}
+		}
+	}
+	
+}
 /**
  * @brief 处理获取群组请求
  * 
