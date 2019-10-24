@@ -21,12 +21,16 @@ if(APPLE)
     link_directories(/usr/local/lib)
 elseif(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /WX")
+	add_compile_options(/wd4838)#warning C4838: 从“int”转换到“UINT”需要收缩转换
+	add_compile_options(/wd4302)#warning C4302: “类型强制转换”: 从“LPCTSTR”到“WORD”截断
+	add_compile_options(/wd4091)#warning C4091: “typedef ”: 没有声明变量时忽略“<unnamed-enum-hdBase>”的左侧
 else(Linux)
     include_directories(${PROJECT_SOURCE_DIR} "/usr/local/include")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -static-libgcc -static-libstdc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 endif()
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ")
 # 在共享库中使用MFC
 SET(CMAKE_MFC_FLAG 2)
 add_link_options("/SUBSYSTEM:WINDOWS")

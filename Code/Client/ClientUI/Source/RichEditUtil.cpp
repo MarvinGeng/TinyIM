@@ -516,6 +516,8 @@ RichEditMsgList RichEdit_GetMsg(HWND hWnd)
 
 	return result;
 }
+
+
 // 获取文本
 void RichEdit_GetText(HWND hWnd, tstring& strText)
 {

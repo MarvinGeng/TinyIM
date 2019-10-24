@@ -682,10 +682,10 @@ void CRemoteDesktopDlg::OnSize(UINT nType, CSize size)
     RECT rect;
     GetClientRect(&rect);
 
-    if ((rect.right + m_HScrollPos) > m_lpbmi->bmiHeader.biWidth)
+    if (static_cast<long>(rect.right + m_HScrollPos) > m_lpbmi->bmiHeader.biWidth)
         InterlockedExchange((PLONG)&m_HScrollPos, m_lpbmi->bmiHeader.biWidth - rect.right);
 
-    if ((rect.bottom + m_VScrollPos) > m_lpbmi->bmiHeader.biHeight)
+    if (static_cast<long>(rect.bottom + m_VScrollPos) > m_lpbmi->bmiHeader.biHeight)
         InterlockedExchange((PLONG)&m_VScrollPos, m_lpbmi->bmiHeader.biHeight - rect.bottom);
 
     SetScrollPos(SB_HORZ, m_HScrollPos);

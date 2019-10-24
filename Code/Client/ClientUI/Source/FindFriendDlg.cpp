@@ -140,7 +140,8 @@ void CFindFriendDlg::OnAddFriend(UINT uNotifyCode, int nID, CWindow wndCtl)
 		CUserSnapInfoDlg userSnapInfoDlg;
 		//userSnapInfoDlg.SetUserFaceID(m_pFMGClient->m_UserMgr.GetFaceID(strAccountToAdd));
 		memset(szData, 0, sizeof(szData));
-		_stprintf_s(szData, ARRAYSIZE(szData), _T("账户：%s"), strAccountToAdd);
+		_stprintf_s(szData, ARRAYSIZE(szData), _T("账户：%s"), strAccountToAdd.GetBuffer());
+		strAccountToAdd.ReleaseBuffer();
 		userSnapInfoDlg.SetAccountName(szData);
 		memset(szData, 0, sizeof(szData));
 		//_stprintf_s(szData, ARRAYSIZE(szData), _T("昵称：%s"), m_pFMGClient->m_UserMgr.GetNickName(strAccountToAdd).c_str());

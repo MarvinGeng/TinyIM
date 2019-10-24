@@ -457,9 +457,9 @@ void CSessChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 	if (strText.size() <= 0)
 		return;
 
-	time_t nTime;// = m_lpFMGClient->GetCurrentTime();
+	//time_t nTime;// = m_lpFMGClient->GetCurrentTime();
 
-	AddMsgToRecvEdit(nTime, strText.c_str());
+	//AddMsgToRecvEdit(nTime, strText.c_str());
 
 	C_UI_FontInfo fontInfo = m_FontSelDlg.GetFontInfo();
 

@@ -7,8 +7,7 @@ std::shared_ptr<spdlog::logger> CreateLogger()
 {
 	if (nullptr == g_loger)
 	{
-		srand(time(nullptr));
-		std::string strDebug = Hootina::CPath::GetAppPathAscii()+"\\Logs\\"+std::to_string(rand());
+		std::string strDebug = Hootina::CPath::GetAppPathAscii() + "\\Logs\\";
 		std::vector<spdlog::sink_ptr> sinks;
 		auto debugFile = std::make_shared<spdlog::sinks::daily_file_sink_st>(strDebug + ".txt", 00, 00, true);
 

@@ -487,33 +487,36 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 	}
 	int n = 1;
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
-		C_UI_BuddyInfo buddyInfo;
+		
 		C_UI_BuddyTeamInfo * teamInfo = new C_UI_BuddyTeamInfo();
 		teamInfo->m_strName = EncodeUtil::AnsiToUnicode("我的好友");
 		for (auto item : rspMsg.m_friendInfoVec) {
+			C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
 			m_friendInfoMap.insert({ item.m_strUserId,item });
 			{
-				buddyInfo.m_nBirthday = std::atoi(item.m_strBirthDate.c_str());
-				buddyInfo.m_nFace = std::atoi(item.m_strFaceId.c_str());
-				buddyInfo.m_nGender = std::atoi(item.m_strGender.c_str());
+				pBuddyInfo->m_nBirthday = std::atoi(item.m_strBirthDate.c_str());
+				pBuddyInfo->m_nFace = std::atoi(item.m_strFaceId.c_str());
+				pBuddyInfo->m_nGender = std::atoi(item.m_strGender.c_str());
 				
-				buddyInfo.m_strUserId = item.m_strUserId;
-				buddyInfo.m_strUserName = item.m_strUserName;
+				pBuddyInfo->m_strUserId = item.m_strUserId;
+				pBuddyInfo->m_strUserName = item.m_strUserName;
 
-				buddyInfo.m_strAccount = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
-				buddyInfo.m_strNickName = EncodeUtil::Utf8ToUnicode(item.m_strNickName);
-				buddyInfo.m_nTeamIndex = 0;
+			
 				if (item.m_eOnlineState == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
 				{
-					buddyInfo.m_nStatus == E_UI_ONLINE_STATUS::STATUS_ONLINE;
+					pBuddyInfo->m_nStatus = E_UI_ONLINE_STATUS::STATUS_ONLINE;
 				}
 				else
 				{
-					buddyInfo.m_nStatus == E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+					pBuddyInfo->m_nStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 				}
-				//buddyInfo.m_uUserID = n;
+		
+				//pBuddyInfo->m_uUserID = n;
 				n++;
-				teamInfo->m_arrBuddyInfo.push_back(new C_UI_BuddyInfo(buddyInfo));
+				pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
+				pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(item.m_strNickName);
+				pBuddyInfo->m_nTeamIndex = 0;
+				teamInfo->m_arrBuddyInfo.push_back(pBuddyInfo);
 
 			}
 			//m_userManager.AddFriend(static_cast<UINT>(nIndex), item.m_strUserName.c_str(), item.m_strNickName.c_str());
@@ -549,10 +552,10 @@ void CMsgProto::HandleAddFriendNotifyReq(const std::shared_ptr<TransBaseMsg_t> p
 		{
 			C_WND_MSG_AddFriendNotifyRequest * pResult = new C_WND_MSG_AddFriendNotifyRequest();
 			pResult->m_nRetryTimes = 0;
-			strcpy(pResult->m_szUserName, reqMsg.m_strUserId.c_str());
-			strcpy(pResult->m_szFriendName, reqMsg.m_strFriendId.c_str());
-			strcpy(pResult->m_szFriendNickName, reqMsg.m_strFriendId.c_str());
-			strcpy(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
+			strcpy_s(pResult->m_szUserName, reqMsg.m_strUserId.c_str());
+			strcpy_s(pResult->m_szFriendName, reqMsg.m_strFriendId.c_str());
+			strcpy_s(pResult->m_szFriendNickName, reqMsg.m_strFriendId.c_str());
+			strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
 			pResult->m_eOption = reqMsg.m_option;
 			::PostMessage(item->second, FMG_MSG_ADD_FRIEND_NOTIFY_REQ, 0, (LPARAM)pResult);
 		}
@@ -573,9 +576,9 @@ void CMsgProto::HandleAddFriendRecvReq(const std::shared_ptr<TransBaseMsg_t> pOr
 		{
 			C_WND_MSG_OperateFriendResult * pResult = new C_WND_MSG_OperateFriendResult();
 			pResult->m_nRetryTimes = 0;
-			strcpy(pResult->m_szAccountName, reqMsg.m_strUserId.c_str());
-			strcpy(pResult->m_szNickName, reqMsg.m_strUserId.c_str());
-			strcpy(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
+			strcpy_s(pResult->m_szAccountName, reqMsg.m_strUserId.c_str());
+			strcpy_s(pResult->m_szNickName, reqMsg.m_strUserId.c_str());
+			strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
 			pResult->m_uCmd = E_UI_OPERATE_FRIEND::Apply;
 			::PostMessage(item->second, FMG_MSG_RECVADDFRIENDREQUSET, 0, (LPARAM)pResult);
 		}
@@ -717,9 +720,9 @@ void CMsgProto::HandleFindGroupRsp(const std::shared_ptr<TransBaseMsg_t> pOrgMsg
 			if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 			{
 				pResult->m_nResultCode = E_UI_ADD_FRIEND_RESULT::FIND_FRIEND_FOUND;
-				strcpy(pResult->m_szAccountId, rspMsg.m_strGroupId.c_str());
-				strcpy(pResult->m_szAccountName, rspMsg.m_strGroupName.c_str());
-				strcpy(pResult->m_szNickName, rspMsg.m_strGroupOwner.c_str());
+				strcpy_s(pResult->m_szAccountId, rspMsg.m_strGroupId.c_str());
+				strcpy_s(pResult->m_szAccountName, rspMsg.m_strGroupName.c_str());
+				strcpy_s(pResult->m_szNickName, rspMsg.m_strGroupOwner.c_str());
 			}
 			else
 			{
@@ -742,10 +745,10 @@ void CMsgProto::HandleFriendSendFileRsp(const std::shared_ptr<TransBaseMsg_t> pO
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 		C_WND_MSG_FileSendRsp * pResult = new C_WND_MSG_FileSendRsp();
 		pResult->m_eErrCode = rspMsg.m_eErrCode;
-		strcpy(pResult->m_szMsgId, rspMsg.m_strMsgId.c_str());
-		strcpy(pResult->m_szUserId, rspMsg.m_strFromId.c_str());
-		strcpy(pResult->m_szFriendId, rspMsg.m_strToId.c_str());
-		strcpy(pResult->m_szFileName, rspMsg.m_strFileName.c_str());
+		strcpy_s(pResult->m_szMsgId, rspMsg.m_strMsgId.c_str());
+		strcpy_s(pResult->m_szUserId, rspMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szFriendId, rspMsg.m_strToId.c_str());
+		strcpy_s(pResult->m_szFileName, rspMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
 			::PostMessage(item->second, FMG_MSG_FRIEND_FILE_SEND_RSP, 0, (LPARAM)pResult);
@@ -764,10 +767,10 @@ void CMsgProto::HandleFriendRecvFileReq(const std::shared_ptr<TransBaseMsg_t> pO
 	if (reqMsg.FromString(pOrgMsg->to_string())) {
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 		C_WND_MSG_FileRecvReq * pResult = new C_WND_MSG_FileRecvReq();
-		strcpy(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
-		strcpy(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
-		strcpy(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
-		strcpy(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
+		strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
+		strcpy_s(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
 			::PostMessage(item->second, FMG_MSG_FRIEND_FILE_RECV_REQ, 0, (LPARAM)pResult);
@@ -786,10 +789,10 @@ void CMsgProto::HandleFriendNotifyFileReq(const std::shared_ptr<TransBaseMsg_t> 
 	if (reqMsg.FromString(pOrgMsg->to_string())) {
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 		C_WND_MSG_FileNotifyReq * pResult = new C_WND_MSG_FileNotifyReq();
-		strcpy(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
-		strcpy(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
-		strcpy(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
-		strcpy(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
+		strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
+		strcpy_s(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
 			::PostMessage(item->second, FMG_MSG_FRIEND_FILE_NOTIFY_REQ, 0, (LPARAM)pResult);
@@ -815,9 +818,9 @@ void CMsgProto::HandleFindFriendRsp(const std::shared_ptr<TransBaseMsg_t> pOrgMs
 			if (!pMsg->m_friendInfoVec.empty())
 			{
 				pResult->m_nResultCode = E_UI_ADD_FRIEND_RESULT::FIND_FRIEND_FOUND;
-				strcpy(pResult->m_szAccountId, pMsg->m_friendInfoVec[0].m_strUserId.c_str());
-				strcpy(pResult->m_szAccountName,pMsg->m_friendInfoVec[0].m_strUserName.c_str());
-				strcpy(pResult->m_szNickName, pMsg->m_friendInfoVec[0].m_strNickName.c_str());
+				strcpy_s(pResult->m_szAccountId, pMsg->m_friendInfoVec[0].m_strUserId.c_str());
+				strcpy_s(pResult->m_szAccountName,pMsg->m_friendInfoVec[0].m_strUserName.c_str());
+				strcpy_s(pResult->m_szNickName, pMsg->m_friendInfoVec[0].m_strNickName.c_str());
 			}
 			else
 			{
@@ -1348,8 +1351,8 @@ void CMsgProto::HandleCreateGroupRspMsg(const std::shared_ptr<TransBaseMsg_t> pO
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
 		C_WND_MSG_CreateNewGroupResult * pResult = new C_WND_MSG_CreateNewGroupResult;
 		pResult->m_uError = 0;
-		strcpy(pResult->m_szGroupName,rspMsg.m_strGroupName.c_str());
-		strcpy(pResult->m_szGroupId, rspMsg.m_strGroupId.c_str());
+		strcpy_s(pResult->m_szGroupName,rspMsg.m_strGroupName.c_str());
+		strcpy_s(pResult->m_szGroupId, rspMsg.m_strGroupId.c_str());
 
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 
@@ -1427,22 +1430,23 @@ void CMsgProto::HandleGetGroupListRspMsg(const std::shared_ptr<TransBaseMsg_t> p
 				pInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupId);
 				pInfo->m_strName = EncodeUtil::Utf8ToUnicode(groupItem.m_strGroupName);
 				{
-					C_UI_BuddyInfo buddyInfo;
+
 					for (const auto buddyItem : groupItem.m_GroupUsers) {
-						buddyInfo.m_nBirthday = std::atoi(buddyItem.m_strBirthDate.c_str());
-						buddyInfo.m_nFace = std::atoi(buddyItem.m_strFaceId.c_str());
-						buddyInfo.m_nGender = std::atoi(buddyItem.m_strGender.c_str());
+						C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
+						pBuddyInfo->m_nBirthday = std::atoi(buddyItem.m_strBirthDate.c_str());
+						pBuddyInfo->m_nFace = std::atoi(buddyItem.m_strFaceId.c_str());
+						pBuddyInfo->m_nGender = std::atoi(buddyItem.m_strGender.c_str());
 
-						buddyInfo.m_strUserId = buddyItem.m_strUserId;
-						buddyInfo.m_strUserName = buddyItem.m_strUserName;
+						pBuddyInfo->m_strUserId = buddyItem.m_strUserId;
+						pBuddyInfo->m_strUserName = buddyItem.m_strUserName;
 
-						buddyInfo.m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
-						buddyInfo.m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
+						pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
+						pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
 
-						buddyInfo.m_nTeamIndex = 0;
-						buddyInfo.m_uUserID = nIndex;
+						pBuddyInfo->m_nTeamIndex = 0;
+						pBuddyInfo->m_uUserID = nIndex;
 						nIndex++;
-						pInfo->m_arrMember.push_back(new C_UI_BuddyInfo(buddyInfo));
+						pInfo->m_arrMember.push_back(pBuddyInfo);
 						{
 							m_friendInfoMap.erase(buddyItem.m_strUserId);
 							m_friendInfoMap.insert({ buddyItem.m_strUserId,buddyItem });

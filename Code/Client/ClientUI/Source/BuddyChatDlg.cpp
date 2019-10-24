@@ -3275,7 +3275,7 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//m_tbMid.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"), 
 	//	_T("aio_toolbar_rightdown.png"), CRect(0,0,1,0));
 	//m_tbMid.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
-	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_cut.png"));
+	//m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_cut.png"));
 
 	//nIndex = m_tbMid.AddItem(212, STBI_STYLE_DROPDOWN);
 	//m_tbMid.SetItemSize(nIndex, 31, 20, 23, 8);

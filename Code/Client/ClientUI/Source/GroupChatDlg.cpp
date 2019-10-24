@@ -470,7 +470,7 @@ void CGroupChatDlg::OnSizeNotShowMsgHistory()
 		//左边显示区域分解
 		{
 			//消息接收区
-			long recvEditHeight = (static_cast<double>(rcLeftShowArea.Height()))*GROUP_DLG_RECV_EDIT_PERCENT - 2;
+			long recvEditHeight = static_cast<long>(rcLeftShowArea.Height()*GROUP_DLG_RECV_EDIT_PERCENT) - 2;
 			CRect rcRecvEdit(
 				CPoint(rcLeftShowArea.left+GROUP_DLG_OUT_BORDER_WIDTH,
 					rcLeftShowArea.top),
@@ -542,7 +542,7 @@ void CGroupChatDlg::OnSizeNotShowMsgHistory()
 				CRect rcBtnArrow(
 					CPoint(rcBottomToolBar.right - GROUP_DLG_BTN_DISTANCE - GROUP_DLG_ARROW_BTN_WIDTH,
 						rcBottomToolBar.top + (rcTopToolBar.Height() - GROUP_DLG_ARROW_BTN_HEIGHT) / 2),
-					CSize(GROUP_DLG_BTN_DISTANCE * 1.5, GROUP_DLG_ARROW_BTN_HEIGHT));
+					CSize(static_cast<int>(GROUP_DLG_BTN_DISTANCE * 1.5), GROUP_DLG_ARROW_BTN_HEIGHT));
 
 				CRect rcBtnSend(
 					CPoint(rcBtnArrow.left-GROUP_DLG_ARROW_BTN_WIDTH,
@@ -1361,16 +1361,17 @@ void CGroupChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	tstring strText;
-	RichEdit_GetText(m_richSend.m_hWnd, strText);
 
-	if (strText.size() <= 0)
 	{
-		return;
+		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
+		std::string strSendText = RichEditMsg(msgList);
+		if (m_netProto) {
+			m_netProto->SendGroupChatTextMsg(m_strGroupId, strSendText, m_FontSelDlg.GetFontInfo());
+		}
+		else {
+
+		}
 	}
-
-	SendGroupTextMsg_Core(strText);
-
 	m_richSend.SetWindowText(_T(""));
 	m_richSend.SetFocus();
 }
@@ -2429,7 +2430,7 @@ BOOL CGroupChatDlg::InitMidToolBar()
 		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_font.png"));
 
-	/*nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_FACE_BTN, STBI_STYLE_BUTTON|STBI_STYLE_CHECK);
+	nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_FACE_BTN, STBI_STYLE_BUTTON|STBI_STYLE_CHECK);
 	m_tbMid.SetItemSize(nIndex, 30, 27);
 	m_tbMid.SetItemPadding(nIndex, 1);
 	m_tbMid.SetItemToolTipText(nIndex, _T("选择表情"));
@@ -2437,7 +2438,7 @@ BOOL CGroupChatDlg::InitMidToolBar()
 		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_face.png"));
 
-	nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_IMAGE_BTN, STBI_STYLE_BUTTON);
+	/*nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_IMAGE_BTN, STBI_STYLE_BUTTON);
 	m_tbMid.SetItemSize(nIndex, 30, 27);
 	m_tbMid.SetItemPadding(nIndex, 1);
 	m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
@@ -3348,23 +3349,52 @@ void CGroupChatDlg::OnRecvToHandle(const HWND recvHandle,C_UI_GroupMessage* pGro
 
 		//处理内容部分
 		{
+			std::string strJson = EncodeUtil::UnicodeToAnsi(pGroupMsg->m_strContext);
+			RichEditMsgList msgList = RichEditMsg(strJson);
 			RichEdit_SetSel(recvHandle, -1, -1);
-			RichEdit_ReplaceSel(recvHandle,
-				pGroupMsg->m_strContext.c_str(),
-				pGroupMsg->m_stFontInfo.m_strName.c_str(),
-				pGroupMsg->m_stFontInfo.m_nSize,
-				pGroupMsg->m_stFontInfo.m_clrText,
-				pGroupMsg->m_stFontInfo.m_bBold,
-				pGroupMsg->m_stFontInfo.m_bItalic,
-				pGroupMsg->m_stFontInfo.m_bUnderLine, 
-				FALSE, 
-				0);
+			for (const auto item : msgList)
+			{
+				switch (item.m_eType)
+				{
+				case E_RichEditType::TEXT:
+				{
+					RichEdit_ReplaceSel(recvHandle, item.m_strContext.c_str(),
+						pGroupMsg->m_stFontInfo.m_strName.c_str(),
+						pGroupMsg->m_stFontInfo.m_nSize,
+						pGroupMsg->m_stFontInfo.m_clrText,
+						pGroupMsg->m_stFontInfo.m_bBold,
+						pGroupMsg->m_stFontInfo.m_bItalic,
+						pGroupMsg->m_stFontInfo.m_bUnderLine,
+						FALSE,
+						0);
+				}break;
+				case E_RichEditType::FACE:
+				{
+					CFaceInfo* lpFaceInfo = m_lpFaceList->GetFaceInfoById(item.m_nFaceId);
+					if (lpFaceInfo != NULL)
+					{
+						_RichEdit_InsertFace(recvHandle,
+							lpFaceInfo->m_strFileName.c_str(),
+							lpFaceInfo->m_nId,
+							lpFaceInfo->m_nIndex);
+					}
+				}break;
+				case E_RichEditType::IMAGE:
+				{
 
-			RichEdit_ReplaceSel(recvHandle, _T("\r\n"));
-			RichEdit_SetStartIndent(recvHandle, 0);
-			::PostMessage(recvHandle, WM_VSCROLL, SB_BOTTOM, 0);
+				}break;
+				default:
+				{
+
+				}break;
+				}
+			}
+
+			//m_richMsgLog.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
 		}
-
+		RichEdit_ReplaceSel(recvHandle, _T("\r\n"));
+		RichEdit_SetStartIndent(recvHandle, 0);
+		::PostMessage(recvHandle, WM_VSCROLL, SB_BOTTOM, 0);
 	}
 }
 

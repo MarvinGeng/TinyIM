@@ -318,8 +318,8 @@ LRESULT CRegisterDialog::OnRegisterResult(UINT uMsg, WPARAM wParam, LPARAM lPara
 	else if(nRegisterResult == E_UI_REGISTER_RESULT_CODE::REGISTER_SUCCESS)
 	{
 		TCHAR szSuccessInfo[64] = {0};
-        _stprintf_s(szSuccessInfo, 64, _T("恭喜您，注册成功，您的账号是[%s]！"), m_strMobile);
-
+        _stprintf_s(szSuccessInfo, 64, _T("恭喜您，注册成功，您的账号是[%s]！"), m_strMobile.GetBuffer());
+		m_strMobile.ReleaseBuffer();
 		::MessageBox(m_hWnd, szSuccessInfo, g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
 
 		EndDialog(IDOK);

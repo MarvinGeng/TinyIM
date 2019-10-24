@@ -30,6 +30,7 @@ struct ImageInfo
 	TCHAR szPath[MAX_PATH];
 };
 RichEditMsgList RichEdit_GetMsg(HWND hWnd);
+//bool RichEditSetMsg(HWND hWnd, const RichEditMsgList& msgList);
 
 void RegisterCom_ImageOleCtrl();
 

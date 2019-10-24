@@ -3106,7 +3106,6 @@ bool CMainDlg::CreateGroupChatDlg(const std::string strGroupId)
 		{
 			long nLastWidth = m_userCfg.GetGroupDlgWidth();
 			long nLastHeight = m_userCfg.GetGroupDlgHeight();
-			//lpGroupChatDlg->m_lpFMGClient = &m_FMGClient;
 			lpGroupChatDlg->m_lpFaceList = &m_FaceList;
 			lpGroupChatDlg->m_lpCascadeWinManager = &m_CascadeWinManager;
 			lpGroupChatDlg->m_hMainDlg = m_hWnd;
@@ -4973,17 +4972,26 @@ void CMainDlg::NotifyBuddyInfoDlg(UINT nUTalkUin, UINT uMsg)
 		{
 			switch (uMsg)
 			{
-			case FMG_MSG_UPDATE_BUDDY_INFO:
-				lpBuddyInfoDlg->UpdateCtrls();
-				break;
+				case FMG_MSG_UPDATE_BUDDY_INFO:
+				{
+					lpBuddyInfoDlg->UpdateCtrls();
+				}break;
 
-			case FMG_MSG_UPDATE_BUDDY_NUMBER:
-				//lpBuddyInfoDlg->OnUpdateBuddyNumber();
-				break;
+				case FMG_MSG_UPDATE_BUDDY_NUMBER:
+				{
+					//lpBuddyInfoDlg->OnUpdateBuddyNumber();
+				}break;
 
-			case FMG_MSG_UPDATE_BUDDY_SIGN:
-				//lpBuddyInfoDlg->OnUpdateBuddySign();
-				break;
+				case FMG_MSG_UPDATE_BUDDY_SIGN:
+				{	//lpBuddyInfoDlg->OnUpdateBuddySign();
+
+
+				}break;
+
+				default:
+				{
+
+				}break;
 			}
 		}
 	}
@@ -5169,11 +5177,15 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				}
 				
 				//清爽资料不显示个性签名
-				if(bShowSimpleProfile)
+				if (bShowSimpleProfile)
+				{
 					m_BuddyListCtrl.SetBuddyItemSign(nTeamIndex, nIndex, lpBuddyInfo->m_strSign.c_str(), FALSE);
+				}
 				else
+				{
 					m_BuddyListCtrl.SetBuddyItemSign(nTeamIndex, nIndex, lpBuddyInfo->m_strSign.c_str(), TRUE);
-				
+				}
+
 				m_BuddyListCtrl.SetBuddyItemGender(nTeamIndex, nIndex, bMale);
 				m_BuddyListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, bGray);
 				

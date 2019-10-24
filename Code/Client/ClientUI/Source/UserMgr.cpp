@@ -1153,7 +1153,7 @@ BOOL CUserMgr::StoreRecentList()
 		pBufferToWrite[i].nType = pRecentInfo->m_nType;
 		pBufferToWrite[i].uUserID = pRecentInfo->m_uUserID;
 		pBufferToWrite[i].uFaceID = pRecentInfo->m_uFaceID;
-		pBufferToWrite[i].uMsgTime = pRecentInfo->m_MsgTime;
+		pBufferToWrite[i].uMsgTime =static_cast<long>(pRecentInfo->m_MsgTime);
 		//_tcscpy_s(pBufferToWrite[i].szName, ARRAYSIZE(pBufferToWrite[i].szName), pRecentInfo->m_szName);
 		//_tcscpy_s(pBufferToWrite[i].szLastMsgText, ARRAYSIZE(pBufferToWrite[i].szLastMsgText), pRecentInfo->m_szLastMsgText);
 	}
