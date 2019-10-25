@@ -11,19 +11,19 @@
 #pragma comment(lib, "sqlite3.lib")
 
 #if defined(UNICODE) || defined(_UNICODE)
-	typedef std::wstring tstring;
+	typedef std::wstring WString;
 #else
-	typedef std::string tstring;
+	typedef std::string WString;
 #endif
 
 struct BUDDY_MSG_LOG		// 好友消息记录
 {
 	UINT		nID;		//TODO: 这个ID做什么用？
 	UINT		nUTalkNum;
-	tstring		strNickName;
+	WString		strNickName;
 	UINT64		nTime;
 	BOOL		bSendFlag;
-	tstring		strContent;
+	WString		strContent;
 };
 
 struct GROUP_MSG_LOG		// 群消息记录
@@ -31,19 +31,19 @@ struct GROUP_MSG_LOG		// 群消息记录
 	UINT nID;
 	UINT nGroupNum;
 	UINT nUTalkNum;
-	tstring strNickName;
+	WString strNickName;
 	UINT64 nTime;
-	tstring strContent;
+	WString strContent;
 };
 
 struct SESS_MSG_LOG			// 临时会话(群成员)消息记录
 {
 	UINT nID;
 	UINT nUTalkNum;
-	tstring strNickName;
+	WString strNickName;
 	UINT64 nTime;
 	BOOL bSendFlag;
-	tstring strContent;
+	WString strContent;
 };
 
 void CloneStr(const wchar_t* src, wchar_t** dest, UINT* destlen);
@@ -55,7 +55,7 @@ public:
 	~CMessageLogger(void);
 
 public:
-	tstring GetMsgLogFileName();								// 获取消息记录文件名称
+	WString GetMsgLogFileName();								// 获取消息记录文件名称
 	void SetMsgLogFileName(LPCTSTR lpszFileName);				// 设置消息记录文件名称
 
 	BOOL IsMsgLogFileValid();									// 判断消息记录文件是否有效
@@ -109,10 +109,10 @@ private:
 	UINT ReadGroupMsgLogCount(UINT nGroupNum, UINT nOffset, UINT nRows);
 	UINT ReadSessMsgLogCount(UINT nUTalkNum, UINT nOffset, UINT nRows);
 
-	void Replace(tstring& strText, const TCHAR* lpOldStr, const TCHAR* lpNewStr);
+	void Replace(WString& strText, const TCHAR* lpOldStr, const TCHAR* lpNewStr);
 
 private:
-	tstring m_strFileName;
+	WString m_strFileName;
 	HANDLE m_hMutex;
 };
 #endif

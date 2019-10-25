@@ -96,9 +96,9 @@ struct FileProgress
 struct RichEditMsg_st
 {
 	E_RichEditType m_eType;
-	tstring m_strContext;
+	WString m_strContext;
 	int m_nFaceId;
-	tstring m_strImageName;
+	WString m_strImageName;
 };
 
 using RichEditMsgList = std::vector<RichEditMsg_st>;

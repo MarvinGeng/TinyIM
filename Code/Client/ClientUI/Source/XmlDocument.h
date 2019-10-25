@@ -6,9 +6,9 @@
 #include <string>
 
 #if defined(UNICODE) || defined(_UNICODE)
-	typedef std::wstring tstring;
+	typedef std::wstring WString;
 #else
-	typedef std::string tstring;
+	typedef std::string WString;
 #endif
 
 class CXmlNodeList;

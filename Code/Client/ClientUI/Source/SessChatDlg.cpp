@@ -138,7 +138,7 @@ void CSessChatDlg::OnUpdateGMemberNumber()
 // 更新群成员头像
 void CSessChatDlg::OnUpdateGMemberHeadPic()
 {
-	tstring strFileName;
+	WString strFileName;
 	//if (m_lpFMGClient != NULL && m_nUTalkNumber != 0)
 	//	strFileName = m_lpFMGClient->GetSessHeadPicFullName(m_nUTalkNumber);
 	if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
@@ -451,7 +451,7 @@ void CSessChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	tstring strText;
+	WString strText;
 	RichEdit_GetText(m_richSend.m_hWnd, strText);
 
 	if (strText.size() <= 0)
@@ -1338,7 +1338,7 @@ BOOL CSessChatDlg::Init()
 	m_picHead.SetBgPic(_T("HeadCtrl\\Padding4Normal.png"), _T("HeadCtrl\\Padding4Hot.png"), _T("HeadCtrl\\Padding4Hot.png"));
 	m_picHead.MoveWindow(10, 10, 54, 54, FALSE);
 
-	tstring strFileName;
+	WString strFileName;
 	//if (m_lpFMGClient != NULL && m_nUTalkNumber != 0)
 	//	strFileName = m_lpFMGClient->GetSessHeadPicFullName(m_nUTalkNumber);
 	if (!Hootina::CPath::IsFileExist(strFileName.c_str()))

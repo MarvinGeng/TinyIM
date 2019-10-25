@@ -203,10 +203,10 @@ private:
 	BOOL HandleFileDragResult(PCTSTR lpszFileName);
 
 	int FindMemberListByUin(UINT nUTalkUin);
-	void GetSenderInfo(UINT nUTalkUin, CString& strName, tstring& strAccount);
+	void GetSenderInfo(UINT nUTalkUin, CString& strName, WString& strAccount);
 	void _RichEdit_ReplaceSel(HWND hWnd, LPCTSTR lpszNewText);
 	BOOL _RichEdit_InsertFace(HWND hWnd, LPCTSTR lpszFileName, int nFaceId, int nFaceIndex);
-	BOOL HandleFontInfo(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
 	BOOL HandleSysFaceId(HWND hRichEditWnd, LPCTSTR& p, CString& strText);
 	BOOL HandleSysFaceIndex(HWND hRichEditWnd, LPCTSTR& p, CString& strText);
 	BOOL HandleCustomPic(HWND hRichEditWnd, LPCTSTR& p, CString& strText);
@@ -229,10 +229,10 @@ private:
 	void CloseMsgLogBrowser();			// 关闭消息记录浏览窗口
 
 	void AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog);
-	void AnalyseContent(tstring& strContent, HWND hRichWnd=NULL);
+	void AnalyseContent(WString& strContent, HWND hRichWnd=NULL);
 	void AddMsgToMsgLogEdit(std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleSysFaceId(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleCustomPic(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleSysFaceId(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleCustomPic(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
 
 	BOOL InitRightTabWindow();
 
@@ -324,7 +324,7 @@ private:
 	RECT					m_rtSplitter; 
 	RECT					m_rtRichSend; //发送富文本控件矩形区域
 
-	void SendGroupTextMsg_Core(tstring strContext);
+	void SendGroupTextMsg_Core(WString strContext);
 };
 
 #endif

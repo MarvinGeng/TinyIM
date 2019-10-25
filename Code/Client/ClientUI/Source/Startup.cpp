@@ -182,7 +182,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
     iniFile.ReadString(_T("ui"), _T("apptitle"), UI_APP_TITLE, szAppTitle, ARRAYSIZE(szAppTitle), strIniFilePath);
     g_strAppTitle = szAppTitle;
 
-	tstring strFileName = Hootina::CPath::GetAppPath() + _T("richFace.dll");
+	WString strFileName = Hootina::CPath::GetAppPath() + _T("richFace.dll");
 	BOOL bRet = DllRegisterServer(strFileName.c_str());	// 注册COM组件
 	if (!bRet)
 	{
@@ -204,7 +204,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 
 	CSkinManager::Init();	// 初始化皮肤管理器
 	
-	tstring strSkinPath = Hootina::CPath::GetAppPath() + _T("Skins\\");	// 设置皮肤文件夹路径
+	WString strSkinPath = Hootina::CPath::GetAppPath() + _T("Skins\\");	// 设置皮肤文件夹路径
 	CSkinManager::GetInstance()->SetSkinPath(strSkinPath.c_str());
 	
 	CSkinManager::GetInstance()->LoadConfigXml();	// 加载皮肤列表配置文件

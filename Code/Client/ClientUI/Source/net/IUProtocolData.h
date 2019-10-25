@@ -120,10 +120,10 @@ class CBuddyChatUiMsg
 {
 public:
 	E_UI_CONTENT_TYPE m_eMsgType;
-	tstring      m_strSenderName;
-	tstring      m_strTime;
-	tstring      m_strContent;
-	tstring      m_strOtherInfo;
+	WString      m_strSenderName;
+	WString      m_strTime;
+	WString      m_strContent;
+	WString      m_strOtherInfo;
 	C_UI_FontInfo    m_stFontInfo;
 };
 

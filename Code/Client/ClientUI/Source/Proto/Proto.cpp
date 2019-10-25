@@ -540,7 +540,7 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 				pBuddyInfo->m_nGender = std::atoi(item.m_strGender.c_str());
 				
 				pBuddyInfo->m_strUserId = item.m_strUserId;
-				pBuddyInfo->m_strUserName = item.m_strUserName;
+				pBuddyInfo->m_strUserName = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
 
 			
 				if (item.m_eOnlineState == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
@@ -1510,7 +1510,7 @@ void CMsgProto::HandleGetGroupListRspMsg(const std::shared_ptr<TransBaseMsg_t> p
 						pBuddyInfo->m_nGender = std::atoi(buddyItem.m_strGender.c_str());
 
 						pBuddyInfo->m_strUserId = buddyItem.m_strUserId;
-						pBuddyInfo->m_strUserName = buddyItem.m_strUserName;
+						pBuddyInfo->m_strUserName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
 
 						pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
 						pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);

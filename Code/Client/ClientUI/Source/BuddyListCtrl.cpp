@@ -418,11 +418,11 @@ void CBuddyListCtrl::SetBuddyItemUTalkNum(int nTeamIndex, int nIndex, LPCTSTR lp
 		lpItem->m_strUTalkNum = lpszText;
 }
 
-void CBuddyListCtrl::SetBuddyItemUserName(const int nTeamIndex, const int nIndex, const std::string strUserName) {
-	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);
-	if (lpItem != NULL)
-		lpItem->m_strUserName = strUserName;
-}
+//void CBuddyListCtrl::SetBuddyItemUserName(const int nTeamIndex, const int nIndex, const std::string strUserName) {
+//	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);
+//	if (lpItem != NULL)
+//		lpItem->m_strUserName = strUserName;
+//}
 
 void CBuddyListCtrl::SetBuddyItemUserId(const int nTeamIndex, const int nIndex, const std::string strUserId) {
 	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);
@@ -430,14 +430,14 @@ void CBuddyListCtrl::SetBuddyItemUserId(const int nTeamIndex, const int nIndex, 
 		lpItem->m_strUserId = strUserId;
 }
 
-std::string CBuddyListCtrl::GetBuddyItemUserName(const int nTeamIndex, const int nIndex) {
-	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);
-	if (lpItem != NULL)
-	{
-		return lpItem->m_strUserName;
-	}
-	return "";
-}
+//std::string CBuddyListCtrl::GetBuddyItemUserName(const int nTeamIndex, const int nIndex) {
+//	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);
+//	if (lpItem != NULL)
+//	{
+//		return lpItem->m_strUserName;
+//	}
+//	return "";
+//}
 
 std::string CBuddyListCtrl::GetBuddyItemUserId(const int nTeamIndex, const int nIndex) {
 	CBuddyItem* lpItem = GetBuddyItemByIndex(nTeamIndex, nIndex);

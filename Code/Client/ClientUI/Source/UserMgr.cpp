@@ -32,11 +32,11 @@ CUserMgr::~CUserMgr(void)
 /**
  * @brief 获取用户文件夹存放路径
  * 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetUserFolder()
+WString CUserMgr::GetUserFolder()
 {
-	tstring strPath(g_szHomePath);
+	WString strPath(g_szHomePath);
 	strPath += _T("Users\\");
 
 	return strPath;
@@ -46,11 +46,11 @@ tstring CUserMgr::GetUserFolder()
 /**
  * @brief 获取个人文件夹存放路径
  * 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetPersonalFolder()
+WString CUserMgr::GetPersonalFolder()
 {
-	tstring strPath(GetUserFolder());
+	WString strPath(GetUserFolder());
 	strPath += m_UserInfo.m_strAccount;
 	strPath += _T("\\");
 	
@@ -61,9 +61,9 @@ tstring CUserMgr::GetPersonalFolder()
 /**
  * @brief 获取聊天图片存放路径
  * 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetChatPicFolder()
+WString CUserMgr::GetChatPicFolder()
 {
 	return GetPersonalFolder()+_T("ChatImage\\");
 }
@@ -72,9 +72,9 @@ tstring CUserMgr::GetChatPicFolder()
 /**
  * @brief 获取用户的缩略图存放路径
  * 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetCustomUserThumbFolder()
+WString CUserMgr::GetCustomUserThumbFolder()
 {
 	return  GetPersonalFolder()+_T("UserThumb\\");
 }
@@ -83,13 +83,13 @@ tstring CUserMgr::GetCustomUserThumbFolder()
  * @brief 获取用户头像图片全路径文件名
  * 
  * @param uFace 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetUserHeadPicFullName(UINT uFace)
+WString CUserMgr::GetUserHeadPicFullName(UINT uFace)
 {
 	TCHAR szPath[MAX_PATH] = {0};
 	_stprintf_s(szPath, MAX_PATH, _T("%sImage\\UserThumbs\\%u.png"), g_szHomePath, uFace);
-	tstring strPath(szPath);
+	WString strPath(szPath);
 
 	return strPath;
 }
@@ -99,9 +99,9 @@ tstring CUserMgr::GetUserHeadPicFullName(UINT uFace)
  * @brief 获取好友头像图片全路径文件名
  * 
  * @param uFace 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetBuddyHeadPicFullName(UINT uFace)
+WString CUserMgr::GetBuddyHeadPicFullName(UINT uFace)
 {
 	return GetUserHeadPicFullName(uFace);
 }
@@ -110,9 +110,9 @@ tstring CUserMgr::GetBuddyHeadPicFullName(UINT uFace)
  * @brief 获取群头像图片全路径文件名
  * 
  * @param nGroupNum 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetGroupHeadPicFullName(UINT nGroupNum)
+WString CUserMgr::GetGroupHeadPicFullName(UINT nGroupNum)
 {
 	//TCHAR szPath[MAX_PATH] = {0};
 	//LPCTSTR lpFmt = _T("%s%u\\HeadImage\\Group\\%u.png");
@@ -127,9 +127,9 @@ tstring CUserMgr::GetGroupHeadPicFullName(UINT nGroupNum)
  * @brief 获取群成员头像图片全路径文件名
  * 
  * @param nUTalkNum 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetSessHeadPicFullName(UINT nUTalkNum)
+WString CUserMgr::GetSessHeadPicFullName(UINT nUTalkNum)
 {
 	//TCHAR szPath[MAX_PATH] = {0};
 	//LPCTSTR lpFmt = _T("%s%u\\HeadImage\\Sess\\%u.png");
@@ -144,9 +144,9 @@ tstring CUserMgr::GetSessHeadPicFullName(UINT nUTalkNum)
  * @brief 获取聊天图片全路径文件名
  * 
  * @param lpszFileName 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetChatPicFullName(LPCTSTR lpszFileName)
+WString CUserMgr::GetChatPicFullName(LPCTSTR lpszFileName)
 {
 	if ( (NULL == lpszFileName) || 
 	     (NULL ==*lpszFileName) )
@@ -159,9 +159,9 @@ tstring CUserMgr::GetChatPicFullName(LPCTSTR lpszFileName)
 /**
  * @brief 获取消息记录全路径文件名
  * 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetMsgLogFullName()
+WString CUserMgr::GetMsgLogFullName()
 {
 	return GetPersonalFolder()+_T("ChatLog\\msg.db");
 }
@@ -170,14 +170,14 @@ tstring CUserMgr::GetMsgLogFullName()
 /**
  * @brief 获取默认的接收文件路径
  * 
- * @return tstring 接收文件路径
+ * @return WString 接收文件路径
  */
-tstring CUserMgr::GetDefaultRecvFilePath()
+WString CUserMgr::GetDefaultRecvFilePath()
 {
 	TCHAR szMyDocumentPath[MAX_PATH] = {0};
 	::SHGetSpecialFolderPath(NULL, szMyDocumentPath, CSIDL_MYDOCUMENTS, TRUE);
 
-	tstring strRecvFilePath(szMyDocumentPath);
+	WString strRecvFilePath(szMyDocumentPath);
 	strRecvFilePath += _T("\\Flamingo\\FileRecv\\");
 	strRecvFilePath += m_UserInfo.m_strAccount;
 
@@ -202,7 +202,7 @@ tstring CUserMgr::GetDefaultRecvFilePath()
  */
 BOOL CUserMgr::IsNeedUpdateBuddyHeadPic(UINT nUTalkNum)
 {
-	tstring strFullName = GetBuddyHeadPicFullName(0);
+	WString strFullName = GetBuddyHeadPicFullName(0);
 
 	if (!Hootina::CPath::IsFileExist(strFullName.c_str()))
 	{
@@ -224,7 +224,7 @@ BOOL CUserMgr::IsNeedUpdateBuddyHeadPic(UINT nUTalkNum)
  */
 BOOL CUserMgr::IsNeedUpdateGroupHeadPic(UINT nGroupNum)
 {
-	tstring strFullName = GetGroupHeadPicFullName(nGroupNum);
+	WString strFullName = GetGroupHeadPicFullName(nGroupNum);
 
 	if (!Hootina::CPath::IsFileExist(strFullName.c_str()))
 	{
@@ -246,7 +246,7 @@ BOOL CUserMgr::IsNeedUpdateGroupHeadPic(UINT nGroupNum)
  */
 BOOL CUserMgr::IsNeedUpdateSessHeadPic(UINT nUTalkNum)
 {
-	tstring strFullName = GetSessHeadPicFullName(nUTalkNum);
+	WString strFullName = GetSessHeadPicFullName(nUTalkNum);
 
 	if (!Hootina::CPath::IsFileExist(strFullName.c_str()))
 	{
@@ -328,9 +328,9 @@ BOOL CUserMgr::IsFriend(PCTSTR pszAccountName)
  * @brief 根据用户ID获取用户名
  * 
  * @param uAccountID 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetAccountName(UINT uAccountID) const
+WString CUserMgr::GetAccountName(UINT uAccountID) const
 {
 	if(uAccountID == m_UserInfo.m_uUserIndex)
 	{
@@ -411,9 +411,9 @@ void CUserMgr::SetAccountName(UINT uAccountID, PCTSTR pszAccountName)
  * @brief 根据群组ID获取群组名称
  * 
  * @param uGroupCode 群组ID
- * @return tstring 群组名称
+ * @return WString 群组名称
  */
-tstring CUserMgr::GetGroupName(UINT uGroupCode)
+WString CUserMgr::GetGroupName(UINT uGroupCode)
 {
 	C_UI_GroupInfo* pGroupInfo = NULL;
 	for(size_t i=0; i<m_GroupList.m_arrGroupInfo.size(); ++i)
@@ -431,9 +431,9 @@ tstring CUserMgr::GetGroupName(UINT uGroupCode)
  * @brief 获取群组账号，TODO 群组的所有项目需要再看看
  * 
  * @param uGroupCode 
- * @return tstring 
+ * @return WString 
  */
-tstring	CUserMgr::GetGroupAccount(UINT uGroupCode)
+WString	CUserMgr::GetGroupAccount(UINT uGroupCode)
 {
 	C_UI_GroupInfo* pGroupInfo = NULL;
 	for(size_t i=0; i<m_GroupList.m_arrGroupInfo.size(); ++i)
@@ -450,9 +450,9 @@ tstring	CUserMgr::GetGroupAccount(UINT uGroupCode)
  * @brief 获取昵称
  * 
  * @param uAccountID 用户ID 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetNickName(UINT uAccountID) const
+WString CUserMgr::GetNickName(UINT uAccountID) const
 {
 	//if(uAccountID == m_UserInfo.m_uUserID)
 	//	return m_UserInfo.m_strNickName;
@@ -985,9 +985,9 @@ BOOL CUserMgr::SetMsgID(UINT uAccountID, UINT uMsgID)
  * @brief 获取用户昵称
  * 
  * @param pszAccountName 
- * @return tstring 
+ * @return WString 
  */
-tstring CUserMgr::GetNickName(PCTSTR pszAccountName) const
+WString CUserMgr::GetNickName(PCTSTR pszAccountName) const
 {
 	if(pszAccountName==NULL ||*pszAccountName==NULL)
 		return _T("");

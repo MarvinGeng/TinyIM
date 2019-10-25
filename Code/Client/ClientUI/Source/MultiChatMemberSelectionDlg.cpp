@@ -162,8 +162,8 @@ LRESULT CMultiChatMemberSelectionDlg::OnBuddyTreeSelectedChanged(LPNMHDR pnmh)
 
 	m_setSelectedIDs.insert(uUserID);
 	
-	tstring strNickName;
-	tstring strAccount;
+	WString strNickName;
+	WString strAccount;
 	//if(IsGroupTarget(uUserID))
 	{
 		//strNickName = m_pFMGClient->m_UserMgr.GetGroupName(uUserID);

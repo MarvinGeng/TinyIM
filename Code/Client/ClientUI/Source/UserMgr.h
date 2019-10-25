@@ -31,19 +31,19 @@ private:
 	~CUserMgr(void);
 
 public:
-	tstring GetUserFolder();							// 获取用户文件夹存放路径
+	WString GetUserFolder();							// 获取用户文件夹存放路径
 	
-	tstring GetPersonalFolder();						// 获取个人文件夹存放路径
-	tstring GetChatPicFolder();							// 获取聊天图片存放路径
-	tstring GetCustomUserThumbFolder();					// 获取自定义用户头像目录
+	WString GetPersonalFolder();						// 获取个人文件夹存放路径
+	WString GetChatPicFolder();							// 获取聊天图片存放路径
+	WString GetCustomUserThumbFolder();					// 获取自定义用户头像目录
 
-	tstring GetUserHeadPicFullName(UINT uFace);			// 获取用户头像图片全路径文件名
-	tstring GetBuddyHeadPicFullName(UINT uFace);		// 获取好友头像图片全路径文件名
-	tstring GetGroupHeadPicFullName(UINT nGroupNum);	// 获取群头像图片全路径文件名
-	tstring GetSessHeadPicFullName(UINT nUTalkNum);		// 获取群成员头像图片全路径文件名
-	tstring GetChatPicFullName(LPCTSTR lpszFileName);	// 获取聊天图片全路径文件名
-	tstring GetMsgLogFullName();						// 获取消息记录全路径文件名
-	tstring GetDefaultRecvFilePath();					// 获取默认接收文件路径名
+	WString GetUserHeadPicFullName(UINT uFace);			// 获取用户头像图片全路径文件名
+	WString GetBuddyHeadPicFullName(UINT uFace);		// 获取好友头像图片全路径文件名
+	WString GetGroupHeadPicFullName(UINT nGroupNum);	// 获取群头像图片全路径文件名
+	WString GetSessHeadPicFullName(UINT nUTalkNum);		// 获取群成员头像图片全路径文件名
+	WString GetChatPicFullName(LPCTSTR lpszFileName);	// 获取聊天图片全路径文件名
+	WString GetMsgLogFullName();						// 获取消息记录全路径文件名
+	WString GetDefaultRecvFilePath();					// 获取默认接收文件路径名
 
 	BOOL IsNeedUpdateBuddyHeadPic(UINT nUTalkNum);		// 判断是否需要更新好友头像
 	BOOL IsNeedUpdateGroupHeadPic(UINT nGroupNum);		// 判断是否需要更新群头像
@@ -59,14 +59,14 @@ public:
 	BOOL DeleteFriend(UINT uAccountID);
 
 	
-	tstring GetAccountName(UINT uAccountID) const;			//通过内部ID获取账户名
+	WString GetAccountName(UINT uAccountID) const;			//通过内部ID获取账户名
 	void	SetAccountName(UINT uAccountID, PCTSTR pszAccountName);
 
-	tstring GetNickName(UINT uAccountID) const;				//通过内部ID获取昵称名
+	WString GetNickName(UINT uAccountID) const;				//通过内部ID获取昵称名
 	void	SetNickName(UINT uAccountID, PCTSTR pszNickName);
 
-	tstring GetGroupName(UINT uGroupCode);
-	tstring	GetGroupAccount(UINT uGroupCode);
+	WString GetGroupName(UINT uGroupCode);
+	WString	GetGroupAccount(UINT uGroupCode);
 
 	UINT	GetFaceID(UINT uAccountID) const;
 	void	SetFaceID(UINT uAccountID, UINT uFaceID);
@@ -82,7 +82,7 @@ public:
 	UINT	GetMsgID(UINT uAccountID) const;
 	BOOL	SetMsgID(UINT uAccountID, UINT uMsgID);
 
-	tstring GetNickName(PCTSTR pszAccountName) const;	//通过账户获取昵称名
+	WString GetNickName(PCTSTR pszAccountName) const;	//通过账户获取昵称名
 
 	UINT	GetFaceID(PCTSTR pszAccountName) const;		//通过账户获取昵称
 

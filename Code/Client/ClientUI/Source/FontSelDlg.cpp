@@ -22,7 +22,7 @@ TCHAR g_cHotKey = _T('D');	// 提取消息热键
 //	{
 //		g_fontInfo.m_strName = xmlNode.GetAttribute(_T("Name"));
 //		g_fontInfo.m_nSize = xmlNode.GetAttributeInt(_T("Size"));
-//		tstring strColor = xmlNode.GetAttribute(_T("Color"));
+//		WString strColor = xmlNode.GetAttribute(_T("Color"));
 //		g_fontInfo.m_clrText = HexStrToRGB(strColor.c_str());
 //		g_fontInfo.m_bBold = xmlNode.GetAttributeInt(_T("Bold"));
 //		g_fontInfo.m_bItalic = xmlNode.GetAttributeInt(_T("Italic"));
@@ -32,7 +32,7 @@ TCHAR g_cHotKey = _T('D');	// 提取消息热键
 //	bRet = xmlDoc.SelectSingleNode(_T("/Misc/HotKey"), xmlNode);
 //	if (bRet)
 //	{
-//		tstring strHotKey = xmlNode.GetText();
+//		WString strHotKey = xmlNode.GetText();
 //		g_cHotKey = toupper(strHotKey.at(0));
 //	}
 //
@@ -291,7 +291,7 @@ BOOL CFontSelDlg::InitFontNameComboBox()
 	m_cboFontName.SetArrowHotPic(_T("ComboBox\\inputbtn_highlight.png"));
 	m_cboFontName.SetArrowPushedPic(_T("ComboBox\\inputbtn_down.png"));
 
-	std::vector<tstring> arrSysFont;
+	std::vector<WString> arrSysFont;
 	EnumSysFont(&arrSysFont);
 
 	for (int i = 0; i < (int)arrSysFont.size(); i++)

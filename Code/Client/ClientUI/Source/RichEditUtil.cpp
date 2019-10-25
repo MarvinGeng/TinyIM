@@ -47,7 +47,7 @@ int RichEdit_GetWindowText(HWND hWnd, LPTSTR lpszStringBuf, int nMaxCount)
 	return ::GetWindowText(hWnd, lpszStringBuf, nMaxCount);
 }
 
-int RichEdit_GetWindowText(HWND hWnd, tstring& strText)
+int RichEdit_GetWindowText(HWND hWnd, WString& strText)
 {
 	int nLength;
 	TCHAR* pszText;
@@ -64,7 +64,7 @@ int RichEdit_GetWindowText(HWND hWnd, tstring& strText)
 	return nLength;
 }
 
-int RichEdit_GetTextRange(HWND hWnd, CHARRANGE* lpchrg, tstring& strText)
+int RichEdit_GetTextRange(HWND hWnd, CHARRANGE* lpchrg, WString& strText)
 {
 	strText = _T("");
 
@@ -436,7 +436,7 @@ RichEditMsgList RichEdit_GetMsg(HWND hWnd)
 	RichEditMsgList result;
 	REOBJECT reobject;
 	LONG nFaceId, nPos = 0;
-	tstring strOrgText, strTemp;
+	WString strOrgText, strTemp;
 
 	IRichEditOle* pRichEditOle = RichEdit_GetOleInterface(hWnd);
 	if (NULL == pRichEditOle)
@@ -519,11 +519,11 @@ RichEditMsgList RichEdit_GetMsg(HWND hWnd)
 
 
 // 获取文本
-void RichEdit_GetText(HWND hWnd, tstring& strText)
+void RichEdit_GetText(HWND hWnd, WString& strText)
 {
 	REOBJECT reobject;
 	LONG nFaceId, nPos = 0;
-	tstring strOrgText, strTemp;
+	WString strOrgText, strTemp;
 
 	IRichEditOle* pRichEditOle = RichEdit_GetOleInterface(hWnd);
 	if (NULL == pRichEditOle)
@@ -644,8 +644,8 @@ void RichEdit_GetImageInfo(HWND hWnd, std::vector<ImageInfo*>& arrImageInfo)
 {
 	REOBJECT reobject;
 	LONG nFaceId, nPos = 0;
-	tstring strOrgText, strTemp;
-	tstring strText;
+	WString strOrgText, strTemp;
+	WString strText;
 
 	IRichEditOle* pRichEditOle = RichEdit_GetOleInterface(hWnd);
 	if (NULL == pRichEditOle)
@@ -921,7 +921,7 @@ int RichEdit_GetWindowText(ITextServices* pTextServices, LPTSTR lpszStringBuf, i
 	return (int)lRes;
 }
 
-int RichEdit_GetWindowText(ITextServices* pTextServices, tstring& strText)
+int RichEdit_GetWindowText(ITextServices* pTextServices, WString& strText)
 {
 	int nLength;
 	TCHAR* pszText;
@@ -938,7 +938,7 @@ int RichEdit_GetWindowText(ITextServices* pTextServices, tstring& strText)
 	return nLength;
 }
 
-int RichEdit_GetTextRange(ITextServices* pTextServices, CHARRANGE* lpchrg, tstring& strText)
+int RichEdit_GetTextRange(ITextServices* pTextServices, CHARRANGE* lpchrg, WString& strText)
 {
 	strText = _T("");
 
@@ -1229,11 +1229,11 @@ Ret0:
 }
 
 // 获取文本
-void RichEdit_GetText(ITextServices* pTextServices, tstring& strText)
+void RichEdit_GetText(ITextServices* pTextServices, WString& strText)
 {
 	REOBJECT reobject;
 	LONG nFaceId, nPos = 0;
-	tstring strOrgText, strTemp;
+	WString strOrgText, strTemp;
 
 	IRichEditOle* pRichEditOle = RichEdit_GetOleInterface(pTextServices);
 	if (NULL == pRichEditOle)

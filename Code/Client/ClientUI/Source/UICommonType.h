@@ -13,5 +13,5 @@
 #ifndef _DENNIS_THINK_COMMON_TYPE_H_
 #define _DENNIS_THINK_COMMON_TYPE_H_
 #include <string>
-typedef std::wstring tstring;
+typedef std::wstring WString;
 #endif

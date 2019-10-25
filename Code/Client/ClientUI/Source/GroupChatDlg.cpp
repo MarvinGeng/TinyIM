@@ -209,7 +209,7 @@ void CGroupChatDlg::OnUpdateGroupNumber()
 // 更新群头像
 void CGroupChatDlg::OnUpdateGroupHeadPic()
 {
-	tstring strFileName;
+	WString strFileName;
 	//if (m_lpFMGClient != NULL && m_nGroupNumber != 0)
 	//	strFileName = m_lpFMGClient->GetGroupHeadPicFullName(m_nGroupNumber);
 	if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
@@ -1377,7 +1377,7 @@ void CGroupChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 }
 
 
-void CGroupChatDlg::SendGroupTextMsg_Core(tstring strContext)
+void CGroupChatDlg::SendGroupTextMsg_Core(WString strContext)
 {
 	if (m_netProto) {
 		std::string strSendTxt = EncodeUtil::UnicodeToAnsi(strContext);
@@ -2593,7 +2593,7 @@ BOOL CGroupChatDlg::Init()
 	m_picHead.MoveWindow(10, 10, 54, 54, FALSE);
 	m_picHead.SetToolTipText(_T("点击查看群资料"));
 
-	tstring strFileName;
+	WString strFileName;
 	//if (m_lpFMGClient != NULL && m_nGroupNumber != 0)
 	//{
 	//	strFileName = m_lpFMGClient->GetGroupHeadPicFullName(m_nGroupNumber);
@@ -2741,7 +2741,7 @@ BOOL CGroupChatDlg::Init()
 	//	fontInfo.m_bItalic, fontInfo.m_bUnderLine, FALSE);
 
 	C_UI_FontInfo fontInfo;
-	std::vector<tstring> arrSysFont;
+	std::vector<WString> arrSysFont;
 	EnumSysFont(&arrSysFont);
 	long nCustomFontNameIndex = -1;
 	if(arrSysFont.empty())
@@ -2979,7 +2979,7 @@ int CGroupChatDlg::FindMemberListByUin(UINT nUTalkUin)
 	return -1;
 }
 
-void CGroupChatDlg::GetSenderInfo(UINT nUTalkUin, CString& strName, tstring& strAccount)
+void CGroupChatDlg::GetSenderInfo(UINT nUTalkUin, CString& strName, WString& strAccount)
 {
 	strName = _T("");
 
@@ -3154,9 +3154,9 @@ BOOL CGroupChatDlg::HandleCustomPic(HWND hRichEditWnd, LPCTSTR& p, CString& strT
 	return FALSE;
 }
 
-BOOL CGroupChatDlg::HandleFontInfo(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+BOOL CGroupChatDlg::HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
-	tstring strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
+	WString strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
 	if (!strTemp.empty())
 	{
 		LPCTSTR lpFontFmt = _T("%[^,],%d,%[^,],%d,%d,%d");
@@ -3334,11 +3334,11 @@ void CGroupChatDlg::OnRecvToHandle(const HWND recvHandle,C_UI_GroupMessage* pGro
 		{
 			CString strText;
 
-			tstring tSpace = _T("  ");
-			tstring tSplash = _T("\r\n");
-			tstring tLeftBrackets = _T("(");
-			tstring tRightBrackets = _T(")");
-			tstring tText = pGroupMsg->m_strSenderName + tLeftBrackets + pGroupMsg->m_strSenderId + tRightBrackets + tSpace + pGroupMsg->m_strMsgTime + tSplash;
+			WString tSpace = _T("  ");
+			WString tSplash = _T("\r\n");
+			WString tLeftBrackets = _T("(");
+			WString tRightBrackets = _T(")");
+			WString tText = pGroupMsg->m_strSenderName + tLeftBrackets + pGroupMsg->m_strSenderId + tRightBrackets + tSpace + pGroupMsg->m_strMsgTime + tSplash;
 			strText = tText.c_str();
 			RichEdit_SetSel(recvHandle, -1, -1);
 			RichEdit_ReplaceSel(recvHandle, strText,
@@ -3404,7 +3404,7 @@ void CGroupChatDlg::AddUserToRecvEdit(const std::string strUserName, const time_
 	FormatTime(nTime, _T("%H:%M:%S"), cTime, sizeof(cTime) / sizeof(TCHAR));
 
 	
-	tstring Context = EncodeUtil::AnsiToUnicode(strUserName);
+	WString Context = EncodeUtil::AnsiToUnicode(strUserName);
 	CString strText;
 	strText.Format(_T("%s(%s)  %s\r\n"), Context.c_str(), Context.c_str(), cTime);
 
@@ -3424,7 +3424,7 @@ void CGroupChatDlg::AddSendTextToRecvEdit(const CString& strContext)
 
 void CGroupChatDlg::AddTextToRecvEdit(const std::string strContext)
 {
-	tstring Context = EncodeUtil::AnsiToUnicode(strContext);
+	WString Context = EncodeUtil::AnsiToUnicode(strContext);
 
 	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
 	RichEdit_ReplaceSel(m_richRecv.m_hWnd, Context.c_str(),_T("微软雅黑"), 10, RGB(0, 0, 0), FALSE, FALSE, FALSE, FALSE, 0);
@@ -3462,7 +3462,7 @@ LRESULT CGroupChatDlg::OnSendChatMsgResult(UINT uMsg, WPARAM wParam, LPARAM lPar
 //		return;
 //
 //	CString strText, strSenderName;
-//	tstring strAccountName;
+//	WString strAccountName;
 //	C_UI_FontInfo fontInfo;
 //
 //	TCHAR cTime[32] = {0};
@@ -3535,7 +3535,7 @@ LRESULT CGroupChatDlg::OnSendChatMsgResult(UINT uMsg, WPARAM wParam, LPARAM lPar
 //
 //			case CONTENT_TYPE_CUSTOM_FACE:
 //				{
-//					tstring strFileName = m_lpFMGClient->GetChatPicFullName(lpContent->m_CFaceInfo.m_strName.c_str());
+//					WString strFileName = m_lpFMGClient->GetChatPicFullName(lpContent->m_CFaceInfo.m_strName.c_str());
 //					if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
 //						strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DownloadFailed.gif");
 //					_RichEdit_InsertFace(m_richRecv.m_hWnd, strFileName.c_str(), -1, -1);
@@ -3558,7 +3558,7 @@ void CGroupChatDlg::AddMsgToRecvEdit(C_UI_BuddyMessage* lpGroupMsg)
 
 	CString strText;
 	CString strSenderName;
-	tstring strAccountName;
+	WString strAccountName;
 	C_UI_FontInfo fontInfo;
 
 	E_UI_CONTENT_TYPE nMsgType = lpGroupMsg->m_nMsgType;
@@ -3598,7 +3598,7 @@ void CGroupChatDlg::AddMsgToRecvEdit(C_UI_BuddyMessage* lpGroupMsg)
 	
 	C_UI_BuddyMessage* lpBuddyMsg = lpGroupMsg;
 	CString strInfo;
-	tstring	strFileName;
+	WString	strFileName;
 	//！！字体信息必须放在文本信息的前面
 	for (int i = 0; i < (int)lpBuddyMsg->m_arrContent.size(); i++)
 	{
@@ -3810,7 +3810,7 @@ LRESULT CGroupChatDlg::OnRecvFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else if(eResult == E_UI_RECV_FILE_RESULT::RECV_FILE_FAILED)
 		{
 			RichEdit_SetSel(m_richRecv.m_hWnd, iter->second, iter->second+1);
-			tstring strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DownloadFailed.gif");
+			WString strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DownloadFailed.gif");
 			_RichEdit_InsertFace(m_richRecv.m_hWnd, strFileName.c_str(), -1, -1);
 		}
 	}
@@ -3875,7 +3875,7 @@ void CGroupChatDlg::SendConfirmMessage(const CUploadFileResult* pUploadFileResul
 		{
 			pConfirm->m_nType = E_UI_CHAT_CONFIRM_TYPE::CHAT_CONFIRM_TYPE_SINGLE;
 		}
-        //SendBuddyMsg(UINT nFromUin, const tstring& strFromNickName, UINT nToUin, const tstring& strToNickName, time_t nTime, const tstring& strChatMsg, HWND hwndFrom/* = NULL*/)
+        //SendBuddyMsg(UINT nFromUin, const WString& strFromNickName, UINT nToUin, const WString& strToNickName, time_t nTime, const WString& strChatMsg, HWND hwndFrom/* = NULL*/)
 
         //m_lpFMGClient->m_SendMsgThread.AddItem(pConfirm);
     }
@@ -3926,10 +3926,10 @@ void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 	
 	UINT nID;
 	UINT nUTalkNum;
-	tstring strNickName;
+	WString strNickName;
 	UINT64 nTime;
 	//BOOL bSendFlag;
-	tstring strContent;
+	WString strContent;
 	TCHAR szTime[32];
 	COLORREF clrNickName(RGB(0, 0, 0));
 	size_t nSize = arrMsgLog.size();
@@ -3978,15 +3978,15 @@ void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 }
 
 // "/f["系统表情id"] /c["自定义表情文件名"] /o[字体名称，大小，颜色，加粗，倾斜，下划线]"
-void CGroupChatDlg::AnalyseContent(tstring& strContent, HWND hRichWnd/*=NULL*/)
+void CGroupChatDlg::AnalyseContent(WString& strContent, HWND hRichWnd/*=NULL*/)
 {
 	//CONTENT_TYPE m_nType;			// 内容类型
 	//C_UI_FontInfo m_FontInfo;			// 字体信息
-	//tstring m_strText;			// 文本信息
+	//WString m_strText;			// 文本信息
 	//int m_nFaceId;				// 系统表情Id
 	//C_UI_CustomFaceInfo m_CFaceInfo;	// 自定义表情信息
 
-	tstring strText;
+	WString strText;
 	C_UI_Content* lpContent = NULL;
 	LPCTSTR lpMsg = strContent.c_str();
 	std::vector<C_UI_Content*> arrContent;
@@ -4103,7 +4103,7 @@ void CGroupChatDlg::AnalyseContent(tstring& strContent, HWND hRichWnd/*=NULL*/)
 
 }
 
-BOOL CGroupChatDlg::HandleSysFaceId(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+BOOL CGroupChatDlg::HandleSysFaceId(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
 	int nFaceId = GetBetweenInt(p+2, _T("[\""), _T("\"]"), -1);
 	if (nFaceId != -1)
@@ -4135,9 +4135,9 @@ BOOL CGroupChatDlg::HandleSysFaceId(LPCTSTR& p, tstring& strText, std::vector<C_
 	return FALSE;
 }
 
-BOOL CGroupChatDlg::HandleCustomPic(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+BOOL CGroupChatDlg::HandleCustomPic(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
-	tstring strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
+	WString strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
 	if (!strFileName.empty())
 	{
 		if (!strText.empty())
@@ -4220,7 +4220,7 @@ void CGroupChatDlg::AddMsgToRecvEdit(std::vector<C_UI_Content*>& arrContent)
 
 			case E_UI_CONTENT_TYPE::CONTENT_TYPE_CHAT_IMAGE:
 				{
-					tstring strFileName;
+					WString strFileName;
 					//安卓发送过来的路径类似这样：/storage/sdcard/windows/BstSharedFolder/]FHGGRBAA@85{PP{W3S]8C52.jpg
 					//先检测是否是类似于C:\dd\xx.png的路径
 					if (::PathIsRelative(lpContent->m_CFaceInfo.m_strName.c_str()))
@@ -4306,7 +4306,7 @@ void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<C_UI_Content*>& arrContent)
 
 			case E_UI_CONTENT_TYPE::CONTENT_TYPE_CHAT_IMAGE:
 				{
-					tstring strFileName;
+					WString strFileName;
 					//安卓发送过来的路径类似这样：/storage/sdcard/windows/BstSharedFolder/]FHGGRBAA@85{PP{W3S]8C52.jpg
 					//先检测是否是类似于C:\dd\xx.png的路径
 					if (::PathIsRelative(lpContent->m_CFaceInfo.m_strName.c_str()))
@@ -4713,10 +4713,10 @@ void CGroupChatDlg::AddMsgToRecvEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 {
 	UINT nID;
 	UINT nUTalkNum;
-	tstring strNickName;
+	WString strNickName;
 	UINT64 nTime;
 	//BOOL bSendFlag;
-	tstring strContent;
+	WString strContent;
 	TCHAR szTime[32];
 	
 	size_t nSize = arrMsgLog.size();

@@ -39,25 +39,25 @@ public:
 public:
 	UINT m_uUserIndex;
 	std::string m_strUserId;		//用户唯一标识
-	std::string m_strUserName;      //用户名
-    tstring		m_strAccount;		//用户账户名
-    tstring		m_strPassword;		// 密码
-    tstring		m_strNickName;		// 昵称
-    tstring		m_strMarkName;		// 备注
+	WString     m_strUserName;      //用户名
+    WString		m_strAccount;		//用户账户名
+    WString		m_strPassword;		// 密码
+    WString		m_strNickName;		// 昵称
+    WString		m_strMarkName;		// 备注
     long		m_nTeamIndex;		// 分组索引
     UINT		m_nFace;			// 头像
     E_UI_ONLINE_STATUS		m_nStatus;			// 在线状态
     E_UI_CLIENT_TYPE     m_nClientType;      // 客户端类型
-    tstring		m_strSign;			// 个性签名
+    WString		m_strSign;			// 个性签名
     long		m_nGender;			// 性别
     long		m_nBirthday;		// 生日
-    tstring		m_strMobile;		// 手机
-    tstring		m_strAddress;		// 用户地址信息
-    tstring		m_strEmail;           //用户邮件
+    WString		m_strMobile;		// 手机
+    WString		m_strAddress;		// 用户地址信息
+    WString		m_strEmail;           //用户邮件
     BOOL		m_bUseCustomFace;		//是否使用自定义头像
     BOOL		m_bCustomFaceAvailable;	//自定义头像是否可用
-    tstring		m_strCustomFace;	    // 自定有头像名（文件名不是路径，本地不存在需要从服务器下载）
-    tstring		m_strRawCustomFace;		//原始自定义头像内容
+    WString		m_strCustomFace;	    // 自定有头像名（文件名不是路径，本地不存在需要从服务器下载）
+    WString		m_strRawCustomFace;		//原始自定义头像内容
 
 	//CString    m_strCustomFaceName;
 
@@ -81,7 +81,7 @@ public:
 public:
     int m_nIndex;			// 索引
     int m_nSort;			// 排列顺序
-    tstring m_strName;		// 分组名称
+    WString m_strName;		// 分组名称
     std::vector<C_UI_BuddyInfo*> m_arrBuddyInfo;//分组的好友信息
 };
 
@@ -152,10 +152,10 @@ public:
     //UINT m_nGroupCode;		// 群账号ID
     //UINT m_nGroupId;		// 群ID
     //UINT m_nGroupNumber;	// 群号码
-    tstring m_strAccount;	// 群账号
-    tstring m_strName;		// 群名称
-    tstring m_strMemo;		// 群公告
-    tstring m_strFingerMemo;// 群简介
+    WString m_strAccount;	// 群账号
+    WString m_strName;		// 群名称
+    WString m_strMemo;		// 群公告
+    WString m_strFingerMemo;// 群简介
 	std::string m_strOwnerId;
     //UINT m_nOwnerUin;		// 群拥有者Uin
     UINT m_nCreateTime;		// 群创建时间
@@ -240,7 +240,7 @@ public:
 public:
     int m_nSize;			// 字体大小
     COLORREF m_clrText;		// 字体颜色
-    tstring m_strName;		// 字体名称
+    WString m_strName;		// 字体名称
     BOOL m_bBold;			// 是否加粗
     BOOL m_bItalic;			// 是否倾斜
     BOOL m_bUnderLine;		// 是否带下划线
@@ -253,14 +253,14 @@ public:
     ~C_UI_CustomFaceInfo(void){}
 
 public:
-    tstring m_strName;			// 接收自定义表情使用参数(TODO: 这个字段先保留，不要用，留作以后扩展)
+    WString m_strName;			// 接收自定义表情使用参数(TODO: 这个字段先保留，不要用，留作以后扩展)
     UINT    m_nFileId;
-    tstring m_strKey;
-    tstring m_strServer;
+    WString m_strKey;
+    WString m_strServer;
 
     DWORD   m_dwFileSize;		// 发送自定义表情使用参数
-    tstring m_strFileName;      //
-    tstring m_strFilePath;      //
+    WString m_strFileName;      //
+    WString m_strFilePath;      //
     BOOL	m_bOnline;			//当是文件类型时，该字段代表文件是离线文件还是在线文件
 };
 
@@ -273,7 +273,7 @@ public:
 public:
 	E_UI_CONTENT_TYPE m_nType;			// 内容类型
     C_UI_FontInfo	m_FontInfo;			// 字体信息
-    tstring			m_strText;			// 文本信息
+    WString			m_strText;			// 文本信息
     int				m_nFaceId;			// 系统表情Id
     int				m_nShakeTimes;		// 窗口抖动次数
     C_UI_CustomFaceInfo m_CFaceInfo;		// 自定义表情信息（当发送的是m_nType，m_CFaceInfo是文件的有关信息）
@@ -301,7 +301,7 @@ public:
     UINT					m_nReplyIp;
     UINT64					m_nTime;
     HWND					m_hwndFrom;
-    tstring					m_strNickName;					//后门字段
+    WString					m_strNickName;					//后门字段
     std::vector<C_UI_Content*> m_arrContent;
 };
 
@@ -320,10 +320,10 @@ public:
 public:
 	E_UI_CONTENT_TYPE m_eType;
 	std::string m_strGroupId;
-	tstring m_strSenderId;
-	tstring m_strSenderName;
-	tstring m_strContext;
-	tstring m_strMsgTime;
+	WString m_strSenderId;
+	WString m_strSenderName;
+	WString m_strContext;
+	WString m_strMsgTime;
 	C_UI_FontInfo m_stFontInfo;
 };
 
@@ -389,7 +389,7 @@ public:
     UINT m_nMsgType;
     UINT m_nReplyIp;
     BOOL m_bShowReason;			// 是否显示被踢下线原因
-    tstring m_strReason;		// 被踢下线原因
+    WString m_strReason;		// 被踢下线原因
 };
 
 class C_UI_SysGroupMessage	// 群系统消息
@@ -410,16 +410,16 @@ public:
     UINT m_nToUin;
     UINT m_nMsgType;
     UINT m_nReplyIp;
-    tstring m_strSubType;
+    WString m_strSubType;
     UINT m_nGroupCode;
     UINT m_nGroupNumber;
     UINT m_nAdminUin;
-    tstring m_strMsg;
+    WString m_strMsg;
     UINT m_nOpType;
     UINT m_nOldMember;
-    tstring m_strOldMember;
-    tstring m_strAdminUin;
-    tstring m_strAdminNickName;
+    WString m_strOldMember;
+    WString m_strAdminUin;
+    WString m_strAdminNickName;
 };
 
 class C_UI_UpdateFriendInfoMsg	//更新好友信息

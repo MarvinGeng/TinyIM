@@ -263,13 +263,13 @@ private:
 	void ResizeImageInRecvRichEdit();
 
 	void DisplayFileTransfer(BOOL bShow);
-	//void AnalyseContent(tstring& strContent, HWND hRichWnd=NULL);
-	BOOL HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleText(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleFontInfo(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleSysFaceId(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleCustomPic(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
-	BOOL HandleFile(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent);
+	//void AnalyseContent(WString& strContent, HWND hRichWnd=NULL);
+	BOOL HandleShake(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleText(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleSysFaceId(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleCustomPic(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
+	BOOL HandleFile(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent);
 	
 	BOOL HandleFileDragResult(PCTSTR lpszFileName);
 	BOOL SendOfflineFile(PCTSTR pszFileName);

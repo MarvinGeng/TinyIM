@@ -246,7 +246,7 @@ int CALLBACK EnumSysFontProc(const LOGFONT*lpelf, const TEXTMETRIC*lpntm, DWORD 
 {
 	if (dwFontType & TRUETYPE_FONTTYPE)
 	{
-		std::vector<tstring>* arrSysFont = (std::vector<tstring>*)lParam;
+		std::vector<WString>* arrSysFont = (std::vector<WString>*)lParam;
 		if (arrSysFont != NULL)
 		{
 			for (int i = 0; i < (int)arrSysFont->size(); i++)
@@ -262,7 +262,7 @@ int CALLBACK EnumSysFontProc(const LOGFONT*lpelf, const TEXTMETRIC*lpntm, DWORD 
 }
 
 // 枚举系统字体
-BOOL EnumSysFont(std::vector<tstring>* arrSysFont)
+BOOL EnumSysFont(std::vector<WString>* arrSysFont)
 {
 	if (NULL == arrSysFont)
 		return FALSE;
@@ -397,9 +397,9 @@ void DecodeHtmlSpecialChars(std::wstring& strText)
 	Replace(strText, _T("&amp;"), _T("&"));
 }
 
-tstring GetBetweenString(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd)
+WString GetBetweenString(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd)
 {
-	tstring strText;
+	WString strText;
 
 	if (NULL == pStr)
 		return _T("");
@@ -430,16 +430,16 @@ tstring GetBetweenString(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd)
 
 int GetBetweenInt(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd, int nDefValue/* = 0*/)
 {
-	tstring strText = GetBetweenString(pStr, cStart, cEnd);
+	WString strText = GetBetweenString(pStr, cStart, cEnd);
 	if (!strText.empty() && IsDigit(strText.c_str()))
 		return _tcstol(strText.c_str(), NULL, 10);
 	else
 		return nDefValue;
 }
 
-tstring GetBetweenString(const WCHAR* pStr, const WCHAR* pStart, const WCHAR* pEnd)
+WString GetBetweenString(const WCHAR* pStr, const WCHAR* pStart, const WCHAR* pEnd)
 {
-	tstring strText;
+	WString strText;
 
 	if (NULL == pStr || NULL == pStart || NULL == pEnd)
 		return _T("");
@@ -473,7 +473,7 @@ tstring GetBetweenString(const WCHAR* pStr, const WCHAR* pStart, const WCHAR* pE
 int GetBetweenInt(const WCHAR* pStr, const WCHAR* pStart, 
 				  const WCHAR* pEnd, int nDefValue/* = 0*/)
 {
-	tstring strText = GetBetweenString(pStr, pStart, pEnd);
+	WString strText = GetBetweenString(pStr, pStart, pEnd);
 	if (!strText.empty() && IsDigit(strText.c_str()))
 		return _tcstol(strText.c_str(), NULL, 10);
 	else
@@ -518,7 +518,7 @@ BOOL DllUnregisterServer(LPCTSTR lpszFileName)
 	return DllRegisterServer(lpszFileName, TRUE);
 }
 
-tstring GetMimeTypeByExtension(const TCHAR* lpExtension)
+WString GetMimeTypeByExtension(const TCHAR* lpExtension)
 {
 	if (NULL == lpExtension)
 		return _T("");

@@ -37,7 +37,7 @@ CMessageLogger::~CMessageLogger(void)
 }
 
 // 获取消息记录文件名称
-tstring CMessageLogger::GetMsgLogFileName()
+WString CMessageLogger::GetMsgLogFileName()
 {
 	return m_strFileName;
 }
@@ -56,7 +56,7 @@ void CMessageLogger::SetMsgLogFileName(LPCTSTR lpszFileName)
 		m_hMutex = NULL;
 	}
 
-	tstring strMutexName = m_strFileName;
+	WString strMutexName = m_strFileName;
 	this->Replace(strMutexName, _T("\\"), _T(""));
 
 	m_hMutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, strMutexName.c_str());
@@ -1023,7 +1023,7 @@ UINT CMessageLogger::ReadSessMsgLogCount(UINT nUTalkNum, UINT nOffset, UINT nRow
 	return nCount;
 }
 
-void CMessageLogger::Replace(tstring& strText, const TCHAR* lpOldStr, const TCHAR* lpNewStr)
+void CMessageLogger::Replace(WString& strText, const TCHAR* lpOldStr, const TCHAR* lpNewStr)
 {
 	if (NULL == lpOldStr || NULL == lpNewStr)
 		return;
@@ -1031,8 +1031,8 @@ void CMessageLogger::Replace(tstring& strText, const TCHAR* lpOldStr, const TCHA
 	int nOldStrLen = _tcslen(lpOldStr);
 	int nNewStrLen = _tcslen(lpNewStr);
 
-	tstring::size_type nPos = 0;
-	while ((nPos = strText.find(lpOldStr, nPos)) != tstring::npos)
+	WString::size_type nPos = 0;
+	while ((nPos = strText.find(lpOldStr, nPos)) != WString::npos)
 	{
 		strText.replace(nPos, nOldStrLen, lpNewStr);
 		nPos += nNewStrLen;

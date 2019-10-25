@@ -100,7 +100,7 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
 	{
 		{
 			auto& config = CUserConfig::GetInstance();
-			tstring configPath = Hootina::CPath::GetAppPath() + _T("config\\userconfig.ini");
+			WString configPath = Hootina::CPath::GetAppPath() + _T("config\\userconfig.ini");
 			config.LoadConfig(configPath.c_str());
 		}
 	}
@@ -217,7 +217,7 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	}
 	
 	// 加载系统表情列表
-	tstring strFileName = Hootina::CPath::GetAppPath() + _T("Face\\FaceConfig.xml");
+	WString strFileName = Hootina::CPath::GetAppPath() + _T("Face\\FaceConfig.xml");
 	m_FaceList.LoadConfigFile(strFileName.c_str());
 
 	// 加载登录帐号列表
@@ -562,12 +562,12 @@ void CMainDlg::OnDestroy()
 	::UnregisterHotKey(m_hWnd, 1001);	// 反注册提取消息热键
 
 	// 保存杂项配置
-	//tstring strFileName = m_FMGClient.GetPersonalFolder()+_T("MiscConfig.xml");
+	//WString strFileName = m_FMGClient.GetPersonalFolder()+_T("MiscConfig.xml");
 	//SaveMiscConfig(strFileName.c_str());
 	{
 		{
 			auto& config = CUserConfig::GetInstance();
-			tstring configPath = Hootina::CPath::GetAppPath() + _T("config\\userconfig.ini");
+			WString configPath = Hootina::CPath::GetAppPath() + _T("config\\userconfig.ini");
 			config.SaveConfig(configPath.c_str());
 		}
 	}
@@ -1182,7 +1182,7 @@ void CMainDlg::ShowPanel(BOOL bShow)
 	{
 		m_SkinDlg.SetBgPic(_T("LoginPanel_window_windowBkg.png"), CRect(4, 65, 4, 4));
 
-		tstring strFileName = Hootina::CPath::GetAppPath() + _T("Image\\Logining.png");
+		WString strFileName = Hootina::CPath::GetAppPath() + _T("Image\\Logining.png");
 		m_picLogining.SetBitmap(strFileName.c_str(), TRUE);
 
 		m_staUTalkNum.SetWindowText(m_stAccountInfo.szUser);
@@ -1206,7 +1206,7 @@ void CMainDlg::ShowLockPanel()
 {
 	//显示下列窗口
 	m_SkinDlg.SetBgPic(_T("LoginPanel_window_windowBkg.png"), CRect(4, 65, 4, 4));
-	tstring strFileName = Hootina::CPath::GetAppPath() + _T("Image\\Logining.png");
+	WString strFileName = Hootina::CPath::GetAppPath() + _T("Image\\Logining.png");
 	m_picLogining.SetBitmap(strFileName.c_str(), TRUE);
 	m_picLogining.ShowWindow(SW_SHOW);
 	m_btnUnlock.ShowWindow(SW_SHOW);
@@ -1863,7 +1863,7 @@ LRESULT CMainDlg::OnRecentListDblClk(LPNMHDR pnmh)
 		{
 			if(m_userMgr.IsFriend(nUTalkUin))
 			{
-				tstring strNickName = m_RecentListCtrl.GetBuddyItemNickName(nTeamIndex, nIndex);
+				WString strNickName = m_RecentListCtrl.GetBuddyItemNickName(nTeamIndex, nIndex);
 				CString strInfo;
 				strInfo.Format(_T("%s已经不是您的好友，请先加对方为好友后再聊天。"), strNickName.c_str());
 				::MessageBox(m_hWnd, strInfo, g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
@@ -2670,7 +2670,7 @@ LRESULT CMainDlg::DoLoginSucceed()
 			m_stAccountInfo.nStatus, m_stAccountInfo.bRememberPwd, m_stAccountInfo.bAutoLogin);
 	}
 	m_LoginAccountList.SetLastLoginUser(m_stAccountInfo.szUser);
-	tstring strFileName = Hootina::CPath::GetAppPath() + _T("Users\\LoginAccountList.dat");
+	WString strFileName = Hootina::CPath::GetAppPath() + _T("Users\\LoginAccountList.dat");
 	m_LoginAccountList.SaveFile(strFileName.c_str());
 
 	// 加载杂项配置
@@ -2919,7 +2919,7 @@ LRESULT CMainDlg::OnBuddyMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
  //       //是否启用静音
  //       if (!m_userCfg.IsEnableMute())
  //       {
- //           tstring strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
+ //           WString strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
  //           ::sndPlaySound(strFileName.c_str(), SND_ASYNC);
  //       }
 	//}
@@ -3095,7 +3095,7 @@ LRESULT CMainDlg::OnGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
                 //是否启用静音
                 if (!m_userCfg.IsEnableMute())
                 {
-                    tstring strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
+                    WString strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
                     ::sndPlaySound(strFileName.c_str(), SND_ASYNC);
                 }               
 			}
@@ -3130,7 +3130,7 @@ LRESULT CMainDlg::OnSessMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
  //   // 是否启用静音
  //   if (!m_userCfg.IsEnableMute())
  //   {
- //       tstring strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
+ //       WString strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\msg.wav");	// 播放来消息提示音
  //       ::sndPlaySound(strFileName.c_str(), SND_ASYNC);
  //   }
 
@@ -3186,7 +3186,7 @@ LRESULT CMainDlg::OnStatusChangeMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
  //       // 是否启用静音
  //       if (!m_userCfg.IsEnableMute())
  //       {
- //           tstring strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\Global.wav");
+ //           WString strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\Global.wav");
  //           ::sndPlaySound(strFileName.c_str(), SND_ASYNC);
  //       }
 	//}
@@ -3354,7 +3354,7 @@ LRESULT CMainDlg::OnSysGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//if (0 == nGroupCode)
 	//	return 0;
 
-	//tstring strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\system.wav");	// 播放来系统消息提示音
+	//WString strFileName = Hootina::CPath::GetAppPath() + _T("Sound\\system.wav");	// 播放来系统消息提示音
 	//::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 
 	//UpdateMsgIcon();
@@ -3773,7 +3773,7 @@ LRESULT CMainDlg::OnUpdateGroupHeadPic(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 
-	tstring strFileName;// m_FMGClient.GetGroupHeadPicFullName(nGroupNum);
+	WString strFileName;// m_FMGClient.GetGroupHeadPicFullName(nGroupNum);
 	if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
 		strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DefGroupHeadPic.png");
 	int nTeamIndex, nIndex;
@@ -3857,7 +3857,7 @@ LRESULT CMainDlg::OnRecvAddFriendRequest(UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 	//m_dwAddFriendTimerId = SetTimer(ADD_FRIEND_REQUEST_TIMER_ID, ::GetCaretBlinkTime(), NULL);
-	tstring strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+	WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
 	::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 	
 	{
@@ -3878,7 +3878,7 @@ LRESULT CMainDlg::OnRecvFriendTextMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	//播放声音
 	{
-		tstring strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+		WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
 		::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 	}
 	//处理接收消息
@@ -3898,7 +3898,7 @@ LRESULT CMainDlg::OnRecvFriendTextMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CMainDlg::OnAddFriendNotifyRequest(UINT uMsg, WPARAM wParam, LPARAM lParam)// 收到加好友结果的通知的请求
 {
 	{
-		tstring strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+		WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
 		::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 		
 		C_WND_MSG_AddFriendNotifyRequest * pResult = (C_WND_MSG_AddFriendNotifyRequest*)lParam;
@@ -4067,7 +4067,6 @@ LRESULT CMainDlg::OnShowOrCloseDlg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	int nTeamIndex, nIndex;
 	m_BuddyListCtrl.GetCurSelIndex(nTeamIndex, nIndex);
-	std::string strUserName = m_BuddyListCtrl.GetBuddyItemUserName(nTeamIndex, nIndex);
 	std::string strUserId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
 	switch (uMsg)
 	{
@@ -4082,9 +4081,9 @@ LRESULT CMainDlg::OnShowOrCloseDlg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		
 	case WM_SHOW_GROUP_CHAT_DLG:
 	{
-		int nTeamIndex, nIndex;
+		int nTeamIndex = 0;
+		int nIndex = 0;
 		m_GroupListCtrl.GetCurSelIndex(nTeamIndex, nIndex);
-		std::string strUserName = m_GroupListCtrl.GetBuddyItemUserName(nTeamIndex, nIndex);
 		std::string strUserId = m_GroupListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
 		ShowGroupChatDlg(strUserId, TRUE);
 	}break;
@@ -4620,7 +4619,7 @@ void CMainDlg::ShowBuddyInfoDlg(UINT nUTalkUin, BOOL bShow)
 		//	// 好友资料对话框
 		//	if (nUTalkUin != m_userMgr.m_UserInfo.m_uUserID)
 		//	{
-		//		tstring strFriendNickName(m_userMgr.GetNickName(nUTalkUin));
+		//		WString strFriendNickName(m_userMgr.GetNickName(nUTalkUin));
 		//		strFriendNickName += _T("的资料");
 		//		lpBuddyInfoDlg->SetWindowTitle(strFriendNickName.c_str());
 		//	}
@@ -5067,7 +5066,7 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				m_BuddyListCtrl.SetBuddyItemUTalkNum(nTeamIndex, nIndex, strUTalkNum);
 				m_BuddyListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpBuddyInfo->m_strNickName.c_str());
 				m_BuddyListCtrl.SetBuddyItemMarkName(nTeamIndex, nIndex, lpBuddyInfo->m_strMarkName.c_str());
-				m_BuddyListCtrl.SetBuddyItemUserName(nTeamIndex, nIndex, lpBuddyInfo->m_strUserName);
+				//m_BuddyListCtrl.SetBuddyItemUserName(nTeamIndex, nIndex, lpBuddyInfo->m_strUserName);
 				m_BuddyListCtrl.SetBuddyItemUserId(nTeamIndex, nIndex, lpBuddyInfo->m_strUserId);
 
 				
@@ -5148,7 +5147,7 @@ void CMainDlg::UpdateGroupTreeCtrl()
 			continue;
 		}
 
-		tstring strFileName;// = m_FMGClient.GetGroupHeadPicFullName(lpGroupInfo->m_nGroupNumber);
+		WString strFileName;// = m_FMGClient.GetGroupHeadPicFullName(lpGroupInfo->m_nGroupNumber);
 		if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
 			strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DefGroupHeadPic.png");
 
@@ -5519,7 +5518,7 @@ BOOL CMainDlg::LoadAppIcon(E_UI_ONLINE_STATUS nStatus)
 {
 	DestroyAppIcon();
 
-	tstring strFileName;
+	WString strFileName;
 	switch (nStatus)
 	{
 	case E_UI_ONLINE_STATUS::STATUS_ONLINE:

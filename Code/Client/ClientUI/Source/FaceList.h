@@ -26,8 +26,8 @@ public:
 public:
 	int m_nId;
 	int m_nIndex;
-	tstring m_strTip;
-	tstring m_strFileName;
+	WString m_strTip;
+	WString m_strFileName;
 };
 
 class CFaceList

@@ -46,7 +46,7 @@ BOOL File_ReadAll(const TCHAR* lpszFileName, CHAR**lpData, LONG*lSize);	// 读�
 BOOL my_isalnum(unsigned char cChar);		// 检测指定字符是否是字母(A-Z，a-z)或数字(0-9)
 BOOL my_isalnum(wchar_t cChar);				// 检测指定字符是否是字母(A-Z，a-z)或数字(0-9)
 
-BOOL EnumSysFont(std::vector<tstring>* arrSysFont);	// 枚举系统字体
+BOOL EnumSysFont(std::vector<WString>* arrSysFont);	// 枚举系统字体
 BOOL FlashWindowEx(HWND hWnd, int nCount);				// 闪烁窗口标题栏
 BOOL GetTrayWndRect(RECT* lpRect);						// 获取系统任务栏区域
 
@@ -62,17 +62,17 @@ void ToUpper(std::wstring& strText);
 void EncodeHtmlSpecialChars(std::wstring& strText);		// 编码Html特殊字符
 void DecodeHtmlSpecialChars(std::wstring& strText);		// 解码Html特殊字符
 
-tstring GetBetweenString(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd);
+WString GetBetweenString(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd);
 int GetBetweenInt(const TCHAR* pStr, TCHAR cStart, TCHAR cEnd, int nDefValue = 0);
 
-tstring GetBetweenString(const WCHAR* pStr, const WCHAR* pStart, const WCHAR* pEnd);
+WString GetBetweenString(const WCHAR* pStr, const WCHAR* pStart, const WCHAR* pEnd);
 int GetBetweenInt(const WCHAR* pStr, const WCHAR* pStart, 
 				  const WCHAR* pEnd, int nDefValue = 0);
 
 BOOL DllRegisterServer(LPCTSTR lpszFileName);
 BOOL DllUnregisterServer(LPCTSTR lpszFileName);
 
-tstring GetMimeTypeByExtension(const TCHAR* lpExtension);
+WString GetMimeTypeByExtension(const TCHAR* lpExtension);
 GUID GetFileTypeGuidByExtension(const WCHAR* lpExtension);
 CLSID GetEncoderClsidByExtension(const WCHAR* lpExtension);
 CLSID GetEncoderClsidByFileType(REFGUID guidFileType);

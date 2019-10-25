@@ -62,7 +62,7 @@ private:
 	void SetDlgAutoSize();		// 自动调整对话框大小
 	void SetCtrlsAutoSize();	// 自动调整控件大小
 	void _AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender);
-	tstring GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin);
+	WString GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin);
 	void GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UINT& nUTalkNum);
 
 public:

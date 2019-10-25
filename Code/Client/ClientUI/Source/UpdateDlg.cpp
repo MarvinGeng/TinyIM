@@ -160,7 +160,7 @@ DWORD WINAPI CUpdateDlg::DownloadThread(LPVOID lpParameter)
 	
 	CString strFilePath;
 	CString strFileName;
-	tstring	strErrorInfo;
+	WString	strErrorInfo;
 
 	long nSize = pDlg->m_aryFileName.size();
 	if(nSize <= 0)
@@ -236,10 +236,10 @@ DWORD WINAPI CUpdateDlg::DownloadThread(LPVOID lpParameter)
 	}		
 	else
 	{
-		tstring strBackupVersionFile = g_szHomePath;
+		WString strBackupVersionFile = g_szHomePath;
 		strBackupVersionFile += _T("config\\version.bak");
 
-		tstring strVersionFile = g_szHomePath;
+		WString strVersionFile = g_szHomePath;
 		strVersionFile += _T("config\\version.ver");
 
 		CFile file;

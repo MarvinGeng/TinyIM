@@ -18,9 +18,9 @@
 #include "IImageOle.h"
 
 #if defined(UNICODE) || defined(_UNICODE)
-	typedef std::wstring tstring;
+	typedef std::wstring WString;
 #else
-	typedef std::string tstring;
+	typedef std::string WString;
 #endif
 
 struct ImageInfo
@@ -37,8 +37,8 @@ void RegisterCom_ImageOleCtrl();
 IRichEditOle* RichEdit_GetOleInterface(HWND hWnd);
 int RichEdit_GetWindowTextLength(HWND hWnd);
 int RichEdit_GetWindowText(HWND hWnd, LPTSTR lpszStringBuf, int nMaxCount);
-int RichEdit_GetWindowText(HWND hWnd, tstring& strText);
-int RichEdit_GetTextRange(HWND hWnd, CHARRANGE* lpchrg, tstring& strText);
+int RichEdit_GetWindowText(HWND hWnd, WString& strText);
+int RichEdit_GetTextRange(HWND hWnd, CHARRANGE* lpchrg, WString& strText);
 DWORD RichEdit_GetDefaultCharFormat(HWND hWnd, CHARFORMAT& cf);
 BOOL RichEdit_SetDefaultCharFormat(HWND hWnd, CHARFORMAT& cf);
 DWORD RichEdit_GetSelectionCharFormat(HWND hWnd, CHARFORMAT& cf);
@@ -62,7 +62,7 @@ void RichEdit_SetLinkText(HWND hWnd, BOOL bEnable);						// 设置超链接
 BOOL RichEdit_SetStartIndent(HWND hWnd, int nSize);						// 设置左缩进(单位:缇)
 BOOL RichEdit_InsertFace(HWND hWnd, LPCTSTR lpszFileName, int nFaceId,	// 插入表情图片
 						 int nFaceIndex, COLORREF clrBg, BOOL bAutoScale, int nReservedWidth);
-void RichEdit_GetText(HWND hWnd, tstring& strText);						// 获取文本
+void RichEdit_GetText(HWND hWnd, WString& strText);						// 获取文本
 void RichEdit_GetImageInfo(HWND hWnd, std::vector<ImageInfo*>& arrImageInfo);
 void RichEdit_ReplaceSel(HWND hWnd, LPCTSTR lpszNewText, LPCTSTR lpFontName,	// 替换选中文本
 						 int nFontSize,	COLORREF clrText, BOOL bBold, BOOL bItalic, 
@@ -74,8 +74,8 @@ int RichEdit_GetCustomPicCount(HWND hWnd);
 IRichEditOle* RichEdit_GetOleInterface(ITextServices* pTextServices);
 int RichEdit_GetWindowTextLength(ITextServices* pTextServices);
 int RichEdit_GetWindowText(ITextServices* pTextServices, LPTSTR lpszStringBuf, int nMaxCount);
-int RichEdit_GetWindowText(ITextServices* pTextServices, tstring& strText);
-int RichEdit_GetTextRange(ITextServices* pTextServices, CHARRANGE* lpchrg, tstring& strText);
+int RichEdit_GetWindowText(ITextServices* pTextServices, WString& strText);
+int RichEdit_GetTextRange(ITextServices* pTextServices, CHARRANGE* lpchrg, WString& strText);
 DWORD RichEdit_GetDefaultCharFormat(ITextServices* pTextServices, CHARFORMAT& cf);
 BOOL RichEdit_SetDefaultCharFormat(ITextServices* pTextServices, CHARFORMAT& cf);
 DWORD RichEdit_GetSelectionCharFormat(ITextServices* pTextServices, CHARFORMAT& cf);
@@ -93,7 +93,7 @@ BOOL RichEdit_SetStartIndent(ITextServices* pTextServices, int nSize);			// 设�
 BOOL RichEdit_InsertFace(ITextServices*pTextServices, ITextHost*pTextHost,	// 插入表情图片
 						 LPCTSTR lpszFileName, int nFaceId,	int nFaceIndex, 
 						 COLORREF clrBg, BOOL bAutoScale, int nReservedWidth,  long cxImage=0, long cyImage=0);	//cxImage和cyImage单位为缇
-void RichEdit_GetText(ITextServices* pTextServices, tstring& strText);			// 获取文本
+void RichEdit_GetText(ITextServices* pTextServices, WString& strText);			// 获取文本
 void RichEdit_ReplaceSel(ITextServices* pTextServices, LPCTSTR lpszNewText,	// 替换选中文本
 						 LPCTSTR lpFontName, int nFontSize,	COLORREF clrText, 
 						 BOOL bBold, BOOL bItalic, BOOL bUnderLine, BOOL bIsLink, 

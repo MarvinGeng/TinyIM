@@ -74,7 +74,7 @@ BOOL CFaceList::LoadConfigFile(LPCTSTR lpszFileName)
 				lpFaceInfo->m_nId = xmlSubNode.GetAttributeInt(_T("id"));
 				lpFaceInfo->m_strTip = xmlSubNode.GetAttribute(_T("tip"));
 				lpFaceInfo->m_strFileName = Hootina::CPath::GetAppPath() + xmlSubNode.GetAttribute(_T("file"));
-				tstring strIndex = Hootina::CPath::GetFileNameWithoutExtension(lpFaceInfo->m_strFileName.c_str());
+				WString strIndex = Hootina::CPath::GetFileNameWithoutExtension(lpFaceInfo->m_strFileName.c_str());
 				if (IsDigit(strIndex.c_str()))
 					lpFaceInfo->m_nIndex = _tcstol(strIndex.c_str(), NULL, 10);
 				m_arrFaceInfo.push_back(lpFaceInfo);

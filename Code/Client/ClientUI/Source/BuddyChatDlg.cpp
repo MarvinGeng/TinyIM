@@ -47,9 +47,9 @@
  * @param arrContent 
  * @return BOOL 
  */
-//BOOL CBuddyChatDlg::HandleText(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+//BOOL CBuddyChatDlg::HandleText(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 //{
-//	tstring strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
+//	WString strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
 //
 //	if (!strTemp.empty())
 //	{
@@ -104,9 +104,9 @@
  * @param arrContent 
  * @return BOOL 
  */
-BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
-	tstring strTemp = GetBetweenString(p, _T("["), _T("]")).c_str();
+	WString strTemp = GetBetweenString(p, _T("["), _T("]")).c_str();
 	if (!strTemp.empty())
 	{
 		if(strTemp == _T("\"1\""))
@@ -140,9 +140,9 @@ BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_C
  * @param arrContent 
  * @return BOOL 
  */
-//BOOL CBuddyChatDlg::HandleFontInfo(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+//BOOL CBuddyChatDlg::HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 //{
-//	tstring strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
+//	WString strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
 //	if (!strTemp.empty())
 //	{
 //		LPCTSTR lpFontFmt = _T("%[^,],%d,%[^,],%d,%d,%d");
@@ -198,7 +198,7 @@ BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_C
  * @param arrContent 
  * @return BOOL 
  */
-//BOOL CBuddyChatDlg::HandleSysFaceId(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+//BOOL CBuddyChatDlg::HandleSysFaceId(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 //{
 //	int nFaceId = GetBetweenInt(p+2, _T("[\""), _T("\"]"), -1);
 //	if (nFaceId != -1)
@@ -239,9 +239,9 @@ BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_C
  * @param arrContent 
  * @return BOOL 
  */
-//BOOL CBuddyChatDlg::HandleCustomPic(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+//BOOL CBuddyChatDlg::HandleCustomPic(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 //{
-//	tstring strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
+//	WString strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
 //	if (!strFileName.empty())
 //	{
 //		if (!strText.empty())
@@ -281,9 +281,9 @@ BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, tstring& strText, std::vector<C_UI_C
  * @return BOOL 
  */
 
-BOOL CBuddyChatDlg::HandleFile(LPCTSTR& p, tstring& strText, std::vector<C_UI_Content*>& arrContent)
+BOOL CBuddyChatDlg::HandleFile(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
-	tstring strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
+	WString strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
 	if (!strFileName.empty())
 	{
 		if (!strText.empty())
@@ -455,9 +455,9 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 		{
 			CString strText;
 
-			tstring tSpace = _T("  ");
-			tstring tSplash = _T("\r\n");
-			tstring tText = msg.m_strSenderName + tSpace + msg.m_strTime + tSplash;
+			WString tSpace = _T("  ");
+			WString tSplash = _T("\r\n");
+			WString tText = msg.m_strSenderName + tSpace + msg.m_strTime + tSplash;
 			strText = tText.c_str();
 			RichEdit_SetSel(recvHandle, -1, -1);
 			RichEdit_ReplaceSel(recvHandle, strText,
@@ -1795,7 +1795,7 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	tstring strText;
+	WString strText;
 	RichEdit_GetText(m_richSend.m_hWnd, strText);
 	if (strText.empty())
 	{
@@ -2345,7 +2345,7 @@ void CBuddyChatDlg::OnMenu_ExportMsgLog(UINT uNotifyCode, int nID, CWindow wndCt
 {
 	//导出消息记录，导出为word、txt文件
 	//导出为word用于后期字体图片表情导出
-	/*tstring strText;
+	/*WString strText;
 	RichEdit_GetText(m_richMsgLog.m_hWnd, strText);
 	TCHAR	cFileName[MAX_PATH] = {0};
 	BOOL	bOpenFileDialog = FALSE;
@@ -2459,7 +2459,7 @@ void CBuddyChatDlg::OnMenu_ClearMsgLog(UINT uNotifyCode, int nID, CWindow wndCtl
 	m_richMsgLog.SetWindowText(_T(""));
 	m_richRecv.SetWindowText(_T(""));
 	m_staMsgLogPage.SetWindowText(_T("0/0"));
-	//tstring strChatMsgDBPath = m_lpFMGClient->GetMsgLogFullName();
+	//WString strChatMsgDBPath = m_lpFMGClient->GetMsgLogFullName();
 	//::DeleteFile(strChatMsgDBPath.c_str());
 	//UINT nUTalkNum = m_lpFMGClient;
 	//m_MsgLogger.DelBuddyMsgLog(m_nUTalkUin);
@@ -2619,7 +2619,7 @@ BOOL CBuddyChatDlg::SendOfflineFile(PCTSTR pszFileName)
 
 		CString strImage;
 		long nItemID = m_FileTransferCtrl.AddItem();
-		tstring strFileName(Hootina::CPath::GetFileName(strSavePath));
+		WString strFileName(Hootina::CPath::GetFileName(strSavePath));
 		m_FileTransferCtrl.SetItemFileFullNameByID(nItemID, strSavePath);
 		m_FileTransferCtrl.SetItemFileNameByID(nItemID, strFileName.c_str());
 		if (!Hootina::CPath::IsFileExist(strFileTypeThumbs))
@@ -3802,7 +3802,7 @@ BOOL CBuddyChatDlg::Init()
 	m_picHead.SetBgPic(_T("HeadCtrl\\Padding4Normal.png"), _T("HeadCtrl\\Padding4Hot.png"), _T("HeadCtrl\\Padding4Hot.png"));
 	m_picHead.MoveWindow(10, 10, 54, 54, FALSE);
 	
-	//tstring strNickName(m_lpFMGClient->m_UserMgr.GetNickName(m_nUTalkUin));
+	//WString strNickName(m_lpFMGClient->m_UserMgr.GetNickName(m_nUTalkUin));
 	CString strTooltip;
 	//strTooltip.Format(_T("点击查看%s的资料"), strNickName.c_str());
 	m_picHead.SetToolTipText(strTooltip);
@@ -3932,7 +3932,7 @@ BOOL CBuddyChatDlg::Init()
 	// 发送消息富文本框控件
 	//C_UI_FontInfo fontInfo = m_FontSelDlg.GetPublicFontInfo();
 	C_UI_FontInfo fontInfo;
-	std::vector<tstring> arrSysFont;
+	std::vector<WString> arrSysFont;
 	EnumSysFont(&arrSysFont);
 	long nCustomFontNameIndex = -1;
 	if(arrSysFont.empty())
@@ -4399,7 +4399,7 @@ void CBuddyChatDlg::AddMsgToSendEdit(LPCTSTR lpText)
 //	//	return;
 //
 //	E_UI_CONTENT_TYPE nMsgType = lpBuddyMsg->m_nMsgType;
-//	tstring strMsgText(_T("                                       ☆"));
+//	WString strMsgText(_T("                                       ☆"));
 //	
 //	//当前消息和隔天消息的时间不同处理
 //	TCHAR cTime[32] = {0};
@@ -4432,8 +4432,8 @@ void CBuddyChatDlg::AddMsgToSendEdit(LPCTSTR lpText)
 //	}
 //
 //	CString strInfo;
-//	tstring	strFileName;
-//	tstring strFileNameWithoutPath;
+//	WString	strFileName;
+//	WString strFileNameWithoutPath;
 //	
 //	//！！字体信息必须放在文本信息的前面
 //	C_UI_FontInfo fontInfo;
@@ -4667,7 +4667,7 @@ void CBuddyChatDlg::InsertAutoReplyContent()
 //
 //			case E_UI_CONTENT_TYPE::CONTENT_TYPE_CHAT_IMAGE:
 //				{
-//					tstring strFileName;
+//					WString strFileName;
 //					//安卓发送过来的路径类似这样：/storage/sdcard/windows/BstSharedFolder/]FHGGRBAA@85{PP{W3S]8C52.jpg
 //					//先检测是否是类似于C:\dd\xx.png的路径
 //					if (::PathIsRelative(lpContent->m_CFaceInfo.m_strName.c_str()))
@@ -4709,10 +4709,10 @@ void CBuddyChatDlg::InsertAutoReplyContent()
 //{
 //	UINT	nID;
 //	UINT	nUTalkNum;
-//	tstring strNickName;
+//	WString strNickName;
 //	UINT64	nTime;
 //	BOOL	bSendFlag;
-//	tstring strContent;
+//	WString strContent;
 //	TCHAR	szTime[32];
 //	CString strText;
 //	
@@ -4781,10 +4781,10 @@ void CBuddyChatDlg::InsertAutoReplyContent()
 //{
 //	UINT	nID;
 //	UINT	nUTalkNum;
-//	tstring strNickName;
+//	WString strNickName;
 //	UINT64	nTime;
 //	BOOL	bSendFlag;
-//	tstring strContent;
+//	WString strContent;
 //	TCHAR	szTime[32];
 //	CString strText;
 //	
@@ -4903,7 +4903,7 @@ void CBuddyChatDlg::InsertAutoReplyContent()
 //
 //			case E_UI_CONTENT_TYPE::CONTENT_TYPE_CHAT_IMAGE:
 //				{
-//					tstring strFileName;
+//					WString strFileName;
 //					//安卓发送过来的路径类似这样：/storage/sdcard/windows/BstSharedFolder/]FHGGRBAA@85{PP{W3S]8C52.jpg
 //					//先检测是否是类似于C:\dd\xx.png的路径
 //					/*if(::PathIsRelative(lpContent->m_CFaceInfo.m_strName.c_str()))

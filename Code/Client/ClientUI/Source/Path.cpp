@@ -13,12 +13,12 @@ CPath::~CPath(void)
 }
 
 // 获取应用程序执行路径
-tstring CPath::GetAppPath()
+WString CPath::GetAppPath()
 {
 	TCHAR szPath[MAX_PATH] = {0};
 	::GetModuleFileName(NULL, szPath, MAX_PATH);
 
-	tstring strPath(szPath);
+	WString strPath(szPath);
 	for (int nPos = (int)strPath.size()-1; nPos >= 0; --nPos)
 	{
 		TCHAR cChar = strPath[nPos];
@@ -44,7 +44,7 @@ std::string CPath::GetAppPathAscii()
 }
 
 // 获取应用程序当前目录
-tstring CPath::GetCurDir()
+WString CPath::GetCurDir()
 {
 	TCHAR szCurDir[MAX_PATH] = {0};
 	::GetCurrentDirectory(MAX_PATH, szCurDir);
@@ -61,7 +61,7 @@ tstring CPath::GetCurDir()
 }
 
 // 获取当前系统的临时文件夹的路径
-tstring CPath::GetTempPath()
+WString CPath::GetTempPath()
 {
 	TCHAR szTempPath[MAX_PATH] = {0};
 	::GetTempPath(MAX_PATH, szTempPath);
@@ -78,15 +78,15 @@ tstring CPath::GetTempPath()
 }
 
 // 获取当前系统的临时文件夹的路径下的唯一命名的临时文件名(全路径)
-tstring CPath::GetTempFileName(LPCTSTR lpszFileName)
+WString CPath::GetTempFileName(LPCTSTR lpszFileName)
 {
 	return GetRandomFileName(GetTempPath().c_str(), lpszFileName);
 }
 
 // 获取随机文件名(全路径)
-tstring CPath::GetRandomFileName(LPCTSTR lpszPath, LPCTSTR lpszFileName)
+WString CPath::GetRandomFileName(LPCTSTR lpszPath, LPCTSTR lpszFileName)
 {
-	tstring strPath, strFileName, strExtFileName, strFullPath;
+	WString strPath, strFileName, strExtFileName, strFullPath;
 	TCHAR szBuf[MAX_PATH] = {0};
 
 	if (!IsDirectoryExist(lpszPath))
@@ -193,34 +193,34 @@ BOOL CPath::CreateDirectory(LPCTSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurity
 }
 
 // 获取指定路径的根目录信息
-tstring CPath::GetPathRoot(LPCTSTR lpszPath)
+WString CPath::GetPathRoot(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 
-	tstring::iterator iter;
+	WString::iterator iter;
 	for (iter = strPath.begin(); iter < strPath.end(); iter++)
 	{
 		if (_T('\\') ==*iter)
 			*iter = _T('/');
 	}
 
-	tstring::size_type nPos = strPath.find(_T('/'));
-	if (nPos != tstring::npos)
+	WString::size_type nPos = strPath.find(_T('/'));
+	if (nPos != WString::npos)
 		strPath = strPath.substr(0, nPos+1);
 
 	return strPath;
 }
 
 // 返回指定路径字符串的目录信息
-tstring CPath::GetDirectoryName(LPCTSTR lpszPath)
+WString CPath::GetDirectoryName(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 	for (int nPos = (int)strPath.size()-1; nPos >= 0; --nPos)
 	{
 		TCHAR cChar = strPath[nPos];
@@ -231,12 +231,12 @@ tstring CPath::GetDirectoryName(LPCTSTR lpszPath)
 }
 
 // 返回指定路径字符串的文件名和扩展名
-tstring CPath::GetFileName(LPCTSTR lpszPath)
+WString CPath::GetFileName(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 	for (int nPos = (int)strPath.size()-1; nPos >= 0; --nPos)
 	{
 		TCHAR cChar = strPath[nPos];
@@ -247,12 +247,12 @@ tstring CPath::GetFileName(LPCTSTR lpszPath)
 }
 
 // 返回不具有扩展名的路径字符串的文件名
-tstring CPath::GetFileNameWithoutExtension(LPCTSTR lpszPath)
+WString CPath::GetFileNameWithoutExtension(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 	for (int nPos = (int)strPath.size()-1; nPos >= 0; --nPos)
 	{
 		TCHAR cChar = strPath[nPos];
@@ -264,42 +264,42 @@ tstring CPath::GetFileNameWithoutExtension(LPCTSTR lpszPath)
 	}
 
 	int nPos = strPath.rfind(_T('.'));
-	if (nPos != tstring::npos)
+	if (nPos != WString::npos)
 		strPath = strPath.substr(0, nPos);
 
 	return strPath;
 }
 
 // 返回指定的路径字符串的扩展名
-tstring CPath::GetExtension(LPCTSTR lpszPath)
+WString CPath::GetExtension(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 
-	tstring::size_type nPos = strPath.rfind(_T('.'));
-	if (nPos != tstring::npos)
+	WString::size_type nPos = strPath.rfind(_T('.'));
+	if (nPos != WString::npos)
 		return strPath.substr(nPos+1);
 	else
 		return _T("");
 }
 
 // 根据指定的相对路径获取绝对路径
-tstring CPath::GetFullPath(LPCTSTR lpszPath)
+WString CPath::GetFullPath(LPCTSTR lpszPath)
 {
 	if (NULL == lpszPath || NULL ==*lpszPath)
 		return _T("");
 
-	tstring strPath(lpszPath);
+	WString strPath(lpszPath);
 
 	TCHAR cFirstChar = strPath.at(0);
 	TCHAR cSecondChar = strPath.at(1);
 
 	if (cFirstChar == _T('\\') || cFirstChar == _T('/'))
 	{
-		tstring strCurDir = GetAppPath();
-		tstring strRootPath = GetPathRoot(strCurDir.c_str());
+		WString strCurDir = GetAppPath();
+		WString strRootPath = GetPathRoot(strCurDir.c_str());
 		return strRootPath + strPath;
 	}
 	else if (::IsCharAlpha(cFirstChar) && cSecondChar == _T(':'))
@@ -308,7 +308,7 @@ tstring CPath::GetFullPath(LPCTSTR lpszPath)
 	}
 	else
 	{
-		tstring strCurDir = GetAppPath();
+		WString strCurDir = GetAppPath();
 		return strCurDir + strPath;
 	}
 }

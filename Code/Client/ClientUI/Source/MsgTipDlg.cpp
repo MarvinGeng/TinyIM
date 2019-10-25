@@ -286,7 +286,7 @@ void CMsgTipDlg::DelMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSende
 BOOL CMsgTipDlg::InitCtrls()
 {
 	m_SkinDlg.SubclassWindow(m_hWnd);
-	tstring strFileName = Hootina::CPath::GetAppPath() + _T("Image\\MsgTipBg.png");	// 加载背景图片
+	WString strFileName = Hootina::CPath::GetAppPath() + _T("Image\\MsgTipBg.png");	// 加载背景图片
 	m_SkinDlg.SetBgPic(strFileName.c_str(), CRect(8,28,8,8));
 
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
@@ -555,7 +555,7 @@ void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 	m_ListCtrl.SetItemText(nIndex, 3, strMsgType);
 }
 
-tstring CMsgTipDlg::GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin)
+WString CMsgTipDlg::GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin)
 {
 	UINT nGroupNum, nUTalkNum;
 	GetNumber(nGroupCode, nUTalkUin, nGroupNum, nUTalkNum);
@@ -567,7 +567,7 @@ tstring CMsgTipDlg::GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin)
 	else								// 好友
 		return m_lpFMGClient->GetBuddyHeadPicFullName(nUTalkNum).c_str();*/
 
-	tstring tresult;
+	WString tresult;
 	return tresult;
 }
 
