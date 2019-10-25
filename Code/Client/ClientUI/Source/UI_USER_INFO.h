@@ -112,6 +112,7 @@ public:
     int GetBuddyTeamCount();//获取好友分组个数
     C_UI_BuddyTeamInfo* GetBuddyTeam(int nTeamIndex);//根据索引获取分组信息
     C_UI_BuddyTeamInfo* GetBuddyTeamByIndex(int nIndex);//根据索引获取分组信息
+	bool IsFriend(const std::string strFriendId);
     int GetBuddyTotalCount();//获取总的好友个数
     int GetBuddyCount(int nTeamIndex);//获取某个分组的好友个数
     int GetOnlineBuddyCount(int nTeamIndex);//获取在线的好友个数
@@ -180,7 +181,7 @@ public:
     int GetGroupCount();							// 获取群总数
     C_UI_GroupInfo* GetGroup(int nIndex);				// 获取群信息(根据索引)
     //C_UI_GroupInfo* GetGroupByCode(UINT nGroupCode);	// 获取群信息(根据群代码)
-    //C_UI_GroupInfo* GetGroupById(UINT nGroupId);		// 获取群信息(根据群Id)
+    C_UI_GroupInfo* GetGroupById(const std::string strGroupId);		// 获取群信息(根据群Id)
     //C_UI_BuddyInfo* GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin);// 根据群代码和群成员UTalkUin获取群成员信息
     //C_UI_BuddyInfo* GetGroupMemberById(UINT nGroupId, UINT nUTalkUin);	// 根据群Id和群成员UTalkUin获取群成员信息
     BOOL AddGroup(C_UI_GroupInfo* lpGroupInfo);		// 添加群

@@ -107,7 +107,7 @@ public:
 	CGroupList m_GroupList;//群组列表
 	C_WND_MSG_LoginResult m_loginResult;//用户登录结果
 	std::string UserName() const { return m_strUserName; }
-
+	std::string UserId() const { return m_strUserId;  }
 	bool SendKeepAliveReq();
 
 
@@ -116,6 +116,7 @@ public:
 	//Friend Info End
 
 	CBuddyChatUiMsgVector GetBuddyMsgList(const std::string strFriendId);
+	bool IsFriend(const std::string strFriendId);
 private:
 	int m_startTime;//某个操作的开始时间
 	std::string m_strRecvMsgId;
@@ -180,6 +181,7 @@ private:
 	CBuddyChatUiMsg CoreMsgToUiMsg(FriendChatSendTxtRspMsg rspMsg);
 	std::string GetFriendName(const std::string strFriendId);
 private:
+	std::vector<std::string> m_friendIdVec;
 	E_UI_ONLINE_STATUS m_eOnLineStatus;//用户在线状态
 	std::map<std::string, CBuddyChatUiMsgVector> m_friendMsgMap;
 };

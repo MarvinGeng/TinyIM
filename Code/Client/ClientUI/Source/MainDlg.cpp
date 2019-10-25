@@ -1676,7 +1676,7 @@ LRESULT CMainDlg::OnBuddyListDblClk(LPNMHDR pnmh)
 	if (nTeamIndex != -1 && nIndex != -1)
 	{
 		UINT nUTalkUin = m_BuddyListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-		SendMessage(WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
+		//(WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
 	}	
 	return 0;
 }
@@ -1870,7 +1870,7 @@ LRESULT CMainDlg::OnRecentListDblClk(LPNMHDR pnmh)
 				return 1;
 			}
 			
-			SendMessage(WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
+			//SendMessage(WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
 		}
 	}	
 	return 0;
@@ -4050,6 +4050,20 @@ LRESULT CMainDlg::OnSelfStatusChange(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
+LRESULT CMainDlg::OnShowBuddyChatDlg(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	std::string * pFriend = (std::string*)(lParam);
+	if (nullptr == pFriend)
+	{
+		return 0;
+	}
+	std::string strFriend = *pFriend;
+	delete pFriend;
+	ShowBuddyChatDlg(strFriend);
+	return 1;
+}
+
+
 //响应显示或者关闭对话框
 //TODO: 需要认真阅读
 LRESULT CMainDlg::OnShowOrCloseDlg(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -4290,7 +4304,6 @@ void CMainDlg::ShowBuddyChatDlg(const std::string& strUserId)
 		{
 			long nLastWidth = m_userCfg.GetChatDlgWidth();
 			long nLastHeight = m_userCfg.GetChatDlgHeight();
-			//lpBuddyChatDlg->m_lpFMGClient = &m_FMGClient;
 			lpBuddyChatDlg->m_lpFaceList = &m_FaceList;
 			lpBuddyChatDlg->m_lpCascadeWinManager = &m_CascadeWinManager;
 			lpBuddyChatDlg->m_hMainDlg = m_hWnd;
@@ -4421,12 +4434,12 @@ void CMainDlg::ShowGroupChatDlg(const std::string strGroupId, BOOL bShow)
 		}
 		else
 		{
-			CGroupChatDlg* lpGroupChatDlg = new CGroupChatDlg;
+			CreateGroupChatDlg(strGroupId);
+			/*CGroupChatDlg* lpGroupChatDlg = new CGroupChatDlg;
 			if (lpGroupChatDlg != NULL)
 			{
 				long nLastWidth = m_userCfg.GetGroupDlgWidth();
 				long nLastHeight  = m_userCfg.GetGroupDlgHeight();
-				//lpGroupChatDlg->m_lpFMGClient = &m_FMGClient;
 				lpGroupChatDlg->m_lpFaceList = &m_FaceList;
 				lpGroupChatDlg->m_lpCascadeWinManager = &m_CascadeWinManager;
 				lpGroupChatDlg->m_hMainDlg = m_hWnd;
@@ -4438,7 +4451,7 @@ void CMainDlg::ShowGroupChatDlg(const std::string strGroupId, BOOL bShow)
 				lpGroupChatDlg->SetWindowPos(NULL, 0, 0, nLastWidth, nLastHeight, SWP_NOMOVE|SWP_NOZORDER|SWP_SHOWWINDOW);
 				SendMessage(lpGroupChatDlg->m_hWnd, WM_SIZE, (WPARAM)SIZE_RESTORED, (LPARAM)MAKELONG(nLastWidth, nLastHeight));
 				::SetForegroundWindow(lpGroupChatDlg->m_hWnd);
-			}
+			}*/
 		}
 	}
 	else

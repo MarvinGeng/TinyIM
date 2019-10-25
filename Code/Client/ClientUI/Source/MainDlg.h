@@ -219,7 +219,7 @@ public:
 		//Dennis Think End
 
 		MESSAGE_HANDLER_EX(WM_TRAYICON_NOTIFY, OnTrayIconNotify)
-		MESSAGE_HANDLER_EX(WM_SHOW_BUDDY_CHAT_DLG, OnShowOrCloseDlg)				//显示或关闭与好友聊天对话框
+		MESSAGE_HANDLER_EX(WM_SHOW_BUDDY_CHAT_DLG, OnShowBuddyChatDlg)				//显示或关闭与好友聊天对话框
 		MESSAGE_HANDLER_EX(WM_SHOW_GROUP_CHAT_DLG, OnShowOrCloseDlg)
 		MESSAGE_HANDLER_EX(WM_SHOW_SESS_CHAT_DLG, OnShowOrCloseDlg)
 		MESSAGE_HANDLER_EX(WM_SHOW_SYS_GROUP_CHAT_DLG, OnShowOrCloseDlg)
@@ -381,6 +381,7 @@ private:
 
 	LRESULT OnCloseDlg(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnShowOrCloseDlg(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT OnShowBuddyChatDlg(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnDelMsgSender(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnCancelFlash(UINT uMsg, WPARAM wParam, LPARAM lParam);
 

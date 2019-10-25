@@ -517,6 +517,32 @@ void CMsgProto::HandleFriendUnReadNotifyReq(const std::shared_ptr<TransBaseMsg_t
 	}
 }
 
+
+C_UI_BuddyInfo CoreToUI(const UserBaseInfo& userInfo)
+{
+	C_UI_BuddyInfo result;
+	result.m_nBirthday = std::atoi(userInfo.m_strBirthDate.c_str());
+	result.m_nFace = std::atoi(userInfo.m_strFaceId.c_str());
+	result.m_nGender = std::atoi(userInfo.m_strGender.c_str());
+
+	result.m_strUserId = userInfo.m_strUserId;
+	result.m_strUserName = EncodeUtil::Utf8ToUnicode(userInfo.m_strUserName);
+
+
+	if (userInfo.m_eOnlineState == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
+	{
+		result.m_nStatus = E_UI_ONLINE_STATUS::STATUS_ONLINE;
+	}
+	else
+	{
+		result.m_nStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+	}
+	result.m_strAccount = EncodeUtil::Utf8ToUnicode(userInfo.m_strUserName);
+	result.m_strNickName = EncodeUtil::Utf8ToUnicode(userInfo.m_strNickName);
+	result.m_nTeamIndex = 0;
+
+	return result;
+}
 /**
  * @brief 处理获取好友列表的回复
  * 
@@ -535,24 +561,7 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 			C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
 			m_friendInfoMap.insert({ item.m_strUserId,item });
 			{
-				pBuddyInfo->m_nBirthday = std::atoi(item.m_strBirthDate.c_str());
-				pBuddyInfo->m_nFace = std::atoi(item.m_strFaceId.c_str());
-				pBuddyInfo->m_nGender = std::atoi(item.m_strGender.c_str());
-				
-				pBuddyInfo->m_strUserId = item.m_strUserId;
-				pBuddyInfo->m_strUserName = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
-
-			
-				if (item.m_eOnlineState == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
-				{
-					pBuddyInfo->m_nStatus = E_UI_ONLINE_STATUS::STATUS_ONLINE;
-				}
-				else
-				{
-					pBuddyInfo->m_nStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
-				}
-				pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(item.m_strUserName);
-				pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(item.m_strNickName);
+				*pBuddyInfo = CoreToUI(item);
 				pBuddyInfo->m_nTeamIndex = 0;
 				teamInfo->m_arrBuddyInfo.push_back(pBuddyInfo);
 
@@ -1505,17 +1514,8 @@ void CMsgProto::HandleGetGroupListRspMsg(const std::shared_ptr<TransBaseMsg_t> p
 
 					for (const auto buddyItem : groupItem.m_GroupUsers) {
 						C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
-						pBuddyInfo->m_nBirthday = std::atoi(buddyItem.m_strBirthDate.c_str());
-						pBuddyInfo->m_nFace = std::atoi(buddyItem.m_strFaceId.c_str());
-						pBuddyInfo->m_nGender = std::atoi(buddyItem.m_strGender.c_str());
-
-						pBuddyInfo->m_strUserId = buddyItem.m_strUserId;
-						pBuddyInfo->m_strUserName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
-
-						pBuddyInfo->m_strAccount = EncodeUtil::Utf8ToUnicode(buddyItem.m_strUserName);
-						pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
-
-						pBuddyInfo->m_nTeamIndex = 0;
+						*pBuddyInfo = CoreToUI(buddyItem);
+			
 						pBuddyInfo->m_uUserIndex = nIndex;
 						nIndex++;
 						pInfo->m_arrMember.push_back(pBuddyInfo);

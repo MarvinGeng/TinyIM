@@ -20,7 +20,7 @@ CGroupChatDlg::CGroupChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 	m_lpFaceList = NULL;
 	m_lpCascadeWinManager = NULL;
 	m_hMainDlg = NULL;
-	m_nGroupCode = 0;
+	//m_nGroupCode = 0;
 
 	m_hDlgIcon = m_hDlgSmallIcon = NULL;
 	m_hRBtnDownWnd = NULL;
@@ -1203,7 +1203,7 @@ void CGroupChatDlg::OnDestroy()
 // “群名称”超链接控件
 void CGroupChatDlg::OnLnk_GroupName(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	::PostMessage(m_hMainDlg, WM_SHOW_GROUP_INFO_DLG, m_nGroupCode, NULL);
+	//PostMessage(m_hMainDlg, WM_SHOW_GROUP_INFO_DLG, m_nGroupCode, NULL);
 }
 
 // “字体选择工具栏”按钮
@@ -1566,17 +1566,23 @@ LRESULT CGroupChatDlg::OnGMemberList_DblClick(LPNMHDR pnmh)
 	int nCurSel = m_GroupMemberListCtrl.GetCurSelItemIndex();
 	if (nCurSel != -1)
 	{
-		UINT nUTalkUin = (UINT)m_GroupMemberListCtrl.GetItemData(nCurSel, 0);
-		//if(nUTalkUin == m_lpFMGClient->m_UserMgr.m_UserInfo.m_uUserID)
+		std::string strFriendId = GetGroupInfoPtr()->GetMember(nCurSel)->m_strUserId;
+		if(strFriendId == m_netProto->UserId())
 		{
-			::MessageBox(m_hWnd, _T("不能和自己聊天。"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
+			::MessageBox(m_hWnd, _T("不能和自己聊天。"), g_strAppTitle.c_str(), MB_OK | MB_ICONINFORMATION);
 			return 0;
 		}
-		
-		//if(m_lpFMGClient->m_UserMgr.IsFriend(nUTalkUin))
-			::SendMessage(m_hMainDlg, WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
-		//else
-			::MessageBox(m_hWnd, _T("暂且不支持临时会话，您必须加对方为好友以后才能与之会话。"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
+
+		if (m_netProto->m_BuddyList.IsFriend(strFriendId))
+		{
+			std::string * pFriend = new std::string();
+			*pFriend = strFriendId;
+			::SendMessage(m_hMainDlg, WM_SHOW_BUDDY_CHAT_DLG, 0, (LPARAM)(pFriend));
+		}
+		else
+		{
+			::MessageBox(m_hWnd, _T("暂且不支持临时会话，您必须加对方为好友以后才能与之会话。"), g_strAppTitle.c_str(), MB_OK | MB_ICONINFORMATION);
+		}
 	}
 	return 0;
 }
@@ -2114,7 +2120,7 @@ void CGroupChatDlg::OnMenu_ClearMsgLog(UINT uNotifyCode, int nID, CWindow wndCtl
 	m_richMsgLog.SetWindowText(_T(""));
 	m_richRecv.SetWindowText(_T(""));
 	m_staMsgLogPage.SetWindowText(_T("0/0"));
-	m_MsgLogger.DelGroupMsgLog(m_nGroupCode);
+	//m_MsgLogger.DelGroupMsgLog(m_nGroupCode);
 }
 
 
@@ -2126,7 +2132,7 @@ C_UI_GroupInfo* CGroupChatDlg::GetGroupInfoPtr()
 		CGroupList* lpGroupList = m_netProto->GetGroupList();
 		if (lpGroupList != NULL)
 		{
-			//return lpGroupList->GetGroupByCode(m_nGroupCode);
+			return lpGroupList->GetGroupById(m_strGroupId);
 		}
 	}
 	return NULL;
@@ -2207,17 +2213,7 @@ void CGroupChatDlg::UpdateDlgTitle()
 // 更新群名称超链接控件
 BOOL CGroupChatDlg::UpdateGroupNameCtrl()
 {
-	CString strText;
-	//if (m_nGroupNumber != 0)
-	//{
-	//	strText.Format(_T("%s(%u)"), m_strGroupName, m_nGroupNumber);
-	//}
-	//else
-	//{
-	//	strText.Format(_T("%s"), m_strGroupName);
-	//}
-	
-	m_lnkGroupName.SetLabel(strText);
+	m_lnkGroupName.SetLabel(m_strGroupName);
 	return TRUE;
 }
 
@@ -2255,8 +2251,6 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 	m_GroupMemberListCtrl.SetRedraw(FALSE);
 	m_GroupMemberListCtrl.DeleteAllItems();
 	BOOL bGray = TRUE;
-	//LOG_INFO("Update Group Member Info: GroupID=%u, GroupAccount=%s, GroupName=%s.",
-	//				lpGroupInfo->m_nGroupCode, lpGroupInfo->m_strAccount.c_str(), lpGroupInfo->m_strName.c_str());
 	for (int i = 0; i < lpGroupInfo->GetMemberCount(); i++)
 	{
 		C_UI_BuddyInfo* lpBuddyInfo = lpGroupInfo->GetMember(i);
@@ -2264,13 +2258,13 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 		{
 			continue;
 		}
-			
-		//if(lpBuddyInfo->m_uUserID == m_lpFMGClient->m_UserMgr.m_UserInfo.m_uUserID)
-			strText.Format(_T("☆%s(%s)"), lpBuddyInfo->m_strNickName.c_str(), lpBuddyInfo->m_strAccount.c_str());
-		//else
-			strText.Format(_T("%s(%s)"), lpBuddyInfo->m_strNickName.c_str(), lpBuddyInfo->m_strAccount.c_str());
 		
-		if(lpBuddyInfo->m_nStatus!= E_UI_ONLINE_STATUS::STATUS_OFFLINE && lpBuddyInfo->m_nStatus!= E_UI_ONLINE_STATUS::STATUS_INVISIBLE)
+		//当前用户
+		
+		strText.Format(_T("%s(%s)"), lpBuddyInfo->m_strNickName.c_str(), lpBuddyInfo->m_strAccount.c_str());
+
+		if( lpBuddyInfo->m_nStatus!= E_UI_ONLINE_STATUS::STATUS_OFFLINE && 
+			lpBuddyInfo->m_nStatus!= E_UI_ONLINE_STATUS::STATUS_INVISIBLE)
 		{
 			bGray = FALSE;
 			++nOnlineMemberCnt;
@@ -2282,7 +2276,7 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 
 		if (lpBuddyInfo->m_bUseCustomFace && lpBuddyInfo->m_bCustomFaceAvailable)
 		{
-			// strFileName.Format(_T("%s%d.png"), m_lpFMGClient->m_UserMgr.GetCustomUserThumbFolder().c_str(), lpBuddyInfo->m_uUserID);
+			//trFileName.Format(_T("%s%d.png"), m_lpFMGClient->m_UserMgr.GetCustomUserThumbFolder().c_str(), lpBuddyInfo->m_uUserID);
 		}
 		else
 		{
@@ -2303,7 +2297,6 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 		}
 		
 		m_GroupMemberListCtrl.InsertItem(nMemberCnt, strText, strFileName, bGray, DT_LEFT, 0);
-		m_GroupMemberListCtrl.SetItemData(nMemberCnt, 0, lpBuddyInfo->m_uUserIndex);
 
 		//LOG_INFO("GroupMemberInfo: AccountID=%u, AccountName=%s, NickName=%s, Gray=%d.",
 		//			lpBuddyInfo->m_uUserID, lpBuddyInfo->m_strAccount.c_str(), lpBuddyInfo->m_strNickName.c_str(), bGray);
@@ -3901,7 +3894,7 @@ void CGroupChatDlg::OpenMsgLogBrowser()
 		nOffset = m_nMsgLogRecordOffset - 1;
 	}
 	//从消息记录文件中获取消息记录
-	long cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, nOffset, nRows, arrMsgLog);
+	//long cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, nOffset, nRows, arrMsgLog);
 	
 	//添加到消息记录富文本控件中
 	AddMsgToMsgLogEdit(arrMsgLog);
@@ -4535,7 +4528,7 @@ void CGroupChatDlg::CalculateMsgLogCountAndOffset()
 	CString strMsgFile;// = m_lpFMGClient->GetMsgLogFullName().c_str();
 	strMsgFile.Replace(_T("\\"), _T("/"));
 	m_MsgLogger.SetMsgLogFileName(strMsgFile);
-	long nTotal = m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
+	long nTotal = 0;// m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
 
 	long nPageCount = nTotal / 10;
 	if (nTotal % 10 != 0)
@@ -4571,7 +4564,7 @@ void CGroupChatDlg::CalculateMsgLogCountAndOffset()
 
 void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	long nTotalCount = m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
+	long nTotalCount = 0;// m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
 	long nPageCount = nTotalCount/10;
 	
 	if (nTotalCount % 10 != 0)
@@ -4668,14 +4661,14 @@ void CGroupChatDlg::ShowLastMsgInRecvRichEdit()
 	C_UI_MessageList* lpMsgList = NULL;// = m_lpFMGClient->GetMessageList();
 	if(lpMsgList != NULL)
 	{
-		C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, m_nGroupCode);
+		C_UI_MessageSender* lpMsgSender = NULL;// lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, m_nGroupCode);
 		if (lpMsgSender != NULL)
 		{
 			nMsgCntUnread = lpMsgSender->GetMsgCount();
 		}
 	}
 	
-	long nTotalCount = (long)m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
+	long nTotalCount = 0;// (long)m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
 	//将未读消息从历史记录中去除
 	nTotalCount -= nMsgCntUnread;
 	if (nTotalCount < 0)
@@ -4699,11 +4692,11 @@ void CGroupChatDlg::ShowLastMsgInRecvRichEdit()
 	long cntArrMsgLog = 0;
 	if (nTotalCount > 5)
 	{
-		cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, nTotalCount - 5, nRows, arrMsgLog);
+		//cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, nTotalCount - 5, nRows, arrMsgLog);
 	}
 	else
 	{
-		cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, 0, nRows, arrMsgLog);
+		//cntArrMsgLog = m_MsgLogger.ReadGroupMsgLog(m_nGroupCode, 0, nRows, arrMsgLog);
 	}
 	//添加到消息记录富文本控件中
 	AddMsgToRecvEdit(arrMsgLog);

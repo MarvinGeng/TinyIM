@@ -332,6 +332,20 @@ int C_UI_BuddyList::GetBuddyTeamCount()
     return m_arrBuddyTeamInfo.size();
 }
 
+bool C_UI_BuddyList::IsFriend(const std::string strFriendId)
+{
+	for (std::size_t i = 0; i < this->m_arrBuddyTeamInfo.size(); i++)
+	{
+		for (std::size_t j = 0; j < this->m_arrBuddyTeamInfo[i]->m_arrBuddyInfo.size(); j++)
+		{
+			if (m_arrBuddyTeamInfo[i]->m_arrBuddyInfo[j]->m_strUserId == strFriendId)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
 /**
  * @brief 根据分组ID获取好友分组信息
  * 
@@ -910,18 +924,18 @@ C_UI_GroupInfo* CGroupList::GetGroup(int nIndex)
  * @param nGroupId 群Id
  * @return C_UI_GroupInfo* 群信息
  */
-//C_UI_GroupInfo* CGroupList::GetGroupById(UINT nGroupId)
-//{
-//    for (int i = 0; i < static_cast<int>(m_arrGroupInfo.size()); i++)
-//    {
-//        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
-//        //if (lpGroupInfo != NULL && lpGroupInfo->m_nGroupId == nGroupId)
-//        //{
-//        //    return lpGroupInfo;
-//        //}
-//    }
-//    return NULL;
-//}
+C_UI_GroupInfo* CGroupList::GetGroupById(const std::string strGroupId)
+{
+    for (int i = 0; i < static_cast<int>(m_arrGroupInfo.size()); i++)
+    {
+        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
+        if (lpGroupInfo != NULL && lpGroupInfo->m_strGroupId == strGroupId)
+        {
+            return lpGroupInfo;
+        }
+    }
+    return NULL;
+}
 
 
 /**

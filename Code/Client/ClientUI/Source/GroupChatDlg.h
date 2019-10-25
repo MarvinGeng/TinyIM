@@ -251,7 +251,6 @@ public:
 	CFaceList*				m_lpFaceList; //头像列表
 	CCascadeWinManager*		m_lpCascadeWinManager;//TODO 
 	HWND					m_hMainDlg; //对话框HANDLE
-	UINT					m_nGroupCode; //TODO 考虑删除
 	std::string				m_strGroupId; //群组唯一标识
 private:
 	CUserConfig&			m_userConfig;
