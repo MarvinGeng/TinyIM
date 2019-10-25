@@ -112,7 +112,7 @@ void CMultiChatMemberSelectionDlg::InitBuddyList()
 				continue;
 			strTemp.Format(_T("%s(%s)"), pTeamInfo->m_arrBuddyInfo[j]->m_strNickName.c_str(), pTeamInfo->m_arrBuddyInfo[j]->m_strAccount.c_str());
 			hTreeItem = m_treeBuddyList.InsertItem(strTemp, 0, 0, hTreeItemRoot, NULL);
-			m_treeBuddyList.SetItemData(hTreeItem, (DWORD_PTR)pTeamInfo->m_arrBuddyInfo[j]->m_uUserID);
+			//m_treeBuddyList.SetItemData(hTreeItem, (DWORD_PTR)pTeamInfo->m_arrBuddyInfo[j]->m_uUserID);
 		}
 	}
 	
@@ -128,7 +128,7 @@ void CMultiChatMemberSelectionDlg::InitBuddyList()
 			continue;
 		strTemp.Format(_T("群-%s(%s)"), pGroupInfo->m_strName.c_str(), pGroupInfo->m_strAccount.c_str());
 		hTreeItem = m_treeBuddyList.InsertItem(strTemp, 0, 0, hTreeItemRoot, NULL);
-		m_treeBuddyList.SetItemData(hTreeItem, (DWORD_PTR)pGroupInfo->m_nGroupCode);
+		//m_treeBuddyList.SetItemData(hTreeItem, (DWORD_PTR)pGroupInfo->m_nGroupCode);
 	}
 }
 

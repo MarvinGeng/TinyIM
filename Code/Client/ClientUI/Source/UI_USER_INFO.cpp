@@ -97,7 +97,7 @@ void C_UI_BuddyInfo::Reset()
  */
 void C_UI_BuddyInfo::FillFakeData()
 {
-    m_uUserID = 0;
+    m_uUserIndex = 0;
     m_nTeamIndex = 0;
     m_strNickName = _T("孙悟空");
     m_strMarkName = _T("");
@@ -453,26 +453,26 @@ C_UI_BuddyInfo* C_UI_BuddyList::GetBuddy(int nTeamIndex, int nIndex)
  * @param nUTalkUin 
  * @return C_UI_BuddyInfo* 
  */
-C_UI_BuddyInfo* C_UI_BuddyList::GetBuddy(UINT nUTalkUin)
-{
-    for (int i = 0; i < (int)m_arrBuddyTeamInfo.size(); i++)
-    {
-        C_UI_BuddyTeamInfo* lpBuddyTeamInfo = m_arrBuddyTeamInfo[i];
-        if (lpBuddyTeamInfo != NULL)
-        {
-            for (int j = 0; j < (int)lpBuddyTeamInfo->m_arrBuddyInfo.size(); j++)
-            {
-                C_UI_BuddyInfo* lpBuddyInfo = lpBuddyTeamInfo->m_arrBuddyInfo[j];
-                //if (lpBuddyInfo != NULL && lpBuddyInfo->m_nUTalkUin == nUTalkUin)
-                //if (lpBuddyInfo != NULL && lpBuddyInfo->m_uUserID == nUTalkUin)
-                //{
-                //    return lpBuddyInfo;
-                //}
-            }
-        }
-    }
-    return NULL;
-}
+//C_UI_BuddyInfo* C_UI_BuddyList::GetBuddy(UINT nUTalkUin)
+//{
+//    for (int i = 0; i < (int)m_arrBuddyTeamInfo.size(); i++)
+//    {
+//        C_UI_BuddyTeamInfo* lpBuddyTeamInfo = m_arrBuddyTeamInfo[i];
+//        if (lpBuddyTeamInfo != NULL)
+//        {
+//            for (int j = 0; j < (int)lpBuddyTeamInfo->m_arrBuddyInfo.size(); j++)
+//            {
+//                C_UI_BuddyInfo* lpBuddyInfo = lpBuddyTeamInfo->m_arrBuddyInfo[j];
+//                //if (lpBuddyInfo != NULL && lpBuddyInfo->m_nUTalkUin == nUTalkUin)
+//                //if (lpBuddyInfo != NULL && lpBuddyInfo->m_uUserID == nUTalkUin)
+//                //{
+//                //    return lpBuddyInfo;
+//                //}
+//            }
+//        }
+//    }
+//    return NULL;
+//}
 
 
 /**
@@ -598,13 +598,13 @@ C_UI_GroupInfo::~C_UI_GroupInfo(void)
  */
 void C_UI_GroupInfo::Reset()
 {
-    m_nGroupCode = 0;
-    m_nGroupId = 0;
-    m_nGroupNumber = 0;
+    //m_nGroupCode = 0;
+    //m_nGroupId = 0;
+    //m_nGroupNumber = 0;
     m_strName = _T("");
     m_strMemo = _T("");
     m_strFingerMemo = _T("");
-    m_nOwnerUin = 0;
+    //m_nOwnerUin = 0;
     m_nCreateTime = 0;
     m_nFace = 0;
     m_nLevel = 0;
@@ -671,18 +671,18 @@ C_UI_BuddyInfo* C_UI_GroupInfo::GetMember(int nIndex)
  * @param nUTalkUin 
  * @return C_UI_BuddyInfo* 成员信息
  */
-C_UI_BuddyInfo* C_UI_GroupInfo::GetMemberByUin(UINT nUTalkUin)
-{
-    //for (int i = 0; i < (int)m_arrMember.size(); i++)
-    //{
-    //    C_UI_BuddyInfo* lpBuddyInfo = m_arrMember[i];
-    //    if (lpBuddyInfo != NULL && lpBuddyInfo->m_uUserID == nUTalkUin)
-    //    {
-    //        return lpBuddyInfo;
-    //    } 
-    //}
-    return NULL;
-}
+//C_UI_BuddyInfo* C_UI_GroupInfo::GetMemberByUin(UINT nUTalkUin)
+//{
+//    //for (int i = 0; i < (int)m_arrMember.size(); i++)
+//    //{
+//    //    C_UI_BuddyInfo* lpBuddyInfo = m_arrMember[i];
+//    //    if (lpBuddyInfo != NULL && lpBuddyInfo->m_uUserID == nUTalkUin)
+//    //    {
+//    //        return lpBuddyInfo;
+//    //    } 
+//    //}
+//    return NULL;
+//}
 
 
 /**
@@ -890,18 +890,18 @@ C_UI_GroupInfo* CGroupList::GetGroup(int nIndex)
  * @param nGroupCode 群代码
  * @return C_UI_GroupInfo* 群信息
  */
-C_UI_GroupInfo* CGroupList::GetGroupByCode(UINT nGroupCode)
-{
-    for (int i = 0; i < (int)m_arrGroupInfo.size(); i++)
-    {
-        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
-        if (lpGroupInfo != NULL && lpGroupInfo->m_nGroupCode == nGroupCode)
-        {
-            return lpGroupInfo;
-        }
-    }
-    return NULL;
-}
+//C_UI_GroupInfo* CGroupList::GetGroupByCode(UINT nGroupCode)
+//{
+//    for (int i = 0; i < (int)m_arrGroupInfo.size(); i++)
+//    {
+//        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
+//        if (lpGroupInfo != NULL)
+//        {
+//            return lpGroupInfo;
+//        }
+//    }
+//    return NULL;
+//}
 
 
 /**
@@ -910,18 +910,18 @@ C_UI_GroupInfo* CGroupList::GetGroupByCode(UINT nGroupCode)
  * @param nGroupId 群Id
  * @return C_UI_GroupInfo* 群信息
  */
-C_UI_GroupInfo* CGroupList::GetGroupById(UINT nGroupId)
-{
-    for (int i = 0; i < static_cast<int>(m_arrGroupInfo.size()); i++)
-    {
-        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
-        if (lpGroupInfo != NULL && lpGroupInfo->m_nGroupId == nGroupId)
-        {
-            return lpGroupInfo;
-        }
-    }
-    return NULL;
-}
+//C_UI_GroupInfo* CGroupList::GetGroupById(UINT nGroupId)
+//{
+//    for (int i = 0; i < static_cast<int>(m_arrGroupInfo.size()); i++)
+//    {
+//        C_UI_GroupInfo* lpGroupInfo = m_arrGroupInfo[i];
+//        //if (lpGroupInfo != NULL && lpGroupInfo->m_nGroupId == nGroupId)
+//        //{
+//        //    return lpGroupInfo;
+//        //}
+//    }
+//    return NULL;
+//}
 
 
 /**
@@ -931,18 +931,18 @@ C_UI_GroupInfo* CGroupList::GetGroupById(UINT nGroupId)
  * @param nUTalkUin 群成员UTalkUin
  * @return C_UI_BuddyInfo* 成员信息
  */
-C_UI_BuddyInfo* CGroupList::GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin)
-{
-    C_UI_GroupInfo* lpGroupInfo = GetGroupByCode(nGroupCode);
-    if (lpGroupInfo != NULL)
-    {
-        return lpGroupInfo->GetMemberByUin(nUTalkUin);
-    }
-    else
-    {
-        return NULL;
-    } 
-}
+//C_UI_BuddyInfo* CGroupList::GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin)
+//{
+//    C_UI_GroupInfo* lpGroupInfo = GetGroupByCode(nGroupCode);
+//    if (lpGroupInfo != NULL)
+//    {
+//        return lpGroupInfo->GetMemberByUin(nUTalkUin);
+//    }
+//    else
+//    {
+//        return NULL;
+//    } 
+//}
 
 
 /**
@@ -952,18 +952,18 @@ C_UI_BuddyInfo* CGroupList::GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin
  * @param nUTalkUin 群成员UTalkUin
  * @return C_UI_BuddyInfo* 成员信息
  */
-C_UI_BuddyInfo* CGroupList::GetGroupMemberById(UINT nGroupId, UINT nUTalkUin)
-{
-    C_UI_GroupInfo* lpGroupInfo = GetGroupById(nGroupId);
-    if (lpGroupInfo != NULL)
-    {
-        return lpGroupInfo->GetMemberByUin(nUTalkUin);
-    }
-    else
-    {
-        return NULL;
-    }
-}
+//C_UI_BuddyInfo* CGroupList::GetGroupMemberById(UINT nGroupId, UINT nUTalkUin)
+//{
+//    C_UI_GroupInfo* lpGroupInfo = GetGroupById(nGroupId);
+//    if (lpGroupInfo != NULL)
+//    {
+//        return lpGroupInfo->GetMemberByUin(nUTalkUin);
+//    }
+//    else
+//    {
+//        return NULL;
+//    }
+//}
 
 
 /**
@@ -989,11 +989,12 @@ BOOL CGroupList::AddGroup(C_UI_GroupInfo* lpGroupInfo)
  * @param nGroupId 群Id
  * @return UINT 群代码
  */
-UINT CGroupList::GetGroupCodeById(UINT nGroupId)
-{
-    C_UI_GroupInfo* lpGroupInfo = GetGroupById(nGroupId);
-    return ((lpGroupInfo != NULL) ? lpGroupInfo->m_nGroupCode : 0);
-}
+//UINT CGroupList::GetGroupCodeById(UINT nGroupId)
+//{
+//    C_UI_GroupInfo* lpGroupInfo = GetGroupById(nGroupId);
+//	return 0;
+//    //return ((lpGroupInfo != NULL) ? lpGroupInfo->m_nGroupCode : 0);
+//}
 
 
 /**
@@ -1002,11 +1003,12 @@ UINT CGroupList::GetGroupCodeById(UINT nGroupId)
  * @param nGroupCode 群代码
  * @return UINT 群Id
  */
-UINT CGroupList::GetGroupIdByCode(UINT nGroupCode)
-{
-    C_UI_GroupInfo* lpGroupInfo = GetGroupByCode(nGroupCode);
-    return ((lpGroupInfo != NULL) ? lpGroupInfo->m_nGroupId : 0);
-}
+//UINT CGroupList::GetGroupIdByCode(UINT nGroupCode)
+//{
+//    C_UI_GroupInfo* lpGroupInfo = GetGroupByCode(nGroupCode);
+//	return 0;
+//    //return ((lpGroupInfo != NULL) ? lpGroupInfo->m_nGroupId : 0);
+//}
 
 
 /**

@@ -1516,7 +1516,7 @@ void CMsgProto::HandleGetGroupListRspMsg(const std::shared_ptr<TransBaseMsg_t> p
 						pBuddyInfo->m_strNickName = EncodeUtil::Utf8ToUnicode(buddyItem.m_strNickName);
 
 						pBuddyInfo->m_nTeamIndex = 0;
-						pBuddyInfo->m_uUserID = nIndex;
+						pBuddyInfo->m_uUserIndex = nIndex;
 						nIndex++;
 						pInfo->m_arrMember.push_back(pBuddyInfo);
 						{

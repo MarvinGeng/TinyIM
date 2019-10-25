@@ -37,7 +37,7 @@ public:
     void SetBuddyInfo(C_UI_BuddyInfo* lpBuddyInfo);
 
 public:
-	UINT m_uUserID;
+	UINT m_uUserIndex;
 	std::string m_strUserId;		//用户唯一标识
 	std::string m_strUserName;      //用户名
     tstring		m_strAccount;		//用户账户名
@@ -95,6 +95,7 @@ public:
     void Reset();
 
 public:
+	std::string m_strUserId;
     UINT m_nUin;
 	E_UI_ONLINE_STATUS m_nStatus;	// 在线状态
     int m_nClientType;		// 客户端类型
@@ -115,7 +116,7 @@ public:
     int GetBuddyCount(int nTeamIndex);//获取某个分组的好友个数
     int GetOnlineBuddyCount(int nTeamIndex);//获取在线的好友个数
     C_UI_BuddyInfo* GetBuddy(int nTeamIndex, int nIndex);//获取具体的好友信息
-    C_UI_BuddyInfo* GetBuddy(UINT nUTalkUin);//根据编号获取好友信息
+    //C_UI_BuddyInfo* GetBuddy(UINT nUTalkUin);//根据编号获取好友信息
     void SortBuddyTeam();//好友分组排序
     void SortBuddy();//好友排序
     BOOL AddBuddyTeam(C_UI_BuddyTeamInfo* lpBuddyTeamInfo);//增加一个分组
@@ -137,7 +138,7 @@ public:
     int GetMemberCount();						// 获取群成员总人数
     int GetOnlineMemberCount();					// 获取群成员在线人数
     C_UI_BuddyInfo* GetMember(int nIndex);			// 根据索引获取群成员信息
-    C_UI_BuddyInfo* GetMemberByUin(UINT nUTalkUin);	// 根据内部ID获取群成员信息
+    //C_UI_BuddyInfo* GetMemberByUin(UINT nUTalkUin);	// 根据内部ID获取群成员信息
     C_UI_BuddyInfo* GetMemberByAccount(PCTSTR pszAccountName);	// 根据账号获取群成员信息
     void Sort();								// 对群成员列表按在线状态进行排序
     BOOL AddMember(C_UI_BuddyInfo* lpBuddyInfo);	// 添加群成员
@@ -148,14 +149,15 @@ public:
 
 public:
 	std::string m_strGroupId;
-    UINT m_nGroupCode;		// 群账号ID
-    UINT m_nGroupId;		// 群ID
-    UINT m_nGroupNumber;	// 群号码
+    //UINT m_nGroupCode;		// 群账号ID
+    //UINT m_nGroupId;		// 群ID
+    //UINT m_nGroupNumber;	// 群号码
     tstring m_strAccount;	// 群账号
     tstring m_strName;		// 群名称
     tstring m_strMemo;		// 群公告
     tstring m_strFingerMemo;// 群简介
-    UINT m_nOwnerUin;		// 群拥有者Uin
+	std::string m_strOwnerId;
+    //UINT m_nOwnerUin;		// 群拥有者Uin
     UINT m_nCreateTime;		// 群创建时间
     int m_nFace;			// 群头像
     int m_nLevel;			// 群等级
@@ -177,13 +179,13 @@ public:
     void Reset();
     int GetGroupCount();							// 获取群总数
     C_UI_GroupInfo* GetGroup(int nIndex);				// 获取群信息(根据索引)
-    C_UI_GroupInfo* GetGroupByCode(UINT nGroupCode);	// 获取群信息(根据群代码)
-    C_UI_GroupInfo* GetGroupById(UINT nGroupId);		// 获取群信息(根据群Id)
-    C_UI_BuddyInfo* GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin);// 根据群代码和群成员UTalkUin获取群成员信息
-    C_UI_BuddyInfo* GetGroupMemberById(UINT nGroupId, UINT nUTalkUin);	// 根据群Id和群成员UTalkUin获取群成员信息
+    //C_UI_GroupInfo* GetGroupByCode(UINT nGroupCode);	// 获取群信息(根据群代码)
+    //C_UI_GroupInfo* GetGroupById(UINT nGroupId);		// 获取群信息(根据群Id)
+    //C_UI_BuddyInfo* GetGroupMemberByCode(UINT nGroupCode, UINT nUTalkUin);// 根据群代码和群成员UTalkUin获取群成员信息
+    //C_UI_BuddyInfo* GetGroupMemberById(UINT nGroupId, UINT nUTalkUin);	// 根据群Id和群成员UTalkUin获取群成员信息
     BOOL AddGroup(C_UI_GroupInfo* lpGroupInfo);		// 添加群
-    UINT GetGroupCodeById(UINT nGroupId);			// 由群Id获取群代码
-    UINT GetGroupIdByCode(UINT nGroupCode);			// 由群代码获取群Id
+    //UINT GetGroupCodeById(UINT nGroupId);			// 由群Id获取群代码
+    //UINT GetGroupIdByCode(UINT nGroupCode);			// 由群代码获取群Id
 
 public:
     std::vector<C_UI_GroupInfo*> m_arrGroupInfo;
@@ -470,6 +472,8 @@ public:
 
 private:
 	E_UI_CHAT_MSG_TYPE m_nType;
+	std::string m_strSenderId;
+	std::string m_strGroupId;
     UINT m_nSenderId;
     UINT m_nGroupCode;
     std::vector<void*> m_arrMsg;

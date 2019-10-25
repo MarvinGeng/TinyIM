@@ -967,9 +967,9 @@ C_UI_GroupInfo* CSessChatDlg::GetGroupInfoPtr()
 {
 	//if (m_lpFMGClient != NULL)
 	{
-		CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
-		if (lpGroupList != NULL)
-			return lpGroupList->GetGroupByCode(m_nGroupCode);
+		//CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
+		//if (lpGroupList != NULL)
+		//	return lpGroupList->GetGroupByCode(m_nGroupCode);
 	}
 	return NULL;
 }
@@ -980,8 +980,8 @@ C_UI_BuddyInfo* CSessChatDlg::GetBuddyInfoPtr()
 	//if (m_lpFMGClient != NULL)
 	{
 		C_UI_GroupInfo* lpGroupInfo = GetGroupInfoPtr();
-		if (lpGroupInfo != NULL)
-			return lpGroupInfo->GetMemberByUin(m_nUTalkUin);
+		//if (lpGroupInfo != NULL)
+		//	return lpGroupInfo->GetMemberByUin(m_nUTalkUin);
 	}
 	return NULL;
 }
@@ -996,11 +996,11 @@ C_UI_BuddyInfo* CSessChatDlg::GetUserInfoPtr()
 		{
 			C_UI_BuddyInfo* lpGMemberInfo = NULL;
 			C_UI_GroupInfo* lpGroupInfo = GetGroupInfoPtr();
-			if (lpGroupInfo != NULL)
-				lpGMemberInfo = lpGroupInfo->GetMemberByUin(lpUserInfo->m_uUserID);
-			if (lpGMemberInfo != NULL && 0 == lpGMemberInfo->m_uUserID)
-				lpGMemberInfo->m_uUserID = lpUserInfo->m_uUserID;
-			return (lpGMemberInfo != NULL) ? lpGMemberInfo : lpUserInfo;
+			//if (lpGroupInfo != NULL)
+			//	lpGMemberInfo = lpGroupInfo->GetMemberByUin(lpUserInfo->m_uUserID);
+			//if (lpGMemberInfo != NULL && 0 == lpGMemberInfo->m_uUserID)
+			//	lpGMemberInfo->m_uUserID = lpUserInfo->m_uUserID;
+			//return (lpGMemberInfo != NULL) ? lpGMemberInfo : lpUserInfo;
 		}
 	}
 	return NULL;
@@ -1012,7 +1012,7 @@ void CSessChatDlg::UpdateData()
 	C_UI_BuddyInfo* lpBuddyInfo = GetBuddyInfoPtr();
 	if (lpBuddyInfo != NULL)
 	{
-		m_nUTalkNumber = lpBuddyInfo->m_uUserID;
+		//m_nUTalkNumber = lpBuddyInfo->m_uUserID;
 		if (!lpBuddyInfo->m_strMarkName.empty())
 			m_strBuddyName = lpBuddyInfo->m_strMarkName.c_str();
 		else
@@ -1022,14 +1022,14 @@ void CSessChatDlg::UpdateData()
 	C_UI_GroupInfo* lpGroupInfo = GetGroupInfoPtr();
 	if (lpGroupInfo != NULL)
 	{
-		m_nGroupId = lpGroupInfo->m_nGroupId;
+		//m_nGroupId = lpGroupInfo->m_nGroupId;
 		m_strGroupName = lpGroupInfo->m_strName.c_str();
 	}
 	
 	C_UI_BuddyInfo* lpUserInfo = GetUserInfoPtr();
 	if (lpUserInfo != NULL)
 	{
-		m_nUserNumber = lpUserInfo->m_uUserID;
+		//m_nUserNumber = lpUserInfo->m_uUserID;
 		m_strUserName = lpUserInfo->m_strNickName.c_str();
 	}
 }

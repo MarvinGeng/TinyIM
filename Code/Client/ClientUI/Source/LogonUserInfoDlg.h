@@ -61,7 +61,7 @@ private:
 
 public:
 	std::shared_ptr<CMsgProto>		m_netProto;
-	UINT				m_uUserID;
+	UINT				m_uUserIndex;
 	UINT				m_uSysFaceID;	//系统头像ID
 	TCHAR				m_szCustomFacePath[MAX_PATH];
 

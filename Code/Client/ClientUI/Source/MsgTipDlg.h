@@ -1,7 +1,8 @@
 ﻿/**
  * @file MsgTipDlg.h
  * @author DennisMi (https://www.dennisthink.com/)
- * @brief 
+ * @brief 消息盒子对话框
+ * @image https://www.dennisthink.com/wp-content/uploads/2019/10/2019-10-25_101630.jpg
  * @version 0.1
  * @date 2019-08-05
  * 
@@ -17,8 +18,6 @@
 #include "SkinLib/SkinLib.h"
 #include "ImageEx.h"
 #include "UI_USER_INFO.h"
-
-class CFlamingoClient;
 
 class CMsgTipDlg : public CDialogImpl<CMsgTipDlg>
 {
@@ -42,9 +41,9 @@ public:
 
 public:
 	BOOL StartTrackMouseLeave();
-	int FindMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId);
-	void AddMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId);
-	void DelMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId);
+	int  FindMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string strSenderId);
+	void AddMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSenderId);
+	void DelMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSenderId);
 
 private:
 	BOOL OnInitDialog(CWindow wndFocus, LPARAM lInitParam);
@@ -67,7 +66,6 @@ private:
 	void GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UINT& nUTalkNum);
 
 public:
-	CFlamingoClient*	m_lpFMGClient;
 	HWND			m_hMainDlg;
 	CRect			m_rcTrayIcon;
 	CRect			m_rcTrayIcon2;		//外部传进来的任务栏图标区域

@@ -486,7 +486,7 @@ private:
 	CSkinToolBar			m_tbTop;                                        //主界面顶层工具栏
 	CSkinToolBar            m_tbBottom;                                     //主界面底层工具栏
 	CSkinTabCtrl			m_TabCtrl;		                                 //主界面的Tab页控件
-	//CBuddyListCtrl			m_RecentListCtrl;
+
 	CRecentListCtrl			m_RecentListCtrl;//最近聊天列表
 	CBuddyListCtrl			m_BuddyListCtrl;//好友列表
 	CBuddyListCtrl			m_GroupListCtrl;//群组列表

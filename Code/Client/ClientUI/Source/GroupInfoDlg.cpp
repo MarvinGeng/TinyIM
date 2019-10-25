@@ -124,9 +124,9 @@ C_UI_GroupInfo* CGroupInfoDlg::GetGroupInfoPtr()
 	//	return NULL;
 
 	CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
-	if (lpGroupList != NULL)
-		return lpGroupList->GetGroupByCode(m_nGroupCode);
-	else
+	/*if (lpGroupList != NULL)
+		return lpGroupList->GetGroupByCode(m_nGroupCode);*/
+	//else
 		return NULL;
 }
 
@@ -140,7 +140,7 @@ void CGroupInfoDlg::UpdateCtrls()
 		SetDlgItemText(ID_EDIT_NAME, lpGroupInfo->m_strName.c_str());
 		strText.Format(_T("%s"), lpGroupInfo->m_strAccount.c_str());
 		SetDlgItemText(ID_EDIT_NUMBER, strText);
-		C_UI_BuddyInfo* lpBuddyInfo = lpGroupInfo->GetMemberByUin(lpGroupInfo->m_nOwnerUin);
+		C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpGroupInfo->GetMemberByUin(lpGroupInfo->m_nOwnerUin);
 		//if (lpBuddyInfo != NULL)
 		//	SetDlgItemText(ID_EDIT_CREATER, lpBuddyInfo->m_strNickName.c_str());
 		SetDlgItemText(ID_EDIT_CREATER, _T("zhangyl"));
@@ -157,7 +157,7 @@ void CGroupInfoDlg::UpdateCtrls()
 		//lpBuddyInfo = m_lpFMGClient->GetUserInfo();
 		if (lpBuddyInfo != NULL)
 		{
-			lpBuddyInfo = lpGroupInfo->GetMemberByUin(lpBuddyInfo->m_uUserID);
+			lpBuddyInfo = NULL;// lpGroupInfo->GetMemberByUin(lpBuddyInfo->m_uUserID);
 			if (lpBuddyInfo != NULL)
 			{
 				SetDlgItemText(ID_EDIT_CARDNAME, lpBuddyInfo->m_strNickName.c_str());

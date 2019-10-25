@@ -287,10 +287,10 @@ BOOL CUserMgr::IsFriend(UINT uAccountID)
 		for(size_t j=0; j<pTeamInfo->m_arrBuddyInfo.size(); ++j)
 		{
 			pBuddyInfo = pTeamInfo->m_arrBuddyInfo[j];
-			if(uAccountID == pBuddyInfo->m_uUserID)
-			{
-				return TRUE;
-			}
+			//if(uAccountID == pBuddyInfo->m_uUserID)
+			//{
+			//	return TRUE;
+			//}
 		}
 	}
 
@@ -332,7 +332,7 @@ BOOL CUserMgr::IsFriend(PCTSTR pszAccountName)
  */
 tstring CUserMgr::GetAccountName(UINT uAccountID) const
 {
-	if(uAccountID == m_UserInfo.m_uUserID)
+	if(uAccountID == m_UserInfo.m_uUserIndex)
 	{
 		return m_UserInfo.m_strAccount;
 	}	
@@ -345,10 +345,10 @@ tstring CUserMgr::GetAccountName(UINT uAccountID) const
 		for(size_t j=0; j<pTeamInfo->m_arrBuddyInfo.size(); ++j)
 		{
 			pBuddyInfo = pTeamInfo->m_arrBuddyInfo[j];
-			if(uAccountID == pBuddyInfo->m_uUserID)
-			{
-				return pBuddyInfo->m_strAccount;
-			}	
+			//if(uAccountID == pBuddyInfo->m_uUserID)
+			//{
+			//	return pBuddyInfo->m_strAccount;
+			//}	
 		}
 	}
 
@@ -368,7 +368,7 @@ void CUserMgr::SetAccountName(UINT uAccountID, PCTSTR pszAccountName)
 		return;
 	}	
 
-	if(uAccountID == m_UserInfo.m_uUserID)
+	if(uAccountID == m_UserInfo.m_uUserIndex)
 	{
 		m_UserInfo.m_strAccount = pszAccountName;
 	}
@@ -419,8 +419,8 @@ tstring CUserMgr::GetGroupName(UINT uGroupCode)
 	for(size_t i=0; i<m_GroupList.m_arrGroupInfo.size(); ++i)
 	{
 		pGroupInfo = m_GroupList.m_arrGroupInfo[i];
-		if(pGroupInfo->m_nGroupCode == uGroupCode)
-			return pGroupInfo->m_strName;
+		//if(pGroupInfo->m_nGroupCode == uGroupCode)
+		//	return pGroupInfo->m_strName;
 	}
 
 	return _T("");
@@ -439,8 +439,8 @@ tstring	CUserMgr::GetGroupAccount(UINT uGroupCode)
 	for(size_t i=0; i<m_GroupList.m_arrGroupInfo.size(); ++i)
 	{
 		pGroupInfo = m_GroupList.m_arrGroupInfo[i];
-		if(pGroupInfo->m_nGroupCode == uGroupCode)
-			return pGroupInfo->m_strAccount;
+		//if(pGroupInfo->m_nGroupCode == uGroupCode)
+		//	return pGroupInfo->m_strAccount;
 	}
 
 	return _T("");
@@ -734,12 +734,12 @@ BOOL CUserMgr::ExitGroup(UINT uGroupID)
 	for(std::vector<C_UI_GroupInfo*>::iterator iter=m_GroupList.m_arrGroupInfo.begin(); iter!=m_GroupList.m_arrGroupInfo.end(); ++iter)
 	{
 		pGroupInfo =*iter;
-		if(pGroupInfo->m_nGroupCode == uGroupID)
-		{
-			DEL(pGroupInfo);
-			m_GroupList.m_arrGroupInfo.erase(iter);
-			return TRUE;
-		}
+		//if(pGroupInfo->m_nGroupCode == uGroupID)
+		//{
+		//	DEL(pGroupInfo);
+		//	m_GroupList.m_arrGroupInfo.erase(iter);
+		//	return TRUE;
+		//}
 	}
 
 	return FALSE;
@@ -754,12 +754,12 @@ BOOL CUserMgr::ExitGroup(UINT uGroupID)
  */
 BOOL CUserMgr::IsGroupMember(UINT uAccountID, UINT uGroupID)
 {
-	C_UI_GroupInfo* pGroupInfo = m_GroupList.GetGroupByCode(uGroupID);
-	if(pGroupInfo == NULL)
-		return FALSE;
-	C_UI_BuddyInfo* pBuddyInfo = pGroupInfo->GetMemberByUin(uAccountID);
-	if(pBuddyInfo == NULL)
-		return FALSE;
+	//C_UI_GroupInfo* pGroupInfo = m_GroupList.GetGroupByCode(uGroupID);
+	//if(pGroupInfo == NULL)
+	//	return FALSE;
+	//C_UI_BuddyInfo* pBuddyInfo = pGroupInfo->GetMemberByUin(uAccountID);
+	//if(pBuddyInfo == NULL)
+	//	return FALSE;
 
 	return TRUE;
 }

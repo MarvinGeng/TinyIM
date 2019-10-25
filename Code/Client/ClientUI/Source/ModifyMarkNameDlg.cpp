@@ -7,7 +7,7 @@
 CModifyMarkNameDlg::CModifyMarkNameDlg()
 {
 	m_pFMGClient = NULL;
-	m_uUserID = 0;
+	//m_uUserID = 0;
 }
 
 CModifyMarkNameDlg::~CModifyMarkNameDlg()

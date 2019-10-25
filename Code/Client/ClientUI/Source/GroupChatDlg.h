@@ -296,8 +296,8 @@ private:
 
 	CString					m_strCurLink;//TODO
 
-	UINT					m_nGroupId;//群组ID TODO 考虑删除
-	UINT                    m_nGroupNumber;//考虑去掉
+	//UINT					m_nGroupId;//群组ID TODO 考虑删除
+	//UINT                    m_nGroupNumber;//考虑去掉
 	CString					m_strAccount;//TODO 考虑去掉
 	CString					m_strGroupName;//群组名
 	CString					m_strUserName;//用户名TODO 考虑去掉

@@ -29,7 +29,7 @@ CGroupChatDlg::CGroupChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 	m_cxPicBarDlg = 122;
 	m_cyPicBarDlg = 24;
 
-	m_nGroupId = m_nGroupNumber = 0;
+	//m_nGroupId = m_nGroupNumber = 0;
 	m_strGroupName = _T("群名称");
 	m_strUserName = _T("");
 	m_nMemberCnt = m_nOnlineMemberCnt = 0;
@@ -1804,7 +1804,7 @@ void CGroupChatDlg::OnMenu_ViewInfo(UINT uNotifyCode, int nID, CWindow wndCtl)
 			{
 				return;
 			}
-			nUTalkUin = lpBuddyInfo->m_uUserID;		
+			nUTalkUin = lpBuddyInfo->m_uUserIndex;		
 		}
 	}
 	else if (hWnd == m_GroupMemberListCtrl.m_hWnd)
@@ -1851,7 +1851,7 @@ void CGroupChatDlg::OnMenu_SendMsg(UINT uNotifyCode, int nID, CWindow wndCtl)
 				return;
 			}
 
-			nUTalkUin = lpBuddyInfo->m_uUserID;
+			nUTalkUin = lpBuddyInfo->m_uUserIndex;
 		}
 	}
 	else if (hWnd == m_GroupMemberListCtrl.m_hWnd)
@@ -2126,7 +2126,7 @@ C_UI_GroupInfo* CGroupChatDlg::GetGroupInfoPtr()
 		CGroupList* lpGroupList = m_netProto->GetGroupList();
 		if (lpGroupList != NULL)
 		{
-			return lpGroupList->GetGroupByCode(m_nGroupCode);
+			//return lpGroupList->GetGroupByCode(m_nGroupCode);
 		}
 	}
 	return NULL;
@@ -2136,17 +2136,17 @@ C_UI_GroupInfo* CGroupChatDlg::GetGroupInfoPtr()
 C_UI_BuddyInfo* CGroupChatDlg::GetGMemberInfoPtr(UINT nUTalkUin)
 {
 	//if (m_lpFMGClient != NULL)
-	{
-		CGroupList* lpGroupList = NULL;// = m_lpFMGClient->GetGroupList();
-		if (lpGroupList != NULL)
-		{
-			C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(m_nGroupCode);
-			if (lpGroupInfo != NULL)
-			{
-				return lpGroupInfo->GetMemberByUin(nUTalkUin);
-			}
-		}
-	}
+	//{
+	//	CGroupList* lpGroupList = NULL;// = m_lpFMGClient->GetGroupList();
+	//	if (lpGroupList != NULL)
+	//	{
+	//		C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(m_nGroupCode);
+	//		if (lpGroupInfo != NULL)
+	//		{
+	//			return lpGroupInfo->GetMemberByUin(nUTalkUin);
+	//		}
+	//	}
+	//}
 	return NULL;
 }
 
@@ -2160,15 +2160,15 @@ C_UI_BuddyInfo* CGroupChatDlg::GetUserInfoPtr()
 		{
 			C_UI_BuddyInfo* lpGMemberInfo = NULL;
 			C_UI_GroupInfo* lpGroupInfo = GetGroupInfoPtr();
-			if (lpGroupInfo != NULL)
+			/*if (lpGroupInfo != NULL)
 			{
-				lpGMemberInfo = lpGroupInfo->GetMemberByUin(lpUserInfo->m_uUserID);
-			}
+				lpGMemberInfo = lpGroupInfo->GetMemberByUin(lpUserInfo->m_uUserIndex);
+			}*/
 			
 			if ( (lpGMemberInfo != NULL) && 
-				 (0 == lpGMemberInfo->m_uUserID) )
+				 (0 == lpGMemberInfo->m_uUserIndex) )
 			{
-				lpGMemberInfo->m_uUserID = lpUserInfo->m_uUserID;
+				lpGMemberInfo->m_uUserIndex = lpUserInfo->m_uUserIndex;
 			}
 			
 			return (lpGMemberInfo != NULL) ? lpGMemberInfo : lpUserInfo;
@@ -2185,8 +2185,8 @@ void CGroupChatDlg::UpdateData()
 	{
 		m_nMemberCnt = lpGroupInfo->GetMemberCount();
 		m_nOnlineMemberCnt = lpGroupInfo->GetOnlineMemberCount();
-		m_nGroupId = lpGroupInfo->m_nGroupId;
-		m_nGroupNumber = lpGroupInfo->m_nGroupNumber;
+		//m_nGroupId = lpGroupInfo->m_nGroupId;
+		//m_nGroupNumber = lpGroupInfo->m_nGroupNumber;
 		m_strGroupName = lpGroupInfo->m_strName.c_str();
 	}
 
@@ -2208,14 +2208,14 @@ void CGroupChatDlg::UpdateDlgTitle()
 BOOL CGroupChatDlg::UpdateGroupNameCtrl()
 {
 	CString strText;
-	if (m_nGroupNumber != 0)
-	{
-		strText.Format(_T("%s(%u)"), m_strGroupName, m_nGroupNumber);
-	}
-	else
-	{
-		strText.Format(_T("%s"), m_strGroupName);
-	}
+	//if (m_nGroupNumber != 0)
+	//{
+	//	strText.Format(_T("%s(%u)"), m_strGroupName, m_nGroupNumber);
+	//}
+	//else
+	//{
+	//	strText.Format(_T("%s"), m_strGroupName);
+	//}
 	
 	m_lnkGroupName.SetLabel(strText);
 	return TRUE;
@@ -2303,7 +2303,7 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 		}
 		
 		m_GroupMemberListCtrl.InsertItem(nMemberCnt, strText, strFileName, bGray, DT_LEFT, 0);
-		m_GroupMemberListCtrl.SetItemData(nMemberCnt, 0, lpBuddyInfo->m_uUserID);
+		m_GroupMemberListCtrl.SetItemData(nMemberCnt, 0, lpBuddyInfo->m_uUserIndex);
 
 		//LOG_INFO("GroupMemberInfo: AccountID=%u, AccountName=%s, NickName=%s, Gray=%d.",
 		//			lpBuddyInfo->m_uUserID, lpBuddyInfo->m_strAccount.c_str(), lpBuddyInfo->m_strNickName.c_str(), bGray);
@@ -2986,12 +2986,12 @@ void CGroupChatDlg::GetSenderInfo(UINT nUTalkUin, CString& strName, tstring& str
 	C_UI_GroupInfo* lpGroupInfo = GetGroupInfoPtr();
 	if (lpGroupInfo != NULL)
 	{
-		C_UI_BuddyInfo* lpBuddyInfo = lpGroupInfo->GetMemberByUin(nUTalkUin);
+		/*C_UI_BuddyInfo* lpBuddyInfo = lpGroupInfo->GetMemberByUin(nUTalkUin);
 		if (lpBuddyInfo != NULL)
 		{
 			strName = lpBuddyInfo->m_strNickName.c_str();
 			strAccount = lpBuddyInfo->m_strAccount;
-		}
+		}*/
 	}
 }
 

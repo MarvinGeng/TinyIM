@@ -11,7 +11,7 @@
 
 CLogonUserInfoDlg::CLogonUserInfoDlg(void):m_userMgr(CUserMgr::GetInstance())
 {
-	m_uUserID = 0;
+	//m_uUserID = 0;
 	m_uSysFaceID = 0;
 	m_hDlgIcon = NULL;
 	m_hDlgSmallIcon = NULL;
@@ -288,7 +288,7 @@ void CLogonUserInfoDlg::UpdateCtrlData()
 	if(m_bUseCustomThumb)
 	{
 		_tcscpy_s(m_szCustomFaceRemotePath, ARRAYSIZE(m_szCustomFaceRemotePath), m_userMgr.m_UserInfo.m_strRawCustomFace.c_str());
-		strThumbPath.Format(_T("%s%d.png"), m_userMgr.GetCustomUserThumbFolder().c_str(), m_userMgr.m_UserInfo.m_uUserID);
+		strThumbPath.Format(_T("%s%d.png"), m_userMgr.GetCustomUserThumbFolder().c_str(), m_userMgr.m_UserInfo.m_uUserIndex);
 		if(!Hootina::CPath::IsFileExist(strThumbPath))
 		{
 			m_userMgr.m_UserInfo.m_bUseCustomFace = FALSE;

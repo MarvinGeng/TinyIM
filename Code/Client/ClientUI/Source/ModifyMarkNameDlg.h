@@ -49,7 +49,7 @@ protected:
 
 public:
 	CFlamingoClient*		m_pFMGClient;
-	UINT				m_uUserID; //用户唯一编号
+	UINT				m_uUserIndex; //用户唯一编号
 
 private:
 	CSkinDialog			m_SkinDlg; //对话框

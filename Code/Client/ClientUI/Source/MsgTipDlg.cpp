@@ -8,7 +8,6 @@
 
 CMsgTipDlg::CMsgTipDlg(void)
 {
-	m_lpFMGClient = NULL;
 	m_hMainDlg = NULL;
 	m_rcTrayIcon.SetRectEmpty();
 	m_rcTrayIcon2.SetRectEmpty();
@@ -118,16 +117,16 @@ LRESULT CMsgTipDlg::OnList_Click(LPNMHDR pnmh)
 			break;
 		case E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS:
 			{
-				if (m_lpFMGClient != NULL)
-				{
-					C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
-					if (lpMsgList != NULL)
-					{
-						C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS, nSenderId);
-						if (lpMsgSender != NULL)
-							::SendMessage(m_hMainDlg, WM_SHOW_SESS_CHAT_DLG, lpMsgSender->GetGroupCode(), nSenderId);
-					}
-				}	
+				//if (m_lpFMGClient != NULL)
+				//{
+				//	C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
+				//	if (lpMsgList != NULL)
+				//	{
+				//		C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS, nSenderId);
+				//		if (lpMsgSender != NULL)
+				//			::SendMessage(m_hMainDlg, WM_SHOW_SESS_CHAT_DLG, lpMsgSender->GetGroupCode(), nSenderId);
+				//	}
+				//}	
 			}
 			break;
 		}
@@ -154,16 +153,16 @@ LRESULT CMsgTipDlg::OnList_ItemChange(LPNMHDR pnmh)
 			break;
 		case E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS:
 			{
-				if (m_lpFMGClient != NULL)
-				{
-					C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
-					if (lpMsgList != NULL)
-					{
-						C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS, nSenderId);
-						if (lpMsgSender != NULL)
-							::SendMessage(m_hMainDlg, WM_SHOW_SESS_CHAT_DLG, lpMsgSender->GetGroupCode(), nSenderId);
-					}
-				}	
+				//if (m_lpFMGClient != NULL)
+				//{
+				//	C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
+				//	if (lpMsgList != NULL)
+				//	{
+				//		C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS, nSenderId);
+				//		if (lpMsgSender != NULL)
+				//			::SendMessage(m_hMainDlg, WM_SHOW_SESS_CHAT_DLG, lpMsgSender->GetGroupCode(), nSenderId);
+				//	}
+				//}	
 			}
 			break;
 		//case FMG_MSG_TYPE_SYSGROUP:
@@ -227,7 +226,7 @@ BOOL CMsgTipDlg::StartTrackMouseLeave()
 	return m_dwTimerId != NULL ? TRUE : FALSE;
 }
 
-int CMsgTipDlg::FindMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
+int CMsgTipDlg::FindMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSenderId)
 {
 	CString strType;
 	UINT nSenderId2=0;
@@ -239,15 +238,15 @@ int CMsgTipDlg::FindMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
 		E_UI_CHAT_MSG_TYPE nType2 = static_cast<E_UI_CHAT_MSG_TYPE>(_tcstol(strType, NULL, 10));
 		nSenderId2 = m_ListCtrl.GetItemData(i, 0);
 
-		if (nType == nType2 && nSenderId == nSenderId2)
-			return i;
+		/*if (nType == nType2 && nSenderId == nSenderId2)
+			return i;*/
 	}
 	return -1;
 }
 
-void CMsgTipDlg::AddMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
+void CMsgTipDlg::AddMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSenderId)
 {
-	C_UI_MessageSender* lpMsgSender = NULL;
+	/*C_UI_MessageSender* lpMsgSender = NULL;
 	if (m_lpFMGClient != NULL)
 	{
 		C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
@@ -255,12 +254,13 @@ void CMsgTipDlg::AddMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
 			lpMsgSender = lpMsgList->GetMsgSender(nType, nSenderId);
 	}
 	if (NULL == lpMsgSender)
-		return;
+		return;*/
 
 	int nItemIndex = FindMsgSender(nType, nSenderId);
 	if (nItemIndex != -1)
 	{
-		int nMsgCnt = lpMsgSender->GetMsgCount();
+		//int nMsgCnt = lpMsgSender->GetMsgCount();
+		int nMsgCnt = 1;
 		CString strMsgCnt;
 		strMsgCnt.Format(_T("(%d)"), nMsgCnt);
 		m_ListCtrl.SetItemText(nItemIndex, 2, strMsgCnt);
@@ -269,11 +269,11 @@ void CMsgTipDlg::AddMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
 	{
 		SetDlgAutoSize();		// 自动调整对话框大小
 		SetCtrlsAutoSize();		// 自动调整控件大小
-		_AddMsgSender(0, lpMsgSender);
+		//_AddMsgSender(0, lpMsgSender);
 	}
 }
 
-void CMsgTipDlg::DelMsgSender(E_UI_CHAT_MSG_TYPE nType, UINT nSenderId)
+void CMsgTipDlg::DelMsgSender(E_UI_CHAT_MSG_TYPE nType, const std::string nSenderId)
 {
 	int nItemIndex = FindMsgSender(nType, nSenderId);
 	if (nItemIndex != -1)
@@ -325,7 +325,7 @@ BOOL CMsgTipDlg::InitCtrls()
 	m_ListCtrl.AddColumn(_T("类型"), NULL, DT_RIGHT, 0);
 
 	m_ListCtrl.DeleteAllItems();
-	if (m_lpFMGClient != NULL)
+	/*if (m_lpFMGClient != NULL)
 	{
 		C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
 		if (lpMsgList != NULL)
@@ -340,7 +340,7 @@ BOOL CMsgTipDlg::InitCtrls()
 				}
 			}
 		}
-	}
+	}*/
 
 	return TRUE;
 }
@@ -364,12 +364,12 @@ BOOL CMsgTipDlg::UnInitCtrls()
 void CMsgTipDlg::SetDlgAutoSize()
 {
 	int nMsgSenderCnt = 0;
-	if (m_lpFMGClient != NULL)
-	{
-		C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
-		if (lpMsgList != NULL)
-			nMsgSenderCnt = lpMsgList->GetMsgSenderCount();
-	}
+	//if (m_lpFMGClient != NULL)
+	//{
+	//	C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
+	//	if (lpMsgList != NULL)
+	//		nMsgSenderCnt = lpMsgList->GetMsgSenderCount();
+	//}
 
 	int cyListCtrl = nMsgSenderCnt* m_nListItemHeight + 5;
 
@@ -424,12 +424,12 @@ void CMsgTipDlg::SetCtrlsAutoSize()
 	GetClientRect(&rcClient);
 
 	int nMsgSenderCnt = 0;
-	if (m_lpFMGClient != NULL)
-	{
-		C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
-		if (lpMsgList != NULL)
-			nMsgSenderCnt = lpMsgList->GetMsgSenderCount();
-	}
+	//if (m_lpFMGClient != NULL)
+	//{
+	//	C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
+	//	if (lpMsgList != NULL)
+	//		nMsgSenderCnt = lpMsgList->GetMsgSenderCount();
+	//}
 
 	int cxListCtrl = 204;
 	int cyListCtrl = nMsgSenderCnt* m_nListItemHeight + 5;
@@ -444,8 +444,8 @@ void CMsgTipDlg::SetCtrlsAutoSize()
 
 void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 {
-	if (NULL == lpMsgSender || NULL == m_lpFMGClient)
-		return;
+	//if (NULL == lpMsgSender || NULL == m_lpFMGClient)
+	//	return;
 
 	CString strHeadPicFileName;
 	CString strSenderName, strMsgCnt, strMsgType;
@@ -478,7 +478,7 @@ void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 			C_UI_BuddyList* lpBuddyList = NULL;// m_lpFMGClient->GetBuddyList();
 			if (lpBuddyList != NULL)
 			{
-				C_UI_BuddyInfo* lpBuddyInfo = lpBuddyList->GetBuddy(nSenderId);
+				C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpBuddyList->GetBuddy(nSenderId);
 				if (lpBuddyInfo != NULL)
 				{
 					CString strBuddyName;
@@ -488,7 +488,7 @@ void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 					else
 						strBuddyName = lpBuddyInfo->m_strNickName.c_str();
 
-					if (lpBuddyInfo->m_uUserID != 0)
+					if (lpBuddyInfo->m_uUserIndex != 0)
 						strSenderName.Format(_T("%s"), strBuddyName);
 				}
 			}
@@ -504,12 +504,12 @@ void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 			CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
 			if (lpGroupList != NULL)
 			{
-				C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(nSenderId);
-				if (lpGroupInfo != NULL)
-				{
-					if (lpGroupInfo->m_nGroupCode != 0)
-						strSenderName.Format(_T("%s"), lpGroupInfo->m_strName.c_str());
-				}
+				//C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(nSenderId);
+				//if (lpGroupInfo != NULL)
+				//{
+				//	//if (lpGroupInfo->m_nGroupCode != 0)
+				//	//	strSenderName.Format(_T("%s"), lpGroupInfo->m_strName.c_str());
+				//}
 			}
 		}
 		break;
@@ -524,15 +524,15 @@ void CMsgTipDlg::_AddMsgSender(int nIndex, C_UI_MessageSender* lpMsgSender)
 			CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
 			if (lpGroupList != NULL)
 			{
-				C_UI_BuddyInfo* lpBuddyInfo = lpGroupList->GetGroupMemberByCode(nGroupCode, nSenderId);
+				C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpGroupList->GetGroupMemberByCode(nGroupCode, nSenderId);
 				if (lpBuddyInfo != NULL)
 				{
 					CString strBuddyName;
 
 					strBuddyName = lpBuddyInfo->m_strNickName.c_str();
 
-					if (lpBuddyInfo->m_uUserID != 0)
-						strSenderName.Format(_T("%s(%u)"), strBuddyName, lpBuddyInfo->m_uUserID);
+					if (lpBuddyInfo->m_uUserIndex != 0)
+						strSenderName.Format(_T("%s(%u)"), strBuddyName, lpBuddyInfo->m_uUserIndex);
 					else
 						strSenderName.Format(_T("%s"), strBuddyName);
 				}
@@ -580,9 +580,9 @@ void CMsgTipDlg::GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UIN
 		CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
 		if (lpGroupList != NULL)
 		{
-			C_UI_BuddyInfo* lpBuddyInfo = lpGroupList->GetGroupMemberByCode(nGroupCode, nUTalkUin);
+			/*C_UI_BuddyInfo* lpBuddyInfo = lpGroupList->GetGroupMemberByCode(nGroupCode, nUTalkUin);
 			if (lpBuddyInfo != NULL)
-				nUTalkNum = lpBuddyInfo->m_uUserID;
+				nUTalkNum = lpBuddyInfo->m_uUserIndex;*/
 		}
 	}
 	else if (nGroupCode != 0)
@@ -590,9 +590,9 @@ void CMsgTipDlg::GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UIN
 		CGroupList* lpGroupList = NULL;// m_lpFMGClient->GetGroupList();
 		if (lpGroupList != NULL)
 		{
-			C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(nGroupCode);
-			if (lpGroupInfo != NULL)
-				nGroupNum = lpGroupInfo->m_nGroupNumber;
+			//C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(nGroupCode);
+			//if (lpGroupInfo != NULL)
+			//	nGroupNum = lpGroupInfo->m_nGroupNumber;
 		}
 	}
 	else if (nUTalkUin != 0)
@@ -600,9 +600,9 @@ void CMsgTipDlg::GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UIN
 		C_UI_BuddyList* lpBuddyList = NULL;// m_lpFMGClient->GetBuddyList();
 		if (lpBuddyList != NULL)
 		{
-			C_UI_BuddyInfo* lpBuddyInfo = lpBuddyList->GetBuddy(nUTalkUin);
+			C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpBuddyList->GetBuddy(nUTalkUin);
 			if (lpBuddyInfo != NULL)
-				nUTalkNum = lpBuddyInfo->m_uUserID;
+				nUTalkNum = lpBuddyInfo->m_uUserIndex;
 		}
 	}
 }

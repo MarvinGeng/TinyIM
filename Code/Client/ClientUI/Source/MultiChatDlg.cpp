@@ -942,7 +942,7 @@ void CMultiChatDlg::OnMenu_ViewInfo(UINT uNotifyCode, int nID, CWindow wndCtl)
 			if (lpBuddyInfo == NULL)
 				return;
 
-			nUTalkUin = lpBuddyInfo->m_uUserID;		
+			//nUTalkUin = lpBuddyInfo->m_uUserID;		
 		}
 	}
 	else if (hWnd == m_ListCtrl.m_hWnd)
@@ -983,7 +983,7 @@ void CMultiChatDlg::OnMenu_SendMsg(UINT uNotifyCode, int nID, CWindow wndCtl)
 			if (lpBuddyInfo == NULL)
 				return;
 
-			nUTalkUin = lpBuddyInfo->m_uUserID;
+			//nUTalkUin = lpBuddyInfo->m_uUserID;
 		}
 	}
 	else if (hWnd == m_ListCtrl.m_hWnd)
@@ -1685,7 +1685,7 @@ void CMultiChatDlg::GetSenderInfo(UINT nUTalkUin, CString& strName, tstring& str
 	C_UI_GroupInfo* lpGroupInfo = /*GetGroupInfoPtr()*/NULL;
 	if (lpGroupInfo != NULL)
 	{
-		C_UI_BuddyInfo* lpBuddyInfo = lpGroupInfo->GetMemberByUin(nUTalkUin);
+		C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpGroupInfo->GetMemberByUin(nUTalkUin);
 		if (lpBuddyInfo != NULL)
 		{
 			strName = lpBuddyInfo->m_strNickName.c_str();
