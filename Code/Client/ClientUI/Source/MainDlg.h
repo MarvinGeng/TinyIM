@@ -501,17 +501,14 @@ private:
 	CSkinButton				m_btnUnlock;									//解锁按钮
 
 
-	std::map<std::string, CBuddyChatDlg*> m_mapBuddyChatDlg;
+	std::map<std::string, CBuddyChatDlg*> m_mapBuddyChatDlg;//好友聊天对话框MAP
+	std::map<std::string,CGroupChatDlg*> m_mapGroupChatDlg;//群组聊天对话框MAP
+	std::map<std::string, CSessChatDlg*> m_mapSessChatDlg;//临时会话对话框MAP
 
-	//std::map<UINT, CBuddyChatDlg*> m_mapBuddyChatDlg;
-	//std::map<UINT, CGroupChatDlg*> m_mapGroupChatDlg;
 
-	std::map<std::string,CGroupChatDlg*> m_mapGroupChatDlg;//
-
- 	std::map<UINT, CSessChatDlg*>	m_mapSessChatDlg;
- 	std::map<UINT, CBuddyInfoDlg*> m_mapBuddyInfoDlg;
- 	std::map<CGMemberInfoMapKey, CBuddyInfoDlg*> m_mapGMemberInfoDlg;
- 	std::map<UINT, CGroupInfoDlg*> m_mapGroupInfoDlg;
+	std::map<std::string, CBuddyInfoDlg*> m_mapBuddyInfoDlg;//好友信息对话框MAP
+ 	std::map<CGMemberInfoMapKey, CBuddyInfoDlg*> m_mapGMemberInfoDlg;//群成员信息对话框MAP
+	std::map<std::string, CGroupInfoDlg*> m_mapGroupInfoDlg;//群组信息对话框MAP
 
 	Gdiplus::GdiplusStartupInput	m_gdiplusStartupInput;
 	ULONG_PTR						m_gdiplusToken;
