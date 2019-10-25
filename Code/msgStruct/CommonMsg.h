@@ -28,6 +28,12 @@ struct UserBaseInfo {
 	CLIENT_ONLINE_TYPE m_eOnlineState;
 };
 
+struct TeamBaseInfo {
+	std::string m_strTeamId;
+	std::string m_strTeamName;
+	std::vector<UserBaseInfo> m_teamUsers;
+};
+
 /**
  * @brief 群组信息结构体
  * 
@@ -728,7 +734,7 @@ class GetFriendListRspMsg :public BaseMsg
 public:
 	std::string m_strMsgId;
 	std::string m_strUserId;
-	std::vector<UserBaseInfo> m_friendInfoVec;//好友信息列表
+	std::vector<TeamBaseInfo> m_teamVec;
 public:
 	GetFriendListRspMsg();
 

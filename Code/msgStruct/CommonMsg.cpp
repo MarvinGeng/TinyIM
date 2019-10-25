@@ -1715,29 +1715,40 @@ std::string GetFriendListRspMsg::ToString() const
 
 
     Json::array itemArray;
-    for (auto item : m_friendInfoVec)
+	Json::array teamArray;
+    for (auto teamItem : m_teamVec)
     {
-        Json itemObj = Json::object(
-        {
-            {"UserId", item.m_strUserId},
-            {"FriendName", item.m_strUserName},
-            {"Signature", item.m_strSignature},
-            {"NickName", item.m_strNickName},
-            {"FaceId", item.m_strFaceId},
-            {"Address", item.m_strAddress},
-            {"BirthDate", item.m_strBirthDate},
-            {"Email", item.m_strEmail},
-            {"Gender", item.m_strGender},
-			{"Online",OnLineType(item.m_eOnlineState)},
-        });
-        itemArray.push_back(itemObj);
+		for (const auto item : teamItem.m_teamUsers)
+		{
+			Json itemObj = Json::object(
+				{
+					{"UserId", item.m_strUserId},
+					{"FriendName", item.m_strUserName},
+					{"Signature", item.m_strSignature},
+					{"NickName", item.m_strNickName},
+					{"FaceId", item.m_strFaceId},
+					{"Address", item.m_strAddress},
+					{"BirthDate", item.m_strBirthDate},
+					{"Email", item.m_strEmail},
+					{"Gender", item.m_strGender},
+					{"Online",OnLineType(item.m_eOnlineState)},
+				});
+			itemArray.push_back(itemObj);
+		}
+		Json teamObj = Json::object({
+			{"TeamId",teamItem.m_strTeamId},
+			{"TeamName",teamItem.m_strTeamName},
+			{"TeamUserList",itemArray},
+		});
+		teamArray.push_back(teamObj);
+        
     }
 
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
         {"UserId", m_strUserId},
-        {"List", itemArray},
+        {"TeamList", teamArray},
     });
     return clientObj.dump();
 }
@@ -1767,105 +1778,135 @@ bool GetFriendListRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
-    if (json["List"].is_array())
+    if (json["TeamList"].is_array())
     {
-        auto itemJson = json["List"];
-        for (auto item : itemJson.array_items())
+        auto teamJson = json["TeamList"];
+		TeamBaseInfo teamInfo;
+        for (auto teamItem : teamJson.array_items())
         {
-            UserBaseInfo info;
-
-            if (item["UserId"].is_string())
-            {
-                info.m_strUserId = item["UserId"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["FriendName"].is_string())
-            {
-                info.m_strUserName = item["FriendName"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["Signature"].is_string())
-            {
-                info.m_strSignature = item["Signature"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-
-            if (item["NickName"].is_string())
-            {
-                info.m_strNickName = item["NickName"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["FaceId"].is_string())
-            {
-                info.m_strFaceId = item["FaceId"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["Address"].is_string())
-            {
-                info.m_strAddress = item["Address"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["BirthDate"].is_string())
-            {
-                info.m_strBirthDate = item["BirthDate"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["Email"].is_string())
-            {
-                info.m_strEmail = item["Email"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-            if (item["Gender"].is_string())
-            {
-                info.m_strGender = item["Gender"].string_value();
-            }
-            else
-            {
-                return false;
-            }
-
-			if (item["Online"].is_string())
+			teamInfo.m_teamUsers.clear();
 			{
-				info.m_eOnlineState = OnLineType(item["Online"].string_value());
-			}
-			else
-			{
-				return false;
-			}
+				
+				if (teamItem["TeamId"].is_string())
+				{
+					teamInfo.m_strTeamId = teamItem["TeamId"].string_value();
+				}
+				else
+				{
+					return false;
+				}
 
-            m_friendInfoVec.push_back(info);
+				if (teamItem["TeamName"].is_string())
+				{
+					teamInfo.m_strTeamName = teamItem["TeamName"].string_value();
+				}
+				else
+				{
+					return false;
+				}
+
+				if (teamItem["TeamUserList"].is_array())
+				{
+					for (const auto item : teamItem["TeamUserList"].array_items())
+					{
+						UserBaseInfo info;
+
+						if (item["UserId"].is_string())
+						{
+							info.m_strUserId = item["UserId"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["FriendName"].is_string())
+						{
+							info.m_strUserName = item["FriendName"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["Signature"].is_string())
+						{
+							info.m_strSignature = item["Signature"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+
+						if (item["NickName"].is_string())
+						{
+							info.m_strNickName = item["NickName"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["FaceId"].is_string())
+						{
+							info.m_strFaceId = item["FaceId"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["Address"].is_string())
+						{
+							info.m_strAddress = item["Address"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["BirthDate"].is_string())
+						{
+							info.m_strBirthDate = item["BirthDate"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["Email"].is_string())
+						{
+							info.m_strEmail = item["Email"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["Gender"].is_string())
+						{
+							info.m_strGender = item["Gender"].string_value();
+						}
+						else
+						{
+							return false;
+						}
+
+						if (item["Online"].is_string())
+						{
+							info.m_eOnlineState = OnLineType(item["Online"].string_value());
+						}
+						else
+						{
+							return false;
+						}
+
+						teamInfo.m_teamUsers.push_back(info);
+					}
+				}
+			}
+			m_teamVec.push_back(teamInfo);
         }
     }
     return true;
@@ -1873,7 +1914,6 @@ bool GetFriendListRspMsg::FromString(const std::string &strJson)
 
 bool GetFriendListRspMsg::Valid() const
 {
-
     if (m_strMsgId.empty())
     {
         return false;
