@@ -186,7 +186,7 @@ void CTeamDlg::OnOK(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	//if(m_pFMGClient->m_UserMgr.m_BuddyList.IsTeamNameExist(strTeamName))
+	if(m_netProto && m_netProto->m_BuddyList.IsTeamNameExist(strTeamName))
 	{
 		::MessageBox(m_hWnd, _T("分组名已经存在！"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
 		return;
@@ -197,9 +197,9 @@ void CTeamDlg::OnOK(UINT uNotifyCode, int nID, CWindow wndCtl)
 	{
 		{
 			auto pProto = CMsgProto::GetInstance();
-			std::string strNewTeamName = EncodeUtil::UnicodeToAnsi(strTeamName.GetBuffer());
+			std::string strNewTeamName = EncodeUtil::UnicodeToUtf8(strTeamName.GetBuffer());
 			strTeamName.ReleaseBuffer();
-			pProto->SendAddTeamReq("", strNewTeamName);
+			pProto->SendAddTeamReq(strNewTeamName);
 		}
         //m_pFMGClient->AddNewTeam(strTeamName);
 	}

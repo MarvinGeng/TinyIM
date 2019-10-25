@@ -81,6 +81,7 @@ public:
 public:
     int m_nIndex;			// 索引
     int m_nSort;			// 排列顺序
+	std::string				m_strTeamId;
     WString m_strName;		// 分组名称
     std::vector<C_UI_BuddyInfo*> m_arrBuddyInfo;//分组的好友信息
 };

@@ -79,8 +79,8 @@ public:
 
 	bool SendFriendNotifyFileRsp(const C_WND_MSG_FileNotifyReq& reqMsg);
 
-	bool SendAddTeamReq(const std::string strUserName, const std::string strTeamName);
-	bool SendRemoveTeamReq(const std::string strUserName, const std::string strTeamId, const std::string strTeamName);
+	bool SendAddTeamReq(const std::string strTeamName);
+	bool SendRemoveTeamReq(const std::string strTeamId, const std::string strTeamName);
 	bool MoveFriendToTeam(const std::string strUserName, const std::string strFriendName, const std::string strSrcTeamId, const std::string strDstTeamId);
 	
 	//Group

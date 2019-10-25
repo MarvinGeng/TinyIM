@@ -57,7 +57,6 @@ private:
 
 public:
 	std::shared_ptr<CMsgProto> m_netProto;
-	//CFlamingoClient*		m_pFMGClient;//客户端socket
 	long				m_nTeamIndex; //分组索引
 
 private:

@@ -554,21 +554,23 @@ void CMsgProto::HandleGetFriendListRsp(const std::shared_ptr<TransBaseMsg_t> pOr
 		m_BuddyList.m_arrBuddyTeamInfo.clear();
 	}
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
-		
-		C_UI_BuddyTeamInfo * teamInfo = new C_UI_BuddyTeamInfo();
-		teamInfo->m_strName = EncodeUtil::AnsiToUnicode("我的好友");
-		for (auto item : rspMsg.m_friendInfoVec) {
-			C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
-			m_friendInfoMap.insert({ item.m_strUserId,item });
+		int nTeamIndex = 0;
+		for (auto teamItem : rspMsg.m_teamVec)
+		{
+			C_UI_BuddyTeamInfo * teamInfo = new C_UI_BuddyTeamInfo();
+			teamInfo->m_strName = EncodeUtil::Utf8ToUnicode(teamItem.m_strTeamName);
+			teamInfo->m_strTeamId = teamItem.m_strTeamId;
+			for (auto userItem : teamItem.m_teamUsers)
 			{
-				*pBuddyInfo = CoreToUI(item);
-				pBuddyInfo->m_nTeamIndex = 0;
+				C_UI_BuddyInfo * pBuddyInfo = new C_UI_BuddyInfo();
+				m_friendInfoMap.insert({ userItem.m_strUserId,userItem });
+				*pBuddyInfo = CoreToUI(userItem);
+				pBuddyInfo->m_nTeamIndex = nTeamIndex;
 				teamInfo->m_arrBuddyInfo.push_back(pBuddyInfo);
-
 			}
-			//m_userManager.AddFriend(static_cast<UINT>(nIndex), item.m_strUserName.c_str(), item.m_strNickName.c_str());
+			nTeamIndex++;
+			m_BuddyList.m_arrBuddyTeamInfo.push_back(teamInfo);
 		}
-		m_BuddyList.m_arrBuddyTeamInfo.push_back(teamInfo);
 		//m_userManager.AddFriend()
 		auto item = m_msgMap.find(rspMsg.GetMsgType());
 		if (item != m_msgMap.end()) {
@@ -1322,12 +1324,12 @@ bool CMsgProto::SendKeepAliveReq()
  * @return true 
  * @return false 
  */
-bool CMsgProto::SendAddTeamReq(const std::string strUserName, const std::string strTeamName)
+bool CMsgProto::SendAddTeamReq(const std::string strTeamName)
 {
 	auto pSess = SourceServer::CSessManager::GetManager();
 	{
 		AddTeamReqMsg reqMsg;
-		reqMsg.m_strUserId = m_strUserName;
+		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strTeamName = strTeamName;
 		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 		return pSess->SendMsg(&trans);
@@ -1343,13 +1345,13 @@ bool CMsgProto::SendAddTeamReq(const std::string strUserName, const std::string 
  * @return true 
  * @return false 
  */
-bool CMsgProto::SendRemoveTeamReq(const std::string strUserName, const std::string strTeamId, const std::string strTeamName)
+bool CMsgProto::SendRemoveTeamReq(const std::string strTeamId, const std::string strTeamName)
 {
 	auto pSess = SourceServer::CSessManager::GetManager();
 	{
 		RemoveTeamReqMsg reqMsg;
 		reqMsg.m_strTeamId = strTeamId;
-		reqMsg.m_strUserId = strUserName;
+		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strTeamId = strTeamName;
 		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 		return pSess->SendMsg(&trans);

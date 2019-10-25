@@ -1669,15 +1669,13 @@ LRESULT CMainDlg::OnTabCtrlDropDown(LPNMHDR pnmh)
 //响应好友列表双击事件
 LRESULT CMainDlg::OnBuddyListDblClk(LPNMHDR pnmh)
 {
-	int nTeamIndex, nIndex;
+	int nTeamIndex = 0;
+	int nIndex = 0;
 	m_BuddyListCtrl.GetCurSelIndex(nTeamIndex, nIndex);
-	
-	//::MessageBox(m_hWnd, _T("弹出好友聊天对话框"), _T(""), MB_OK);
-	if (nTeamIndex != -1 && nIndex != -1)
+	std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
 	{
-		UINT nUTalkUin = m_BuddyListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-		//(WM_SHOW_BUDDY_CHAT_DLG, 0, nUTalkUin);
-	}	
+		ShowBuddyChatDlg(strFriendId);
+	}
 	return 0;
 }
 
@@ -5126,6 +5124,8 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 			}
 		}
 		m_BuddyListCtrl.SetBuddyTeamMaxCnt(nTeamIndex, nValidBuddyCount);
+		
+		nTeamIndex++;
 	}
 
 	if (m_BuddyListCtrl.IsWindowVisible())
@@ -5496,7 +5496,7 @@ void CMainDlg::OnTrayIcon_MouseHover()
 				m_MsgTipDlg.Create(m_hWnd);
 			}
 			
-			m_MsgTipDlg.ShowWindow(SW_SHOWNOACTIVATE);	
+			//m_MsgTipDlg.ShowWindow(SW_SHOWNOACTIVATE);	
 		}
 	}
 	//::OutputDebugString(_T("WM_MOUSEHOVER\n"));
@@ -5534,12 +5534,14 @@ BOOL CMainDlg::LoadAppIcon(E_UI_ONLINE_STATUS nStatus)
 	WString strFileName;
 	switch (nStatus)
 	{
-	case E_UI_ONLINE_STATUS::STATUS_ONLINE:
-		strFileName = Hootina::CPath::GetAppPath() + _T("Image\\imonline.ico");
-		break;
-	case E_UI_ONLINE_STATUS::STATUS_OFFLINE:
-		strFileName = Hootina::CPath::GetAppPath() + _T("Image\\offline.ico");
-		break;
+		case E_UI_ONLINE_STATUS::STATUS_ONLINE:
+		{
+			strFileName = Hootina::CPath::GetAppPath() + _T("Image\\imonline.ico");
+		}break;
+		case E_UI_ONLINE_STATUS::STATUS_OFFLINE:
+		{
+			strFileName = Hootina::CPath::GetAppPath() + _T("Image\\offline.ico");
+		}break;
 	}
 	m_hAppIcon = AtlLoadIconImage(strFileName.c_str(), LR_DEFAULTCOLOR|LR_LOADFROMFILE, 
 		::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
@@ -5575,14 +5577,14 @@ BOOL CMainDlg::LoadLoginIcon()
 //销毁应用图标
 void CMainDlg::DestroyLoginIcon()
 {
-	/*for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		if (m_hLoginIcon[i] != NULL)
 		{
 			::DestroyIcon(m_hLoginIcon[i]);
 			m_hLoginIcon[i] = NULL;
 		}
-	}*/
+	}
 }
 
 //加载好友图标
@@ -5604,14 +5606,14 @@ BOOL CMainDlg::LoadAddFriendIcon()
 //销毁添加好友的图标
 void CMainDlg::DestroyAddFriendIcon()
 {
-	/*for (int i = 0; i < ARRAYSIZE(m_hAddFriendIcon); i++)
+	for (int i = 0; i < ARRAYSIZE(m_hAddFriendIcon); i++)
 	{
 		if (m_hAddFriendIcon[i] != NULL)
 		{
 			::DestroyIcon(m_hAddFriendIcon[i]);
 			m_hAddFriendIcon[i] = NULL;
 		}
-	}*/
+	}
 }
 
 //更新消息图标
@@ -5731,15 +5733,19 @@ void CMainDlg::GetNumber(UINT nGroupCode, UINT nUTalkUin, UINT& nGroupNum, UINT&
 //导出图标
 HICON CMainDlg::ExtractIcon(LPCTSTR lpszFileName)
 {
-	if (NULL == lpszFileName || NULL ==*lpszFileName)
+	if (NULL == lpszFileName || NULL == *lpszFileName)
+	{
 		return NULL;
+	}
 
 	int cx = 16, cy = 16;
 	HBITMAP hBmp = NULL;
 
 	Gdiplus::Bitmap imgHead(lpszFileName);
 	if (imgHead.GetLastStatus() != Gdiplus::Ok)
+	{
 		return NULL;
+	}
 
 	if (imgHead.GetWidth() != cx || imgHead.GetHeight() != cy)
 	{
@@ -5870,16 +5876,22 @@ void CMainDlg::CloseAllDlg()
 	}
 
 	//销毁查找好友对话框
-	if(m_pFindFriendDlg!=NULL && m_pFindFriendDlg->IsWindow())
+	if (m_pFindFriendDlg != NULL && m_pFindFriendDlg->IsWindow())
+	{
 		m_pFindFriendDlg->DestroyWindow();
+	}
 
 	//销毁我的资料对话框
-	if(m_LogonUserInfoDlg.IsWindow())
+	if (m_LogonUserInfoDlg.IsWindow())
+	{
 		m_LogonUserInfoDlg.DestroyWindow();
+	}
 
     //好友信息浮窗
-    if (m_BuddyInfoFloatWnd.IsWindow())
-        m_BuddyInfoFloatWnd.DestroyWindow();
+	if (m_BuddyInfoFloatWnd.IsWindow())
+	{
+		m_BuddyInfoFloatWnd.DestroyWindow();
+	}
 }
 
 // 从菜单ID获取对应的UTalk_STATUS
@@ -5887,12 +5899,18 @@ E_UI_ONLINE_STATUS CMainDlg::GetStatusFromMenuID(int nMenuID)
 {
 	switch (nMenuID)
 	{
-	case ID_MENU_IMONLINE:
-		return E_UI_ONLINE_STATUS::STATUS_ONLINE;
-	case ID_MENU_IMOFFLINE:
-		return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
-	default:
-		return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+		case ID_MENU_IMONLINE:
+		{
+			return E_UI_ONLINE_STATUS::STATUS_ONLINE;
+		}break;
+		case ID_MENU_IMOFFLINE:
+		{
+			return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+		}break;
+		default:
+		{
+			return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+		}break;
 	}
 }
 
