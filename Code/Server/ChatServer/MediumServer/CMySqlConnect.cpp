@@ -560,7 +560,47 @@ bool CMySqlConnect::DeleteFriendChatMsg(const uint64_t msgId){
 	return true;
 }
 
-
+bool CMySqlConnect::GetUserFriendList(const std::string strUser, std::vector<T_FRIEND_RELATION_BEAN>& friendList)
+{
+	bool bResult = false;
+	MYSQL_RES *result;
+	MYSQL_ROW sql_row;
+	int res = 0;
+	constexpr char * strTemplate2 = "SELECT F_TEAM_ID,\
+F_FRIEND_ID,\
+F_STATUS \
+FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
+	std::string strSql = fmt::format(strTemplate2, strUser);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());
+	if (!res)
+	{
+		result = mysql_store_result(&m_mysql);
+		if (result)
+		{
+			T_FRIEND_RELATION_BEAN bean;
+			bean.m_strF_USER_ID = strUser;
+			while (sql_row = mysql_fetch_row(result))
+			{
+				bean.m_strF_TEAM_ID = sql_row[0];
+				bean.m_strF_FRIEND_ID = sql_row[1];
+				bean.m_eF_STATUS = E_FRIEND_RELATION::E_FRIEND_TYPE;
+				friendList.push_back(bean);
+				bResult = true;
+			}
+		}
+	}
+	else
+	{
+		return bResult;
+	}
+	if (result != NULL)
+	{
+		mysql_free_result(result);
+		return bResult;
+	}
+	return bResult;
+}
 /**
  * @brief 获取某个用户的好友ID列表
  * 
@@ -926,8 +966,8 @@ bool CMySqlConnect::UpdateToReadUnNotifyAddFriendMsg(const std::string strMsgId,
 bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_USER_TEAM(F_TEAM_ID,F_USER_NAME,F_TEAM_NAME,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
-	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_ID, teamBean.m_strF_USER_NAME, teamBean.m_strF_TEAM_NAME);
+	constexpr char * strTemplate2 = "INSERT INTO T_USER_TEAM(F_USER_ID,F_TEAM_ID,F_TEAM_NAME,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
+	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_USER_ID,teamBean.m_strF_TEAM_ID,teamBean.m_strF_TEAM_NAME);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -937,6 +977,8 @@ bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 	}
 	else
 	{
+		int nError = mysql_errno(&m_mysql);
+		LOG_INFO(m_loger, "SQL_ERROR:{} [{}  {} ]", nError, __FILENAME__, __LINE__);
 		return false;
 	}
 	return true;
@@ -953,8 +995,8 @@ bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 bool CMySqlConnect::DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_USER_TEAM WHERE F_TEAM_ID='{0}' AND F_USER_NAME='{1}';";
-	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_ID,teamBean.m_strF_USER_NAME);
+	constexpr char * strTemplate2 = "DELETE FROM T_USER_TEAM WHERE F_TEAM_ID='{0}' AND F_USER_ID='{1}';";
+	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_ID,teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
 	if (!res)
@@ -982,7 +1024,7 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_TEAM_ID,F_USER_NAME,F_TEAM_NAME FROM T_USER_TEAM WHERE F_USER_NAME='{0}';";
+	constexpr char * strTemplate2 = "SELECT F_USER_ID,F_TEAM_ID,F_TEAM_NAME FROM T_USER_TEAM WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -994,8 +1036,8 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 			T_USER_TEAM_BEAN bean;
 			while (sql_row = mysql_fetch_row(result))
 			{
-				bean.m_strF_TEAM_ID = sql_row[0];
-				bean.m_strF_USER_NAME = sql_row[1];
+				bean.m_strF_USER_ID = sql_row[0];
+				bean.m_strF_TEAM_ID = sql_row[1];
 				bean.m_strF_TEAM_NAME = sql_row[2];
 				teamBeans.push_back(bean);
 				bResult = true;
@@ -1025,8 +1067,8 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 bool CMySqlConnect::UpdateUserTeamName(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_USER_TEAM SET F_TEAM_NAME='{0}' WHERE F_TEAM_ID='{1}' AND F_USER_NAME='{2}";
-	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_NAME,teamBean.m_strF_TEAM_ID, teamBean.m_strF_USER_NAME);
+	constexpr char * strTemplate2 = "UPDATE T_USER_TEAM SET F_TEAM_NAME='{0}' WHERE F_TEAM_ID='{1}' AND F_USER_ID='{2}";
+	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_NAME,teamBean.m_strF_TEAM_ID, teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
 	if (!res)

@@ -89,7 +89,7 @@ struct T_ADD_FRIEND_MSG_BEAN {
 
 struct T_USER_TEAM_BEAN {
 	std::string m_strF_TEAM_ID;
-	std::string m_strF_USER_NAME;
+	std::string m_strF_USER_ID;
 	std::string m_strF_TEAM_NAME;
 };
 
@@ -100,8 +100,16 @@ struct T_GROUP_BEAN {
 
 struct T_GROUP_RELATION_BEAN {
 	std::string m_strF_GROUP_ID;
-	std::string m_strF_USER_ID;//USER_Name
+	std::string m_strF_USER_ID;//
 	std::string m_strF_LAST_READ_MSG_ID;
 	E_GROUP_MEMBER_ROLE m_eRole;
 };
+
+struct T_FRIEND_RELATION_BEAN {
+	std::string m_strF_USER_ID;
+	std::string m_strF_TEAM_ID;
+	std::string m_strF_FRIEND_ID;
+	E_FRIEND_RELATION m_eF_STATUS;
+};
+
 #endif

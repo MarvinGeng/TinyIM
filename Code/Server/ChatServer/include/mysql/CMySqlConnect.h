@@ -54,6 +54,7 @@ public:
 	bool SelectFriendRelation(const std::string strUser, const std::string strFriend, E_FRIEND_RELATION& relationType);
 	bool UpdateFriendRelation(const std::string strUser, const std::string strFriend, const E_FRIEND_RELATION relationType);
 	bool GetUserFriendList(const std::string strUser, std::vector<std::string>& friendList);
+	bool GetUserFriendList(const std::string strUser, std::vector<T_FRIEND_RELATION_BEAN>& friendList);
 	
 	bool InsertFriendChatMsg(const T_USER_CHAT_MSG& chatMsg);
 	bool SelectUnReadFriendChatMsg(const std::string& strToId, T_USER_CHAT_MSG& chatMsg);

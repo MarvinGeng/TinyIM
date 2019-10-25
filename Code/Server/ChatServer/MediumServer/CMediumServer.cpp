@@ -1111,26 +1111,62 @@ UserUnRegisterRspMsg CChatServer::DoUserUnRegisterReq(const UserUnRegisterReqMsg
  */
 GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) {
 	std::vector<std::string> strFriendIdList;
+	std::vector<T_FRIEND_RELATION_BEAN> friendBeanList;
+	std::vector<T_USER_TEAM_BEAN> teamBeanList;
 	GetFriendListRspMsg rspMsg;
 	rspMsg.m_strUserId = req.m_strUserId;
-	if (m_util.GetUserFriendList(req.m_strUserId, strFriendIdList))
+	if (m_util.GetUserFriendList(req.m_strUserId, friendBeanList))
 	{
-		T_USER_INFO_BEAN bean;
-		UserBaseInfo info;
-		for (const auto& item: strFriendIdList) {
-			m_util.SelectUserInfoByName(item, bean);
+		if (m_util.SelectUserTeams(req.m_strUserId, teamBeanList))
+		{
+			std::map<std::string,TeamBaseInfo> teamIdTeamMap;
+			for (const auto teamItem : teamBeanList)
 			{
-				info.m_strUserId = item;
-				info.m_strAddress = bean.m_strF_ADDRESS;
-				info.m_strBirthDate = bean.m_strF_BIRTH_DATE;
-				info.m_strEmail = bean.m_strF_EMAIL_ADDR;
-				info.m_strNickName = bean.m_strF_NICK_NAME;
-				info.m_strSignature = bean.m_strF_SIGNATURE;
-				info.m_strFaceId = bean.m_strF_FACE_ID;
-				info.m_strUserName = bean.m_strF_USER_NAME;
-				info.m_eOnlineState = bean.m_eOnlineState;
+				TeamBaseInfo teamInfo;
+				teamInfo.m_strTeamId = teamItem.m_strF_TEAM_ID;
+				teamInfo.m_strTeamName = teamItem.m_strF_TEAM_NAME;
+				teamIdTeamMap.insert({ teamItem.m_strF_TEAM_ID,teamInfo });
 			}
-			rspMsg.m_friendInfoVec.push_back(info);
+			{	
+				UserBaseInfo info;
+				for (const auto& friendItem : friendBeanList) {
+					T_USER_INFO_BEAN bean;
+					if (m_util.SelectUserInfoByName(friendItem.m_strF_FRIEND_ID, bean)) {
+						{
+							info.m_strUserId = bean.m_strF_USER_ID;
+							info.m_strAddress = bean.m_strF_ADDRESS;
+							info.m_strBirthDate = bean.m_strF_BIRTH_DATE;
+							info.m_strEmail = bean.m_strF_EMAIL_ADDR;
+							info.m_strNickName = bean.m_strF_NICK_NAME;
+							info.m_strSignature = bean.m_strF_SIGNATURE;
+							info.m_strFaceId = bean.m_strF_FACE_ID;
+							info.m_strUserName = bean.m_strF_USER_NAME;
+							info.m_eOnlineState = bean.m_eOnlineState;
+						}
+						{
+							auto item = teamIdTeamMap.find(friendItem.m_strF_TEAM_ID);
+							if (item != teamIdTeamMap.end())
+							{
+								item->second.m_teamUsers.push_back(info);
+							}
+							else
+							{
+								TeamBaseInfo teamInfo;
+								teamInfo.m_strTeamId = friendItem.m_strF_TEAM_ID;
+								teamInfo.m_strTeamName = info.m_strNickName;
+								teamInfo.m_teamUsers.push_back(info);
+								teamIdTeamMap.insert({ friendItem.m_strF_TEAM_ID,teamInfo });
+							}
+						}
+					}
+					//rspMsg.m_friendInfoVec.push_back(info);
+				}
+			}
+
+			for (const auto item : teamIdTeamMap)
+			{
+				rspMsg.m_teamVec.push_back(item.second);
+			}
 		}
 	}
 
@@ -1257,14 +1293,14 @@ AddTeamRspMsg CChatServer::DoAddTeamReq(const AddTeamReqMsg& reqMsg) {
 
 	T_USER_TEAM_BEAN teamBean;
 	teamBean.m_strF_TEAM_ID = std::to_string(m_MsgID_Util.nextId()%10000000);
-	teamBean.m_strF_USER_NAME = reqMsg.m_strUserId;
+	teamBean.m_strF_USER_ID = reqMsg.m_strUserId;
 	teamBean.m_strF_TEAM_NAME = reqMsg.m_strTeamName;
 	
 	if (m_util.InsertUserTeam(teamBean)) {
 		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 		rspMsg.m_strErrMsg = "Succeed";
 		rspMsg.m_strTeamId = teamBean.m_strF_TEAM_ID;
-		rspMsg.m_strUserId = teamBean.m_strF_USER_NAME;
+		rspMsg.m_strUserId = teamBean.m_strF_USER_ID;
 		rspMsg.m_strTeamName = teamBean.m_strF_TEAM_NAME;
 	}
 	else {
@@ -1285,7 +1321,7 @@ RemoveTeamRspMsg CChatServer::DoRemoveTeamReq(const RemoveTeamReqMsg& reqMsg) {
 	RemoveTeamRspMsg rspMsg;
 	T_USER_TEAM_BEAN teamBean;
 	teamBean.m_strF_TEAM_ID = reqMsg.m_strTeamId;
-	teamBean.m_strF_USER_NAME = reqMsg.m_strUserId;
+	teamBean.m_strF_USER_ID = reqMsg.m_strUserId;
 
 	if (m_util.DeleteUserTeam(teamBean)) {
 		rspMsg.m_eErrorCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
