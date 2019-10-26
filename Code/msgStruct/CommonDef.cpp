@@ -377,3 +377,42 @@ std::string OnLineType(const CLIENT_ONLINE_TYPE onLineType)
 	}break;
 	}
 }
+
+std::string FriendRelation(const E_FRIEND_RELATION& relation)
+{
+	switch (relation)
+	{
+	case E_FRIEND_RELATION::E_FRIEND_TYPE:
+	{
+		return "FRIEND";
+	}break;
+	case E_FRIEND_RELATION::E_BLACK_TYPE:
+	{
+		return "BLACK";
+	}break;
+	case E_FRIEND_RELATION::E_STRANGER_TYPE:
+	{
+		return "STRANGER";
+	}break;
+	default:
+	{
+		return "UNKNOWN";
+	}break;
+	}
+}
+E_FRIEND_RELATION FriendRelation(const std::string& strRelation)
+{
+	if (strRelation == "FRIEND")
+	{
+		return E_FRIEND_RELATION::E_FRIEND_TYPE;
+	}
+	else if (strRelation == "BLACK")
+	{
+		return E_FRIEND_RELATION::E_BLACK_TYPE;
+	}
+	else if (strRelation == "STRANGER")
+	{
+		return E_FRIEND_RELATION::E_STRANGER_TYPE;
+	}
+	return E_FRIEND_RELATION::E_STRANGER_TYPE;
+}

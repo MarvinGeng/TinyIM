@@ -433,4 +433,7 @@ std::string HexToString(const std::string& strInput);
 
 std::string OnLineType(const CLIENT_ONLINE_TYPE onlineType);
 CLIENT_ONLINE_TYPE OnLineType(const std::string strOnlineType);
+
+std::string FriendRelation(const E_FRIEND_RELATION& relation);
+E_FRIEND_RELATION FriendRelation(const std::string& strRelation);
 #endif
