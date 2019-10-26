@@ -760,6 +760,23 @@ bool CMySqlConnect::SelectFriendRelation(const std::string strUser, const std::s
 	return bResult;
 }
 
+bool CMySqlConnect::UpdateFriendTeamId(const std::string strUser, const std::string strOldTeamId, const std::string strNewTeamId)
+{
+	int res = 0;
+	constexpr char * strTemplate2 = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_TEAM_ID='{2}';";
+	std::string strSql = fmt::format(strTemplate2,strNewTeamId,strUser,strOldTeamId);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	if (!res)
+	{
+
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
 /**
  * @brief 更新好友关系
  * 
@@ -1010,6 +1027,42 @@ bool CMySqlConnect::DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean)
 	return true;
 }
 
+bool CMySqlConnect::SelectUserByTeamId(const std::string strUserName, const std::string strTeamId, std::vector<T_FRIEND_RELATION_BEAN>& teamBeans)
+{
+	bool bResult = false;
+	MYSQL_RES *result;
+	MYSQL_ROW sql_row;
+	int res = 0;
+	constexpr char * strTemplate2 = "SELECT F_FRIEND_ID,F_TEAM_ID, FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_TEAM_ID='{1}';";
+	std::string strSql = fmt::format(strTemplate2, strUserName,strTeamId);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());
+	if (!res)
+	{
+		result = mysql_store_result(&m_mysql);
+		if (result)
+		{
+			T_FRIEND_RELATION_BEAN bean;
+			while (sql_row = mysql_fetch_row(result))
+			{
+				bean.m_strF_FRIEND_ID = sql_row[0];
+				bean.m_strF_TEAM_ID = sql_row[1];
+				teamBeans.push_back(bean);
+				bResult = true;
+			}
+		}
+	}
+	else
+	{
+		return bResult;
+	}
+	if (result != NULL)
+	{
+		mysql_free_result(result);
+		return bResult;
+	}
+	return bResult;
+}
 /**
  * @brief 查找用户的所有分组
  * 

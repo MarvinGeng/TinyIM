@@ -14,6 +14,9 @@
 #include "DaemonSvcApp.h"
 #include "EncodingUtil.h"
 #include "CTimeUtil.h"
+
+const std::string DEFAULT_TEAM_ID = "10000000";
+const std::string DEFAULT_TEAM_NAME = EncodeUtil::AnsiToUtf8("我的好友");
 namespace ChatServer
 {
 std::shared_ptr<spdlog::logger> CChatServer::ms_loger;
@@ -1119,6 +1122,7 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 	{
 		if (m_util.SelectUserTeams(req.m_strUserId, teamBeanList))
 		{
+		}
 			std::map<std::string,TeamBaseInfo> teamIdTeamMap;
 			for (const auto teamItem : teamBeanList)
 			{
@@ -1152,8 +1156,8 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 							else
 							{
 								TeamBaseInfo teamInfo;
-								teamInfo.m_strTeamId = friendItem.m_strF_TEAM_ID;
-								teamInfo.m_strTeamName = info.m_strNickName;
+								teamInfo.m_strTeamId = DEFAULT_TEAM_ID;
+								teamInfo.m_strTeamName = DEFAULT_TEAM_NAME;
 								teamInfo.m_teamUsers.push_back(info);
 								teamIdTeamMap.insert({ friendItem.m_strF_TEAM_ID,teamInfo });
 							}
@@ -1167,7 +1171,6 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 			{
 				rspMsg.m_teamVec.push_back(item.second);
 			}
-		}
 	}
 
 	return rspMsg;
@@ -1332,6 +1335,17 @@ RemoveTeamRspMsg CChatServer::DoRemoveTeamReq(const RemoveTeamReqMsg& reqMsg) {
 	else {
 		rspMsg.m_eErrorCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
 		rspMsg.m_strErrMsg = "Failed";
+	}
+
+	{
+		if (m_util.UpdateFriendTeamId(reqMsg.m_strUserId, reqMsg.m_strTeamId, DEFAULT_TEAM_ID))
+		{
+
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "Update Friend Team Id Failed User:{} OldTeam:{} NewTeam:{} [{} {}]", reqMsg.m_strUserId, reqMsg.m_strTeamId, DEFAULT_TEAM_ID, __FILENAME__, __LINE__);
+		}
 	}
 	return rspMsg;
 }
