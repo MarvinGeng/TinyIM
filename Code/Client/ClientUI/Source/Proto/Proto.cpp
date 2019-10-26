@@ -1339,20 +1339,17 @@ bool CMsgProto::SendAddTeamReq(const std::string strTeamName)
 /**
  * @brief 发送删除分组请求
  * 
- * @param strUserName 
  * @param strTeamId 分组ID
- * @param strTeamName 分组名
  * @return true 
  * @return false 
  */
-bool CMsgProto::SendRemoveTeamReq(const std::string strTeamId, const std::string strTeamName)
+bool CMsgProto::SendRemoveTeamReq(const std::string strTeamId)
 {
 	auto pSess = SourceServer::CSessManager::GetManager();
 	{
 		RemoveTeamReqMsg reqMsg;
 		reqMsg.m_strTeamId = strTeamId;
 		reqMsg.m_strUserId = m_strUserId;
-		reqMsg.m_strTeamId = strTeamName;
 		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 		return pSess->SendMsg(&trans);
 	}

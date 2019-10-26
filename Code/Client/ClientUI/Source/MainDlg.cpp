@@ -37,6 +37,7 @@
 #include "PerformanceCounter.h"
 #include "net/Msg.h"
 #include "Proto.h"
+#include "UIDefaultValue.h"
 #pragma comment(lib, "winmm.lib")
 
 extern HWND g_hwndOwner;
@@ -1672,9 +1673,12 @@ LRESULT CMainDlg::OnBuddyListDblClk(LPNMHDR pnmh)
 	int nTeamIndex = 0;
 	int nIndex = 0;
 	m_BuddyListCtrl.GetCurSelIndex(nTeamIndex, nIndex);
-	std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+	if (nTeamIndex >= 0 && nIndex >= 0)
 	{
-		ShowBuddyChatDlg(strFriendId);
+		std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+		{
+			ShowBuddyChatDlg(strFriendId);
+		}
 	}
 	return 0;
 }
@@ -2267,15 +2271,15 @@ void CMainDlg::OnBuddyListDeleteTeam(UINT uNotifyCode, int nID, CWindow wndCtl)
 	{
 		return;
 	}
-
-	if(m_userMgr.m_BuddyList.GetBuddyTeamCount() <= 1)
+	
+	if(m_netProto && m_netProto->m_BuddyList.GetBuddyTeamCount() <= 1)
 	{
 		::MessageBox(m_hWnd, _T("至少得有一个分组。"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
 		return;
 	}
 
-    CString strTeamName = m_BuddyListCtrl.GetBuddyTeamName(nTeamIndex);
-    if (strTeamName == DEFAULT_TEAMNAME)
+	std::string strTeamId = m_BuddyListCtrl.GetBuddyTeamID(nTeamIndex);
+    if (strTeamId == DEFAULT_TEAM_ID)
     {
         ::MessageBox(m_hWnd, _T("默认分组不能删除！"), g_strAppTitle.c_str(), MB_ICONINFORMATION | MB_OK);
         return;
@@ -2286,6 +2290,10 @@ void CMainDlg::OnBuddyListDeleteTeam(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
+	if(m_netProto)
+	{
+		m_netProto->SendRemoveTeamReq(strTeamId);
+	}
    // m_FMGClient.DeleteTeam(strTeamName);   
 }
 
@@ -5023,6 +5031,7 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 			//m_BuddyListCtrl.SetBuddyTeamMaxCnt(nTeamIndex, nBuddyCount);
 			m_BuddyListCtrl.SetBuddyTeamCurCnt(nTeamIndex, nOnlineBuddyCount);
 			m_BuddyListCtrl.SetBuddyTeamExpand(nTeamIndex, aryTeamExpandStatus[i]);
+			m_BuddyListCtrl.SetBuddyTeamID(nTeamIndex, lpBuddyTeamInfo->m_strTeamId);
 		}
 
 		for (int j = 0; j < nBuddyCount; j++)

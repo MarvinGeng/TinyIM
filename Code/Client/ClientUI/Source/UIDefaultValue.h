@@ -42,4 +42,7 @@ const long GROUP_MEMBER_LIST_WIDTH = 200;//群组成员列表控件宽度
 const long GROUP_CHAT_DLG_EXTEND_WIDTH = 1043;//扩展历史消息后的宽度
 const long GROUP_MSG_LOG_WIDTH = 373;//群组历史消息宽度
 
+
+//Team
+#define DEFAULT_TEAM_ID "10000000"
 #endif

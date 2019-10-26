@@ -317,11 +317,13 @@ void CBuddyListCtrl::DelAllItems()
 	m_arrBuddyTeamItems.clear();
 }
 
-void CBuddyListCtrl::SetBuddyTeamID(int nTeamIndex, int nID)
+void CBuddyListCtrl::SetBuddyTeamID(int nTeamIndex, const std::string strId)
 {
 	CBuddyTeamItem* lpItem = GetBuddyTeamByIndex(nTeamIndex);
 	if (lpItem != NULL)
-		lpItem->m_nID = nID;
+	{
+		lpItem->m_strTeamId = strId;
+	}
 }
 
 void CBuddyListCtrl::SetBuddyTeamName(int nTeamIndex, LPCTSTR lpszText)
@@ -352,13 +354,17 @@ void CBuddyListCtrl::SetBuddyTeamExpand(int nTeamIndex, BOOL bExpand)
 		lpItem->m_bExpand = bExpand;
 }
 
-int CBuddyListCtrl::GetBuddyTeamID(int nTeamIndex)
+std::string CBuddyListCtrl::GetBuddyTeamID(int nTeamIndex)
 {
 	CBuddyTeamItem* lpItem = GetBuddyTeamByIndex(nTeamIndex);
 	if (lpItem != NULL)
-		return lpItem->m_nID;
+	{
+		return lpItem->m_strTeamId;
+	}
 	else
+	{
 		return 0;
+	}
 }
 
 CString CBuddyListCtrl::GetBuddyTeamName(int nTeamIndex)

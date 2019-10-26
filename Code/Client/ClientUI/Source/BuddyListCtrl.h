@@ -89,6 +89,7 @@ public:
 
 public:
 	int m_nID;									// 项ID
+	std::string m_strTeamId; //好友分组ID
 	CString m_strName;							// 好友分组名称
 	int m_nCurCnt;								// 当前在线好友数
 	int m_nMaxCnt;								// 该好友分组的好友数
@@ -159,14 +160,16 @@ public:
 
 	void DelAllItems();
 
-	void SetBuddyTeamID(int nTeamIndex, int nID);
+	//void SetBuddyTeamID(int nTeamIndex, int nID);
+	void SetBuddyTeamID(int nTeamIndex, const std::string teamId);
 	void SetBuddyTeamName(int nTeamIndex, LPCTSTR lpszText);
 	void SetBuddyTeamMaxCnt(int nTeamIndex, int nMaxCnt);
 	void SetBuddyTeamCurCnt(int nTeamIndex, int nCurCnt);
 	void SetBuddyTeamExpand(int nTeamIndex, BOOL bExpand);
 	inline void SetBuddyListCtrlType(BLCTRL_TYPE type) {m_nType = type;}
 
-	int GetBuddyTeamID(int nTeamIndex);
+	//int GetBuddyTeamID(int nTeamIndex);
+	std::string GetBuddyTeamID(int nTeamIndex);
 	CString GetBuddyTeamName(int nTeamIndex);
 	int GetBuddyTeamMaxCnt(int nTeamIndex);
 	int GetBuddyTeamCurCnt(int nTeamIndex);
