@@ -2331,13 +2331,16 @@ void CMainDlg::OnMoveBuddyToTeam(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	UINT uUserID = (UINT)m_BuddyListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-	if (uUserID == 0)
+	std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+	std::string strOldTeamId = m_BuddyListCtrl.GetBuddyTeamID(nTeamIndex);
+	std::string strNewTeamId = m_BuddyListCtrl.GetBuddyTeamID(nID - TEAM_MENU_ITEM_BASE);
+
+	if (m_netProto)
 	{
-		return;
+		m_netProto->MoveFriendToTeam("", strFriendId, strOldTeamId, strNewTeamId);
 	}
 
-	C_UI_BuddyInfo* pBuddyInfo = NULL;
+	/*C_UI_BuddyInfo* pBuddyInfo = NULL;
 	C_UI_BuddyTeamInfo* pTeamInfo = m_userMgr.m_BuddyList.GetBuddyTeamByIndex(nTeamIndex);
 	if (pTeamInfo == NULL)
 	{
@@ -2362,7 +2365,7 @@ void CMainDlg::OnMoveBuddyToTeam(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
     CString strNewTeamName = pTargetTeamInfo->m_strName.c_str();
-	
+	*/
     //m_FMGClient.MoveFriendToOtherTeam(uUserID, strOldTeamName, strNewTeamName);
 }
 
@@ -6040,26 +6043,26 @@ void CMainDlg::ShowAddFriendConfirmDlg()
 //插入好友分组的一项
 BOOL CMainDlg::InsertTeamMenuItem(CSkinMenu& popMenu)
 {
-	//if(popMenu.GetMenuItemCount() >= 5)
-	//	return TRUE;
 	
 	int nTeamIndex = -1;
 	int nItemIndex = -1;
 	m_BuddyListCtrl.GetCurSelIndex(nTeamIndex, nItemIndex);
-	if(nTeamIndex<0 || nItemIndex<0)
+	if (nTeamIndex < 0 || nItemIndex < 0)
+	{
 		return FALSE;
+	}
 
 	CSkinMenu* subMenu = new CSkinMenu();
 	subMenu->CreatePopupMenu();
 
 
-	size_t nCount = m_userMgr.m_BuddyList.m_arrBuddyTeamInfo.size();
+	size_t nCount = m_netProto->m_BuddyList.m_arrBuddyTeamInfo.size();
 	for(size_t i=0; i<nCount; ++i)
 	{
 		if(i == nTeamIndex)
 			continue;
 		
-		//subMenu->AppendMenu(MF_STRING|MF_BYPOSITION, TEAM_MENU_ITEM_BASE+i, m_userMgr.m_BuddyList.m_arrBuddyTeamInfo[i]->m_strName.c_str());
+		subMenu->AppendMenu(MF_STRING|MF_BYPOSITION, TEAM_MENU_ITEM_BASE+i,m_netProto->m_BuddyList.m_arrBuddyTeamInfo[i]->m_strName.c_str());
 	}
 
 	popMenu.ModifyMenu(8, MF_POPUP|MF_BYPOSITION, (UINT_PTR)subMenu->m_hMenu, NULL);
