@@ -1741,7 +1741,7 @@ std::string GetFriendListRspMsg::ToString() const
 			{"TeamUserList",itemArray},
 		});
 		teamArray.push_back(teamObj);
-        
+		itemArray.clear();
     }
 
     Json clientObj = Json::object(
