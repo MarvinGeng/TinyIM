@@ -643,6 +643,27 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 	}
 	return bResult;
 }
+bool CMySqlConnect::InsertFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
+{
+	int res = 0;
+	constexpr char * strTemplate2 = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
+F_FRIEND_ID,\
+F_TEAM_ID,\
+F_STATUS,\
+F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}',now());";
+	std::string strSql = fmt::format(strTemplate2,bean.m_strF_USER_ID,bean.m_strF_FRIEND_ID,bean.m_strF_TEAM_ID,FriendRelation(bean.m_eF_STATUS));
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	if (!res)
+	{
+
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
 
 /**
  * @brief 插入好友关系
@@ -704,7 +725,24 @@ bool CMySqlConnect::DeleteFriendRelation(const std::string strUser, const std::s
 	}
 	return true;
 }
+bool CMySqlConnect::UpdateFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
+{
+	int res = 0;
+	constexpr char * strTemplate2 = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_FRIEND_ID='{2}';";
+	std::string strSql = fmt::format(strTemplate2,bean.m_strF_TEAM_ID,bean.m_strF_USER_ID,bean.m_strF_FRIEND_ID);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	if (!res)
+	{
 
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+	return false;
+}
 /**
  * @brief 查询A用户和B用户的好友关系
  * 

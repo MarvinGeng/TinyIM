@@ -53,9 +53,9 @@ public:
 	bool DeleteFriendRelation(const std::string strUser, const std::string strFriend);
 	bool SelectFriendRelation(const std::string strUser, const std::string strFriend, E_FRIEND_RELATION& relationType);
 	bool UpdateFriendRelation(const std::string strUser, const std::string strFriend, const E_FRIEND_RELATION relationType);
-
+	bool UpdateFriendRelation(const T_FRIEND_RELATION_BEAN& bean);
 	bool UpdateFriendTeamId(const std::string strUser, const std::string strOldTeamId, const std::string strNewTeamId);
-	
+	bool InsertFriendRelation(const T_FRIEND_RELATION_BEAN& bean);
 	bool GetUserFriendList(const std::string strUser, std::vector<std::string>& friendList);
 	bool GetUserFriendList(const std::string strUser, std::vector<T_FRIEND_RELATION_BEAN>& friendList);
 	

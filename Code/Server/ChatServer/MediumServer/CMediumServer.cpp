@@ -1358,7 +1358,19 @@ RemoveTeamRspMsg CChatServer::DoRemoveTeamReq(const RemoveTeamReqMsg& reqMsg) {
  */
 MoveFriendToTeamRspMsg CChatServer::DoMoveFriendToTeamReq(const MoveFriendToTeamReqMsg& reqMsg) {
 	MoveFriendToTeamRspMsg rspMsg;
-	rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
+	T_FRIEND_RELATION_BEAN bean;
+	bean.m_strF_USER_ID = reqMsg.m_strUserId;
+	bean.m_strF_FRIEND_ID = reqMsg.m_strFriendId;
+	bean.m_strF_TEAM_ID = reqMsg.m_strDstTeamId;
+	if (m_util.UpdateFriendRelation(bean))
+	{
+		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+	}
+	else
+	{
+		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+	}
+	
 	return rspMsg;
 }
 
