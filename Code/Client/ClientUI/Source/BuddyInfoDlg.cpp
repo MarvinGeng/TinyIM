@@ -122,6 +122,10 @@ void CBuddyInfoDlg::OnDestroy()
 void CBuddyInfoDlg::OnBtnOK(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	SendMessage(WM_CLOSE);
+	if (IsWindow())
+	{
+		ShowWindow(SW_HIDE);
+	}
 }
 
 /**

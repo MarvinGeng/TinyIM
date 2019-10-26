@@ -1818,7 +1818,8 @@ LRESULT CMainDlg::OnGroupListDblClk(LPNMHDR pnmh)
 	if (nTeamIndex != -1 && nIndex != -1)
 	{
 		UINT nGroupCode = m_GroupListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-		SendMessage(WM_SHOW_GROUP_CHAT_DLG, nGroupCode, 0);
+		std::string strUserId = m_GroupListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+		ShowGroupChatDlg(strUserId, TRUE);
 	}	
 	return 0;
 }
@@ -2444,8 +2445,8 @@ void CMainDlg::OnMenu_ViewBuddyInfo(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	UINT nUTalkUin = m_BuddyListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-	::PostMessage(m_hWnd, WM_SHOW_BUDDY_INFO_DLG, NULL, nUTalkUin);
+	std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+	ShowBuddyInfoDlg(strFriendId, TRUE);
 }
 
 //鼠标右键显示好友基本信息，最近聊天列表
@@ -4612,47 +4613,44 @@ void CMainDlg::ShowUserInfoDlg(UINT nUTalkUin, BOOL bShow)
 }
 
 //显示好友信息对话框
-void CMainDlg::ShowBuddyInfoDlg(UINT nUTalkUin, BOOL bShow)
+void CMainDlg::ShowBuddyInfoDlg(const std::string strFriendId, BOOL bShow)
 {
-	if (nUTalkUin == 0)
-		return;
-
 	if (bShow)
 	{
-		//std::map<UINT, CBuddyInfoDlg*>::iterator iter;
-		//iter = m_mapBuddyInfoDlg.find(nUTalkUin);
-		//if (iter != m_mapBuddyInfoDlg.end())
-		//{
-		//	CBuddyInfoDlg* lpBuddyInfoDlg = iter->second;
-		//	if (lpBuddyInfoDlg != NULL)
-		//	{
-		//		if (!lpBuddyInfoDlg->IsWindow())
-		//			lpBuddyInfoDlg->Create(NULL);
-		//		lpBuddyInfoDlg->ShowWindow(SW_SHOW);
-		//		::SetForegroundWindow(lpBuddyInfoDlg->m_hWnd);
-		//	}
-		//}
-		//else
-		//{
-		//	CBuddyInfoDlg* lpBuddyInfoDlg = new CBuddyInfoDlg;
-		//	// 好友资料对话框
-		//	if (nUTalkUin != m_userMgr.m_UserInfo.m_uUserID)
-		//	{
-		//		WString strFriendNickName(m_userMgr.GetNickName(nUTalkUin));
-		//		strFriendNickName += _T("的资料");
-		//		lpBuddyInfoDlg->SetWindowTitle(strFriendNickName.c_str());
-		//	}
+		auto item = m_mapBuddyInfoDlg.find(strFriendId);
+		if (item != m_mapBuddyInfoDlg.end())
+		{
+			CBuddyInfoDlg* lpBuddyInfoDlg = item->second;
+			if (lpBuddyInfoDlg != NULL)
+			{
+				if (!lpBuddyInfoDlg->IsWindow())
+					lpBuddyInfoDlg->Create(NULL);
+				lpBuddyInfoDlg->ShowWindow(SW_SHOW);
+				::SetForegroundWindow(lpBuddyInfoDlg->m_hWnd);
+			}
+		}
+		else
+		{
+			CBuddyInfoDlg* lpBuddyInfoDlg = new CBuddyInfoDlg;
+			// 好友资料对话框
+			if (strFriendId != m_netProto->UserId())
+			{
+				//TODO  此处是否需要优化
+				WString strFriendNickName = EncodeUtil::Utf8ToUnicode(m_netProto->GetFriendInfoById(strFriendId).m_strNickName);
+				strFriendNickName += _T("的资料");
+				lpBuddyInfoDlg->SetWindowTitle(strFriendNickName.c_str());
+			}
 
-		//	if (lpBuddyInfoDlg != NULL)
-		//	{
-		//		m_mapBuddyInfoDlg[nUTalkUin] = lpBuddyInfoDlg;
-		//		//lpBuddyInfoDlg->m_lpFMGClient = &m_FMGClient;
-		//		lpBuddyInfoDlg->m_nUTalkUin = nUTalkUin;
-		//		lpBuddyInfoDlg->Create(NULL);
-		//		lpBuddyInfoDlg->ShowWindow(SW_SHOW);
-		//		::SetForegroundWindow(lpBuddyInfoDlg->m_hWnd);
-		//	}
-		//}
+			if (lpBuddyInfoDlg != NULL)
+			{
+				m_mapBuddyInfoDlg[strFriendId] = lpBuddyInfoDlg;
+				//lpBuddyInfoDlg->m_lpFMGClient = &m_FMGClient;
+				//lpBuddyInfoDlg-> = nUTalkUin;
+				lpBuddyInfoDlg->Create(NULL);
+				lpBuddyInfoDlg->ShowWindow(SW_SHOW);
+				::SetForegroundWindow(lpBuddyInfoDlg->m_hWnd);
+			}
+		}
 	}
 	else
 	{

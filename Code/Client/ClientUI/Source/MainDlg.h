@@ -390,7 +390,7 @@ private:
 	void ShowGroupChatDlg(const std::string strGroupId, BOOL bShow);
 	void ShowSessChatDlg(UINT nGroupCode, UINT nUTalkUin, BOOL bShow);
 	void ShowSysGroupChatDlg(UINT nGroupCode, BOOL bShow);
-	void ShowBuddyInfoDlg(UINT nUTalkUin, BOOL bShow);
+	void ShowBuddyInfoDlg(const std::string strFriendId, BOOL bShow);
 																	 
 	void ShowUserInfoDlg(UINT nUTalkUin, BOOL bShow);						// 显示或者关闭个人信息对话框
 	void ShowGMemberInfoDlg(UINT nGroupCode, UINT nUTalkUin, BOOL bShow);
