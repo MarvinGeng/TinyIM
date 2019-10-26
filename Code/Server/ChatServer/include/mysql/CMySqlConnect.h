@@ -53,6 +53,9 @@ public:
 	bool DeleteFriendRelation(const std::string strUser, const std::string strFriend);
 	bool SelectFriendRelation(const std::string strUser, const std::string strFriend, E_FRIEND_RELATION& relationType);
 	bool UpdateFriendRelation(const std::string strUser, const std::string strFriend, const E_FRIEND_RELATION relationType);
+
+	bool UpdateFriendTeamId(const std::string strUser, const std::string strOldTeamId, const std::string strNewTeamId);
+	
 	bool GetUserFriendList(const std::string strUser, std::vector<std::string>& friendList);
 	bool GetUserFriendList(const std::string strUser, std::vector<T_FRIEND_RELATION_BEAN>& friendList);
 	
@@ -64,6 +67,7 @@ public:
 	bool InsertUserTeam(const T_USER_TEAM_BEAN& teamBean);
 	bool DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean);
 	bool SelectUserTeams(const std::string strUserName, std::vector<T_USER_TEAM_BEAN>& teamBeans);
+	bool SelectUserByTeamId(const std::string strUserName,const std::string strTeamId,std::vector<T_FRIEND_RELATION_BEAN>& teamBeans);
 	bool UpdateUserTeamName(const T_USER_TEAM_BEAN& teamBean);
 
 	//Group 
