@@ -71,7 +71,8 @@ public:
 	bool SendChatTxtMsg(const std::string strFriendName, const std::string strContext,const C_UI_FontInfo font=C_UI_FontInfo());
 	bool SendRecvChatTxtRsp(const std::string strUserName,const std::string strFriendName,const std::string strMsgId);
 	bool GetFriendList();
-
+	
+	bool SendRemoveFriend(const std::string strFriendId);
 	bool SendFriendOnLineFile(const std::string strFriendId, std::string strFileName);
 
 	bool SendFriendRecvFileRsp(const C_WND_MSG_FileRecvReq& reqMsg, const E_FRIEND_OPTION eOption);

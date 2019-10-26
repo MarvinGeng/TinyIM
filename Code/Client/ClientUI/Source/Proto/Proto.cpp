@@ -1041,6 +1041,18 @@ bool CMsgProto::GetFriendList() {
 	}
 }
 
+bool CMsgProto::SendRemoveFriend(const std::string strFriendId)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	{
+		RemoveFriendReqMsg reqMsg;
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = strFriendId;
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		return pSess->SendMsg(&trans);
+	}
+}
+
 /**
  * @brief 发送加入群组的请求消息
  * 

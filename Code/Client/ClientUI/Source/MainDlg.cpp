@@ -2385,9 +2385,18 @@ void CMainDlg::OnMenu_DeleteFriend(UINT uNotifyCode, int nID, CWindow wndCtl)
 	strInfo.Format(_T("确定要删除%s(%s)吗？"), strMarkName, strNickName);
 	int nRet = ::MessageBox(m_hWnd, strInfo, g_strAppTitle.c_str(), MB_YESNO|MB_ICONQUESTION);
 	if (IDNO == nRet)
+	{
 		return;
-
+	}
 	UINT uUserID = (UINT)m_BuddyListCtrl.GetBuddyItemID(nTeamIndex, nBuddyIndex);	
+	//Core
+	{
+		std::string strFriendId = m_BuddyListCtrl.GetBuddyItemUserId(nTeamIndex, nBuddyIndex);
+		if (m_netProto && !strFriendId.empty())
+		{
+			m_netProto->SendRemoveFriend(strFriendId);
+		}
+	}
 	//m_FMGClient.DeleteFriend(uUserID);
 }
 
