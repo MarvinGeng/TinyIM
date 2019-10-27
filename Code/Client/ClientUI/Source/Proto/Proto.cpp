@@ -1465,6 +1465,19 @@ void CMsgProto::HandleDestroyGroupRspMsg(const std::shared_ptr<TransBaseMsg_t> p
 
 }
 
+bool CMsgProto::SendQuitFromGroupReq(const std::string strGroupId)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	{
+		QuitFromGroupReqMsg reqMsg;
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strGroupId = strGroupId;
+
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		return pSess->SendMsg(&trans);
+	}
+	return false;
+}
 
 /**
  * @brief 发送获取群组列表请求

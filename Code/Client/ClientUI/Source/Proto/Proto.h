@@ -98,6 +98,8 @@ public:
 	bool SendFindGroupReq(const std::string strGroupId);
 
 	bool SendAddToGroupReq(const std::string strGroupId);
+
+	bool SendQuitFromGroupReq(const std::string strGroupId);
 	//Core End
 
 	CGroupList* GetGroupList() {

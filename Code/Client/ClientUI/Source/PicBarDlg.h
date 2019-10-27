@@ -40,6 +40,7 @@ private:
 	BOOL OnInitDialog(CWindow wndFocus, LPARAM lInitParam);
 	void OnClose()
 	{
+		ShowWindow(SW_HIDE);
 		DestroyWindow();
 	}
 	void OnDestroy();

@@ -394,7 +394,7 @@ private:
 																	 
 	void ShowUserInfoDlg(UINT nUTalkUin, BOOL bShow);						// 显示或者关闭个人信息对话框
 	void ShowGMemberInfoDlg(UINT nGroupCode, UINT nUTalkUin, BOOL bShow);
-	void ShowGroupInfoDlg(UINT nGroupCode, BOOL bShow);
+	void ShowGroupInfoDlg(const std::string& strGroupId, BOOL bShow);
 
 	void NotifyBuddyChatDlg(UINT nUTalkUin, UINT uMsg);						// 通知好友聊天窗口更新
 	void NotifyGroupChatDlg(UINT nGroupCode,								// 通知群聊天窗口更新

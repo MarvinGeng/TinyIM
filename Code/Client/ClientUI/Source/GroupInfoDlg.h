@@ -57,6 +57,7 @@ public:
 	//CFlamingoClient* m_lpFMGClient;
 	HWND m_hMainDlg;
 	UINT m_nGroupCode;
+	std::string m_strGroupId;
 
 private:
 	CSkinDialog m_SkinDlg;

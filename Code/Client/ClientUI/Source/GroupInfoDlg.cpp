@@ -68,6 +68,7 @@ BOOL CGroupInfoDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 
 void CGroupInfoDlg::OnClose()
 {
+	ShowWindow(SW_HIDE);
 	::PostMessage(m_hMainDlg, WM_CLOSE_GROUP_INFO_DLG, m_nGroupCode, NULL);
 }
 

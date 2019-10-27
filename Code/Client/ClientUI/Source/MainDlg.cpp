@@ -2554,8 +2554,12 @@ void CMainDlg::OnMenu_ViewGroupInfo(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	if (nTeamIndex != -1 && nIndex != -1)
 	{
-		UINT nGroupCode = m_GroupListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
-		::PostMessage(m_hWnd, WM_SHOW_GROUP_INFO_DLG, nGroupCode, NULL);
+		//TODO: GetBuddyItemUserId待修改
+		std::string strGroupId = m_GroupListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
+		ShowGroupInfoDlg(strGroupId,TRUE);
+		//std::string strGroupId = m_GroupListCtr
+
+		//::PostMessage(m_hWnd, WM_SHOW_GROUP_INFO_DLG, nGroupCode, NULL);
 	}		
 }
 
@@ -2568,12 +2572,14 @@ void CMainDlg::OnMenu_ExitGroup(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	if (nTeamIndex != -1 && nIndex != -1)
 	{
-		UINT nGroupCode = m_GroupListCtrl.GetBuddyItemID(nTeamIndex, nIndex);
+		std::string strGroupId = m_GroupListCtrl.GetBuddyItemUserId(nTeamIndex, nIndex);
 		CString strPromptInfo;
 		strPromptInfo.Format(_T("确实要退出群[%s(%s)]？"), m_GroupListCtrl.GetBuddyItemMarkName(nTeamIndex, nIndex), m_GroupListCtrl.GetBuddyItemNickName(nTeamIndex, nIndex));
-		if(IDNO == ::MessageBox(m_hWnd, strPromptInfo, g_strAppTitle.c_str(), MB_YESNO|MB_ICONQUESTION))
+		if (IDNO == ::MessageBox(m_hWnd, strPromptInfo, g_strAppTitle.c_str(), MB_YESNO | MB_ICONQUESTION))
+		{
 			return;
-
+		}
+		m_netProto->SendQuitFromGroupReq(strGroupId);
 		//m_FMGClient.DeleteFriend(nGroupCode);
 	}		
 }
@@ -4745,45 +4751,41 @@ void CMainDlg::ShowGMemberInfoDlg(UINT nGroupCode, UINT nUTalkUin, BOOL bShow)
 }
 
 //显示群信息的对话框
-void CMainDlg::ShowGroupInfoDlg(UINT nGroupCode, BOOL bShow)
+void CMainDlg::ShowGroupInfoDlg(const std::string& strGroupId, BOOL bShow)
 {
-	if (0 == nGroupCode)
-		return;
-
 	if (bShow)
 	{
-//		std::map<UINT, CGroupInfoDlg*>::iterator iter;
-//		iter = m_mapGroupInfoDlg.find(nGroupCode);
-//		if (iter != m_mapGroupInfoDlg.end())
-//		{
-//			CGroupInfoDlg* lpGroupInfoDlg = iter->second;
-//			if (lpGroupInfoDlg != NULL)
-//			{
-//				if (!lpGroupInfoDlg->IsWindow())
-//					lpGroupInfoDlg->Create(NULL);
-//				lpGroupInfoDlg->ShowWindow(SW_SHOW);
-//				::SetForegroundWindow(lpGroupInfoDlg->m_hWnd);
-//			}
-//		}
-//		else
-//		{
-//			CGroupInfoDlg* lpGroupInfoDlg = new CGroupInfoDlg;
-//			if (lpGroupInfoDlg != NULL)
-//			{
-//				m_mapGroupInfoDlg[nGroupCode] = lpGroupInfoDlg;
-////				lpGroupInfoDlg->m_lpFMGClient = &m_FMGClient;
-//				lpGroupInfoDlg->m_hMainDlg = m_hWnd;
-//				lpGroupInfoDlg->m_nGroupCode = nGroupCode;
-//				lpGroupInfoDlg->Create(NULL);
-//				lpGroupInfoDlg->ShowWindow(SW_SHOW);
-//				::SetForegroundWindow(lpGroupInfoDlg->m_hWnd);
-//			}
-//		}
+		
+		auto iter = m_mapGroupInfoDlg.find(strGroupId);
+		if (iter != m_mapGroupInfoDlg.end())
+		{
+			CGroupInfoDlg* lpGroupInfoDlg = iter->second;
+			if (lpGroupInfoDlg != NULL)
+			{
+				if (!lpGroupInfoDlg->IsWindow())
+					lpGroupInfoDlg->Create(NULL);
+				lpGroupInfoDlg->ShowWindow(SW_SHOW);
+				::SetForegroundWindow(lpGroupInfoDlg->m_hWnd);
+			}
+		}
+		else
+		{
+			CGroupInfoDlg* lpGroupInfoDlg = new CGroupInfoDlg;
+			if (lpGroupInfoDlg != NULL)
+			{
+				m_mapGroupInfoDlg[strGroupId] = lpGroupInfoDlg;
+//				lpGroupInfoDlg->m_lpFMGClient = &m_FMGClient;
+				lpGroupInfoDlg->m_hMainDlg = m_hWnd;
+				lpGroupInfoDlg->m_strGroupId = strGroupId;
+				lpGroupInfoDlg->Create(NULL);
+				lpGroupInfoDlg->ShowWindow(SW_SHOW);
+				::SetForegroundWindow(lpGroupInfoDlg->m_hWnd);
+			}
+		}
 	}
 	else
 	{
-		/*std::map<UINT, CGroupInfoDlg*>::iterator iter;
-		iter = m_mapGroupInfoDlg.find(nGroupCode);
+		auto iter = m_mapGroupInfoDlg.find(strGroupId);
 		if (iter != m_mapGroupInfoDlg.end())
 		{
 			CGroupInfoDlg* lpGroupInfoDlg = iter->second;
@@ -4794,7 +4796,7 @@ void CMainDlg::ShowGroupInfoDlg(UINT nGroupCode, BOOL bShow)
 				delete lpGroupInfoDlg;
 			}
 			m_mapGroupInfoDlg.erase(iter);
-		}*/
+		}
 	}
 }
 
