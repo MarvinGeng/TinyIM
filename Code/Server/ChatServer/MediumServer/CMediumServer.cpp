@@ -719,7 +719,33 @@ void CChatServer::HandleGetGroupListReq(const std::shared_ptr<CServerSess>& pSes
 		pSess->SendMsg(pSend);
 	}
 }
+void CChatServer::HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSess, const QuitFromGroupReqMsg& reqMsg)
+{
+	QuitFromGroupRspMsg rspMsg = DoQuitFromGroup(reqMsg);
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	if (pSess)
+	{
+		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
+		pSess->SendMsg(pSend);
+	}
+}
 
+QuitFromGroupRspMsg CChatServer::DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg)
+{
+	QuitFromGroupRspMsg rspMsg;
+	rspMsg.m_strGroupId = reqMsg.m_strGroupId;
+	rspMsg.m_strUserId = reqMsg.m_strUserId;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	T_GROUP_RELATION_BEAN bean;
+	bean.m_strF_USER_ID = reqMsg.m_strUserId;
+	bean.m_strF_GROUP_ID = reqMsg.m_strGroupId;
+	if (m_util.DeleteGroupRelation(bean))
+	{
+
+	}
+
+	return rspMsg;
+}
 /**
  * @brief 处理获取群组列表请求
  * 
@@ -765,6 +791,7 @@ GetGroupListRspMsg CChatServer::DoGetGroupListReq(const GetGroupListReqMsg& reqM
 				}
 			}
 			rspMsg.m_GroupList.push_back(groupInfo);
+			groupInfo.m_GroupUsers.clear();
 		}
 	}
 	rspMsg.m_strUserId = reqMsg.m_strUserId;

@@ -221,6 +221,13 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 			m_server->HandleAddToGroupReq(shared_from_this(), msg);
 		}
 	}break;
+	case MessageType::QuitGroupReq_Type:
+	{
+		QuitFromGroupReqMsg reqMsg;
+		if (reqMsg.FromString(hdr->to_string())) {
+			m_server->HandleQuitGroupReqMsg(shared_from_this(), reqMsg);
+		}
+	}break;
 	case MessageType::RecvGroupTextMsgRsp_Type:
 	{
 		RecvGroupTextMsgRspMsg msg;

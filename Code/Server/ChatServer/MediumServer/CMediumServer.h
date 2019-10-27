@@ -86,6 +86,8 @@ public:
 
 	void HandleRecvGroupTextMsgRspMsg(const std::shared_ptr<CServerSess>& pSess, const RecvGroupTextMsgRspMsg& reqMsg);
 
+	void HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSess, const QuitFromGroupReqMsg& reqMsg);
+
 	void HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
 
 	void HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& reqMsg);
@@ -136,6 +138,7 @@ public:
 	SendGroupTextMsgRspMsg DoSendGroupTextMsgReqMsg(const SendGroupTextMsgReqMsg& reqMsg);
 
 	AddToGroupRspMsg DoAddToGroupReqMsg(const AddToGroupReqMsg& reqMsg);
+	QuitFromGroupRspMsg DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg);
 	//
   protected:
     //asio的主循环类
