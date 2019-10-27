@@ -1091,7 +1091,7 @@ public:
 
 
 
-/* 添加好友分组回复*/
+/* 创建群聊回复*/
 class CreateGroupRspMsg :public BaseMsg {
 public:
 	ERROR_CODE_TYPE m_eErrCode;
@@ -1115,7 +1115,7 @@ public:
 
 
 
-/* 删除好友分组请求*/
+/* 解散群聊请求*/
 class DestroyGroupReqMsg :public BaseMsg {
 public:
 	std::string m_strMsgId;
@@ -1461,7 +1461,33 @@ public:
 
 };
 
+class QuitFromGroupReqMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId;
+	std::string m_strUserId;
+	std::string m_strGroupId;
+public:
+	QuitFromGroupReqMsg();
 
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class QuitFromGroupRspMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId;
+	std::string m_strUserId;
+	std::string m_strGroupId;
+public:
+	QuitFromGroupRspMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
 /**
  * @brief 发送群组文本消息请求[发送方--->服务器]
  * 

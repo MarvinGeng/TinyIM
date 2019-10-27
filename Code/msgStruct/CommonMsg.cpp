@@ -4849,8 +4849,126 @@ bool InviteFriendToGroupNotifyReqMsg::FromString(const std::string &strJson)
 
 
 
+QuitFromGroupReqMsg::QuitFromGroupReqMsg()
+{
+	m_type = MessageType::QuitGroupReq_Type;
+}
+
+std::string QuitFromGroupReqMsg::ToString() const
+{
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+			{"GroupId", m_strGroupId},
+		});
+	return clientObj.dump();
+}
 
 
+bool QuitFromGroupReqMsg::FromString(const std::string &strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["GroupId"].is_string())
+	{
+		m_strGroupId = json["GroupId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+QuitFromGroupRspMsg::QuitFromGroupRspMsg()
+{
+	m_type = MessageType::QuitGroupRsp_Type;
+}
+
+std::string QuitFromGroupRspMsg::ToString() const
+{
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+			{"GroupId", m_strGroupId},
+		});
+	return clientObj.dump();
+}
+
+
+bool QuitFromGroupRspMsg::FromString(const std::string &strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["GroupId"].is_string())
+	{
+		m_strGroupId = json["GroupId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
 
 
 InviteFriendToGroupNotifyRspMsg::InviteFriendToGroupNotifyRspMsg()
