@@ -1214,6 +1214,14 @@ CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg)
 	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strFromId));
 	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strRecvTime);
 	result.m_strOtherInfo = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.ToString());
+	{
+		result.m_stFontInfo.m_bBold = reqMsg.m_fontInfo.IsBold();
+		result.m_stFontInfo.m_bItalic = reqMsg.m_fontInfo.IsItalic();
+		result.m_stFontInfo.m_bUnderLine = reqMsg.m_fontInfo.IsUnderScore();
+		result.m_stFontInfo.m_nSize = reqMsg.m_fontInfo.m_nFontSize;
+		result.m_stFontInfo.ColorHexString(reqMsg.m_fontInfo.m_strFontColorHex);
+		result.m_stFontInfo.m_strName = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.m_strFontName);
+	}
 	return result;
 }
 

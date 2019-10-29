@@ -240,7 +240,6 @@ void CMainDlg::OnSysCommand(UINT nID, CPoint pt)
 {
 	if (nID == SC_MINIMIZE)
 	{
-        m_BuddyInfoFloatWnd.ShowWindow(SW_HIDE);
         ShowWindow(SW_HIDE);
 		return;
 	}
