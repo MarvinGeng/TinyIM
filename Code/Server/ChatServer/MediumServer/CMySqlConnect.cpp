@@ -1200,6 +1200,14 @@ bool CMySqlConnect::InsertGroup(const T_GROUP_BEAN& groupBean)
 	return true;
 }
 
+/**
+ * @brief 根据群组ID获取群组的基本信息
+ * 
+ * @param groupId 群组ID
+ * @param groupBean 
+ * @return true 
+ * @return false 
+ */
 bool CMySqlConnect::SelectGroupById(const std::string groupId, T_GROUP_BEAN& groupBean)
 {
 	MYSQL_RES *result;

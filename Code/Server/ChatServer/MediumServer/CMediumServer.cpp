@@ -310,7 +310,7 @@ void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSes
 	if ( (pSess) &&
 		(!pSess->UserId().empty()))
 	{
-		//OnUserStateCheck(pSess->UserId());
+		OnUserStateCheck(pSess->UserId());
 		//OnAddFriendRecvReqMsg(pSess->UserId());
 		//OnAddFriendNotifyReqMsg(pSess->UserId());
 	}
