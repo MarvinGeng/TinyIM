@@ -65,7 +65,6 @@ public:
 
 		COMMAND_HANDLER_EX(ID_PIC_HEAD, BN_CLICKED, OnLnk_BuddyName)			//点击头像按钮
 		COMMAND_HANDLER_EX(ID_LINK_BUDDYNAME, BN_CLICKED, OnLnk_BuddyName)
-        COMMAND_ID_HANDLER_EX(ID_BUDDY_DLG_REMOTE_DESKTOP_BTN, OnBtn_RemoteDesktop)
 		COMMAND_ID_HANDLER_EX(ID_BUDDY_DLG_FONT_BTN, OnBtn_Font)
 		COMMAND_ID_HANDLER_EX(ID_BUDDY_DLG_FACE_BTN, OnBtn_Face)
 		COMMAND_ID_HANDLER_EX(ID_BUDDY_DLG_SHAKE_WINDOW_BTN, OnShakeWindow)								//窗口抖动
@@ -154,7 +153,6 @@ private:
 	void OnDestroy();
 
 	void OnLnk_BuddyName(UINT uNotifyCode, int nID, CWindow wndCtl);			// “好友名称”超链接控件
-    void OnBtn_RemoteDesktop(UINT uNotifyCode, int nID, CWindow wndCtl);
 	void OnBtn_Font(UINT uNotifyCode, int nID, CWindow wndCtl);					// “字体选择工具栏”按钮
 	void OnBtn_Face(UINT uNotifyCode, int nID, CWindow wndCtl);					// “表情”按钮
 	void OnShakeWindow(UINT uNotifyCode, int nID, CWindow wndCtl);				// “窗口抖动”按钮
@@ -245,7 +243,6 @@ private:
 	BOOL HandleSysFaceIndex(HWND hRichEditWnd, LPCTSTR& p, CString& strText);
 	BOOL HandleCustomPic(HWND hRichEditWnd, LPCTSTR& p, CString& strText);
 	
-	void AddMsg(HWND hRichEditWnd, LPCTSTR lpText);
 	
 	void AddMsgToSendEdit(LPCTSTR lpText);
 	
