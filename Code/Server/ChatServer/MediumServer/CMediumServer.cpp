@@ -1090,6 +1090,12 @@ UserRegisterRspMsg CChatServer::DoUserRegisterReq(const UserRegisterReqMsg& reqM
 			rsp.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 			rsp.m_strErrMsg = "Succeed";
 			rsp.m_strUserName = newUser.m_strF_USER_NAME;
+
+			T_USER_TEAM_BEAN teamBean;
+			teamBean.m_strF_TEAM_ID = DEFAULT_TEAM_ID;
+			teamBean.m_strF_TEAM_NAME = DEFAULT_TEAM_NAME;
+			teamBean.m_strF_USER_ID = newUser.m_strF_USER_ID;
+			m_util.InsertUserTeam(teamBean);
 		}
 		else
 		{
@@ -1145,10 +1151,11 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 	std::vector<T_USER_TEAM_BEAN> teamBeanList;
 	GetFriendListRspMsg rspMsg;
 	rspMsg.m_strUserId = req.m_strUserId;
-	if (m_util.GetUserFriendList(req.m_strUserId, friendBeanList))
+	if (m_util.SelectUserTeams(req.m_strUserId, teamBeanList))
 	{
-		if (m_util.SelectUserTeams(req.m_strUserId, teamBeanList))
+		if (m_util.GetUserFriendList(req.m_strUserId, friendBeanList))
 		{
+			
 		}
 			std::map<std::string,TeamBaseInfo> teamIdTeamMap;
 			for (const auto teamItem : teamBeanList)
@@ -1280,8 +1287,6 @@ bool CChatServer::OnAddFriendNotifyReqMsg(const std::string strUser)
 			reqMsg.m_strFriendId = msgBean.m_strF_FRIEND_ID;
 
 			reqMsg.m_option = msgBean.m_eF_FRIEND_OPTION;
-			//reqMsg.m = msgBean.m_strF_USER_NAME;
-			//reqMsg.m_strFriendName = msgBean.m_strF_FRIEND_NAME;
 			if ((!m_util.IsFriend(reqMsg.m_strUserId, reqMsg.m_strFriendId))||
 				(!m_util.IsFriend(reqMsg.m_strFriendId, reqMsg.m_strUserId) ))
 			{
@@ -1295,8 +1300,17 @@ bool CChatServer::OnAddFriendNotifyReqMsg(const std::string strUser)
 				}
 				if (E_FRIEND_OPTION::E_AGREE_ADD == reqMsg.m_option)
 				{
-					m_util.InsertFriendRelation(reqMsg.m_strUserId, reqMsg.m_strFriendId, E_FRIEND_RELATION::E_FRIEND_TYPE);
-					m_util.InsertFriendRelation(reqMsg.m_strFriendId, reqMsg.m_strUserId, E_FRIEND_RELATION::E_FRIEND_TYPE);
+					T_FRIEND_RELATION_BEAN bean;
+					bean.m_eF_STATUS = E_FRIEND_RELATION::E_FRIEND_TYPE;
+					bean.m_strF_TEAM_ID = DEFAULT_TEAM_ID;
+					
+					bean.m_strF_USER_ID = reqMsg.m_strUserId;
+					bean.m_strF_FRIEND_ID = reqMsg.m_strFriendId;
+					m_util.InsertFriendRelation(bean);
+					
+					bean.m_strF_FRIEND_ID = reqMsg.m_strUserId;
+					bean.m_strF_USER_ID = reqMsg.m_strFriendId;
+					m_util.InsertFriendRelation(bean);
 				}
 				else
 				{
