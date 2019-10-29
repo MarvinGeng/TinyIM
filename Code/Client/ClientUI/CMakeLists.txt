@@ -103,7 +103,6 @@ SET(FLAMING_GO_CLIENT_SOURCE
 ./Source/PicBarDlg.h ./Source/PicBarDlg.cpp  
 ./Source/RecentListCtrl.h ./Source/RecentListCtrl.cpp   
 ./Source/RegisterDialog.h ./Source/RegisterDialog.cpp
-./Source/RemoteDesktopDlg.h ./Source/RemoteDesktopDlg.cpp  
 ./Source/resource.h ./Source/Result.h 
 ./Source/RichEditUtil.h ./Source/RichEditUtil.cpp  
 ./Source/SessChatDlg.h  ./Source/SessChatDlg.cpp    

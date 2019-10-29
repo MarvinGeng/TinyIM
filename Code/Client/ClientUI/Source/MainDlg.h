@@ -134,10 +134,10 @@ public:
 		COMMAND_RANGE_HANDLER_EX(TEAM_MENU_ITEM_BASE, 0xF015, OnMoveBuddyToTeam)//移动联系人至指定分组
 
 		
-		COMMAND_ID_HANDLER_EX(ID_MENU_BIGHEADPIC, OnMenu_BigHeadPic)			//大头像菜单
-		COMMAND_ID_HANDLER_EX(ID_MENU_SMALLHEADPIC, OnMenu_SmallHeadPic)		//小头像菜单
-		COMMAND_ID_HANDLER_EX(ID_MENU_STDHEADPIC, OnMenu_StdHeadPic)			//标准头像菜单
-		COMMAND_ID_HANDLER_EX(ID_MENU_SHOWBIGHEADPICINSEL, OnMenu_ShowBigHeadPicInSel)
+		//COMMAND_ID_HANDLER_EX(ID_MENU_BIGHEADPIC, OnMenu_BigHeadPic)			//大头像菜单
+		//COMMAND_ID_HANDLER_EX(ID_MENU_SMALLHEADPIC, OnMenu_SmallHeadPic)		//小头像菜单
+		//COMMAND_ID_HANDLER_EX(ID_MENU_STDHEADPIC, OnMenu_StdHeadPic)			//标准头像菜单
+		//COMMAND_ID_HANDLER_EX(ID_MENU_SHOWBIGHEADPICINSEL, OnMenu_ShowBigHeadPicInSel)
 		COMMAND_ID_HANDLER_EX(ID_BTN_SIGN, OnBtn_Sign)								//个性签名按钮
 		COMMAND_HANDLER_EX(ID_EDIT_SIGN, EN_KILLFOCUS, OnEdit_Sign_KillFocus)		//个性签名编辑框
 		COMMAND_RANGE_HANDLER_EX(ID_MENU_IMONLINE, ID_MENU_IMOFFLINE, OnMenu_Status)
@@ -162,7 +162,7 @@ public:
         COMMAND_ID_HANDLER_EX(IDM_EXIT_GROUP, OnMenu_ExitGroup)					//右键菜单退出该群
 
 		//显示昵称和账户、显示昵称、显示账号、显示清爽资料
-		COMMAND_RANGE_HANDLER_EX(ID_32911, ID_32914, OnMenu_ShowNameChoice)
+		//COMMAND_RANGE_HANDLER_EX(ID_32911, ID_32914, OnMenu_ShowNameChoice)
         
         //网络错误
         MESSAGE_HANDLER_EX(FMG_MSG_NET_ERROR, OnNetError)
@@ -171,7 +171,7 @@ public:
 		MESSAGE_HANDLER_EX(FMG_MSG_LOGOUT_RESULT, OnLogoutResult)
 
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_INFO, OnUpdateBuddyInfo)		 //更新用户信息
-		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_NUMBER, OnUpdateBuddyNumber)	 //更新用户昵称(TODO: 名字要改)
+		//MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_NUMBER, OnUpdateBuddyNumber)	 //更新用户昵称(TODO: 名字要改)
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_HEADPIC, OnUpdateBuddyHeadPic)
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_SIGN, OnUpdateBuddySign)
 		MESSAGE_HANDLER_EX(FMG_MSG_SELF_STATUS_CHANGE, OnSelfStatusChange)
@@ -180,9 +180,8 @@ public:
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_BUDDY_LIST, OnUpdateBuddyList)		 //更新好友列表信息
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_GROUP_LIST, OnUpdateGroupList)
 		MESSAGE_HANDLER_EX(FMG_MSG_UPDATE_RECENT_LIST, OnUpdateRecentList)	 //更新最近联系人列表
-		MESSAGE_HANDLER_EX(FMG_MSG_BUDDY_MSG, OnBuddyMsg)
-		MESSAGE_HANDLER_EX(FMG_MSG_GROUP_MSG, OnGroupMsg)
-		MESSAGE_HANDLER_EX(FMG_MSG_SESS_MSG, OnSessMsg)
+		//MESSAGE_HANDLER_EX(FMG_MSG_GROUP_MSG, OnGroupMsg)
+		//MESSAGE_HANDLER_EX(FMG_MSG_SESS_MSG, OnSessMsg)
 		MESSAGE_HANDLER_EX(FMG_MSG_STATUS_CHANGE_MSG, OnStatusChangeMsg)
 		MESSAGE_HANDLER_EX(FMG_MSG_KICK_MSG, OnKickMsg)
         MESSAGE_HANDLER_EX(FMG_MSG_SCREENSHOT, OnScreenshotMsg)
@@ -281,10 +280,10 @@ private:
 	void OnMainMenu_About(UINT uNotifyCode, int nID, CWindow wndCtl);			// 主菜单关于菜单点击
 	void OnBtn_Cancel(UINT uNotifyCode, int nID, CWindow wndCtl);				// “取消”按钮(取消登录)
 	void OnPic_Clicked_Head(UINT uNotifyCode, int nID, CWindow wndCtl);			// “用户头像”控件
-	void OnMenu_BigHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “大头像”菜单
-	void OnMenu_SmallHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);		// “小头像”菜单
-	void OnMenu_StdHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “标准头像”菜单
-	void OnMenu_ShowBigHeadPicInSel(UINT uNotifyCode, int nID, CWindow wndCtl);	// “选中时显示大头像”菜单
+	//void OnMenu_BigHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “大头像”菜单
+	//void OnMenu_SmallHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);		// “小头像”菜单
+	//void OnMenu_StdHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “标准头像”菜单
+	//void OnMenu_ShowBigHeadPicInSel(UINT uNotifyCode, int nID, CWindow wndCtl);	// “选中时显示大头像”菜单
 	void OnEdit_Sign_KillFocus(UINT uNotifyCode, int nID, CWindow wndCtl);	// “个性签名”编辑文本框
 	void OnMenu_Status(UINT uNotifyCode, int nID, CWindow wndCtl);				// “用户在线状态”菜单
 
@@ -465,8 +464,7 @@ private:
 	CMsgTipDlg				m_MsgTipDlg;
 	CLogonUserInfoDlg       m_LogonUserInfoDlg;						
 	CModifyPasswordDlg		m_ModifyPasswordDlg;//修改密码的对话框
-	CMultiChatDlg			m_MultiChatDlg;									//群发消息窗口
-    CRemoteDesktopDlg*      m_pRemoteDesktopDlg;                            //远程桌面窗口
+	CMultiChatDlg			m_MultiChatDlg;									//群发消息窗口                           //远程桌面窗口
 
 	CSkinButton				m_btnMainMenu;		//主界面菜单按钮
 	CSkinMenu				m_SkinMenu;										//左下角带头像的菜单
