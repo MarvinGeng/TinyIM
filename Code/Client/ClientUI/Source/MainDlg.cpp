@@ -42,15 +42,6 @@
 
 extern HWND g_hwndOwner;
 
-#define LOGIN_TIMER_ID			  1 //登录定时器ID
-#define RECV_CHAT_MSG_TIMER_ID	  2 //接收消息定时器ID
-#define ADD_FRIEND_REQUEST_TIMER_ID 3 //添加好友定时器ID
-#define EXIT_APP_TIMER_ID		  4	 //退出APP的定时器ID
-#define RECONNECT_TIMER_ID        5 //重连定时器ID
-
-//好友项信息浮动窗口宽和高
-#define BUDDY_INFO_FLOAT_WND_WIDTH   300
-#define BUDDY_INFO_FLOAT_WND_HEIGHT  150
 
 //主菜单各个子菜单索引号
 enum MAIN_PANEL_MEMU
@@ -118,16 +109,14 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
 	m_loger = CreateLogger();
 	m_netProto = CMsgProto::GetInstance();
 	m_nLastMsgType = E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY;
-	m_nLastSenderId = 0;
-	m_bPicHeadPress = FALSE;
+
+	
+	//UI
 	m_hAppIcon = NULL;
 	memset(m_hLoginIcon, 0, sizeof(m_hLoginIcon));
-	m_nCurLoginIcon = 0;
+	//CORE
+
 	m_hMsgIcon = NULL;
-	m_dwLoginTimerId = 0;
-	m_dwMsgTimerId = 0;
-	m_dwAddFriendTimerId = 0;
-    m_dwReconnectTimerId = 0;
 
     m_bAlreadySendReloginRequest = false;
 
@@ -151,8 +140,6 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
 	m_bShowBigHeadPicInSel = TRUE;
 	m_bPanelLocked = FALSE;
 	m_bAlreadyLogin = FALSE;
-
-	m_bShowOnlineBuddyOnly = FALSE;
 
 	m_rcTrayIconRect.SetRectEmpty();
 
@@ -673,16 +660,6 @@ void CMainDlg::CloseDialog(int nVal)
 		}
 	}
 	
-	if (m_dwLoginTimerId != NULL)
-	{
-		KillTimer(m_dwLoginTimerId);
-		m_dwLoginTimerId = NULL;
-	}
-	if (m_dwMsgTimerId != NULL)
-	{
-		KillTimer(m_dwMsgTimerId);
-		m_dwMsgTimerId = NULL;
-	}
 
 	if (m_LogonUserInfoDlg.IsWindow())
 	{
@@ -1162,8 +1139,6 @@ BOOL CMainDlg::InitUI()
 	InitGroupListCtrl();	// 初始化群列表控件
 	InitRecentListCtrl();	// 初始化最近联系人列表控件
 
-    CRect rcBuddyInfoFloatWnd(0, 0, BUDDY_INFO_FLOAT_WND_WIDTH, BUDDY_INFO_FLOAT_WND_HEIGHT);
-    m_BuddyInfoFloatWnd.Create(m_hWnd, rcBuddyInfoFloatWnd, NULL, WS_POPUP);
 
 	return TRUE;
 }
@@ -1868,9 +1843,6 @@ LRESULT CMainDlg::OnTabCtrlDropDown(LPNMHDR pnmh)
 	//显示清爽资料菜单项
 	PopupMenu.CheckMenuItem(ID_32914, (m_userCfg.IsEnableSimpleProfile()?MF_CHECKED:MF_UNCHECKED)|MF_BYCOMMAND);
 	
-	//显示在线联系人
-	PopupMenu.CheckMenuItem(IDM_SHOW_ONLINEBUDDY_ONLY, (m_bShowOnlineBuddyOnly?MF_CHECKED:MF_UNCHECKED)|MF_BYCOMMAND);
-	
 	
 	PopupMenu.TrackPopupMenu(TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_VERTICAL, 
 		rcItem.right-19, rcItem.bottom + 4, m_hWnd, &rcItem);
@@ -1986,11 +1958,6 @@ LRESULT CMainDlg::OnBuddyListHover(LPNMHDR pnmh)
 	}
 
     int xLeftBuddyInfoFloatWnd = rtMainDlg.left - rtBuddyInfoFloatWnd.right + rtBuddyInfoFloatWnd.left;
-    //如果主窗口太靠近屏幕左边，信息窗口将显示在主窗口的右边
-	if (rtMainDlg.left < BUDDY_INFO_FLOAT_WND_WIDTH)
-	{
-		xLeftBuddyInfoFloatWnd = rtMainDlg.right;
-	}
 
     CString strHeadImg = m_BuddyListCtrl.GetBuddyItemHeadPic(hdr->nTeamIndex, hdr->nItemIndex);
     UINT nBuddyID = m_BuddyListCtrl.GetBuddyItemID(hdr->nTeamIndex, hdr->nItemIndex);
@@ -2241,7 +2208,6 @@ void CMainDlg::OnRefreshBuddyList(UINT uNotifyCode, int nID, CWindow wndCtl)
  */
 void CMainDlg::OnShowOnlineBuddyOnly(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	m_bShowOnlineBuddyOnly = !m_bShowOnlineBuddyOnly;
 	::SendMessage(m_hWnd, FMG_MSG_UPDATE_BUDDY_LIST, 0, 0);
 }
 
@@ -2870,8 +2836,6 @@ LRESULT CMainDlg::OnNetRecover(UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CMainDlg::OnNetError(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {        
     //重连定时器已经开启，直接退出，避免重复开启
-    if (m_dwReconnectTimerId != 0)
-        return 0;
     
     m_userMgr.ResetToOfflineStatus();
 
@@ -3045,9 +3009,6 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
         m_bAlreadySendReloginRequest = false;
         return 0;
     }
-    
- 	KillTimer(m_dwLoginTimerId);
- 	m_dwLoginTimerId = NULL;
 
 	E_UI_ONLINE_STATUS nStatus = m_netProto->GetStatus();
 
@@ -3555,26 +3516,6 @@ LRESULT CMainDlg::OnSysGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-
-/**
- * @brief 响应好友号码更新
- * TODO: 应该用不到
- * @param uMsg 
- * @param wParam 
- * @param lParam 
- * @return LRESULT 
- */
-//LRESULT CMainDlg::OnUpdateBuddyNumber(UINT uMsg, WPARAM wParam, LPARAM lParam)
-//{
-//	UINT nUTalkUin = (UINT)lParam;
-//	if (0 == nUTalkUin)
-//		return 0;
-//
-// 	NotifyBuddyChatDlg(nUTalkUin, FMG_MSG_UPDATE_BUDDY_NUMBER);		// 通知好友聊天窗口更新
-// 	NotifyBuddyInfoDlg(nUTalkUin, FMG_MSG_UPDATE_BUDDY_NUMBER);		// 通知好友信息窗口更新
-//
-//	return 0;
-//}
 
 
 /**
@@ -4579,8 +4520,6 @@ LRESULT CMainDlg::OnDelMsgSender(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (m_MsgTipDlg.IsWindow())
 			m_MsgTipDlg.DestroyWindow();
-		KillTimer(m_dwMsgTimerId);
-		m_dwMsgTimerId = NULL;
 		m_nLastMsgType = E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY;
 		m_nLastSenderId = 0;
 
@@ -4604,9 +4543,6 @@ LRESULT CMainDlg::OnCancelFlash(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		::PostMessage(m_MsgTipDlg.m_hWnd, WM_CLOSE, 0, 0);
 	}
-	
-	KillTimer(m_dwMsgTimerId);
-	m_dwMsgTimerId = NULL;
 	//先将任务栏图标恢复成正常状态
 	SetTrayIconOnLine();
 
@@ -5527,12 +5463,6 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				if (lpBuddyInfo->m_strAccount.empty())
 					continue;
 
-				if (m_bShowOnlineBuddyOnly)
-				{
-					if (lpBuddyInfo->m_nStatus == E_UI_ONLINE_STATUS::STATUS_OFFLINE || lpBuddyInfo->m_nStatus == E_UI_ONLINE_STATUS::STATUS_INVISIBLE /*|| lpBuddyInfo->m_nStatus==STATUS_MOBILE_OFFLINE*/)
-						continue;
-				}
-
 				CString strUTalkNum;
 				//strUTalkNum.Format(_T("%u"),lpBuddyInfo->m_nUTalkNum);
 				strUTalkNum.Format(_T("%s"), lpBuddyInfo->m_strAccount.c_str());
@@ -5857,46 +5787,6 @@ void CMainDlg::UpdateRecentTreeCtrl()
 void CMainDlg::OnTrayIcon_LButtunUp()
 {
 	DoMsgList();
-	if (m_dwMsgTimerId != NULL)
-	{
-		C_UI_MessageList* lpMsgList = NULL;// m_FMGClient.GetMessageList();
-		if (lpMsgList != NULL && lpMsgList->GetMsgSenderCount() > 0)
-		{
-			C_UI_MessageSender* lpMsgSender = lpMsgList->GetLastMsgSender();
-			if (lpMsgSender != NULL)
-			{			
-				E_UI_CHAT_MSG_TYPE nType = lpMsgSender->GetMsgType();
-				UINT nSenderId = lpMsgSender->GetSenderId();
-				UINT nGroupCode = lpMsgSender->GetGroupCode();
-
-
-				switch (nType)
-				{
-				case E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY:
-				{
-					ShowBuddyChatDlg("");
-				}
-					//ShowBuddyChatDlg(nSenderId, TRUE);
-					break;
-				case E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP:
-				{
-					ShowGroupChatDlg("", TRUE);
-				}break;
-				case E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS:
-					ShowSessChatDlg(nGroupCode, nSenderId, TRUE);
-					break;
-				}
-			}
-		}
-	}
-	else if(m_dwAddFriendTimerId != 0)
-	{
-		KillTimer(m_dwAddFriendTimerId);
-		m_dwAddFriendTimerId = 0;
-
-		ShowAddFriendConfirmDlg();
-	}
-	else
 	{
 		if (m_LoginDlg.IsWindow())
 		{

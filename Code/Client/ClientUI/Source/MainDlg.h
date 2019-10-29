@@ -280,10 +280,7 @@ private:
 	void OnMainMenu_About(UINT uNotifyCode, int nID, CWindow wndCtl);			// 主菜单关于菜单点击
 	void OnBtn_Cancel(UINT uNotifyCode, int nID, CWindow wndCtl);				// “取消”按钮(取消登录)
 	void OnPic_Clicked_Head(UINT uNotifyCode, int nID, CWindow wndCtl);			// “用户头像”控件
-	//void OnMenu_BigHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “大头像”菜单
-	//void OnMenu_SmallHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);		// “小头像”菜单
-	//void OnMenu_StdHeadPic(UINT uNotifyCode, int nID, CWindow wndCtl);			// “标准头像”菜单
-	//void OnMenu_ShowBigHeadPicInSel(UINT uNotifyCode, int nID, CWindow wndCtl);	// “选中时显示大头像”菜单
+
 	void OnEdit_Sign_KillFocus(UINT uNotifyCode, int nID, CWindow wndCtl);	// “个性签名”编辑文本框
 	void OnMenu_Status(UINT uNotifyCode, int nID, CWindow wndCtl);				// “用户在线状态”菜单
 
@@ -474,7 +471,7 @@ private:
 	CSkinEdit               m_edtSearch;                                    //查找按钮
 	CSkinPictureBox			m_picHead;                                      //个人头像
 	
-	BOOL					m_bPicHeadPress;
+	//BOOL					m_bPicHeadPress;
 
 	CSkinStatic				m_staNickName;									//个人昵称静态展示
 	
@@ -519,14 +516,10 @@ private:
 
 	HICON							m_hAppIcon;
 	HICON							m_hLoginIcon[6];
-	int								m_nCurLoginIcon; //当前
+
 	HICON							m_hMsgIcon;//消息图标
 	HICON							m_hAddFriendIcon[2];
-	DWORD							m_dwLoginTimerId; //登录定时器
-	DWORD							m_dwMsgTimerId;//消息定时器ID
-	DWORD							m_dwAddFriendTimerId;					//加好友定时器ID
-    DWORD                           m_dwReconnectTimerId;                   //断线重连定时器ID
-	//DWORD							m_dwExitAppTimerId;						//检测程序退出计时器
+
 
     bool                            m_bEnableReconnect;                     //是否断线重连
     UINT                            m_uReconnectInterval;                   //重连时间间隔，必须大于0，单位毫秒
@@ -549,7 +542,6 @@ private:
 
 	HRGN							m_hHotRgn;
 
-	BOOL							m_bShowOnlineBuddyOnly;  //只显示在线好友
 
 	CRect							m_rcTrayIconRect;        //系统托盘区矩形
 
