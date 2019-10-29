@@ -396,7 +396,7 @@ private:
 	void NotifyGMemberInfoDlg(UINT nGroupCode, UINT nUTalkUin, UINT uMsg);	// 通知群成员信息窗口更新
 	void NotifyGroupInfoDlg(UINT nGroupCode, UINT uMsg);					// 通知群信息窗口更新
 
-	void UpdateBuddyTreeCtrl(UINT uAccountID=0);
+	void UpdateBuddyTreeCtrl();
 	void BuddyListSortOnStaus();											//根据在线和离线状态排列好友列表
 	void UpdateGroupTreeCtrl();
 	void UpdateRecentTreeCtrl();

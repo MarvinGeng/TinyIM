@@ -119,7 +119,6 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
 	m_nLoginTryTimes = 0;
 
 	InitNetConnect();
-
 }
 
 bool CMainDlg::InitNetConnect()
@@ -165,16 +164,21 @@ CMainDlg::~CMainDlg(void)
 BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 {
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
-	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
-	SetIcon(m_hDlgSmallIcon, FALSE);
-
-	// register object for message filtering and idle updates
-	CMessageLoop* pLoop = _Module.GetMessageLoop();
-	ATLASSERT(pLoop != NULL);
-	pLoop->AddMessageFilter(this);
-	pLoop->AddIdleHandler(this);
+	{
+		m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+		SetIcon(m_hDlgIcon, TRUE);
+		m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+		SetIcon(m_hDlgSmallIcon, FALSE);
+	}
+	
+	//Init Message Loop
+	{
+		// register object for message filtering and idle updates
+		CMessageLoop* pLoop = _Module.GetMessageLoop();
+		ATLASSERT(pLoop != NULL);
+		pLoop->AddMessageFilter(this);
+		pLoop->AddIdleHandler(this);
+	}
 
 	UIAddChildWindowContainer(m_hWnd);
 	
@@ -184,7 +188,7 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 
 	LoadAppIcon(GetStatus());
 	
-	m_TrayIcon.AddIcon(m_hWnd, WM_TRAYICON_NOTIFY, 1, m_hAppIcon, _T("Flamingo未登录"));
+	m_TrayIcon.AddIcon(m_hWnd, WM_TRAYICON_NOTIFY, 1, m_hAppIcon, _T("TinyIM未登录"));
 
 	//创建Users目录
 	CString strAppPath(g_szHomePath);
@@ -210,8 +214,6 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 		return TRUE;
 	}
 
-	//TODO: 根据账户名设置用户头像
-	UINT nUTalkUin = _tcstoul(m_stAccountInfo.szUser, NULL, 10);
 
 	//设置默认位置
 	long cxScreen = ::GetSystemMetrics(SM_CXSCREEN);
@@ -222,7 +224,7 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	ModifyStyleEx(WS_EX_APPWINDOW, 0);
 
 	m_MultiChatDlg.m_lpFaceList = &m_FaceList;
-	
+	m_BuddyListCtrl.SetStyle(BLCTRL_STYLE::BLC_BIG_ICON_STYLE);
 	InitMsgTypeMap();
 	return TRUE;
 }
@@ -273,7 +275,7 @@ void CMainDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 /**
  * @brief 响应最大最小化
- * 
+ * TODO: 此处的变量需要默认值
  * @param lpMMI 
  */
 void CMainDlg::OnGetMinMaxInfo(LPMINMAXINFO lpMMI)
@@ -3013,7 +3015,7 @@ LRESULT CMainDlg::OnUpdateBuddyList(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	BuddyListSortOnStaus();
 	
-	UpdateBuddyTreeCtrl(uAccountID);		// 更新好友列表控件
+	UpdateBuddyTreeCtrl();		// 更新好友列表控件
 
     //TODO: 后期放到更新最近联系人和群组列表之后
     //m_FMGClient.m_RecvMsgThread.EnableUI(true);
@@ -5284,18 +5286,27 @@ void CMainDlg::NotifyGroupInfoDlg(UINT nGroupCode, UINT uMsg)
 
 
 /**
- * @brief 更新好友列表(UI)
+ * @brief 更新好友列表,主界面的好友列表(UI)
  * 
  * @param uAccountID 
  */
-void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
+void CMainDlg::UpdateBuddyTreeCtrl()
 {
-	//C_UI_BuddyList* lpBuddyList = m_FMGClient.GetBuddyList();
-	auto pProto = m_netProto;
-	C_UI_BuddyList * lpBuddyList = &(pProto->m_BuddyList);
+	C_UI_BuddyList * lpBuddyList = nullptr;
+	
+	//GetBudyList
+	{
+		if (nullptr != m_netProto)
+		{
+			lpBuddyList = &(m_netProto->m_BuddyList);
+		}
+		if (nullptr == lpBuddyList)
+		{
+			return;
+		}
+	}
 
-	if (NULL == lpBuddyList)
-		return;
+
 
 	int nBuddyTeamCount = lpBuddyList->GetBuddyTeamCount();
 	//记录上一次好友分组控件是处于收起还是展开状态
@@ -5330,8 +5341,6 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 		{
 			nTeamIndex = m_BuddyListCtrl.AddBuddyTeam(i);
 			m_BuddyListCtrl.SetBuddyTeamName(nTeamIndex, lpBuddyTeamInfo->m_strName.c_str());
-			//ATLTRACE(_T("nBuddyCount: %d.\n"), nBuddyCount);
-			//m_BuddyListCtrl.SetBuddyTeamMaxCnt(nTeamIndex, nBuddyCount);
 			m_BuddyListCtrl.SetBuddyTeamCurCnt(nTeamIndex, nOnlineBuddyCount);
 			m_BuddyListCtrl.SetBuddyTeamExpand(nTeamIndex, aryTeamExpandStatus[i]);
 			m_BuddyListCtrl.SetBuddyTeamID(nTeamIndex, lpBuddyTeamInfo->m_strTeamId);
@@ -5342,11 +5351,10 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 			C_UI_BuddyInfo* lpBuddyInfo = lpBuddyList->GetBuddy(i, j);
 			if (lpBuddyInfo != NULL)
 			{
-				//if(lpBuddyInfo->m_uUserID==0)
-				//	continue;
-
 				if (lpBuddyInfo->m_strAccount.empty())
+				{
 					continue;
+				}
 
 				CString strUTalkNum;
 				//strUTalkNum.Format(_T("%u"),lpBuddyInfo->m_nUTalkNum);
@@ -5359,15 +5367,13 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				{
 					bGray = TRUE;
 				}
-				BOOL bOnlineFlash = FALSE;
-				//if(uAccountID == lpBuddyInfo->m_uUserID)
-				//	bOnlineFlash = TRUE;
-
-				/* = m_FMGClient.GetBuddyHeadPicFullName(lpBuddyInfo->m_nUTalkNum)*/;
-				//if (!Hootina::CPath::IsFileExist(strFileName.c_str()))
-				if(lpBuddyInfo->m_nFace >= (UINT)USER_THUMB_COUNT)
+	
+				if (lpBuddyInfo->m_nFace >= (UINT)USER_THUMB_COUNT)
+				{
 					lpBuddyInfo->m_nFace = 0;
-				if(lpBuddyInfo->m_bUseCustomFace && lpBuddyInfo->m_bCustomFaceAvailable)
+				}
+				
+				if (lpBuddyInfo->m_bUseCustomFace && lpBuddyInfo->m_bCustomFaceAvailable)
 				{
 					strThumbPath.Format(_T("%s%d.png"), m_userMgr.GetCustomUserThumbFolder().c_str(), lpBuddyInfo->m_uUserIndex);
 					if(!Hootina::CPath::IsFileExist(strThumbPath))
@@ -5386,20 +5392,6 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				//m_BuddyListCtrl.SetBuddyItemUserName(nTeamIndex, nIndex, lpBuddyInfo->m_strUserName);
 				m_BuddyListCtrl.SetBuddyItemUserId(nTeamIndex, nIndex, lpBuddyInfo->m_strUserId);
 
-				
-				if(nNameStyle == E_UI_NAME_STYLE::NAME_STYLE_SHOW_NICKNAME)
-				{
-					m_BuddyListCtrl.SetBuddyItemMode(nTeamIndex, nIndex, BLCTRL_DISPLAY_SHOW_NICKNAME);
-				}
-				else if(nNameStyle == E_UI_NAME_STYLE::NAME_STYLE_SHOW_ACCOUNT)
-				{
-					m_BuddyListCtrl.SetBuddyItemMode(nTeamIndex, nIndex, BLCTRL_DISPLAY_SHOW_ACCOUNT);
-				}
-				else
-				{
-					m_BuddyListCtrl.SetBuddyItemMode(nTeamIndex, nIndex, BLCTRL_DISPLAY_SHOW_NICKNAME_ACCOUNT);
-				}
-				
 				//清爽资料不显示个性签名
 				if (bShowSimpleProfile)
 				{
@@ -5414,7 +5406,7 @@ void CMainDlg::UpdateBuddyTreeCtrl(UINT uAccountID/*=0*/)
 				m_BuddyListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, bGray);
 				
 				//SetBuddyItemOnline最后一个参数是上线动画
-				m_BuddyListCtrl.SetBuddyItemOnline(nTeamIndex, nIndex, !bGray, bOnlineFlash);
+				//m_BuddyListCtrl.SetBuddyItemOnline(nTeamIndex, nIndex, !bGray, bOnlineFlash);
                 /*if (lpBuddyInfo->m_nStatus == online_type_android_cellular || lpBuddyInfo->m_nStatus == online_type_android_wifi)
 				{
 					strThumbPath.Format(_T("%sImage\\mobile_online.png"), g_szHomePath);
@@ -5477,13 +5469,7 @@ void CMainDlg::UpdateGroupTreeCtrl()
 		m_GroupListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpGroupInfo->m_strAccount.c_str());
 		m_GroupListCtrl.SetBuddyItemMarkName(nTeamIndex, nIndex, lpGroupInfo->m_strName.c_str());
 		m_GroupListCtrl.SetBuddyItemUserId(nTeamIndex, nIndex, lpGroupInfo->m_strGroupId);
-		//m_GroupListCtrl.SetBuddyItemUserId(nTeamIndex, nIndex, lpGroupInfo->m_strAccount.c_str());
 		m_GroupListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strFileName.c_str(), FALSE);
-
-		//LOG_INFO(_T("GroupID=%u, GroupName=%s, GroupName=%s."), 
-		//			lpGroupInfo->m_nGroupCode,
-		//			lpGroupInfo->m_strAccount.c_str(),
-		//			lpGroupInfo->m_strName.c_str());
 
 		++nActualGroupCount;
 		
@@ -5505,162 +5491,164 @@ void CMainDlg::UpdateGroupTreeCtrl()
  */
 void CMainDlg::UpdateRecentTreeCtrl()
 {
-	C_UI_RecentList* lpRecentList = NULL;// m_FMGClient.GetRecentList();
-	if (NULL == lpRecentList)
-		return;
+	//{
+	//	C_UI_RecentList* lpRecentList = NULL;// m_FMGClient.GetRecentList();
+	//	if (NULL == lpRecentList)
+	//		return;
 
-	m_RecentListCtrl.DelAllItems();
+	//	m_RecentListCtrl.DelAllItems();
 
-	//TODO: 目前只有一组最近联系人
-	int nTeamIndex = m_RecentListCtrl.AddBuddyTeam(-1);
-	//m_RecentListCtrl.SetBuddyTeamName(nTeamIndex, _T("最近联系人"));
-	m_RecentListCtrl.SetBuddyTeamName(nTeamIndex, _T(""));
-	m_RecentListCtrl.SetBuddyTeamExpand(nTeamIndex, TRUE);
+	//	//TODO: 目前只有一组最近联系人
+	//	int nTeamIndex = m_RecentListCtrl.AddBuddyTeam(-1);
+	//	//m_RecentListCtrl.SetBuddyTeamName(nTeamIndex, _T("最近联系人"));
+	//	m_RecentListCtrl.SetBuddyTeamName(nTeamIndex, _T(""));
+	//	m_RecentListCtrl.SetBuddyTeamExpand(nTeamIndex, TRUE);
 
-	int nCount = 0;
-	CString strUserID;
-	UINT uFaceID = 0;
-	CString strThumbPath;
-	TCHAR szTime[8];
-	long nNewMsgCount;
-	C_UI_MessageSender* pMessageSender = NULL;
+	//	int nCount = 0;
+	//	CString strUserID;
+	//	UINT uFaceID = 0;
+	//	CString strThumbPath;
+	//	TCHAR szTime[8];
+	//	long nNewMsgCount;
+	//	C_UI_MessageSender* pMessageSender = NULL;
 
-	int nRecentCount = lpRecentList->GetRecentCount();
-	for (int i=nRecentCount-1; i >=0 ; --i)
-	{
-		C_UI_RecentInfo* lpRecentInfo = lpRecentList->GetRecent(i);
-		if (lpRecentInfo == NULL)
-			continue;
-		
-		if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY == lpRecentInfo->m_nType)			// 好友
-		{
-			C_UI_BuddyList* lpBuddyList = NULL;// m_FMGClient.GetBuddyList();
-			//如果还是最近好友，则根据好友信息显示
-			if (lpBuddyList != NULL)
-			{
-				C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpBuddyList->GetBuddy(lpRecentInfo->m_uUserID);
-				if (lpBuddyInfo != NULL)
-				{
-					BOOL bGray = TRUE;
-					if(lpBuddyInfo->m_nStatus!=E_UI_ONLINE_STATUS::STATUS_OFFLINE && lpBuddyInfo->m_nStatus!= E_UI_ONLINE_STATUS::STATUS_INVISIBLE)
-						bGray = FALSE;
+	//	int nRecentCount = lpRecentList->GetRecentCount();
+	//	for (int i = nRecentCount - 1; i >= 0; --i)
+	//	{
+	//		C_UI_RecentInfo* lpRecentInfo = lpRecentList->GetRecent(i);
+	//		if (lpRecentInfo == NULL)
+	//			continue;
 
-                    if (lpBuddyInfo->m_bUseCustomFace&& lpBuddyInfo->m_bCustomFaceAvailable)
-					{
-						strThumbPath.Format(_T("%s%d.png"), m_userMgr.GetCustomUserThumbFolder().c_str(), lpBuddyInfo->m_uUserIndex);
-						if(!Hootina::CPath::IsFileExist(strThumbPath))
-							strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, lpBuddyInfo->m_nFace);
-					}
-					else
-						strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, lpBuddyInfo->m_nFace);
+	//		if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY == lpRecentInfo->m_nType)			// 好友
+	//		{
+	//			C_UI_BuddyList* lpBuddyList = NULL;// m_FMGClient.GetBuddyList();
+	//			//如果还是最近好友，则根据好友信息显示
+	//			if (lpBuddyList != NULL)
+	//			{
+	//				C_UI_BuddyInfo* lpBuddyInfo = NULL;// lpBuddyList->GetBuddy(lpRecentInfo->m_uUserID);
+	//				if (lpBuddyInfo != NULL)
+	//				{
+	//					BOOL bGray = TRUE;
+	//					if (lpBuddyInfo->m_nStatus != E_UI_ONLINE_STATUS::STATUS_OFFLINE && lpBuddyInfo->m_nStatus != E_UI_ONLINE_STATUS::STATUS_INVISIBLE)
+	//						bGray = FALSE;
 
-					int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
-					//strUserID.Format(_T("%u"), lpBuddyInfo->m_uUserID);
-					m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpBuddyInfo->m_uUserIndex);
-					m_RecentListCtrl.SetBuddyItemAccountID(nTeamIndex, nIndex, lpBuddyInfo->m_uUserIndex);
+	//					if (lpBuddyInfo->m_bUseCustomFace&& lpBuddyInfo->m_bCustomFaceAvailable)
+	//					{
+	//						strThumbPath.Format(_T("%s%d.png"), m_userMgr.GetCustomUserThumbFolder().c_str(), lpBuddyInfo->m_uUserIndex);
+	//						if (!Hootina::CPath::IsFileExist(strThumbPath))
+	//							strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, lpBuddyInfo->m_nFace);
+	//					}
+	//					else
+	//						strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, lpBuddyInfo->m_nFace);
 
-					m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpBuddyInfo->m_strNickName.c_str());
-					//m_RecentListCtrl.SetBuddyItemGender(nTeamIndex, nIndex, bGender);
-					m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, bGray);
-					m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
-					if(lpBuddyInfo->m_nStatus == E_UI_ONLINE_STATUS::STATUS_MOBILE_ONLINE)
-					{
-						strThumbPath.Format(_T("%sImage\\mobile_online.png"), g_szHomePath);
-						m_RecentListCtrl.SetBuddyItemMobilePic(nTeamIndex, nIndex, strThumbPath);
-					}
-					
-					memset(szTime, 0, sizeof(szTime));
-					if(IsToday(lpRecentInfo->m_MsgTime))	
-						FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
-					else
-						FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
-					m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
+	//					int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
+	//					//strUserID.Format(_T("%u"), lpBuddyInfo->m_uUserID);
+	//					m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpBuddyInfo->m_uUserIndex);
+	//					m_RecentListCtrl.SetBuddyItemAccountID(nTeamIndex, nIndex, lpBuddyInfo->m_uUserIndex);
 
-					pMessageSender = m_userMgr.m_MsgList.GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY, lpBuddyInfo->m_uUserIndex);
-					if(pMessageSender != NULL)
-						nNewMsgCount = pMessageSender->GetDisplayMsgCount();
-					else
-						nNewMsgCount = 0;
-					m_RecentListCtrl.SetBuddyItemNewMsgCount(nTeamIndex, nIndex, nNewMsgCount);
+	//					m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpBuddyInfo->m_strNickName.c_str());
+	//					//m_RecentListCtrl.SetBuddyItemGender(nTeamIndex, nIndex, bGender);
+	//					m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, bGray);
+	//					m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
+	//					if (lpBuddyInfo->m_nStatus == E_UI_ONLINE_STATUS::STATUS_MOBILE_ONLINE)
+	//					{
+	//						strThumbPath.Format(_T("%sImage\\mobile_online.png"), g_szHomePath);
+	//						m_RecentListCtrl.SetBuddyItemMobilePic(nTeamIndex, nIndex, strThumbPath);
+	//					}
 
-					nCount++;
-				}
-				//如果已经不是好友了，则根据最近联系人中的信息显示
-				//else
-				//{
-				//	uFaceID = lpRecentInfo->m_uFaceID;
-				//	if(uFaceID > USER_THUMB_COUNT)
-				//		uFaceID = 0;
+	//					memset(szTime, 0, sizeof(szTime));
+	//					if (IsToday(lpRecentInfo->m_MsgTime))
+	//						FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
+	//					else
+	//						FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
+	//					m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
 
-				//	strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, uFaceID);
+	//					pMessageSender = m_userMgr.m_MsgList.GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY, lpBuddyInfo->m_uUserIndex);
+	//					if (pMessageSender != NULL)
+	//						nNewMsgCount = pMessageSender->GetDisplayMsgCount();
+	//					else
+	//						nNewMsgCount = 0;
+	//					m_RecentListCtrl.SetBuddyItemNewMsgCount(nTeamIndex, nIndex, nNewMsgCount);
 
-				//	int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
-				//	strUserID.Format(_T("%u"), lpRecentInfo->m_uUserID);
-				//	m_RecentListCtrl.SetBuddyItemAccountID(nTeamIndex, nIndex, lpRecentInfo->m_uUserID);
-				//	m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpRecentInfo->m_uUserID);
+	//					nCount++;
+	//				}
+	//				//如果已经不是好友了，则根据最近联系人中的信息显示
+	//				//else
+	//				//{
+	//				//	uFaceID = lpRecentInfo->m_uFaceID;
+	//				//	if(uFaceID > USER_THUMB_COUNT)
+	//				//		uFaceID = 0;
 
-				//	m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpRecentInfo->m_szName);
-				//	//m_RecentListCtrl.SetBuddyItemGender(nTeamIndex, nIndex, bGender);
-				//	m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, TRUE);
-				//	m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
-				//	
-				//	memset(szTime, 0, sizeof(szTime));
-				//	if(IsToday(lpRecentInfo->m_MsgTime))	
-				//		FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
-				//	else
-				//		FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
-				//	m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
+	//				//	strThumbPath.Format(_T("%sImage\\UserThumbs\\%d.png"), g_szHomePath, uFaceID);
 
-				//	nCount++;
-				//}
-			}	
-		}
-		else if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP == lpRecentInfo->m_nType)	// 群
-		{
-			CGroupList* lpGroupList = NULL;// m_FMGClient.GetGroupList();
-			if (lpGroupList != NULL)
-			{
-				C_UI_GroupInfo* lpGroupInfo = NULL;// lpGroupList->GetGroupByCode(lpRecentInfo->m_uUserID);
-				if (lpGroupInfo != NULL)
-				{
-					
-					strThumbPath.Format(_T("%sImage\\DefGroupHeadPic.png"), g_szHomePath);
+	//				//	int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
+	//				//	strUserID.Format(_T("%u"), lpRecentInfo->m_uUserID);
+	//				//	m_RecentListCtrl.SetBuddyItemAccountID(nTeamIndex, nIndex, lpRecentInfo->m_uUserID);
+	//				//	m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpRecentInfo->m_uUserID);
 
-					int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
-					//m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpGroupInfo->m_nGroupCode);
-					m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpGroupInfo->m_strName.c_str());
-					m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, FALSE);
-					m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
+	//				//	m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpRecentInfo->m_szName);
+	//				//	//m_RecentListCtrl.SetBuddyItemGender(nTeamIndex, nIndex, bGender);
+	//				//	m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, TRUE);
+	//				//	m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
+	//				//	
+	//				//	memset(szTime, 0, sizeof(szTime));
+	//				//	if(IsToday(lpRecentInfo->m_MsgTime))	
+	//				//		FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
+	//				//	else
+	//				//		FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
+	//				//	m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
 
-					memset(szTime, 0, sizeof(szTime));
-					if(IsToday(lpRecentInfo->m_MsgTime))	
-						FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
-					else
-						FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
-					m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
+	//				//	nCount++;
+	//				//}
+	//			}
+	//		}
+	//		else if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP == lpRecentInfo->m_nType)	// 群
+	//		{
+	//			CGroupList* lpGroupList = NULL;// m_FMGClient.GetGroupList();
+	//			if (lpGroupList != NULL)
+	//			{
+	//				C_UI_GroupInfo* lpGroupInfo = NULL;// lpGroupList->GetGroupByCode(lpRecentInfo->m_uUserID);
+	//				if (lpGroupInfo != NULL)
+	//				{
 
-					pMessageSender = m_userMgr.m_MsgList.GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, lpRecentInfo->m_uUserID);
-					if(pMessageSender != NULL)
-						nNewMsgCount = pMessageSender->GetDisplayMsgCount();	
-					else
-						nNewMsgCount = 0;	
-					m_RecentListCtrl.SetBuddyItemNewMsgCount(nTeamIndex, nIndex, nNewMsgCount);
+	//					strThumbPath.Format(_T("%sImage\\DefGroupHeadPic.png"), g_szHomePath);
 
-					nCount++;
-				}
-			}
-		}
-		else if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS == lpRecentInfo->m_nType)	// 好像是讨论组
-		{
-		}
-		
-	}// end for-loop
+	//					int nIndex = m_RecentListCtrl.AddBuddyItem(nTeamIndex, i);
+	//					//m_RecentListCtrl.SetBuddyItemID(nTeamIndex, nIndex, lpGroupInfo->m_nGroupCode);
+	//					m_RecentListCtrl.SetBuddyItemNickName(nTeamIndex, nIndex, lpGroupInfo->m_strName.c_str());
+	//					m_RecentListCtrl.SetBuddyItemHeadPic(nTeamIndex, nIndex, strThumbPath, FALSE);
+	//					m_RecentListCtrl.SetBuddyItemLastMsg(nTeamIndex, nIndex, lpRecentInfo->m_szLastMsgText);
 
-	m_RecentListCtrl.SetBuddyTeamMaxCnt(nTeamIndex, nCount);
-	m_RecentListCtrl.SetBuddyTeamCurCnt(nTeamIndex, nCount);
+	//					memset(szTime, 0, sizeof(szTime));
+	//					if (IsToday(lpRecentInfo->m_MsgTime))
+	//						FormatTime(lpRecentInfo->m_MsgTime, _T("%H:%M"), szTime, ARRAYSIZE(szTime));
+	//					else
+	//						FormatTime(lpRecentInfo->m_MsgTime, _T("%m-%d"), szTime, ARRAYSIZE(szTime));
+	//					m_RecentListCtrl.SetBuddyItemDate(nTeamIndex, nIndex, szTime);
 
-	if (m_RecentListCtrl.IsWindowVisible())
-		m_RecentListCtrl.Invalidate();
+	//					pMessageSender = m_userMgr.m_MsgList.GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, lpRecentInfo->m_uUserID);
+	//					if (pMessageSender != NULL)
+	//						nNewMsgCount = pMessageSender->GetDisplayMsgCount();
+	//					else
+	//						nNewMsgCount = 0;
+	//					m_RecentListCtrl.SetBuddyItemNewMsgCount(nTeamIndex, nIndex, nNewMsgCount);
+
+	//					nCount++;
+	//				}
+	//			}
+	//		}
+	//		else if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS == lpRecentInfo->m_nType)	// 好像是讨论组
+	//		{
+	//		}
+
+	//	}// end for-loop
+
+	//	m_RecentListCtrl.SetBuddyTeamMaxCnt(nTeamIndex, nCount);
+	//	m_RecentListCtrl.SetBuddyTeamCurCnt(nTeamIndex, nCount);
+
+	//	if (m_RecentListCtrl.IsWindowVisible())
+	//		m_RecentListCtrl.Invalidate();
+	//}
 }
 
 
@@ -5775,9 +5763,6 @@ void CMainDlg::OnTrayIcon_MouseHover()
 	//::OutputDebugString(_T("WM_MOUSEHOVER\n"));
 }
 
-/*
-鼠标移开托盘区图标的操作
-*/
 
 
 /**
@@ -6000,8 +5985,6 @@ void CMainDlg::UpdateMsgIcon()
  */
 CString CMainDlg::GetHeadPicFullName(UINT nGroupCode, UINT nUTalkUin)
 {
-	
-
 	return _T("");
 }
 
@@ -6068,8 +6051,8 @@ HICON CMainDlg::ExtractIcon(LPCTSTR lpszFileName)
  */
 void CMainDlg::CloseAllDlg()
 {
+	//关闭好友聊天窗口
 	{
-		//std::map<UINT, CBuddyChatDlg*>::iterator iter;
 		for (auto iter : m_mapBuddyChatDlg)
 		{
 			CBuddyChatDlg* lpBuddyChatDlg = iter.second;
@@ -6086,6 +6069,7 @@ void CMainDlg::CloseAllDlg()
 		m_mapBuddyChatDlg.clear();
 	}
 
+	//关闭群组聊天窗口
 	{
 		for (auto iter = m_mapGroupChatDlg.begin(); iter != m_mapGroupChatDlg.end(); iter++)
 		{
@@ -6100,6 +6084,7 @@ void CMainDlg::CloseAllDlg()
 		m_mapGroupChatDlg.clear();
 	}
 
+	//关闭临时聊天会话框
 	{
 		for (auto iter = m_mapSessChatDlg.begin(); iter != m_mapSessChatDlg.end(); iter++)
 		{
@@ -6114,6 +6099,7 @@ void CMainDlg::CloseAllDlg()
 		m_mapSessChatDlg.clear();
 	}
 
+	//关闭好友消息对话框
 	{
 		for (auto iter = m_mapBuddyInfoDlg.begin(); iter != m_mapBuddyInfoDlg.end(); iter++)
 		{
@@ -6128,6 +6114,7 @@ void CMainDlg::CloseAllDlg()
 		m_mapBuddyInfoDlg.clear();
 	}
 
+	//关闭群组成员信息对话框
 	{
 		std::map<CGMemberInfoMapKey, CBuddyInfoDlg*>::iterator iter;
 		for (iter = m_mapGMemberInfoDlg.begin(); iter != m_mapGMemberInfoDlg.end(); iter++)
@@ -6143,6 +6130,7 @@ void CMainDlg::CloseAllDlg()
 		m_mapGMemberInfoDlg.clear();
 	}
 
+	//关闭群组信息对话框
 	{
 		for (auto iter = m_mapGroupInfoDlg.begin(); iter != m_mapGroupInfoDlg.end(); iter++)
 		{
@@ -6260,72 +6248,72 @@ void CMainDlg::BuddyListSortOnStaus()
  */
 void CMainDlg::ShowAddFriendConfirmDlg()
 {	
-	size_t nCount = 0;// m_FMGClient.m_aryAddFriendInfo.size();
-	if(nCount == 0)
-		return;
+	//size_t nCount = 0;// m_FMGClient.m_aryAddFriendInfo.size();
+	//if(nCount == 0)
+	//	return;
 
-	AddFriendInfo_ST* pAddFriendInfo = NULL;// m_FMGClient.m_aryAddFriendInfo[nCount - 1];
-	if(pAddFriendInfo == NULL)
-		return;
+	//AddFriendInfo_ST* pAddFriendInfo = NULL;// m_FMGClient.m_aryAddFriendInfo[nCount - 1];
+	//if(pAddFriendInfo == NULL)
+	//	return;
 
-	CString strWindowTitle;
-	CString strInfo;
-	CAddFriendConfirmDlg AddFriendConfirmDlg;
-	//AddFriendConfirmDlg.m_pFMGClient = &m_FMGClient;
+	//CString strWindowTitle;
+	//CString strInfo;
+	//CAddFriendConfirmDlg AddFriendConfirmDlg;
+	////AddFriendConfirmDlg.m_pFMGClient = &m_FMGClient;
 
-	//别人加自己
-	if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Apply)
-	{
-		strWindowTitle = _T("加好友请求");
-		strInfo.Format(_T("%s(%s)请求您添加为好友，是否同意？"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
-		AddFriendConfirmDlg.ShowAgreeButton(TRUE);
-		AddFriendConfirmDlg.ShowRefuseButton(TRUE);
-		AddFriendConfirmDlg.ShowOKButton(FALSE);
-	}
-	//自己主动拒绝别人或者被别人拒绝
-	else if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Refuse)
-	{
-		strWindowTitle = g_strAppTitle.c_str();
-		strInfo.Format(_T("您或者对方(%s(%s))拒绝了加好友请求。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
-		AddFriendConfirmDlg.ShowAgreeButton(FALSE);
-		AddFriendConfirmDlg.ShowRefuseButton(FALSE);
-		AddFriendConfirmDlg.ShowOKButton(TRUE);
-	}
-	//自己或者别人同意了加好友请求
-	else if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Agree)
-	{		
-		strWindowTitle = g_strAppTitle.c_str();
-        //群号大于0xFFFFFFF
-		if (pAddFriendInfo->uAccountID < 0xFFFFFFF)
-		{
-			strInfo.Format(_T("您和%s(%s)已经是好友啦，开始聊天吧。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
-		}
-		else
-		{
-			strInfo.Format(_T("您已经成功加入群【%s(%s)】啦，开始聊天吧。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
-		}
-		AddFriendConfirmDlg.ShowAgreeButton(FALSE);
-		AddFriendConfirmDlg.ShowRefuseButton(FALSE);
-		AddFriendConfirmDlg.ShowOKButton(TRUE);
-		
-		//m_userMgr.AddFriend(pAddFriendInfo->uAccountID, pAddFriendInfo->szAccountName, pAddFriendInfo->szNickName);
-		//PostMessage(FMG_MSG_UPDATE_BUDDY_LIST, 0, 0);
-		//重新获取下好友列表并更新
-        //m_FMGClient.GetFriendList();
-	}
-	
-	AddFriendConfirmDlg.SetWindowInfo(strInfo);
-	AddFriendConfirmDlg.SetWindowTitle(strWindowTitle);
+	////别人加自己
+	//if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Apply)
+	//{
+	//	strWindowTitle = _T("加好友请求");
+	//	strInfo.Format(_T("%s(%s)请求您添加为好友，是否同意？"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
+	//	AddFriendConfirmDlg.ShowAgreeButton(TRUE);
+	//	AddFriendConfirmDlg.ShowRefuseButton(TRUE);
+	//	AddFriendConfirmDlg.ShowOKButton(FALSE);
+	//}
+	////自己主动拒绝别人或者被别人拒绝
+	//else if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Refuse)
+	//{
+	//	strWindowTitle = g_strAppTitle.c_str();
+	//	strInfo.Format(_T("您或者对方(%s(%s))拒绝了加好友请求。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
+	//	AddFriendConfirmDlg.ShowAgreeButton(FALSE);
+	//	AddFriendConfirmDlg.ShowRefuseButton(FALSE);
+	//	AddFriendConfirmDlg.ShowOKButton(TRUE);
+	//}
+	////自己或者别人同意了加好友请求
+	//else if(pAddFriendInfo->nCmd== E_UI_OPERATE_FRIEND::Agree)
+	//{		
+	//	strWindowTitle = g_strAppTitle.c_str();
+ //       //群号大于0xFFFFFFF
+	//	if (pAddFriendInfo->uAccountID < 0xFFFFFFF)
+	//	{
+	//		strInfo.Format(_T("您和%s(%s)已经是好友啦，开始聊天吧。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
+	//	}
+	//	else
+	//	{
+	//		strInfo.Format(_T("您已经成功加入群【%s(%s)】啦，开始聊天吧。"), pAddFriendInfo->szNickName, pAddFriendInfo->szAccountName);
+	//	}
+	//	AddFriendConfirmDlg.ShowAgreeButton(FALSE);
+	//	AddFriendConfirmDlg.ShowRefuseButton(FALSE);
+	//	AddFriendConfirmDlg.ShowOKButton(TRUE);
+	//	
+	//	//m_userMgr.AddFriend(pAddFriendInfo->uAccountID, pAddFriendInfo->szAccountName, pAddFriendInfo->szNickName);
+	//	//PostMessage(FMG_MSG_UPDATE_BUDDY_LIST, 0, 0);
+	//	//重新获取下好友列表并更新
+ //       //m_FMGClient.GetFriendList();
+	//}
+	//
+	//AddFriendConfirmDlg.SetWindowInfo(strInfo);
+	//AddFriendConfirmDlg.SetWindowTitle(strWindowTitle);
 
-	int nRet = AddFriendConfirmDlg.DoModal(m_hWnd, NULL);
-	
-	if(nRet==ID_ADDCONFIRM_REFUSE || nRet==ID_ADDCONFIRM_AGREE)
-	{		
-		E_UI_OPERATE_FRIEND uCmd = (nRet==ID_ADDCONFIRM_AGREE ? E_UI_OPERATE_FRIEND::Agree : E_UI_OPERATE_FRIEND::Refuse);
-		//m_FMGClient.ResponseAddFriendApply(pAddFriendInfo->uAccountID, uCmd);
-	}
-	
-	DELETE_PTR(pAddFriendInfo);
+	//int nRet = AddFriendConfirmDlg.DoModal(m_hWnd, NULL);
+	//
+	//if(nRet==ID_ADDCONFIRM_REFUSE || nRet==ID_ADDCONFIRM_AGREE)
+	//{		
+	//	E_UI_OPERATE_FRIEND uCmd = (nRet==ID_ADDCONFIRM_AGREE ? E_UI_OPERATE_FRIEND::Agree : E_UI_OPERATE_FRIEND::Refuse);
+	//	//m_FMGClient.ResponseAddFriendApply(pAddFriendInfo->uAccountID, uCmd);
+	//}
+	//
+	//DELETE_PTR(pAddFriendInfo);
 	//m_FMGClient.m_aryAddFriendInfo.erase(m_FMGClient.m_aryAddFriendInfo.end()-1);
 }
 
@@ -6630,22 +6618,14 @@ void CMainDlg::DoAddFriendRecvReqMsg(C_WND_MSG_OperateFriendResult* pResult)
 
 		if (AddFriendConfirmDlg.IsAgree())
 		{
-			{
-				//
-				auto pSess = m_netProto;
-				if (pSess) {
-					pSess->SendAddFriendRecvAsnyc(pResult->m_szAccountName, pResult->m_szMsgId, E_UI_OPERATE_FRIEND::Agree);
-				}
+			if (m_netProto) {
+				m_netProto->SendAddFriendRecvAsnyc(pResult->m_szAccountName, pResult->m_szMsgId, E_UI_OPERATE_FRIEND::Agree);
 			}
 		}
 		else
 		{
-			{
-				//
-				auto pSess = m_netProto;
-				if (pSess) {
-					pSess->SendAddFriendRecvAsnyc(pResult->m_szAccountName, pResult->m_szMsgId, E_UI_OPERATE_FRIEND::Refuse);
-				}
+			if (m_netProto) {
+				m_netProto->SendAddFriendRecvAsnyc(pResult->m_szAccountName, pResult->m_szMsgId, E_UI_OPERATE_FRIEND::Refuse);
 			}
 		}
 	}
