@@ -11,7 +11,6 @@
 #include "net/IUProtocolData.h"
 #include "SystemSettingDlg.h"
 #include "ClosePromptDlg.h"
-#include "IULog.h"
 #include "MobileStatusDlg.h"
 #include "UI_USER_INFO.h"
 #include "ModifyMarkNameDlg.h"
@@ -98,56 +97,33 @@ BOOL CMainDlg::OnIdle()
  * 
  */
 CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserConfig::GetInstance())
-{
-	{
-		{
-			auto& config = CUserConfig::GetInstance();
-			WString configPath = Hootina::CPath::GetAppPath() + _T("config\\userconfig.ini");
-			config.LoadConfig(configPath.c_str());
-		}
-	}
-	m_loger = CreateLogger();
-	m_netProto = CMsgProto::GetInstance();
-	m_nLastMsgType = E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY;
-
+{	
 	
 	//UI
 	m_hAppIcon = NULL;
 	memset(m_hLoginIcon, 0, sizeof(m_hLoginIcon));
-	//CORE
-
-	m_hMsgIcon = NULL;
-
-    m_bAlreadySendReloginRequest = false;
-
-
-    m_bEnableReconnect = true;
-    m_uReconnectInterval = 3000;
-
 	memset(m_hAddFriendIcon, 0, sizeof(m_hAddFriendIcon));
-
 	m_hDlgIcon = m_hDlgSmallIcon = NULL;
-	memset(&m_stAccountInfo, 0, sizeof(m_stAccountInfo));
-
 	m_pFindFriendDlg = new CFindFriendDlg();
-
-	m_nYOffset = 0;
-	m_bFold = TRUE;
-	m_bSideState = TRUE;
+	m_rcTrayIconRect.SetRectEmpty();
+	m_nCurSelIndexInMainTab = -1;
+	m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 
 	m_hHotRgn = NULL;
-	m_nBuddyListHeadPicStyle = BLC_BIG_ICON_STYLE;
-	m_bShowBigHeadPicInSel = TRUE;
 	m_bPanelLocked = FALSE;
-	m_bAlreadyLogin = FALSE;
-
-	m_rcTrayIconRect.SetRectEmpty();
-
-	m_nCurSelIndexInMainTab = -1;
-
-    m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
-	
+	//CORE
+	m_loger = CreateLogger();
+	m_netProto = CMsgProto::GetInstance();
+	m_hMsgIcon = NULL;
+	memset(&m_stAccountInfo, 0, sizeof(m_stAccountInfo));
 	m_nLoginTryTimes = 0;
+
+	InitNetConnect();
+
+}
+
+bool CMainDlg::InitNetConnect()
+{
 	{
 		std::string strServerIp = "127.0.0.1";
 		int serverPort = 9000;
@@ -163,14 +139,14 @@ CMainDlg::CMainDlg(void) :m_userMgr(CUserMgr::GetInstance()), m_userCfg(CUserCon
 			strTemp.ReleaseBuffer();
 			serverPort = std::atoi(EncodeUtil::UnicodeToUtf8(strTemp));
 		}
-		auto pProto = CMsgProto::GetInstance();
-		if (pProto)
+		m_netProto = CMsgProto::GetInstance();
+		if (m_netProto)
 		{
-			pProto->SetIpPort(strServerIp, serverPort);
-			pProto->StartConnect();
+			m_netProto->SetIpPort(strServerIp, serverPort);
+			m_netProto->StartConnect();
 		}
 	}
-
+	return true;
 }
 
 CMainDlg::~CMainDlg(void)
@@ -570,8 +546,6 @@ void CMainDlg::OnDestroy()
 		m_userCfg.SetMainDlgWidth(rcWindow.Width());
 		m_userCfg.SetMainDlgHeight(rcWindow.Height());
 
-		m_userCfg.SetBuddyListHeadPicStyle(m_nBuddyListHeadPicStyle);
-		m_userCfg.EnableBuddyListShowBigHeadPicInSel(m_bShowBigHeadPicInSel);
 		m_userCfg.SetFaceID(m_userMgr.m_UserInfo.m_nFace);
 		m_userCfg.SetCustomFace(m_userMgr.m_UserInfo.m_strCustomFace.c_str());
 	}
@@ -1791,54 +1765,8 @@ LRESULT CMainDlg::OnTabCtrlDropDown(LPNMHDR pnmh)
 	m_TabCtrl.GetItemRectByIndex(nCurSel, rcItem);
 	m_TabCtrl.ClientToScreen(&rcItem);
 	
-	if(m_nBuddyListHeadPicStyle == BLC_BIG_ICON_STYLE)
-	{
-		PopupMenu.CheckMenuItem(ID_MENU_BIGHEADPIC, MF_CHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_SMALLHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_STDHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-	}
-	else if(m_nBuddyListHeadPicStyle == BLC_SMALL_ICON_STYLE)
-	{
-		PopupMenu.CheckMenuItem(ID_MENU_BIGHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_SMALLHEADPIC, MF_CHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_STDHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-	}
-	else if(m_nBuddyListHeadPicStyle == BLC_STANDARD_ICON_STYLE)
-	{
-		PopupMenu.CheckMenuItem(ID_MENU_BIGHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_SMALLHEADPIC, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_MENU_STDHEADPIC, MF_CHECKED|MF_BYCOMMAND);
-	}
-	
-	if (m_bShowBigHeadPicInSel)
-	{
-		PopupMenu.CheckMenuItem(ID_MENU_SHOWBIGHEADPICINSEL, MF_CHECKED | MF_BYCOMMAND);
-	}
-	else
-	{
-		PopupMenu.CheckMenuItem(ID_MENU_SHOWBIGHEADPICINSEL, MF_UNCHECKED | MF_BYCOMMAND);
-	}
 
 	//显示昵称和账户、显示昵称、显示账户三个子菜单项
-	auto nNameStyle = m_userCfg.GetNameStyle();
-	if(nNameStyle == E_UI_NAME_STYLE::NAME_STYLE_SHOW_NICKNAME_AND_ACCOUNT)
-	{
-		PopupMenu.CheckMenuItem(ID_32911, MF_CHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32912, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32913, MF_UNCHECKED|MF_BYCOMMAND);
-	}
-	else if(nNameStyle == E_UI_NAME_STYLE::NAME_STYLE_SHOW_NICKNAME)
-	{
-		PopupMenu.CheckMenuItem(ID_32911, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32912, MF_CHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32913, MF_UNCHECKED|MF_BYCOMMAND);
-	}
-	else
-	{	
-		PopupMenu.CheckMenuItem(ID_32911, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32912, MF_UNCHECKED|MF_BYCOMMAND);
-		PopupMenu.CheckMenuItem(ID_32913, MF_CHECKED|MF_BYCOMMAND);
-	}
 	
 	//显示清爽资料菜单项
 	PopupMenu.CheckMenuItem(ID_32914, (m_userCfg.IsEnableSimpleProfile()?MF_CHECKED:MF_UNCHECKED)|MF_BYCOMMAND);
@@ -2843,13 +2771,6 @@ LRESULT CMainDlg::OnNetError(UINT uMsg, WPARAM wParam, LPARAM lParam)
     ::SendMessage(m_userMgr.m_hCallBackWnd, FMG_MSG_UPDATE_BUDDY_LIST, 0, 0);
     ::SendMessage(m_userMgr.m_hCallBackWnd, FMG_MSG_UPDATE_RECENT_LIST, 0, 0);
     ::SendMessage(m_userMgr.m_hCallBackWnd, FMG_MSG_UPDATE_GROUP_LIST, 0, 0);
-
-    //没有开启重连或者用户主动下线也不要重连
-    if (m_bEnableReconnect && m_nMainPanelStatus != MAINPANEL_STATUS_USERGOOFFLINE)
-    {
-        m_nMainPanelStatus = MAINPANEL_STATUS_RECONNECTING;
-       // m_dwReconnectTimerId = SetTimer(RECONNECT_TIMER_ID, m_uReconnectInterval, NULL);   
-    }
     
     return 1;
 }
@@ -2871,32 +2792,8 @@ LRESULT CMainDlg::DoLoginSucceed()
 	CString strIniFile;
 	strIniFile.Format(_T("%sconfig\\flamingo.ini"), g_szHomePath);
 
-	if (iniFile.ReadInt(_T("server"), _T("enablereconnect"), 1, strIniFile) != 0)
-	{
-		m_bEnableReconnect = true;
-	}
-	else
-	{
-		m_bEnableReconnect = false;
-	}
-	//如果都不重连，就没必要读取重连时间间隔了
-	if (m_bEnableReconnect)
-	{
-		m_uReconnectInterval = iniFile.ReadInt(_T("server"), _T("reconnectinterval"), 5000, strIniFile);
-		if (m_uReconnectInterval <= 0)
-			m_uReconnectInterval = 5000;
-	}
 
 	CreateEssentialDirectories();
-
-	//登录成功以后，获取服务器时间
-	//m_FMGClient.RequestServerTime();
-
-
-	//TODO: 这里调用时，网络线程一定都启动了吗？
-	//m_FMGClient.GetFriendList();
-	//m_FMGClient.StartCheckNetworkStatusTask();
-	//m_FMGClient.StartHeartbeatTask();
 
 	// 保存登录帐号列表
 	LOGIN_ACCOUNT_INFO* lpAccount = m_LoginAccountList.Find(m_stAccountInfo.szUser);
@@ -2931,10 +2828,6 @@ LRESULT CMainDlg::DoLoginSucceed()
 
 	//m_FMGClient.LoadUserConfig();
 	////加载头像风格信息
-	m_nBuddyListHeadPicStyle = m_userCfg.GetBuddyListHeadPicStyle();
-	m_BuddyListCtrl.SetStyle((BLCTRL_STYLE)m_nBuddyListHeadPicStyle);
-	m_bShowBigHeadPicInSel = m_userCfg.IsEnableBuddyListShowBigHeadPicInSel();
-	m_BuddyListCtrl.SetShowBigIconInSel(m_bShowBigHeadPicInSel);
 
 	//重连成功后，保持主窗口原来的位置
 	if (m_nMainPanelStatus != MAINPANEL_STATUS_RECONNECTING)
@@ -2972,12 +2865,9 @@ LRESULT CMainDlg::DoLoginSucceed()
 
 	::SetForegroundWindow(m_hWnd);
 	::SetFocus(m_hWnd);
-	m_bAlreadyLogin = TRUE;
 
 	m_nMainPanelStatus = MAINPANEL_STATUS_LOGIN;
 
-	//登录成功也清除该标志位，以便下次重连
-	m_bAlreadySendReloginRequest = false;
 	//登录成功获取好友列表
 	GetFriendList();
 	//登录成功获取群组列表
@@ -3006,7 +2896,6 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (m_nMainPanelStatus == MAINPANEL_STATUS_RECONNECTING && 
 		nCode != E_UI_LOGIN_RESULT_CODE::LOGIN_SUCCESS)
     {
-        m_bAlreadySendReloginRequest = false;
         return 0;
     }
 
@@ -3029,7 +2918,7 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_nLoginTryTimes++;
 				StartLogin();
 
-				m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
+				m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 			}
 			else
 			{
@@ -3043,7 +2932,7 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{						
 			MessageBox(_T("用户名未注册！"), g_strAppTitle.c_str(), MB_OK);
 			StartLogin();
-            m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
+            m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 		}
 		break;
 
@@ -3051,7 +2940,7 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			MessageBox(_T("密码错误！"), g_strAppTitle.c_str(), MB_OK);
 			StartLogin();
-            m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
+            m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 		}
 		break;
 	
@@ -3060,13 +2949,13 @@ LRESULT CMainDlg::OnLoginResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			ShowPanel(FALSE);		// 显示登录面板
 			MessageBox(_T("服务器拒绝您的登录请求！"), g_strAppTitle.c_str(), MB_OK);
 			StartLogin();
-            m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
+            m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 	}break;
 
 	case E_UI_LOGIN_RESULT_CODE::LOGIN_USER_CANCEL_LOGIN:	// 用户取消登录
 		{
 			StartLogin();
-            m_nMainPanelStatus = MAINPANEL_STATUS_NOTLOGIN;
+            m_nMainPanelStatus = MAIN_PANEL_STATUS_NOT_LOGIN;
 		}
 		break;
 	}
@@ -4520,10 +4409,6 @@ LRESULT CMainDlg::OnDelMsgSender(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (m_MsgTipDlg.IsWindow())
 			m_MsgTipDlg.DestroyWindow();
-		m_nLastMsgType = E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY;
-		m_nLastSenderId = 0;
-
-
 	}
 
 	return 0;
@@ -5817,11 +5702,6 @@ void CMainDlg::OnTrayIcon_RButtunUp()
 
 	int nPos = MAIN_PANEL_TRAYICON_SUBMENU_INDEX;		//登录前的托盘菜单索引
 	
-	if (!m_bAlreadyLogin)
-	{
-		nPos = MAIN_PANEL_TRAYICON_SUBMENU_INDEX;
-	}
-	else
 	{
 		if(m_bPanelLocked)
 			nPos = MAIN_PANEL_LOCK_SUBMENU_INDEX;		//面板锁定时的托盘菜单索引
@@ -6066,10 +5946,9 @@ void CMainDlg::UpdateMsgIcon()
 	UINT nSenderId = lpMsgSender->GetSenderId();
 	UINT nGroupCode = lpMsgSender->GetGroupCode();
 
-	if (m_nLastMsgType != nMsgType || m_nLastSenderId != nSenderId)
+	if (1)
 	{
-		m_nLastMsgType = nMsgType;
-		m_nLastSenderId = nSenderId;
+
 
 		if (m_hMsgIcon != NULL)
 		{

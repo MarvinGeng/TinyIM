@@ -41,7 +41,7 @@ const int MAX_LOGIN_TRY_TIMES = 3;
 //主面板状态
 enum MAINPANEL_STATUS
 {
-    MAINPANEL_STATUS_NOTLOGIN,     //主面板未登录
+    MAIN_PANEL_STATUS_NOT_LOGIN,     //主面板未登录
     MAINPANEL_STATUS_LOGINING,     //主面板正在登录
     MAINPANEL_STATUS_LOGIN,        //主面板已经登录
     MAINPANEL_STATUS_RECONNECTING, //主面板正在重连
@@ -133,11 +133,7 @@ public:
 		COMMAND_ID_HANDLER_EX(IDM_MODIFYTEAMNAME, OnBuddyListModifyTeamName)	//好友分组修改组名
 		COMMAND_RANGE_HANDLER_EX(TEAM_MENU_ITEM_BASE, 0xF015, OnMoveBuddyToTeam)//移动联系人至指定分组
 
-		
-		//COMMAND_ID_HANDLER_EX(ID_MENU_BIGHEADPIC, OnMenu_BigHeadPic)			//大头像菜单
-		//COMMAND_ID_HANDLER_EX(ID_MENU_SMALLHEADPIC, OnMenu_SmallHeadPic)		//小头像菜单
-		//COMMAND_ID_HANDLER_EX(ID_MENU_STDHEADPIC, OnMenu_StdHeadPic)			//标准头像菜单
-		//COMMAND_ID_HANDLER_EX(ID_MENU_SHOWBIGHEADPICINSEL, OnMenu_ShowBigHeadPicInSel)
+	
 		COMMAND_ID_HANDLER_EX(ID_BTN_SIGN, OnBtn_Sign)								//个性签名按钮
 		COMMAND_HANDLER_EX(ID_EDIT_SIGN, EN_KILLFOCUS, OnEdit_Sign_KillFocus)		//个性签名编辑框
 		COMMAND_RANGE_HANDLER_EX(ID_MENU_IMONLINE, ID_MENU_IMOFFLINE, OnMenu_Status)
@@ -450,20 +446,18 @@ private:
 	void DoRecvFriendChatTextMsg(C_WND_MSG_BuddyTextMessage* pResult);
 	//Dennis End
 public:
-	BOOL m_bSideState;
 
 private:
-	//CFlamingoClient			m_FMGClient;//用来
 	std::shared_ptr<spdlog::logger> m_loger=nullptr;
 	CSkinDialog				m_SkinDlg;										//主框架对话框
 	CLoginDlg				m_LoginDlg;			//登录对话框
 	CFindFriendDlg*			m_pFindFriendDlg;								//查找好友对话框
 	CMsgTipDlg				m_MsgTipDlg;
 	CLogonUserInfoDlg       m_LogonUserInfoDlg;						
-	CModifyPasswordDlg		m_ModifyPasswordDlg;//修改密码的对话框
+	CModifyPasswordDlg		m_ModifyPasswordDlg;							//修改密码的对话框
 	CMultiChatDlg			m_MultiChatDlg;									//群发消息窗口                           //远程桌面窗口
 
-	CSkinButton				m_btnMainMenu;		//主界面菜单按钮
+	CSkinButton				m_btnMainMenu;									//主界面菜单按钮
 	CSkinMenu				m_SkinMenu;										//左下角带头像的菜单
 	CSkinButton				m_btnMultiChat;									//群发按钮
 	CSkinButton				m_btnFind;										//查找好友按钮
@@ -498,7 +492,7 @@ private:
 
 
 	std::map<std::string, CBuddyChatDlg*> m_mapBuddyChatDlg;//好友聊天对话框MAP
-	std::map<std::string,CGroupChatDlg*> m_mapGroupChatDlg;//群组聊天对话框MAP
+	std::map<std::string, CGroupChatDlg*> m_mapGroupChatDlg;//群组聊天对话框MAP
 	std::map<std::string, CSessChatDlg*> m_mapSessChatDlg;//临时会话对话框MAP
 
 
@@ -506,13 +500,9 @@ private:
  	std::map<CGMemberInfoMapKey, CBuddyInfoDlg*> m_mapGMemberInfoDlg;//群成员信息对话框MAP
 	std::map<std::string, CGroupInfoDlg*> m_mapGroupInfoDlg;//群组信息对话框MAP
 
-	Gdiplus::GdiplusStartupInput	m_gdiplusStartupInput;
-	ULONG_PTR						m_gdiplusToken;
 	CFaceList						m_FaceList;
 	CTrayIcon						m_TrayIcon;
 
-	E_UI_CHAT_MSG_TYPE              m_nLastMsgType;//最后一个消息的类型
-	UINT							m_nLastSenderId;//最后一个发送者的编号
 
 	HICON							m_hAppIcon;
 	HICON							m_hLoginIcon[6];
@@ -520,25 +510,13 @@ private:
 	HICON							m_hMsgIcon;//消息图标
 	HICON							m_hAddFriendIcon[2];
 
-
-    bool                            m_bEnableReconnect;                     //是否断线重连
-    UINT                            m_uReconnectInterval;                   //重连时间间隔，必须大于0，单位毫秒
-
-    bool                            m_bAlreadySendReloginRequest;           //重连过程中是否已经发送过登录请求包
-
 	HICON							m_hDlgIcon;			//对话框图标
 	HICON                           m_hDlgSmallIcon;    //对话框的小图标
 	CLoginAccountList				m_LoginAccountList; //所有的登录账号的列表
 	LOGIN_ACCOUNT_INFO				m_stAccountInfo;						//当前即将要登录的账户信息
 	CCascadeWinManager				m_CascadeWinManager;
 		
-	long							m_nYOffset;
-	long							m_bFold;
-	long							m_nBuddyListHeadPicStyle;				//好友列表中头像风格
-	BOOL							m_bShowBigHeadPicInSel;					//当是小头像模式时，选中显示大头像
 	BOOL							m_bPanelLocked;							//主面板处于锁定状态
-
-	BOOL							m_bAlreadyLogin;				        //是否已经登录过
 
 	HRGN							m_hHotRgn;
 
@@ -577,5 +555,7 @@ private:
 	void SetTrayIconOnLine();
 	void SetTrayIconOffLine();
 	bool CreateGroupChatDlg(const std::string strGroupId);
+
+	bool InitNetConnect();
 };
 #endif
