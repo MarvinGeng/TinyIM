@@ -77,17 +77,17 @@ void CChatServer::CheckAllConnect()
  */
 void CChatServer::do_accept() 
 {
-		LOG_INFO(ms_loger,"CMediumServer do_accept[{} {}]", __FILENAME__, __LINE__);
-        m_acceptor.async_accept(m_socket, [this](std::error_code ec) {
-            if (!ec)
-			{
-			   LOG_INFO(ms_loger,"Server accept Successed [{} {}]", __FILENAME__, __LINE__);
-               auto agentSess= std::make_shared<CServerSess>(std::move(m_socket),this);
-			   agentSess->Start();
-			   m_listenList.push_back(agentSess);
-			}
-            do_accept();
-        });
+	LOG_INFO(ms_loger,"CMediumServer do_accept[{} {}]", __FILENAME__, __LINE__);
+	m_acceptor.async_accept(m_socket, [this](std::error_code ec) {
+		if (!ec)
+		{
+			LOG_INFO(ms_loger,"Server accept Successed [{} {}]", __FILENAME__, __LINE__);
+			auto agentSess= std::make_shared<CServerSess>(std::move(m_socket),this);
+			agentSess->Start();
+			m_listenList.push_back(agentSess);
+		}
+		do_accept();
+	});
 }
 
 /**
