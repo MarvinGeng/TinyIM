@@ -20,7 +20,6 @@ CGroupChatDlg::CGroupChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 	m_lpFaceList = NULL;
 	m_lpCascadeWinManager = NULL;
 	m_hMainDlg = NULL;
-	//m_nGroupCode = 0;
 
 	m_hDlgIcon = m_hDlgSmallIcon = NULL;
 	m_hRBtnDownWnd = NULL;
@@ -29,7 +28,6 @@ CGroupChatDlg::CGroupChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 	m_cxPicBarDlg = 122;
 	m_cyPicBarDlg = 24;
 
-	//m_nGroupId = m_nGroupNumber = 0;
 	m_strGroupName = _T("群名称");
 	m_strUserName = _T("");
 	m_nMemberCnt = m_nOnlineMemberCnt = 0;
@@ -59,10 +57,6 @@ CGroupChatDlg::~CGroupChatDlg(void)
 //预处理消息
 BOOL CGroupChatDlg::PreTranslateMessage(MSG* pMsg)
 {
-	//if (::GetForegroundWindow() == m_hWnd && !m_Accelerator.IsNull() && 
-	//	m_Accelerator.TranslateAccelerator(m_hWnd, pMsg))
-	//	return TRUE;
-
 	if ( (pMsg->hwnd == m_richRecv.m_hWnd) || 
 		 (pMsg->hwnd == m_richSend.m_hWnd) || 
 		 (pMsg->hwnd == m_richMsgLog.m_hWnd) )
@@ -133,60 +127,6 @@ BOOL CGroupChatDlg::PreTranslateMessage(MSG* pMsg)
 	return CWindow::IsDialogMessage(pMsg);
 }
 
-// 接收群消息
-//void CGroupChatDlg::OnRecvMsg(UINT nGroupCode, UINT nMsgId)
-//{
-//	if (::GetForegroundWindow() != m_hWnd)
-//	{
-//		FlashWindowEx(m_hWnd, 3);
-//	}
-//
-//	if (nMsgId == 0)
-//	{
-//		C_UI_MessageList* lpMsgList = NULL;// m_lpFMGClient->GetMessageList();
-//		if (lpMsgList != NULL)
-//		{
-//			C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, nGroupCode);
-//			if (lpMsgSender != NULL)
-//			{
-//				int nMsgCnt = lpMsgSender->GetMsgCount();
-//				for (int i = 0; i < nMsgCnt; i++)
-//				{
-//					C_UI_BuddyMessage* lpGroupMsg = lpMsgSender->GetGroupMsg(i);
-//					if (lpGroupMsg != NULL)
-//					{
-//						AddMsgToRecvEdit(lpGroupMsg);
-//					}
-//				}
-//				lpMsgList->DelMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, nGroupCode);
-//				::PostMessage(m_hMainDlg, WM_DEL_MSG_SENDER, static_cast<WPARAM>(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP), nGroupCode);
-//			}
-//		}
-//	}
-//	else
-//	{
-//		C_UI_MessageList* lpMsgList = NULL;// = m_lpFMGClient->GetMessageList();
-//		if (lpMsgList != NULL)
-//		{
-//			C_UI_MessageSender* lpMsgSender = lpMsgList->GetMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, nGroupCode);
-//			if (lpMsgSender != NULL)
-//			{
-//				C_UI_BuddyMessage* lpGroupMsg = lpMsgSender->GetGroupMsgById(nMsgId);
-//				if (lpGroupMsg != NULL)
-//				{
-//					AddMsgToRecvEdit(lpGroupMsg);
-//					lpMsgSender->DelMsgById(nMsgId);
-//				}
-//
-//				if (lpMsgSender->GetMsgCount() <= 0)
-//				{
-//					lpMsgList->DelMsgSender(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP, nGroupCode);
-//					::PostMessage(m_hMainDlg, WM_DEL_MSG_SENDER,static_cast<WPARAM>(E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP), nGroupCode);
-//				}
-//			}
-//		}
-//	}
-//}
 
 // 更新群信息
 void CGroupChatDlg::OnUpdateGroupInfo()
@@ -226,12 +166,11 @@ void CGroupChatDlg::OnUpdateGMemberNumber(WPARAM wParam, LPARAM lParam)
 	UINT nGroupCode = (UINT)wParam;
 	UINT nUTalkUin = (UINT)lParam;
 
-	C_UI_BuddyInfo* lpBuddyInfo = GetGMemberInfoPtr(nUTalkUin);
-	//if ( (NULL == lpBuddyInfo) || 
-	//	 (0 == lpBuddyInfo->m_uUserID) )
-	//{
-	//	return;
-	//}
+	C_UI_BuddyInfo* lpBuddyInfo = NULL;
+	if ( (NULL == lpBuddyInfo)  )
+	{
+		return;
+	}
 
 	CString strNickName;
 	CString strText;
@@ -267,12 +206,12 @@ void CGroupChatDlg::OnUpdateGMemberHeadPic(WPARAM wParam, LPARAM lParam)
 	UINT nGroupCode = (UINT)wParam;
 	UINT nUTalkUin = (UINT)lParam;
 
-	C_UI_BuddyInfo* lpBuddyInfo = GetGMemberInfoPtr(nUTalkUin);
-	//if ((NULL == lpBuddyInfo) ||
-	//	(0 == lpBuddyInfo->m_uUserID))
-	//{
-	//	return;
-	//}
+	C_UI_BuddyInfo* lpBuddyInfo = NULL;
+	if ((NULL == lpBuddyInfo) ||
+		(0 == lpBuddyInfo->m_uUserID))
+	{
+		return;
+	}
 		
 
 	BOOL bGray = FALSE;
@@ -643,409 +582,12 @@ void CGroupChatDlg::OnSizeNotShowMsgHistory()
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-	//	if (m_richRecv.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			if ((m_FontSelDlg.IsWindow()) &&
-	//				(m_FontSelDlg.IsWindowVisible()))
-	//			{
-	//				m_richRecv.MoveWindow(6,
-	//					106,
-	//					size.cx - GROUP_MEMBER_LIST_WIDTH - 2,
-	//					m_rtRichRecv.bottom - m_rtRichRecv.top - 32);
-	//			}
-	//			else if ((m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) ||
-	//				(!m_FontSelDlg.IsWindow()))
-	//			{
-	//				m_richRecv.MoveWindow(6,
-	//					106,
-	//					size.cx - GROUP_MEMBER_LIST_WIDTH - 2,
-	//					m_rtRichRecv.bottom - m_rtRichRecv.top, TRUE);
-	//			}
-
-	//			if ((m_FontSelDlg.IsWindow()) &&
-	//				(m_FontSelDlg.IsWindowVisible()))
-	//			{
-	//				m_FontSelDlg.MoveWindow(2,
-	//					m_rtRichRecv.bottom - 32,
-	//					size.cx - 20,
-	//					32, TRUE);
-	//			}
-	//		}
-	//		else
-	//		{
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 20, size.cy - 305);
-	//			}
-	//			else if ((m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 20, size.cy - 273, TRUE);
-	//			}
-
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_FontSelDlg.MoveWindow(2, size.cy - 197, size.cx - GROUP_MEMBER_LIST_WIDTH, 32, TRUE);
-	//			}
-	//		}
-	//	}
-
-	//	if (m_tbMid.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx - GROUP_MEMBER_LIST_WIDTH, 31, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_tbMid.MoveWindow(3, size.cy - 167, size.cx - GROUP_MEMBER_LIST_WIDTH, 31, TRUE);
-	//		}
-	//		//消息记录按钮始终靠边
-	//		m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx - GROUP_MEMBER_LIST_WIDTH - 200, 0);
-	//	}
-
-	//	if (m_SplitterCtrl.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 5, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_SplitterCtrl.MoveWindow(6, size.cy - 133, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 5, TRUE);
-	//		}
-	//	}
-
-	//	if (m_richSend.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, size.cy - m_rtRichSend.top - 35, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_richSend.MoveWindow(6, size.cy - 128, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 95, TRUE);
-	//		}
-	//	}
-
-	//	if (m_ListCtrl.IsWindow())
-	//	{
-	//		CRect rcListCtrl(rcClient.right - 194, 298, rcClient.right - 3, rcClient.bottom - 4);
-	//		m_ListCtrl.MoveWindow(&rcListCtrl);
-	//	}
-
-	//	if (m_RightTabCtrl.IsWindow())
-	//	{
-	//		m_RightTabCtrl.ShowWindow(SW_HIDE);
-	//	}
-	//}
 }
 //响应窗口大小变化
 //TODO 此函数过于复杂，要分析每种情况分别处理和提取
 void CGroupChatDlg::OnSize(UINT nType, CSize size)
 {
-	return OnSizeNotShowMsgHistory();
-	
-	//if(!m_bMsgLogWindowVisible)
-	//{
-
-		/*if (m_tbTop.IsWindow())
-		{
-			m_tbTop.MoveWindow(3, 70, size.cx - 1, 32, TRUE);
-		}
-
-		if (m_staMemoTitle.IsWindow())
-		{
-			m_staMemoTitle.MoveWindow(rcClient.right - 195, 98, 193, 28, FALSE);
-		}
-
-		if (m_staMemberTitle.IsWindow())
-		{
-			m_staMemberTitle.MoveWindow(rcClient.right - 195, 267, 193, 30, FALSE);
-		}
-
-		if (m_edtMemo.IsWindow())
-		{
-			m_edtMemo.MoveWindow(rcClient.right - 195, 124, 193, 145, FALSE);
-		}
-
-		if (m_btnClose.IsWindow())
-		{
-			m_btnClose.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 208, size.cy - 30, 77, 25, TRUE);
-		}
-
-		if (m_btnSend.IsWindow())
-		{
-			m_btnSend.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 118, size.cy - 30, 77, 25, TRUE);
-		}
-
-		if (m_btnArrow.IsWindow())
-		{
-			m_btnArrow.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 42, size.cy - 30, 28, 25, TRUE);
-		}
-
-
-		if (m_richRecv.IsWindow())
-		{
-			if(m_bDraged)
-			{
-				if ( (m_FontSelDlg.IsWindow()) && 
-					 (m_FontSelDlg.IsWindowVisible()) )
-				{
-					m_richRecv.MoveWindow(6, 
-						                 106, 
-						                 size.cx - GROUP_MEMBER_LIST_WIDTH - 2,
-						                 m_rtRichRecv.bottom - m_rtRichRecv.top - 32);
-				}
-				else if ( (m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) || 
-					     (!m_FontSelDlg.IsWindow()) )
-				{
-					m_richRecv.MoveWindow(6, 
-						                  106,
-						                  size.cx - GROUP_MEMBER_LIST_WIDTH - 2, 
-						                  m_rtRichRecv.bottom - m_rtRichRecv.top, TRUE);
-				}
-
-				if ( (m_FontSelDlg.IsWindow()) && 
-					 (m_FontSelDlg.IsWindowVisible()) )
-				{
-					m_FontSelDlg.MoveWindow(2, 
-											m_rtRichRecv.bottom - 32, 
-											size.cx - 20,
-											32, TRUE);
-				}
-			}
-			else
-			{
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-				{
-					m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 20, size.cy - 305);
-				}
-				else if ((m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-				{
-					m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 20, size.cy - 273, TRUE);
-				}
-
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-				{
-					m_FontSelDlg.MoveWindow(2, size.cy - 197, size.cx - GROUP_MEMBER_LIST_WIDTH, 32, TRUE);
-				}
-			}
-		}*/
-		
-	//	if (m_tbMid.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx - GROUP_MEMBER_LIST_WIDTH, 31, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_tbMid.MoveWindow(3, size.cy - 167, size.cx - GROUP_MEMBER_LIST_WIDTH, 31, TRUE);
-	//		}
-	//		//消息记录按钮始终靠边
-	//		m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-GROUP_MEMBER_LIST_WIDTH-200, 0);
-	//	}
-
-	//	if(m_SplitterCtrl.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 5, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_SplitterCtrl.MoveWindow(6, size.cy - 133, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 5, TRUE);
-	//		}
-	//	}
-
-	//	if (m_richSend.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, size.cy - m_rtRichSend.top - 35, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_richSend.MoveWindow(6, size.cy - 128, size.cx - GROUP_MEMBER_LIST_WIDTH - 5, 95, TRUE);
-	//		}
-	//	}
-
-	//	if (m_ListCtrl.IsWindow())
-	//	{
-	//		CRect rcListCtrl(rcClient.right-194, 298, rcClient.right-3, rcClient.bottom-4);
-	//		m_ListCtrl.MoveWindow(&rcListCtrl);
-	//	}
-
-	//	if(m_RightTabCtrl.IsWindow())
-	//	{
-	//		m_RightTabCtrl.ShowWindow(SW_HIDE);
-	//	}
-	//}
-	//else
-	//{
-	//	if (m_tbTop.IsWindow())
-	//	{
-	//		m_tbTop.MoveWindow(3, 70, size.cx - 1, 32, TRUE);
-	//	}
-
-	//	if (m_staMemoTitle.IsWindow())
-	//	{
-	//		m_staMemoTitle.MoveWindow(rcClient.right - 195 - GROUP_MSG_LOG_WIDTH, 98, 192, 30, FALSE);
-	//	}
-
-	//	if (m_staMemberTitle.IsWindow())
-	//	{
-	//		m_staMemberTitle.MoveWindow(rcClient.right - 195 - GROUP_MSG_LOG_WIDTH, 267, 192, 30, FALSE);
-	//	}
-
-	//	if (m_edtMemo.IsWindow())
-	//	{
-	//		m_edtMemo.MoveWindow(rcClient.right - 195 - GROUP_MSG_LOG_WIDTH, 124, 190, 145, FALSE);
-	//	}
-
-	//	if (m_btnClose.IsWindow())
-	//	{
-	//		m_btnClose.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 208 - GROUP_MSG_LOG_WIDTH, size.cy - 30, 77, 25, TRUE);
-	//	}
-
-	//	if (m_btnSend.IsWindow())
-	//	{
-	//		m_btnSend.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 118 - GROUP_MSG_LOG_WIDTH, size.cy - 30, 77, 25, TRUE);
-	//	}
-	//	if (m_btnArrow.IsWindow())
-	//	{
-	//		m_btnArrow.MoveWindow(size.cx - GROUP_MEMBER_LIST_WIDTH - 42 - GROUP_MSG_LOG_WIDTH, size.cy - 30, 28, 25, TRUE);
-	//	}
-	//	if (m_richRecv.IsWindow())
-	//	{
-	//		if(m_bDraged)
-	//		{
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, m_rtRichRecv.bottom - m_rtRichRecv.top - 32);
-	//			}
-	//			else if ((m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, m_rtRichRecv.bottom - m_rtRichRecv.top);
-	//			}
-	//		
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_FontSelDlg.MoveWindow(2, m_rtRichRecv.bottom - 32, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH - 20, 32, TRUE);
-	//			}
-
-	//		}
-	//		else
-	//		{
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, size.cy - 305);
-	//			}
-	//			else if ((m_FontSelDlg.IsWindow() && !m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-	//			{
-	//				m_richRecv.MoveWindow(6, 106, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, size.cy - 273);
-	//			}
-
-	//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-	//			{
-	//				m_FontSelDlg.MoveWindow(2, size.cy - 197, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH - 20, 32, TRUE);
-	//			}
-	//		}
-	//	}
-
-	//	if (m_tbMid.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH, 31, TRUE);
-	//		}
-	//		else
-	//		{
-	//			m_tbMid.MoveWindow(3, size.cy - 167, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH, 31, TRUE);
-	//		}//消息记录按钮始终靠边
-	//		m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-GROUP_MEMBER_LIST_WIDTH-200-GROUP_MSG_LOG_WIDTH, 0);
-	//	}
-
-	//	if(m_SplitterCtrl.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_SplitterCtrl.MoveWindow(3, m_rtSplitter.top, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH, 5, FALSE);
-	//		}
-	//		else
-	//		{
-	//			m_SplitterCtrl.MoveWindow(3, size.cy - 133, size.cx - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH, 5, FALSE);
-	//		}
-	//	}
-
-	//	if (m_richSend.IsWindow())
-	//	{
-	//		if (m_bDraged)
-	//		{
-	//			m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, size.cy - m_rtRichSend.top - 35, FALSE);
-	//		}
-	//		else
-	//		{
-	//			m_richSend.MoveWindow(6, size.cy - 128, size.cx - GROUP_MEMBER_LIST_WIDTH - 2 - GROUP_MSG_LOG_WIDTH, 95, FALSE);
-	//		}
-	//	}
-	//	
-	//	if (m_ListCtrl.IsWindow())
-	//	{
-	//		CRect rcListCtrl(rcClient.right-194-GROUP_MSG_LOG_WIDTH, 298, rcClient.right-3-GROUP_MSG_LOG_WIDTH, rcClient.bottom-4);
-	//		m_ListCtrl.MoveWindow(&rcListCtrl);
-	//	}
-
-	//	if(m_RightTabCtrl.IsWindow())
-	//	{
-	//		m_RightTabCtrl.MoveWindow(size.cx-GROUP_MSG_LOG_WIDTH+4, 74, GROUP_MSG_LOG_WIDTH-6, 20);
-	//	}
-
-	//	if (m_richMsgLog.IsWindow())
-	//	{
-	//		m_richMsgLog.MoveWindow(size.cx-GROUP_MSG_LOG_WIDTH+4, 106, GROUP_MSG_LOG_WIDTH-6, size.cy-140);	
-	//	}
-
-	//	//聊天记录翻页四个按钮
-	//	if (m_btnFirstMsgLog.IsWindow())
-	//	{
-	//		m_btnFirstMsgLog.MoveWindow(size.cx - GROUP_MSG_LOG_WIDTH + 110, size.cy - 30, 28, 25, TRUE);
-	//	}
-
-	//	if (m_btnPrevMsgLog.IsWindow())
-	//	{
-	//		m_btnPrevMsgLog.MoveWindow(size.cx - GROUP_MSG_LOG_WIDTH + 140, size.cy - 30, 28, 25, TRUE);
-	//	}
-	//	
-	//	if (m_staMsgLogPage.IsWindow())
-	//	{
-	//		m_staMsgLogPage.MoveWindow(size.cx - GROUP_MSG_LOG_WIDTH + 180, size.cy - 24, 60, 25, TRUE);
-	//	}
-
-	//	if (m_btnNextMsgLog.IsWindow())
-	//	{
-	//		m_btnNextMsgLog.MoveWindow(size.cx - GROUP_MSG_LOG_WIDTH + 240, size.cy - 30, 28, 25, TRUE);
-	//	}
-
-	//	if (m_btnLastMsgLog.IsWindow())
-	//	{
-	//		m_btnLastMsgLog.MoveWindow(size.cx - GROUP_MSG_LOG_WIDTH + 270, size.cy - 30, 28, 25, TRUE);
-	//	}
-	//}
-
+	OnSizeNotShowMsgHistory();
 	ResizeImageInRecvRichEdit();
 }
 
@@ -1216,12 +758,9 @@ void CGroupChatDlg::OnBtn_Font(UINT uNotifyCode, int nID, CWindow wndCtl)
 	if (BN_PUSHED == uNotifyCode)
 	{
 		m_FontSelDlg.ShowWindow(SW_SHOW);
-		//m_richRecv.MoveWindow(6, 106, rtRichRecv.right-rtRichRecv.left, rtRichRecv.bottom-rtRichRecv.top-32, TRUE);
-		//m_FontSelDlg.MoveWindow(6, rtRichRecv.bottom-32, rtRichRecv.right-rtRichRecv.left, 32, TRUE);	
 	}
 	else if (BN_UNPUSHED == uNotifyCode)
 	{
-		//m_richRecv.MoveWindow(6, 106, rtRichRecv.right-rtRichRecv.left, rtRichRecv.bottom-rtRichRecv.top+32);
 		m_FontSelDlg.ShowWindow(SW_HIDE);
 	}
 }
@@ -1323,21 +862,6 @@ void CGroupChatDlg::OnBtn_ScreenShot(UINT uNotifyCode, int nID, CWindow wndCtl)
 	}
 }
 
-// “消息记录”按钮
-//void CGroupChatDlg::OnBtn_MsgLog(UINT uNotifyCode, int nID, CWindow wndCtl)
-//{
-//	if (uNotifyCode == BN_CLICKED)
-//	{
-//		BOOL bChecked = m_tbMid.GetItemCheckState(11);
-//		if (!bChecked)
-//		{
-//			CloseMsgLogBrowser();
-//			return;
-//		}
-//
-//		OpenMsgLogBrowser();
-//	}
-//}
 
 // “点击另存为”按钮
 void CGroupChatDlg::OnBtn_SaveAs(UINT uNotifyCode, int nID, CWindow wndCtl)
@@ -1829,12 +1353,8 @@ void CGroupChatDlg::OnMenu_ViewInfo(UINT uNotifyCode, int nID, CWindow wndCtl)
 		return;
 	}
 
-	//if(m_lpFMGClient->m_UserMgr.IsFriend(nUTalkUin) || m_lpFMGClient->m_UserMgr.m_UserInfo.m_uUserID==nUTalkUin)
-	//	::PostMessage(m_hMainDlg, WM_SHOW_BUDDYINFODLG, 0, nUTalkUin);
-	//else
 	{
 		::MessageBox(m_hWnd, _T("暂不支持查看非好友的资料。"), g_strAppTitle.c_str(), MB_OK|MB_ICONINFORMATION);
-		//::PostMessage(m_hMainDlg, WM_SHOW_GMEMBERINFODLG, m_nGroupCode, nUTalkUin);
 	}
 }
 
@@ -2138,23 +1658,6 @@ C_UI_GroupInfo* CGroupChatDlg::GetGroupInfoPtr()
 	return NULL;
 }
 
-// 获取群成员信息指针
-C_UI_BuddyInfo* CGroupChatDlg::GetGMemberInfoPtr(UINT nUTalkUin)
-{
-	//if (m_lpFMGClient != NULL)
-	//{
-	//	CGroupList* lpGroupList = NULL;// = m_lpFMGClient->GetGroupList();
-	//	if (lpGroupList != NULL)
-	//	{
-	//		C_UI_GroupInfo* lpGroupInfo = lpGroupList->GetGroupByCode(m_nGroupCode);
-	//		if (lpGroupInfo != NULL)
-	//		{
-	//			return lpGroupInfo->GetMemberByUin(nUTalkUin);
-	//		}
-	//	}
-	//}
-	return NULL;
-}
 
 // 获取用户信息指针
 C_UI_BuddyInfo* CGroupChatDlg::GetUserInfoPtr()
@@ -2316,92 +1819,24 @@ BOOL CGroupChatDlg::UpdateGroupMemberList()
 // 初始化Top工具栏
 BOOL CGroupChatDlg::InitTopToolBar()
 {
-	/*
-#ifdef _DEBUG
-	int nIndex = m_tbTop.AddItem(101, STBI_STYLE_DROPDOWN);
-	m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
-	m_tbTop.SetItemPadding(nIndex, 1);
-	m_tbTop.SetItemToolTipText(nIndex, _T("群社区"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"), 
-		_T("aio_toolbar_leftdown.png"), CRect(0,0,0,0));
-	m_tbTop.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"), 
-		_T("aio_toolbar_rightdown.png"), CRect(0,0,0,0));
-	m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupCommunity.png"));
 
-	nIndex = m_tbTop.AddItem(102, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 1);
-	m_tbTop.SetItemToolTipText(nIndex, _T("群共享"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupShare.png"));
 
-	nIndex = m_tbTop.AddItem(103, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 1);
-	m_tbTop.SetItemToolTipText(nIndex, _T("群相册"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupAlbum.png"));
+	if (0)
+	{
+		int nIndex = m_tbTop.AddItem(101, STBI_STYLE_DROPDOWN);
+		m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
+		m_tbTop.SetItemPadding(nIndex, 1);
+		m_tbTop.SetItemToolTipText(nIndex, _T("群社区"));
+		m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+		m_tbTop.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"),
+			_T("aio_toolbar_leftdown.png"), CRect(0, 0, 0, 0));
+		m_tbTop.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"),
+			_T("aio_toolbar_rightdown.png"), CRect(0, 0, 0, 0));
+		m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
+		m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupCommunity.png"));
+	}
 
-	nIndex = m_tbTop.AddItem(104, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("休闲小游戏"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\Game.png"));
-
-	nIndex = m_tbTop.AddItem(105, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("创建讨论组"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\create_disc_group.png"));
-
-	nIndex = m_tbTop.AddItem(106, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("发起多人语音会话"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\MultiAudio.png"));
-
-	nIndex = m_tbTop.AddItem(107, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("搜索"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\soso.png"));
-
-	nIndex = m_tbTop.AddItem(108, STBI_STYLE_DROPDOWN);
-	m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("群设置"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"), 
-		_T("aio_toolbar_leftdown.png"), CRect(0,0,0,0));
-	m_tbTop.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"), 
-		_T("aio_toolbar_rightdown.png"), CRect(0,0,0,0));
-	m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupSet.png"));
-
-	nIndex = m_tbTop.AddItem(109, STBI_STYLE_BUTTON);
-	m_tbTop.SetItemSize(nIndex, 38, 28);
-	m_tbTop.SetItemPadding(nIndex, 2);
-	m_tbTop.SetItemToolTipText(nIndex, _T("举报"));
-	m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\Report.png"));
-
-#endif
-*/
 	m_tbTop.SetLeftTop(2, 2);
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 

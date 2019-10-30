@@ -178,7 +178,6 @@ private:
 	BOOL OnRichEdit_RBtnDown(MSG* pMsg);		// 发送/接收文本框的鼠标右键按下消息
 
 	C_UI_GroupInfo* GetGroupInfoPtr();				// 获取群信息指针
-	C_UI_BuddyInfo* GetGMemberInfoPtr(UINT nUTalkUin);// 获取群成员信息指针
 	C_UI_BuddyInfo* GetUserInfoPtr();				// 获取用户信息指针
 
 	void UpdateData();					// 更新信息
