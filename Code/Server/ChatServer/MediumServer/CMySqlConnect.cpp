@@ -225,6 +225,15 @@ bool CMySqlConnect::UpdateUser(const T_USER_BEAN& bean)
 	}
 }
 
+
+/**
+ * @brief 更新用户在线状态
+ * 
+ * @param strUserId 用户ID
+ * @param type 在线状态
+ * @return true 成功
+ * @return false 失败
+ */
 bool CMySqlConnect::UpdateUserOnlineState(const std::string strUserId, const CLIENT_ONLINE_TYPE type)
 {
 	int res = 0;
@@ -643,6 +652,14 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 	}
 	return bResult;
 }
+
+/**
+ * @brief 插入好友关系,添加好友的时候使用
+ * 
+ * @param bean 好友关系bean
+ * @return true 成功
+ * @return false 失败
+ */
 bool CMySqlConnect::InsertFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
 {
 	int res = 0;
@@ -725,6 +742,15 @@ bool CMySqlConnect::DeleteFriendRelation(const std::string strUser, const std::s
 	}
 	return true;
 }
+
+/**
+ * @brief 更新好友的分组ID
+ * 
+ * TODO: 可以删除
+ * @param bean 
+ * @return true 成功 
+ * @return false 失败
+ */
 bool CMySqlConnect::UpdateFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
 {
 	int res = 0;
@@ -798,6 +824,15 @@ bool CMySqlConnect::SelectFriendRelation(const std::string strUser, const std::s
 	return bResult;
 }
 
+/**
+ * @brief 修改用户的分组ID,删除用户分组的时候，将分组的所有成员移动到我的好友分组
+ * 
+ * @param strUser 用户ID
+ * @param strOldTeamId 旧分组ID
+ * @param strNewTeamId 新的分组ID
+ * @return true 成功
+ * @return false 失败
+ */
 bool CMySqlConnect::UpdateFriendTeamId(const std::string strUser, const std::string strOldTeamId, const std::string strNewTeamId)
 {
 	int res = 0;
@@ -1065,6 +1100,15 @@ bool CMySqlConnect::DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean)
 	return true;
 }
 
+/**
+ * @brief 选择某个用户的某个分组的所有好友
+ * 
+ * @param strUserName 用户ID
+ * @param strTeamId 分组ID
+ * @param teamBeans 所有好友的数组
+ * @return true 
+ * @return false 
+ */
 bool CMySqlConnect::SelectUserByTeamId(const std::string strUserName, const std::string strTeamId, std::vector<T_FRIEND_RELATION_BEAN>& teamBeans)
 {
 	bool bResult = false;

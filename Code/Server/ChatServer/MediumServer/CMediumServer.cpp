@@ -231,6 +231,12 @@ bool CChatServer::OnAddFriendRecvReqMsg(const std::string strUser)
 	}
 }
 
+
+/**
+ * @brief 响应用户状态检查
+ * 
+ * @param strUserId 用户ID
+ */
 void CChatServer::OnUserStateCheck(const std::string strUserId)
 {
 	auto stateItem = m_clientStateMap.find(strUserId);
@@ -300,11 +306,24 @@ void CChatServer::HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, 
 		NotifyUserFriends(rspMsg.m_strUserId);
 	}
 }
+
+/**
+ * @brief 处理用户未读消息的回复
+ * 
+ * @param pSess 
+ * @param rspMsg 
+ */
 void CChatServer::HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg)
 {
 	m_clientStateMap[rspMsg.m_strUserId] = CLIENT_SESS_STATE::SESS_FRIEND_MSG_SEND_RECV_STATE;
 	OnUserReceiveMsg(rspMsg.m_strUserId);
 }
+
+/**
+ * @brief 处理用户的KeepAlive的请求
+ * 
+ * @param pSess 用户会话
+ */
 void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess)
 {
 	if ( (pSess) &&
@@ -408,15 +427,28 @@ void CChatServer::HandleFindFriendReq(const std::shared_ptr<CServerSess>& pSess,
 }
 
 
+/**
+ * @brief 响应更新好友列表回复
+ * 
+ * @param pSess 用户会话
+ * @param reqMsg 更新好友列表回复
+ */
 void CChatServer::HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateFriendListNotifyRspMsg& reqMsg)
 {
 	OnUserStateCheck(reqMsg.m_strUserId);
 }
 
+/**
+ * @brief 处理更新群组列表回复
+ * 
+ * @param pSess 用户会话
+ * @param reqMsg 更新群列表回复
+ */
 void CChatServer::HandleUpdateGroupListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateGroupListNotifyRspMsg& reqMsg)
 {
 	OnUserRecvGroupMsg(reqMsg.m_strUserId);
 }
+
 /**
  * @brief 处理获取好友列表请求
  * 
@@ -683,6 +715,11 @@ void CChatServer::HandleFriendNotifyFileRsp(const std::shared_ptr<CServerSess>& 
 
 }
 
+/**
+ * @brief 通知用户更新好友列表
+ * TODO: 函数需要重命名
+ * @param strUserId 用户ID
+ */
 void CChatServer::NotifyUserFriends(const std::string strUserId)
 {
 	std::vector<std::string> strFriendIdList;
@@ -719,6 +756,13 @@ void CChatServer::HandleGetGroupListReq(const std::shared_ptr<CServerSess>& pSes
 		pSess->SendMsg(pSend);
 	}
 }
+
+/**
+ * @brief 处理用户退出群聊请求
+ * 
+ * @param pSess 
+ * @param reqMsg 
+ */
 void CChatServer::HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSess, const QuitFromGroupReqMsg& reqMsg)
 {
 	QuitFromGroupRspMsg rspMsg = DoQuitFromGroup(reqMsg);
@@ -730,6 +774,12 @@ void CChatServer::HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSes
 	}
 }
 
+/**
+ * @brief 执行用户退出群聊请求
+ * 
+ * @param reqMsg 用户退出群聊请求 
+ * @return QuitFromGroupRspMsg 用户退出群聊回复
+ */
 QuitFromGroupRspMsg CChatServer::DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg)
 {
 	QuitFromGroupRspMsg rspMsg;
@@ -1643,6 +1693,14 @@ void CChatServer::OnDispatchGroupMsg(const std::string strGroupId)
 	}
 }
 
+/**
+ * @brief 处理用户接收群组消息
+ * 
+ * @param strUser 用户ID
+ * @param msg 群聊消息
+ * @return true 成功
+ * @return false 失败
+ */
 bool CChatServer::OnUserRecvGroupMsg(const std::string strUser, const T_GROUP_CHAT_MSG& msg)
 {
 	auto item = m_UserSessVec.find(strUser);
