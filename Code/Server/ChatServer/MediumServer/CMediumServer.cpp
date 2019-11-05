@@ -155,15 +155,17 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 			KeepAliveReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string()))
 			{
-				auto item = m_UserSessVec.find(reqMsg.m_strClientId);
+				/*auto item = m_UserSessVec.find(reqMsg.m_strClientId);
 				if (item != m_UserSessVec.end())
+				{*/
+				for(auto item:m_UserSessVec)
 				{
 					NotifyUserUdpAddrReqMsg udpReqMsg;
 					udpReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
 					udpReqMsg.m_strUserId = reqMsg.m_strClientId;
 					udpReqMsg.m_udpEndPt.m_strServerIp = sendPt.address().to_string();
 					udpReqMsg.m_udpEndPt.m_nPort = sendPt.port();
-					item->second->SendMsg(&udpReqMsg);
+					item.second->SendMsg(&udpReqMsg);
 				}
 			}
 		}break;
