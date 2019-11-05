@@ -167,6 +167,7 @@ void CMediumServer::CheckAllConnect()
 	for (auto& item : m_userClientSessMap)
 	{
 		item.second->StartConnect();
+		item.second->SendKeepAlive();
 	}
 
 	if (m_udpClient)
@@ -357,7 +358,7 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				}
 			}
 		}
-		if (msg.GetType() == MessageType::KeepAliveRsp_Type || msg.GetType() == MessageType::KeepAliveReq_Type)
+		if (msg.GetType() == MessageType::KeepAliveRsp_Type )
 		{
 			KeepAliveRspMsg rspMsg;
 			if(rspMsg.FromString(msg.to_string()))
@@ -365,6 +366,20 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				KeepAliveReqMsg reqMsg;
 				reqMsg.m_strClientId = pClientSess->UserId();
 				TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+				if (m_udpClient)
+				{
+					m_udpClient->sendToServer(&trans);
+				}
+			}
+		}
+		if (msg.GetType() == MessageType::KeepAliveReq_Type)
+		{
+			KeepAliveReqMsg reqMsg;
+			if (reqMsg.FromString(msg.to_string()))
+			{
+				KeepAliveReqMsg reqMsg2;
+				reqMsg2.m_strClientId = pClientSess->UserId();
+				TransBaseMsg_t trans(reqMsg2.GetMsgType(), reqMsg2.ToString());
 				if (m_udpClient)
 				{
 					m_udpClient->sendToServer(&trans);

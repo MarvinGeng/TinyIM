@@ -119,12 +119,6 @@ void CClientSess::handle_message(const TransBaseMsg_t& hdr)
 	{
 		m_queue->SendBack(shared_from_this(),hdr);
 	}
-	if (MessageType::KeepAliveReq_Type == hdr.GetType())
-	{
-		KeepAliveReqMsg reqMsg;
-		reqMsg.FromString(hdr.to_string());
-		handleKeepAliveReq(reqMsg);
-	}
 }
 
 /**
@@ -213,6 +207,8 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 bool CClientSess::SendKeepAlive()
 {
 	KeepAliveReqMsg reqMsg(UserId());
+	auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+	SendMsg(pSendMsg);
 	return true;
 }
 

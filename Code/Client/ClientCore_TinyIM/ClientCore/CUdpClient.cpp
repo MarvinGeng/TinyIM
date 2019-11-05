@@ -45,10 +45,10 @@ namespace ClientCore {
 	
 	void CUdpClient::SendKeepAlive()
 	{
-		KeepAliveReqMsg reqMsg;
-		reqMsg.m_strClientId = "UdpTest";
-		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
-		send_msg(m_udpServerPt, &trans);
+		//KeepAliveReqMsg reqMsg;
+		//reqMsg.m_strClientId = "UdpTest";
+		//TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		//send_msg(m_udpServerPt, &trans);
 	}
 
 	void CUdpClient::handle_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
