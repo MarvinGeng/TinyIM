@@ -12,6 +12,7 @@ namespace ClientCore {
 		void StartConnect();
 		void SendKeepAlive();
 		void send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
+		void send_msg(const std::string strIp, const int port, const BaseMsg* pMsg);
 		void sendToServer(TransBaseMsg_t* pMsg);
 	public:
 		static std::shared_ptr<spdlog::logger> ms_loger;
@@ -23,6 +24,7 @@ namespace ClientCore {
 		asio::ip::udp::endpoint m_recvFromPt;
 		std::shared_ptr<asio::ip::udp::socket> m_udpSocket;
 		void do_read();
+		std::string EndPoint(const asio::ip::udp::endpoint endPt);
 		void handle_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
 	
 		static const int max_msg_length_udp = 8092;

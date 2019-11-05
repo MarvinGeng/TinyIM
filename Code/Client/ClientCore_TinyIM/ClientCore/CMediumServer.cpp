@@ -74,6 +74,15 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 			}
 		}
 	}
+
+	{
+		auto httpCfg = cfg["httpserver"];
+		if (httpCfg.is_object())
+		{
+			m_httpCfg.m_strServerIp = httpCfg["ip"].string_value();
+			m_httpCfg.m_nPort = httpCfg["port"].int_value();
+		}
+	}
 }
 
 
@@ -125,7 +134,7 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 		}
 		SetTimer(5);
 		do_accept();
-		m_httpServer->Start();
+		m_httpServer->Start(m_httpCfg.m_nPort);
 
 		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
 			m_clientCfgVec[0].m_strServerIp,
@@ -383,6 +392,17 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				if (m_udpClient)
 				{
 					m_udpClient->sendToServer(&trans);
+				}
+			}
+		}
+		if (msg.GetType() == MessageType::NotifyUserUdpAddrReq_Type)
+		{
+			NotifyUserUdpAddrReqMsg reqMsg;
+			if (reqMsg.FromString(msg.to_string())) {
+				KeepAliveReqMsg aliveMsg;
+				aliveMsg.m_strClientId = reqMsg.m_strUserId;
+				if (m_udpClient) {
+					m_udpClient->send_msg(reqMsg.m_udpEndPt.m_strServerIp, reqMsg.m_udpEndPt.m_nPort, &aliveMsg);
 				}
 			}
 		}

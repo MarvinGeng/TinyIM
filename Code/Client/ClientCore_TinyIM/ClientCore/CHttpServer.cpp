@@ -893,8 +893,8 @@ namespace ClientCore
 	 * @brief 初始化URL和函数的对应关系
 	 * 
 	 */
-	void CHttpServer::Init() {
-		m_httpServer.config.port = 8000;
+	void CHttpServer::Init(const int port=8000) {
+		m_httpServer.config.port = port;
 		auto pSelf = shared_from_this();
 		
 		m_httpServer.resource["/version"]["GET"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {

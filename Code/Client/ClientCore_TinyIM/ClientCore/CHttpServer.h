@@ -28,9 +28,9 @@ namespace ClientCore {
 
 		}
 
-		void Start()
+		void Start(const int port)
 		{
-			Init();
+			Init(port);
 			m_httpServer.start();
 		}
 
@@ -135,7 +135,7 @@ namespace ClientCore {
 
 		void Post_RecvGroupTextMsgRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
-		void Init();
+		void Init(const int port);
 
 		std::string GetHttpParamUserId(std::shared_ptr<HttpServer::Request> request);
 	

@@ -49,8 +49,10 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
     std::vector<IpPortCfg> m_clientCfgVec;
 
 	std::vector<IpPortCfg> m_clientBinCfgVec;
-
-    std::vector<std::shared_ptr<CServerSess>> m_listenList; //监听的套接字的列表
+	
+	IpPortCfg m_httpCfg;
+    
+	std::vector<std::shared_ptr<CServerSess>> m_listenList; //监听的套接字的列表
 
 	std::map<std::shared_ptr<CServerSess>, std::shared_ptr<CClientSess>> m_ForwardSessMap;
 	std::map<std::shared_ptr<CClientSess>, std::shared_ptr<CServerSess>> m_BackSessMap;
