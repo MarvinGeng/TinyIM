@@ -416,3 +416,109 @@ E_FRIEND_RELATION FriendRelation(const std::string& strRelation)
 	}
 	return E_FRIEND_RELATION::E_STRANGER_TYPE;
 }
+
+/*
+std::string ErrMsg(const ERROR_CODE_TYPE errType)
+{
+	switch (errType)
+	{
+	case ERROR_CODE_TYPE::E_CODE_SUCCEED:
+	{
+		return "Succeed";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_CONNECT_FAILED:
+	{
+		return "Connect To Server Failed";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_USER_HAS_EXIST:
+	{
+		return "User Has Exist";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED:
+	{
+		return "User Login Failed";
+	}break;
+
+	}
+}*/
+
+std::string ErrMsg(const ERROR_CODE_TYPE errType)
+{
+	switch (errType)
+	{
+	case ERROR_CODE_TYPE::E_CODE_SUCCEED:
+	{
+		return "成功";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_CONNECT_FAILED:
+	{
+		return "连接到服务器失败";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_USER_HAS_EXIST:
+	{
+		return "用户已存在";
+	}break;
+
+	case ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED:
+	{
+		return "登录失败";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER:
+	{
+		return "没有此用户";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_USER_NAME_PASS_WORD_NOT_MATCH:
+	{
+		return "用户名密码不匹配";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_USER_OFF_LINE:
+	{
+		return "用户不在线";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_VERIFY_CODE_NOT_MATCH:
+	{
+		return "验证码不匹配";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_EMPTY_GROUP_NAME:
+	{
+		return "群组名为空";
+	}break; 
+	case ERROR_CODE_TYPE::E_CODE_ADD_SELF_AS_FRIEND:
+	{
+		return "不能添加自己为好友";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_EMPTY_USER_ID:
+	{
+		return "用户ID为空";
+	}break; 
+	case ERROR_CODE_TYPE::E_CODE_EMPTY_GROUP_ID:
+	{
+		return "群组ID为空";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_EMPTY_USER_NAME:
+	{
+		return "用户名为空";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_EMPTY_PASS_WORD:
+	{
+		return "登录失败";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_NOT_FRIEND_RELATION:
+	{
+		return "非好友关系";
+	}break;
+	case ERROR_CODE_TYPE::E_CODE_ERROR_PARAM:
+	{
+		return "参数错误";
+	}break;
+	default:
+	{
+		return "未知错误";
+	}break;
+	}
+}

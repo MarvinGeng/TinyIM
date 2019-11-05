@@ -387,7 +387,7 @@ public:
  */
 class KeepAliveRspMsg final:public BaseMsg
 {
-private:
+public:
 	std::string m_strClientId;//心跳请求中携带的客户端标识
 public:
 	explicit KeepAliveRspMsg();
@@ -1997,6 +1997,31 @@ public:
 	std::string m_strMsgId; //消息ID
 	std::string m_strUserId;//用户ID
 	UpdateGroupListNotifyRspMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class NotifyUserUdpAddrReqMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId; //消息ID
+	std::string m_strUserId;//用户ID
+	IpPortCfg	m_udpEndPt;
+	NotifyUserUdpAddrReqMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class NotifyUserUdpAddrRspMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId; //消息ID
+	std::string m_strUserId;//用户ID
+	NotifyUserUdpAddrRspMsg();
 
 	virtual std::string ToString() const override;
 

@@ -7121,3 +7121,117 @@ bool UpdateGroupListNotifyRspMsg::FromString(const std::string& strJson) {
 	}
 	return true;
 }
+
+NotifyUserUdpAddrReqMsg::NotifyUserUdpAddrReqMsg()
+{
+	m_type = MessageType::NotifyUserUdpAddrReq_Type;
+}
+
+std::string NotifyUserUdpAddrReqMsg::ToString() const {
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+			{"UdpIp",m_udpEndPt.m_strServerIp},
+			{"UdpPort",m_udpEndPt.m_nPort},
+		});
+
+	return clientObj.dump();
+}
+
+bool NotifyUserUdpAddrReqMsg::FromString(const std::string& strJson) {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UdpIp"].is_string())
+	{
+		m_udpEndPt.m_strServerIp = json["UdpIp"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UdpPort"].is_number())
+	{
+		m_udpEndPt.m_nPort = json["UdpPort"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+
+NotifyUserUdpAddrRspMsg::NotifyUserUdpAddrRspMsg()
+{
+	m_type = MessageType::NotifyUserUdpAddrRsp_Type;
+}
+
+std::string NotifyUserUdpAddrRspMsg::ToString() const {
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+		});
+
+	return clientObj.dump();
+}
+
+bool NotifyUserUdpAddrRspMsg::FromString(const std::string& strJson) {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}

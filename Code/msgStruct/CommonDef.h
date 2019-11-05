@@ -289,6 +289,18 @@ UpdateGroupListNotifyReq_Type,
 
 //群组更新回复
 UpdateGroupListNotifyRsp_Type,
+
+//通知用户Udp的地址请求
+NotifyUserUdpAddrReq_Type,
+
+//通知用户Udp的地址回复
+NotifyUserUdpAddrRsp_Type,
+
+//UdpP2P开始请求
+UdpP2PStartReq_Type,
+
+//UdpP2P开始回复
+UdpP2PStartRsp_Type,
 };
 
 //客户端会话状态
@@ -370,6 +382,14 @@ enum class ERROR_CODE_TYPE {
 	E_CODE_EMPTY_GROUP_NAME,//群组名称为空
 
 	E_CODE_ADD_SELF_AS_FRIEND,//添加自己为好友
+	E_CODE_EMPTY_USER_ID,//用户ID为空
+	E_CODE_EMPTY_GROUP_ID,//群组ID为空
+	E_CODE_EMPTY_USER_NAME,//用户名为空
+	E_CODE_EMPTY_PASS_WORD,//用户密码为空
+	E_CODE_NOT_GROUP_MEMBER,//不是群组成员
+	E_CODE_NOT_FRIEND_RELATION,//不是好友关系
+	E_CODE_ERROR_PARAM,//参数错误
+
 };
 
 //好友关系类型
@@ -436,4 +456,6 @@ CLIENT_ONLINE_TYPE OnLineType(const std::string strOnlineType);
 
 std::string FriendRelation(const E_FRIEND_RELATION& relation);
 E_FRIEND_RELATION FriendRelation(const std::string& strRelation);
+
+std::string ErrMsg(const ERROR_CODE_TYPE errType);
 #endif
