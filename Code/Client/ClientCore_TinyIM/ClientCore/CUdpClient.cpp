@@ -58,6 +58,12 @@ namespace ClientCore {
 			LOG_INFO(ms_loger, "{}:{} Send :{}", endPt.address().to_string(),endPt.port(), pMsg->to_string());
 		}
 	}
+	
+	void CUdpClient::sendToServer(TransBaseMsg_t* pMsg)
+	{
+		send_msg(m_udpServerPt, pMsg);
+	}
+
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
 		if (m_udpSocket)

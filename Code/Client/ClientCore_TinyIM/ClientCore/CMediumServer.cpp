@@ -357,6 +357,20 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				}
 			}
 		}
+		if (msg.GetType() == MessageType::KeepAliveRsp_Type || msg.GetType() == MessageType::KeepAliveReq_Type)
+		{
+			KeepAliveRspMsg rspMsg;
+			if(rspMsg.FromString(msg.to_string()))
+			{
+				KeepAliveReqMsg reqMsg;
+				reqMsg.m_strClientId = pClientSess->UserId();
+				TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+				if (m_udpClient)
+				{
+					m_udpClient->sendToServer(&trans);
+				}
+			}
+		}
 		OnHttpRsp(pMsg);
 	}
 }

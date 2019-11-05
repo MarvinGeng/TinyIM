@@ -212,7 +212,7 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
  */
 bool CClientSess::SendKeepAlive()
 {
-	KeepAliveReqMsg reqMsg("MediumServer");
+	KeepAliveReqMsg reqMsg(UserId());
 	return true;
 }
 
