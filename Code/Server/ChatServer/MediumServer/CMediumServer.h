@@ -36,6 +36,8 @@ class CChatServer : public std::enable_shared_from_this<CChatServer>
 {
 public:
 	void HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess);
+	void HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess,const KeepAliveReqMsg& reqMsg);
+	void HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess,const KeepAliveRspMsg& rspMsg);
 	void HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, const UserLoginReqMsg& reqMsg);
 
 	void HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess, const UserKickOffRspMsg& reqMsg);

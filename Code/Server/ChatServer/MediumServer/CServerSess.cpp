@@ -50,27 +50,17 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 		KeepAliveReqMsg msg;
 		if (msg.FromString(hdr->to_string()))
 		{
-			handleKeepAliveReq(msg);
+			m_server->HandleUserKeepAliveReq(shared_from_this(), msg);
 		}
-		else
-		{
-			LOG_ERR(ms_loger, "Bad KeepAlivReqMsg {}  [ {} {} ] ", hdr->to_string(), __FILENAME__, __LINE__);
-		}
-		return;
 	}
 	break;
 	case MessageType::KeepAliveRsp_Type:
 	{
-		KeepAliveRspMsg msg;
-		if (msg.FromString(hdr->to_string()))
+		KeepAliveRspMsg rspMsg;
+		if (rspMsg.FromString(hdr->to_string()))
 		{
-			handleKeepAliveRsp(msg);
+			m_server->HandleUserKeepAliveRsp(shared_from_this(), rspMsg);
 		}
-		else
-		{
-			LOG_ERR(ms_loger, "Bad KeepAlivRspMsg {} [ {} {} ] ", hdr->to_string(),__FILENAME__, __LINE__);
-		}
-		return;
 	}
 	break;
 	case MessageType::UserLoginReq_Type:

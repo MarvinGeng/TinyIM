@@ -13,6 +13,7 @@ namespace ChatServer
 		addr.from_string(strIp);
 		asio::ip::udp::endpoint endPt(addr, port);
 		std::error_code ec;
+		m_serverPt = endPt;
 		m_socket = std::make_shared<asio::ip::udp::socket>(ioService, endPt);
 	}
 
@@ -71,11 +72,17 @@ namespace ChatServer
 			});
 		}
 	}
+
+	std::string CUdpServer::EndPoint(const asio::ip::udp::endpoint senderPt)
+	{
+		std::string strResult = senderPt.address().to_string() + ":" + std::to_string(senderPt.port());
+		return strResult;
+	}
 	void CUdpServer::HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg)
 	{
 		if (ms_loger && msg )
 		{
-			LOG_INFO(ms_loger, "{}:{} Send Msg:{}", senderPt.address().to_string(),senderPt.port(), msg->to_string());
+			LOG_INFO(ms_loger, "UDP {} ===> {} Send Msg:{}",EndPoint(senderPt),EndPoint(m_serverPt), msg->to_string());
 		}
 		if (msg)
 		{

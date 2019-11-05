@@ -57,7 +57,23 @@ void CChatServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 	}
 }
 
+void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess, const KeepAliveReqMsg& reqMsg)
+{
+	if (pSess)
+	{
+		KeepAliveRspMsg rspMsg;
+		rspMsg.m_strClientId = reqMsg.m_strClientId;
+		auto pSendMsg = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
+		pSess->SendMsg(pSendMsg);
+	}
+}
+void CChatServer::HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess, const KeepAliveRspMsg& rspMsg)
+{
+	if (pSess)
+	{
 
+	}
+}
 /**
  * @brief 检查所有的socket连接
  * 

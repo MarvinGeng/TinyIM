@@ -74,7 +74,7 @@ void CClientSessManager::CheckSessConn()
 		if(sessItem.second->IsConnect())
 		{
 			LOG_WARN(ms_loger,"{} Connected [{} {}]",sessItem.second->GetConnectInfo(), __FILENAME__, __LINE__);
-			sessItem.second->SendKeepAlive();
+			//sessItem.second->SendKeepAlive();
 		}
 		else
 		{

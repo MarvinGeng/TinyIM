@@ -25,13 +25,15 @@ class CClientSessManager;
  */
 class CClientSess : public std::enable_shared_from_this<CClientSess>  {
 protected:
+	
 	enum STATE
 	{
 		ST_CONN_FINISHED=0,
 		ST_CONNING,
 		ST_NOT_CONNECT
 	};
-    asio::io_service& m_ioService;
+    
+	asio::io_service& m_ioService;
 
 	std::string m_serverIp;
 	int 		m_serverPort;
@@ -65,9 +67,6 @@ public:
 	}
 	//获取连接的ip地址和端口号,格式为 xx.xx.xx.xx:port
 	std::string GetConnectInfo(){return m_connectInfo;}
-
-	bool SendKeepAlive();
-	
 	
 
     CClientSess(asio::io_service& ioService,std::string& strIp,int port,CClientSessManager* queue);

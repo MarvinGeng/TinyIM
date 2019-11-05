@@ -202,14 +202,14 @@ bool CClientSess::SendMessage(std::shared_ptr<TransBaseMsg_t> pMsg)
  * @return true 发送成功
  * @return false 发送失败
  */
-bool CClientSess::SendKeepAlive()
-{
-	KeepAliveReqMsg reqMsg("MediumServer");
-	auto pMsg =
-		std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-	SendMessage(pMsg);
-	return true;
-}
+//bool CClientSess::SendKeepAlive()
+//{
+//	KeepAliveReqMsg reqMsg("MediumServer");
+//	auto pMsg =
+//		std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+//	//SendMessage(pMsg);
+//	return true;
+//}
 
 /**
  * @brief 处理心跳请求消息

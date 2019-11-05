@@ -57,6 +57,8 @@ namespace ChatServer
 		int StopConnect();
 		bool SendMessage(std::shared_ptr<TransBaseMsg_t> pMsg);
 		void HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg);
+
+		std::string EndPoint(const asio::ip::udp::endpoint senderPt);
 	private:
 		asio::ip::udp::endpoint m_senderPt;
 		int do_read();
@@ -69,6 +71,7 @@ namespace ChatServer
 		UDP_CALL_BACK m_udpCallBack;
 		//tcpÁ¬½ÓµÄsocket
 		std::shared_ptr<asio::ip::udp::socket>   m_socket;
+		asio::ip::udp::endpoint m_serverPt;
 	};
 }
 #endif
