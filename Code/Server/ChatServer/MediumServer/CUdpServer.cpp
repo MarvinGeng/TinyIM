@@ -8,7 +8,7 @@ namespace ChatServer
 		return false;
 	}
 
-	CUdpServer::CUdpServer(asio::io_service& ioService, std::string strIp, int port) :m_ioService(ioService)
+	CUdpServer::CUdpServer(asio::io_service& ioService, std::string strIp, int port, UDP_CALL_BACK&& callBack):m_ioService(ioService),m_udpCallBack(callBack)
 	{	asio::ip::address addr;
 		addr.from_string(strIp);
 		asio::ip::udp::endpoint endPt(addr, port);
@@ -19,6 +19,7 @@ namespace ChatServer
 	int CUdpServer::StartConnect() {
 		return do_read();
 	}
+
 	int CUdpServer::StopConnect() {
 		return 0;
 	}
@@ -78,6 +79,7 @@ namespace ChatServer
 		}
 		if (msg)
 		{
+			m_udpCallBack(senderPt, msg);
 			switch (msg->GetType())
 			{
 			case MessageType::KeepAliveReq_Type:

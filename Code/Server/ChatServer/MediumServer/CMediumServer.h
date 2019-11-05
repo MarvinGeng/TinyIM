@@ -205,7 +205,7 @@ private:
 
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);
 
-
+	void HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
  public:
 
     static std::shared_ptr<spdlog::logger> ms_loger; //日志指针
@@ -223,7 +223,7 @@ private:
         
         m_util.ConnectToServer("admin","admin","imdev","127.0.0.1");
 
-		m_udpServer = std::make_shared<CUdpServer>(m_ioService, "127.0.0.1", 20000);
+		
     }
 
     void start(const std::function<void(const std::error_code &)> &callback)
@@ -269,6 +269,10 @@ private:
             }
             SetTimer(30);
             do_accept();
+			auto pSelf = shared_from_this();
+			m_udpServer = std::make_shared<CUdpServer>(m_ioService, "127.0.0.1", 20000, [this, pSelf](const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg) {
+				HandleRecvUdpMsg(sendPt, pMsg);
+			});
 			if (m_udpServer)
 			{
 				m_udpServer->StartConnect();

@@ -5,6 +5,7 @@
 #include "asio_common.h"
 #include "Log.h"
 #include <atomic>
+using UDP_CALL_BACK=std::function<void(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg)>;
 namespace ChatServer
 {
 	using asio::ip::tcp;
@@ -51,8 +52,7 @@ namespace ChatServer
 
 
 
-		CUdpServer(asio::io_service& ioService, std::string strIp, int port);
-
+		CUdpServer(asio::io_service& ioService, std::string strIp, int port, UDP_CALL_BACK&& callBack);
 		int StartConnect();
 		int StopConnect();
 		bool SendMessage(std::shared_ptr<TransBaseMsg_t> pMsg);
@@ -66,7 +66,7 @@ namespace ChatServer
 		void handleKeepAliveReq(const KeepAliveReqMsg& reqMsg);
 
 		void handleKeepAliveRsp(const KeepAliveRspMsg& rspMsg);
-
+		UDP_CALL_BACK m_udpCallBack;
 		//tcpÁ¬½ÓµÄsocket
 		std::shared_ptr<asio::ip::udp::socket>   m_socket;
 	};

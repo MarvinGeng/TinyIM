@@ -129,6 +129,38 @@ void CChatServer::SetTimer(int nSeconds)
 	}
 }
 
+void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg)
+{
+	if (pMsg)
+	{
+		switch (pMsg->GetType())
+		{
+		case MessageType::KeepAliveReq_Type:
+		{
+			KeepAliveReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string()))
+			{
+				auto item = m_UserSessVec.find(reqMsg.m_strClientId);
+				if (item != m_UserSessVec.end())
+				{
+					NotifyUserUdpAddrReqMsg udpReqMsg;
+					udpReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
+					udpReqMsg.m_strUserId = reqMsg.m_strClientId;
+					udpReqMsg.m_udpEndPt.m_strServerIp = sendPt.address().to_string();
+					udpReqMsg.m_udpEndPt.m_nPort = sendPt.port();
+					auto pSendMsg = std::make_shared<TransBaseMsg_t>(udpReqMsg.GetMsgType(), udpReqMsg.ToString());
+					item->second->SendMsg(pSendMsg);
+				}
+			}
+		}break;
+		default:
+		{
+
+		}break;
+		}
+	}
+}
+
 /**
  * @brief 获取Listen的服务器的IP和端口
  * 
