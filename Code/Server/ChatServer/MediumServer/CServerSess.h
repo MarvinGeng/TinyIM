@@ -64,17 +64,37 @@ public:
      * 
      * @param msg 待发送的消息
      */
-    void SendMsg(std::shared_ptr<TransBaseMsg_t> msg){
-		if (m_bSend) {
-			m_msgQueue.push(msg);
-		}
-		else
+  //  void SendMsg(std::shared_ptr<TransBaseMsg_t> msg){
+		//if (m_bSend) {
+		//	m_msgQueue.push(msg);
+		//}
+		//else
+		//{
+		//	m_msgQueue.push(msg);
+		//	m_bSend.store(true);
+		//	DoSendMsg();
+		//}
+  //  }
+	/**
+	 * @brief 发送消息函数，所有的消息需要转为TransBaseMsg_t的类型来进行发送。
+	 *
+	 * @param msg 待发送的消息
+	 */
+	void SendMsg(const BaseMsg* pMsg) {
+		if (pMsg)
 		{
-			m_msgQueue.push(msg);
-			m_bSend.store(true);
-			DoSendMsg();
+			auto pSend = std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
+			if (m_bSend) {
+				m_msgQueue.push(pSend);
+			}
+			else
+			{
+				m_msgQueue.push(pSend);
+				m_bSend.store(true);
+				DoSendMsg();
+			}
 		}
-    }
+	}
 
     CServerSess(tcp::socket socket, CChatServer* server) : m_socket(std::move(socket)),m_server(server),m_bConnect(true) { }
     

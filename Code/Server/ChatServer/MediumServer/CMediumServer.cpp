@@ -63,8 +63,7 @@ void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSes
 	{
 		KeepAliveRspMsg rspMsg;
 		rspMsg.m_strClientId = reqMsg.m_strClientId;
-		auto pSendMsg = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSendMsg);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 void CChatServer::HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess, const KeepAliveRspMsg& rspMsg)
@@ -164,8 +163,7 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 					udpReqMsg.m_strUserId = reqMsg.m_strClientId;
 					udpReqMsg.m_udpEndPt.m_strServerIp = sendPt.address().to_string();
 					udpReqMsg.m_udpEndPt.m_nPort = sendPt.port();
-					auto pSendMsg = std::make_shared<TransBaseMsg_t>(udpReqMsg.GetMsgType(), udpReqMsg.ToString());
-					item->second->SendMsg(pSendMsg);
+					item->second->SendMsg(&udpReqMsg);
 				}
 			}
 		}break;
@@ -220,12 +218,11 @@ bool CChatServer::OnUserReceiveMsg(const std::string strUserId) {
 			reqMsg.m_strContext = msgBean.m_strF_MSG_CONTEXT;
 			reqMsg.m_strRecvTime = msgBean.m_strF_CREATE_TIME;
 			reqMsg.m_fontInfo.FromString(msgBean.m_strF_OTHER_INFO);
-			auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 			{
 				auto item = m_UserSessVec.find(strUserId);
 				if (item != m_UserSessVec.end() && item->second->IsConnected())
 				{
-					item->second->SendMsg(pSend);
+					item->second->SendMsg(&reqMsg);
 				}
 			}
 		}
@@ -257,12 +254,11 @@ bool CChatServer::OnAddFriendRecvReqMsg(const std::string strUser)
 			reqMsg.m_strFriendId = msgBean.m_strF_FRIEND_ID;
 			reqMsg.m_strUserId = strUser;
 
-			auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 			{
 				auto item = m_UserSessVec.find(strUser);
 				if (item != m_UserSessVec.end() && item->second->IsConnected())
 				{
-					item->second->SendMsg(pSend);
+					item->second->SendMsg(&reqMsg);
 				}
 				else
 				{
@@ -298,10 +294,9 @@ void CChatServer::OnUserStateCheck(const std::string strUserId)
 				reqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
 				reqMsg.m_strUserId = strUserId;
 
-				auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 				auto item = m_UserSessVec.find(strUserId);
 				if (item != m_UserSessVec.end()) {
-					item->second->SendMsg(pSend);
+					item->second->SendMsg(&reqMsg);
 				}
 			}
 			else
@@ -342,8 +337,7 @@ void CChatServer::HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, 
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
@@ -394,8 +388,7 @@ void CChatServer::HandleUserLogoutReq(const std::shared_ptr<CServerSess>& pSess,
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 		NotifyUserFriends(pSess->UserId());
 		OnSessClose(pSess);
 	}
@@ -414,9 +407,7 @@ void CChatServer::HandleUserRegisterReq(const std::shared_ptr<CServerSess>& pSes
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		LOG_INFO(ms_loger, "RSP: {} {}:{}", pSend->to_string(), __FILENAME__, __LINE__);
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -432,8 +423,7 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -450,8 +440,7 @@ void CChatServer::HandleFriendChatSendTxtReq(const std::shared_ptr<CServerSess>&
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 	OnUserStateCheck(reqMsg.m_strSenderId);
 	//OnUserStateCheck(reqMsg.m_strReceiverId);
@@ -469,8 +458,7 @@ void CChatServer::HandleFindFriendReq(const std::shared_ptr<CServerSess>& pSess,
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -508,8 +496,7 @@ void CChatServer::HandleGetFriendListReq(const std::shared_ptr<CServerSess>& pSe
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 	//获取好友列表以后，再将未读消息下发，聊天窗口中就不会没有昵称了
 	//OnUserStateCheck(reqMsg.m_strUserId);
@@ -528,8 +515,7 @@ void CChatServer::HandleCreateGroupReq(const std::shared_ptr<CServerSess>& pSess
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -546,8 +532,7 @@ void CChatServer::HandleDestroyGroupReq(const std::shared_ptr<CServerSess>& pSes
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -689,14 +674,15 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 		if (item != m_UserSessVec.end())
 		{
 			//接收方在线
-			FriendSendFileMsgRspMsg rspMsg;
+			{
+				FriendSendFileMsgRspMsg rspMsg;
 
-			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
-			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_strFromId;
-			rspMsg.m_strToId = reqMsg.m_strToId;
-			auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-			pSess->SendMsg(pSend);
+				rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+				rspMsg.m_strFromId = reqMsg.m_strFromId;
+				rspMsg.m_strToId = reqMsg.m_strToId;
+				pSess->SendMsg(&rspMsg);
+			}
 
 			{
 				FriendRecvFileMsgReqMsg recvMsg;
@@ -704,8 +690,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 				recvMsg.m_strFromId = reqMsg.m_strFromId;
 				recvMsg.m_strToId = reqMsg.m_strToId;
 				recvMsg.m_strFileName = reqMsg.m_strFileName;
-				auto pSend = std::make_shared<TransBaseMsg_t>(recvMsg.GetMsgType(), recvMsg.ToString());
-				item->second->SendMsg(pSend);
+				pSess->SendMsg(&recvMsg);
 			}
 		}
 		else
@@ -716,8 +701,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 			rspMsg.m_strFromId = reqMsg.m_strFromId;
 			rspMsg.m_strToId = reqMsg.m_strToId;
-			auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-			pSess->SendMsg(pSend);
+			pSess->SendMsg(&rspMsg);
 		}
 	}
 }
@@ -745,8 +729,7 @@ void CChatServer::HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& pS
 			sendMsg.m_strToId = reqMsg.m_strToId;
 			sendMsg.m_strFileName = reqMsg.m_strFileName;
 			sendMsg.m_nFileId = reqMsg.m_nFileId;
-			auto pSend = std::make_shared<TransBaseMsg_t>(sendMsg.GetMsgType(), sendMsg.ToString());
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&sendMsg);
 		}
 	}
 	
@@ -781,8 +764,7 @@ void CChatServer::NotifyUserFriends(const std::string strUserId)
 				UpdateFriendListNotifyReqMsg reqMsg;
 				reqMsg.m_strUserId = item;
 				reqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
-				auto trans = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-				findItem->second->SendMsg(trans);
+				findItem->second->SendMsg(&reqMsg);
 			}
 		}
 	}
@@ -800,8 +782,7 @@ void CChatServer::HandleGetGroupListReq(const std::shared_ptr<CServerSess>& pSes
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -817,8 +798,7 @@ void CChatServer::HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSes
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -908,8 +888,7 @@ void CChatServer::HandleAddFriendReq(const std::shared_ptr<CServerSess>& pSess, 
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 
 	OnAddFriendRecvReqMsg(reqMsg.m_strFriendId);
@@ -982,8 +961,7 @@ void CChatServer::HandleRemoveFriendReq(const std::shared_ptr<CServerSess>& pSes
 	rspMsg.m_strFriendId = reqMsg.m_strFriendId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -999,8 +977,7 @@ void CChatServer::HandleAddTeamReq(const std::shared_ptr<CServerSess>& pSess, co
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -1016,8 +993,7 @@ void CChatServer::HandleRemoveTeamReq(const std::shared_ptr<CServerSess>& pSess,
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -1032,8 +1008,7 @@ void CChatServer::HandleMoveFriendToTeamReq(const std::shared_ptr<CServerSess>& 
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -1049,8 +1024,7 @@ void CChatServer::HandleFriendChatRecvMsgReq(const std::shared_ptr<CServerSess>&
 {
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&reqMsg);
 	}
 }
 
@@ -1067,8 +1041,7 @@ void CChatServer::HandleFindGroupReq(const std::shared_ptr<CServerSess>& pSess, 
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -1388,13 +1361,12 @@ bool CChatServer::OnAddFriendNotifyReqMsg(const std::string strUser)
 			if ((!m_util.IsFriend(reqMsg.m_strUserId, reqMsg.m_strFriendId))||
 				(!m_util.IsFriend(reqMsg.m_strFriendId, reqMsg.m_strUserId) ))
 			{
-				auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 				{
 					auto item = m_UserSessVec.find(strUser);
-						if (item != m_UserSessVec.end() && item->second->IsConnected())
-						{
-							item->second->SendMsg(pSend);
-						}
+					if (item != m_UserSessVec.end() && item->second->IsConnected())
+					{
+						item->second->SendMsg(&reqMsg);
+					}
 				}
 				if (E_FRIEND_OPTION::E_AGREE_ADD == reqMsg.m_option)
 				{
@@ -1574,8 +1546,7 @@ void CChatServer::HandleSendGroupTextReq(const std::shared_ptr<CServerSess>& pSe
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 
 	OnDispatchGroupMsg(reqMsg.m_strGroupId);
@@ -1593,8 +1564,7 @@ void CChatServer::HandleAddToGroupReq(const std::shared_ptr<CServerSess>& pSess,
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	if (pSess)
 	{
-		auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-		pSess->SendMsg(pSend);
+		pSess->SendMsg(&rspMsg);
 	}
 }
 
@@ -1618,13 +1588,11 @@ void CChatServer::HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& p
 		sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
 		sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
 		memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-
-		auto pSend = std::make_shared<TransBaseMsg_t>(sendReqMsg.GetMsgType(), sendReqMsg.ToString());
 		
 		auto item = m_UserSessVec.find(reqMsg.m_strToId);
 		if (item != m_UserSessVec.end())
 		{
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&sendReqMsg);
 		}
 		else
 		{
@@ -1645,8 +1613,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 		auto item = m_UserSessVec.find(req.m_strToId);
 		if (item != m_UserSessVec.end())
 		{
-			auto pSend = std::make_shared<TransBaseMsg_t>(req.GetMsgType(), req.ToString());
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&req);
 		}
 	}
 }
@@ -1663,8 +1630,7 @@ void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess,
 		auto item = m_UserSessVec.find(req.m_strToId);
 		if (item != m_UserSessVec.end())
 		{
-			auto pSend = std::make_shared<TransBaseMsg_t>(req.GetMsgType(), req.ToString());
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&req);
 		}
 	}
 }
@@ -1690,8 +1656,7 @@ void CChatServer::HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& p
 			sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
 			sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
 
-			auto pSend = std::make_shared<TransBaseMsg_t>(sendRsp.GetMsgType(), sendRsp.ToString());
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&sendRsp);
 		}
 	}
 }
@@ -1764,8 +1729,7 @@ bool CChatServer::OnUserRecvGroupMsg(const std::string strUser, const T_GROUP_CH
 			reqMsg.m_strMsgId = msg.m_strF_MSG_ID;
 			reqMsg.m_stFontInfo.FromString(msg.m_strF_OTHER_INFO);
 			reqMsg.m_strMsgTime = msg.m_strF_CREATE_TIME;
-			auto  pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			item->second->SendMsg(pSend);
+			item->second->SendMsg(&reqMsg);
 			return true;
 		}
 
@@ -1794,8 +1758,7 @@ bool CChatServer::OnUserRecvGroupMsg(const std::string strUser,const std::string
 		reqMsg.m_strSenderId = strSender;
 		reqMsg.m_strContext = strMsg;
 		reqMsg.m_strMsgId = strMsgId;
-		auto  pSend= std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-		item->second->SendMsg(pSend);
+		item->second->SendMsg(&reqMsg);
 		return true;
 	}
 	return false;
@@ -1900,8 +1863,7 @@ void CChatServer::HandleReLogin(std::string strUserId, std::shared_ptr<CServerSe
 				reqMsg.m_strUserId = strUserId;
 				reqMsg.m_strNewLoginIp = pSess->GetRemoteIp();
 
-				auto pSend = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-				pOldSess->SendMsg(pSend);
+				pOldSess->SendMsg(&reqMsg);
 			}
 		}
 	}

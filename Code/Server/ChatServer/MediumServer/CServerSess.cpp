@@ -12,25 +12,27 @@ void CServerSess::do_read()
 	auto self = shared_from_this();
 	m_socket.async_read_some(
 		asio::buffer(m_recvbuf + m_recvpos, max_length - m_recvpos),
-		[this, self](std::error_code ec, std::size_t length) {
-			TransBaseMsg_t msg(m_recvbuf);
-			auto curlen = m_recvpos + length;
-			LOG_DBG(ms_loger, "Server async_read_some:size:{:#x}  ec:{} [{} {}]", length,
-				 ec.message(), __FILENAME__, __LINE__);
-			while (curlen >= sizeof(Header) && curlen >= msg.GetSize())
+			[this, self](std::error_code ec, std::size_t length) {
+			if (length > sizeof(TransBaseMsg_t))
 			{
-				handle_message(&msg);
-				curlen -= msg.GetSize();
-				memmove(m_recvbuf, m_recvbuf + msg.GetSize(), curlen);
-			}
-			m_recvpos = (uint32_t)curlen;
-			if (m_recvpos < max_length && !ec)
-			{
-				do_read();
-			}
-			else
-			{
-				CloseSocket();
+
+				TransBaseMsg_t msg(m_recvbuf);
+				auto curlen = m_recvpos + length;
+				while (curlen >= sizeof(Header) && curlen >= msg.GetSize())
+				{
+					handle_message(&msg);
+					curlen -= msg.GetSize();
+					memmove(m_recvbuf, m_recvbuf + msg.GetSize(), curlen);
+				}
+				m_recvpos = (uint32_t)curlen;
+				if (m_recvpos < max_length && !ec)
+				{
+					do_read();
+				}
+				else
+				{
+					CloseSocket();
+				}
 			}
 		});
 }
@@ -318,9 +320,7 @@ void CServerSess::handleKeepAliveReq(const KeepAliveReqMsg &reqMsg)
 {
 	LOG_INFO(ms_loger, "KeepAliveReq:{} [ {} {} ] ", reqMsg.ToString(), __FILENAME__, __LINE__);
 	KeepAliveRspMsg rspMsg("MediumServer");
-	auto pMsg =
-		std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-	SendMsg(pMsg);
+	SendMsg(&rspMsg);
 	if (m_server)
 	{
 		m_server->HandleUserKeepAliveReq(shared_from_this());
