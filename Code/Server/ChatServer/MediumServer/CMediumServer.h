@@ -24,6 +24,7 @@
 #include "CClientSess.h"
 #include "CClientSessManager.h"
 #include "CServerSess.h"
+#include "CUdpServer.h"
 #include "planform.h"
 #include "CMySqlConnect.h"
 #include "SnowFlake.h"
@@ -44,7 +45,7 @@ public:
 	void HandleUserRegisterReq(const std::shared_ptr<CServerSess>& pSess, const UserRegisterReqMsg& reqMsg);
 	void HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pSess, const UserUnRegisterReqMsg& reqMsg);
 
-	void HandleFrientChatSendTxtReq(const std::shared_ptr<CServerSess>& pSess, const FriendChatSendTxtReqMsg& reqMsg);
+	void HandleFriendChatSendTxtReq(const std::shared_ptr<CServerSess>& pSess, const FriendChatSendTxtReqMsg& reqMsg);
 	void HandleFriendChatRecvMsgReq(const std::shared_ptr<CServerSess>& pSess, const FriendChatRecvTxtReqMsg& regMsg);
 	void HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>& pSess, const FriendChatRecvTxtRspMsg& regMsg);
 
@@ -199,9 +200,12 @@ private:
 
 	std::map<std::string, std::shared_ptr<CServerSess>> m_KickOffSessMap;  //保存UserId和Sess的对应关系
 
+	std::shared_ptr<CUdpServer> m_udpServer;
 	std::string GenerateUserId();
 
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);
+
+
  public:
 
     static std::shared_ptr<spdlog::logger> ms_loger; //日志指针
@@ -218,6 +222,8 @@ private:
         }
         
         m_util.ConnectToServer("admin","admin","imdev","127.0.0.1");
+
+		m_udpServer = std::make_shared<CUdpServer>(m_ioService, "127.0.0.1", 20000);
     }
 
     void start(const std::function<void(const std::error_code &)> &callback)
@@ -263,6 +269,10 @@ private:
             }
             SetTimer(30);
             do_accept();
+			if (m_udpServer)
+			{
+				m_udpServer->StartConnect();
+			}
             if(0)
 			{
                 for (auto item : m_clientCfgVec)

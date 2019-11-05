@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	ChatServer::CServerSess::ms_loger = logger;
 	ChatServer::CChatServer::ms_loger = logger;
 	ChatServer::CClientSessManager::ms_loger = logger;
+	ChatServer::CUdpServer::ms_loger = logger;
 	CMySqlConnect::m_loger = logger;
 	asio::io_service IoService;
 	auto server = std::make_shared<ChatServer::CChatServer>(IoService);

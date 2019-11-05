@@ -46,6 +46,8 @@ set(SERVER_FILES
         ../include/DaemonApp/DaemonSvcApp.cpp
 		../../../msgStruct/CommonDef.cpp
 		../../../msgStruct/CommonMsg.cpp
+		./CUdpServer.h 
+		./CUdpServer.cpp
 		CTimeUtil.h 
 		CTimeUtil.cpp
         CMySqlConnect.cpp

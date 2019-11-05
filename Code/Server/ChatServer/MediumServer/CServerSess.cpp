@@ -107,7 +107,7 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 	{
 		FriendChatSendTxtReqMsg msg;
 		if (msg.FromString(hdr->to_string())) {
-			m_server->HandleFrientChatSendTxtReq(shared_from_this(), msg);
+			m_server->HandleFriendChatSendTxtReq(shared_from_this(), msg);
 		}
 	}break;
 

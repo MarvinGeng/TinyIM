@@ -396,7 +396,7 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
  * @param pSess 用户连接会话
  * @param reqMsg 发送文本消息请求
  */
-void CChatServer::HandleFrientChatSendTxtReq(const std::shared_ptr<CServerSess>& pSess, const FriendChatSendTxtReqMsg& reqMsg)
+void CChatServer::HandleFriendChatSendTxtReq(const std::shared_ptr<CServerSess>& pSess, const FriendChatSendTxtReqMsg& reqMsg)
 {
 	FriendChatSendTxtRspMsg rspMsg = DoFriendChatSendTxtReq(reqMsg);
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
