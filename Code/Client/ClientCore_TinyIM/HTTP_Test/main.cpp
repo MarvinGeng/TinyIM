@@ -2,6 +2,7 @@
 #include <doctest/doctest.h>
 
 //#include "header.h"
+#include "UserRegister_Test.cpp"
 #include "Http_Test.cpp"
 int program();
 //void some_program_code(int argc, char** argv);

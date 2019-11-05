@@ -47,6 +47,7 @@ set(SERVER_FILES
 		./CHttpServer.h ./CHttpServer.cpp
 		CMsgPersistentUtil.h CMsgPersistentUtil.cpp
 		CFileUtil.h  CFileUtil.cpp
+		./CUdpClient.h ./CUdpClient.cpp
 		../../../msgStruct/CommonDef.cpp
 		../../../msgStruct/CommonMsg.cpp
         )

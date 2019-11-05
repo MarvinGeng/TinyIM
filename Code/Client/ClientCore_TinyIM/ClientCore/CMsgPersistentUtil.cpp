@@ -259,6 +259,10 @@ bool CMsgPersistentUtil::Get_FriendChatRecvTxtReqMsg(FriendChatRecvTxtReqMsg& ms
 		msg.m_strToId = m_pInsertQuery->getColumn(3).getString();
 		msg.m_strContext = m_pInsertQuery->getColumn(4).getString();
 	}
+	else
+	{
+
+	}
 	// Reset the query to be able to use it again later
 	m_pInsertQuery->reset();
 	/*auto item = m_FriendChatRecvTxtReqMsgMap.find(msg.m_strMsgId);

@@ -37,6 +37,8 @@ set(SERVER_FILES main.cpp
     ../../../msgStruct/json11/json11.cpp
 	../../../msgStruct/CommonMsg.cpp
 	../../../msgStruct/CommonDef.cpp
+./HttpFunction.h
+./HttpFunction.cpp
 
 )
 #set(LEARN_SERVER_FILES fmtLearn.cpp

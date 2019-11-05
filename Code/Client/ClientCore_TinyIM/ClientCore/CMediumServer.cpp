@@ -132,6 +132,9 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 			m_clientCfgVec[0].m_nPort, this);
 
 		m_freeClientSess->StartConnect();
+		m_udpClient->StartConnect();
+
+
 		/*{
 			for (auto item : m_clientCfgVec)
 			{
@@ -164,6 +167,11 @@ void CMediumServer::CheckAllConnect()
 	for (auto& item : m_userClientSessMap)
 	{
 		item.second->StartConnect();
+	}
+
+	if (m_udpClient)
+	{
+		m_udpClient->SendKeepAlive();
 	}
 }
 

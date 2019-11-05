@@ -24,6 +24,7 @@
 #include "CClientSess.h"
 #include "CServerSess.h"
 #include "CHttpServer.h"
+#include "CUdpClient.h"
 #include "planform.h"
 #include "CMsgPersistentUtil.h"
 #include "CFileUtil.h"
@@ -100,6 +101,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 		m_httpServer = std::make_shared<CHttpServer>(m_ioService,this);
 		m_msgPersisUtil = std::make_shared<CMsgPersistentUtil>();
 		m_msgPersisUtil->InitDataBase();
+
+		m_udpClient = std::make_shared<CUdpClient>(io_service, "127.0.0.1", 9000);
     }
 
 	void start(const std::function<void(const std::error_code &)> &callback);
@@ -110,6 +113,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 private:
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
+	std::shared_ptr<CUdpClient> m_udpClient;
 };
 } // namespace MediumServer
 

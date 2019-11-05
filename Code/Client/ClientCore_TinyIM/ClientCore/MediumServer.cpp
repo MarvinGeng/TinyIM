@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
 	ClientCore::CClientSess::ms_loger = logger;
 	ClientCore::CServerSess::ms_loger = logger;
 	ClientCore::CMediumServer::ms_loger = logger;
+	ClientCore::CUdpClient::ms_loger = logger;
 	//MediumServer::CClientSessManager::ms_loger = logger;
 
 	asio::io_service IoService;
