@@ -7122,26 +7122,27 @@ bool UpdateGroupListNotifyRspMsg::FromString(const std::string& strJson) {
 	return true;
 }
 
-NotifyUserUdpAddrReqMsg::NotifyUserUdpAddrReqMsg()
+
+
+QueryUserUdpAddrReqMsg::QueryUserUdpAddrReqMsg()
 {
-	m_type = MessageType::NotifyUserUdpAddrReq_Type;
+	m_type = MessageType::QueryUserUdpAddrReq_Type;
 }
 
-std::string NotifyUserUdpAddrReqMsg::ToString() const {
+std::string QueryUserUdpAddrReqMsg::ToString() const {
 	using namespace json11;
 
 	Json clientObj = Json::object(
 		{
 			{"MsgId", m_strMsgId},
 			{"UserId", m_strUserId},
-			{"UdpIp",m_udpEndPt.m_strServerIp},
-			{"UdpPort",m_udpEndPt.m_nPort},
+			{"UdpUserId",m_strUdpUserId},
 		});
 
 	return clientObj.dump();
 }
 
-bool NotifyUserUdpAddrReqMsg::FromString(const std::string& strJson) {
+bool QueryUserUdpAddrReqMsg::FromString(const std::string& strJson) {
 	std::string err;
 	using namespace json11;
 	auto json = Json::parse(strJson, err);
@@ -7162,6 +7163,85 @@ bool NotifyUserUdpAddrReqMsg::FromString(const std::string& strJson) {
 	if (json["UserId"].is_string())
 	{
 		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UdpUserId"].is_string())
+	{
+		m_strUdpUserId = json["UdpUserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+
+
+QueryUserUdpAddrRspMsg::QueryUserUdpAddrRspMsg()
+{
+	m_type = MessageType::QueryUserUdpAddrRsp_Type;
+}
+
+std::string QueryUserUdpAddrRspMsg::ToString() const {
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"Code",static_cast<int>(m_errCode)},
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+			{"UdpUserId",m_strUdpUserId},
+			{"UdpIp",m_udpEndPt.m_strServerIp},
+			{"UdpPort",m_udpEndPt.m_nPort},
+		});
+
+	return clientObj.dump();
+}
+
+bool QueryUserUdpAddrRspMsg::FromString(const std::string& strJson) {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["Code"].is_number()) {
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	
+	if (json["UdpUserId"].is_string())
+	{
+		m_strUdpUserId = json["UdpUserId"].string_value();
 	}
 	else
 	{
@@ -7180,54 +7260,6 @@ bool NotifyUserUdpAddrReqMsg::FromString(const std::string& strJson) {
 	if (json["UdpPort"].is_number())
 	{
 		m_udpEndPt.m_nPort = json["UdpPort"].int_value();
-	}
-	else
-	{
-		return false;
-	}
-	return true;
-}
-
-
-
-NotifyUserUdpAddrRspMsg::NotifyUserUdpAddrRspMsg()
-{
-	m_type = MessageType::NotifyUserUdpAddrRsp_Type;
-}
-
-std::string NotifyUserUdpAddrRspMsg::ToString() const {
-	using namespace json11;
-
-	Json clientObj = Json::object(
-		{
-			{"MsgId", m_strMsgId},
-			{"UserId", m_strUserId},
-		});
-
-	return clientObj.dump();
-}
-
-bool NotifyUserUdpAddrRspMsg::FromString(const std::string& strJson) {
-	std::string err;
-	using namespace json11;
-	auto json = Json::parse(strJson, err);
-	if (!err.empty())
-	{
-		return false;
-	}
-
-	if (json["MsgId"].is_string())
-	{
-		m_strMsgId = json["MsgId"].string_value();
-	}
-	else
-	{
-		return false;
-	}
-
-	if (json["UserId"].is_string())
-	{
-		m_strUserId = json["UserId"].string_value();
 	}
 	else
 	{

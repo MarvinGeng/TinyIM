@@ -290,17 +290,19 @@ UpdateGroupListNotifyReq_Type,
 //群组更新回复
 UpdateGroupListNotifyRsp_Type,
 
-//通知用户Udp的地址请求
-NotifyUserUdpAddrReq_Type,
-
-//通知用户Udp的地址回复
-NotifyUserUdpAddrRsp_Type,
 
 //UdpP2P开始请求
 UdpP2PStartReq_Type,
 
 //UdpP2P开始回复
 UdpP2PStartRsp_Type,
+
+//查询用户的UDP地址
+QueryUserUdpAddrReq_Type,
+
+//查询用户的UDP地址的回复
+QueryUserUdpAddrRsp_Type,
+
 };
 
 //客户端会话状态

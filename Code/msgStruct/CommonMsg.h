@@ -2003,30 +2003,35 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
-class NotifyUserUdpAddrReqMsg :public BaseMsg
+class QueryUserUdpAddrReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId; //消息ID
 	std::string m_strUserId;//用户ID
+	std::string m_strUdpUserId;//收到的UDP用户的ID
+	QueryUserUdpAddrReqMsg();
+
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class QueryUserUdpAddrRspMsg :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_errCode;
+	std::string m_strMsgId; //消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strUdpUserId;
 	IpPortCfg	m_udpEndPt;
-	NotifyUserUdpAddrReqMsg();
+	QueryUserUdpAddrRspMsg();
 
 	virtual std::string ToString() const override;
 
 	virtual bool FromString(const std::string& strJson) override;
 };
 
-class NotifyUserUdpAddrRspMsg :public BaseMsg
-{
-public:
-	std::string m_strMsgId; //消息ID
-	std::string m_strUserId;//用户ID
-	NotifyUserUdpAddrRspMsg();
 
-	virtual std::string ToString() const override;
-
-	virtual bool FromString(const std::string& strJson) override;
-};
 /**
  * @brief 服务器配置
  * 
