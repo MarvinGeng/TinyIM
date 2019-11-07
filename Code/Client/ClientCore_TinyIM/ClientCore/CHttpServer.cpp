@@ -357,6 +357,23 @@ namespace ClientCore
 		}
 	}
 
+	void CHttpServer::Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string strUserId = GetHttpParamUserId(request);
+		if (strUserId.length() > 0)
+		{
+			GetFriendListReqMsg reqMsg;
+			reqMsg.m_strUserId = strUserId;
+			reqMsg.m_strMsgId = GenerateMsgId();
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserId);
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+			}
+			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+		}
+	}
 	/**
 	 * @brief 发送已经收到群组文本消息的回复
 	 * 
@@ -507,11 +524,17 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			reqMsg.m_strMsgId = GenerateMsgId();
-			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strFromId);
 			if (pClientSess)
 			{
-				pClientSess->SendMsg(pSendMsg);
+				pClientSess->SendMsg(&reqMsg);
+				{
+					QueryUserUdpAddrReqMsg queryReq;
+					queryReq.m_strMsgId = GenerateMsgId();
+					queryReq.m_strUserId = reqMsg.m_strFromId;
+					queryReq.m_strUdpUserId = reqMsg.m_strToId;
+					pClientSess->SendMsg(&queryReq);
+				}
 			}
 			m_httpRspMap.insert(std::pair<std::string, std::shared_ptr<HttpServer::Response>>(reqMsg.m_strMsgId, response));
 			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
@@ -781,7 +804,18 @@ namespace ClientCore
 		}
 	}
 
-
+	void CHttpServer::On_GetFriendListRsp(const GetFriendListRspMsg& msg)
+	{
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(item);
+			}
+		}
+	}
 	/**
 	 * @brief 响应发送在线文件请求的回复消息
 	 * 
@@ -979,6 +1013,11 @@ namespace ClientCore
 
 		m_httpServer.resource["/on_send_file_online_to_friend_rsp_notify"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			this->Post_SendFileOnlineNotifyRsp(response, request);
+		};
+
+
+		m_httpServer.resource["/get_friend_list"]["GET"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_FriendListReq(response, request);
 		};
 		//Friend End
 

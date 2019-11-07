@@ -75,7 +75,7 @@ public:
     int StopConnect();
 	bool IsConnect(){return m_bConnect == ST_CONN_FINISHED;}
 	bool SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg);
-
+	bool SendMsg(const BaseMsg* pMsg);
 	void SetUserName(const std::string strUserName)
 	{
 		m_strUserName = strUserName;

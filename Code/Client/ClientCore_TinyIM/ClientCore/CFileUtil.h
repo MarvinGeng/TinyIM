@@ -33,6 +33,7 @@ public:
 	bool OnReadData(const int nFileId,char * pData,int& nReadLen,const int nMaxDataLen);
 	bool OnCloseFile(const int nFileId);
 	std::string CalcHash(const std::string strFileName);
+	std::string GetFileNameFromPath(const std::string strFullPath);
 private:
 	std::map<int, std::FILE*> m_ReadFileMap;
 	std::map<int, std::FILE*> m_WriteFileMap;

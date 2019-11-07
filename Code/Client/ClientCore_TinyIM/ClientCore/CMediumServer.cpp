@@ -84,8 +84,67 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 		}
 	}
 }
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const FileDataSendRspMsg& rspMsg)
+{
+	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
+	{
+		FileDataSendReqMsg reqMsg;
+		if (m_fileUtil.OnReadData(rspMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength, 1024))
+		{
+			LOG_INFO(ms_loger, "Read Data ", rspMsg.m_nFileId);
+			reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+			reqMsg.m_nFileId = rspMsg.m_nFileId;
+			reqMsg.m_strFromId = rspMsg.m_strToId;
+			reqMsg.m_strToId = rspMsg.m_strFromId;
+			reqMsg.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+			reqMsg.m_nDataIndex = rspMsg.m_nDataIndex + 1;
+			m_udpClient->send_msg(endPt, &reqMsg);
+		}
+	}
+	else
+	{
+		FileVerifyReqMsg verifyReqMsg;
+		verifyReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+		verifyReqMsg.m_nFileId = rspMsg.m_nFileId;
+		verifyReqMsg.m_strFromId = rspMsg.m_strToId;
+		verifyReqMsg.m_strToId = rspMsg.m_strFromId;
+		verifyReqMsg.m_strFileName = "";
+		verifyReqMsg.m_nFileSize = 0;
+		verifyReqMsg.m_strFileHash = "FILE_HASH";
+		auto pSess = GetClientSess(verifyReqMsg.m_strToId);
+		if (pSess != nullptr)
+		{
+			auto pSend = std::make_shared<TransBaseMsg_t>(verifyReqMsg.GetMsgType(), verifyReqMsg.ToString());
+			pSess->SendMsg(pSend);
+		}
+		m_fileUtil.OnCloseFile(rspMsg.m_nFileId);
+	}
+}
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
+{
+	if (pMsg)
+	{
+		switch (pMsg->GetType())
+		{
+		case MessageType::KeepAliveReq_Type:
+		{
 
+		}break;
+		case MessageType::FileSendDataRsp_Type:
+		{
+			FileDataSendRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string()))
+			{
+				Handle_UdpMsg(endPt, rspMsg);
+			}
+		}break;
+		default:
+		{
 
+		}break;
+		}
+	}
+}
 /**
  * @brief 启动服务
  * 
@@ -141,6 +200,10 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 			m_clientCfgVec[0].m_nPort, this);
 
 		m_freeClientSess->StartConnect();
+		auto pSelf = shared_from_this();
+		m_udpClient = std::make_shared<CUdpClient>(m_ioService, "127.0.0.1", 9000, [this,pSelf](const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg) {
+			Handle_UdpMsg(endPt, pMsg);
+		});
 		m_udpClient->StartConnect();
 
 
@@ -249,6 +312,30 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 	
 }
 
+void CMediumServer::CheckWaitMsgVec()
+{
+	decltype(m_WaitMsgMap) notSendMap;
+	if (m_timeCount % 10 == 0)
+	{
+		for (auto item : m_WaitMsgMap)
+		{
+			auto pSess = GetClientSess(item.first);
+			if (pSess)
+			{
+				for (auto msgItem : item.second)
+				{
+					pSess->SendMsg(msgItem.get());
+				}
+			}
+			else
+			{
+				notSendMap.insert(item);
+			}
+		}
+		m_WaitMsgMap.clear();
+		m_WaitMsgMap = notSendMap;
+	}
+}
 /**
  * @brief 响应定时器的任务，一些需要定时处理的任务，可以写成一个函数，在此函数中调用
  * 
@@ -256,6 +343,8 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 void CMediumServer::OnTimer()
 {
 	CheckAllConnect();
+	CheckWaitMsgVec();
+	m_timeCount++;
 }
 
 /**
@@ -374,10 +463,9 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 			{
 				KeepAliveReqMsg reqMsg;
 				reqMsg.m_strClientId = pClientSess->UserId();
-				TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 				if (m_udpClient)
 				{
-					m_udpClient->sendToServer(&trans);
+					m_udpClient->sendToServer(&reqMsg);
 				}
 			}
 		}
@@ -388,21 +476,38 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 			{
 				KeepAliveReqMsg reqMsg2;
 				reqMsg2.m_strClientId = pClientSess->UserId();
-				TransBaseMsg_t trans(reqMsg2.GetMsgType(), reqMsg2.ToString());
 				if (m_udpClient)
 				{
-					m_udpClient->sendToServer(&trans);
+					m_udpClient->sendToServer(&reqMsg2);
 				}
 			}
 		}
-		if (msg.GetType() == MessageType::NotifyUserUdpAddrReq_Type)
+		if (msg.GetType() == MessageType::QueryUserUdpAddrRsp_Type)
 		{
-			NotifyUserUdpAddrReqMsg reqMsg;
-			if (reqMsg.FromString(msg.to_string())) {
-				KeepAliveReqMsg aliveMsg;
-				aliveMsg.m_strClientId = reqMsg.m_strUserId;
-				if (m_udpClient) {
-					m_udpClient->send_msg(reqMsg.m_udpEndPt.m_strServerIp, reqMsg.m_udpEndPt.m_nPort, &aliveMsg);
+			QueryUserUdpAddrRspMsg rspMsg;
+			if (rspMsg.FromString(msg.to_string())) {
+				if (ERROR_CODE_TYPE::E_CODE_SUCCEED == rspMsg.m_errCode)
+				{
+					m_userIdUdpAddrMap.erase(rspMsg.m_strUdpUserId);
+					m_userIdUdpAddrMap.insert({ rspMsg.m_strUdpUserId,rspMsg.m_udpEndPt });
+				}
+				else
+				{
+					//TODO再次获取时间
+					auto pMsg = std::make_shared<QueryUserUdpAddrReqMsg>();
+					pMsg->m_strUserId = rspMsg.m_strUserId;
+					pMsg->m_strUdpUserId = rspMsg.m_strUdpUserId;
+					auto item = m_WaitMsgMap.find(pMsg->m_strUserId);
+					if (item != m_WaitMsgMap.end())
+					{
+						m_WaitMsgMap[rspMsg.m_strUserId].push_back(pMsg);
+					}
+					else
+					{
+						std::vector<std::shared_ptr<BaseMsg>> mapVec;
+						mapVec.push_back(pMsg);
+						m_WaitMsgMap.insert({ rspMsg.m_strUserId,mapVec});
+					}
 				}
 			}
 		}
@@ -481,8 +586,8 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 {
 	if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
-		int nFileId = 15;
-		std::string strFileName = "E:\\GitHub\\DennisThinkIM\\源代码\\Client\\ClientCore_TinyIM\\bin\\Debug\\Read.txt";
+		int nFileId = static_cast<int>(time(nullptr));
+		std::string strFileName = notifyMsg.m_strFileName;
 		int nFileSize = 0;
 		m_fileUtil.GetFileSize(nFileSize, strFileName);
 		if (m_fileUtil.OpenReadFile(notifyMsg.m_nFileId, strFileName)) {
@@ -496,13 +601,36 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 			sendReqMsg.m_nDataIndex = 1;
 			sendReqMsg.m_nDataLength = 0;
 			m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
-			auto pSess = GetClientSess(notifyMsg.m_strToId);
-			if (pSess != nullptr)
+			
 			{
-				auto pSend = std::make_shared<TransBaseMsg_t>(sendReqMsg.GetMsgType(), sendReqMsg.ToString());
-				pSess->SendMsg(pSend);
+				auto udpItem = m_userIdUdpAddrMap.find(sendReqMsg.m_strToId);
+				if (udpItem != m_userIdUdpAddrMap.end())
+				{
+					m_udpClient->send_msg(udpItem->second.m_strServerIp, udpItem->second.m_nPort, &sendReqMsg);
+				}
+				else
+				{
+					m_udpClient->sendToServer(&sendReqMsg);
+				}
 			}
 		}
+	}
+}
+
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataRecvReqMsg& reqMsg)
+{
+	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnWriteData(reqMsg.m_nFileId + 1, reqMsg.m_szData, reqMsg.m_nDataLength);
+		LOG_INFO(ms_loger, "WriteData ", reqMsg.m_nFileId);
+		FileDataRecvRspMsg rspMsg;
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_nFileId = reqMsg.m_nFileId;
+		rspMsg.m_strFromId = reqMsg.m_strToId;
+		rspMsg.m_strToId = reqMsg.m_strFromId;
+		rspMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		rspMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+		m_udpClient->send_msg(endPt, &rspMsg);
 	}
 }
 void CMediumServer::HandleFileDataRecvReq(const FileDataRecvReqMsg& reqMsg)
@@ -771,6 +899,15 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				HandleFileVerifyReq(reqMsg);
 			}
 		}break;
+		case MessageType::GetFriendListRsp_Type:
+		{
+			GetFriendListRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_GetFriendListRsp(rspMsg);
+				}
+			}
+		}break;
 		default:
 		{
 			LOG_ERR(ms_loger, "UnHandle MsgType:{} MsgContent:{} [{} {}]",MsgType(pMsg->GetType()),pMsg->to_string(), __FILENAME__, __LINE__);
@@ -783,7 +920,7 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
 {
 	if (rspMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
-		m_fileUtil.OpenWriteFile(rspMsg.m_nFileId+1, rspMsg.m_strFromId+std::to_string(rand())+".txt");
+		m_fileUtil.OpenWriteFile(rspMsg.m_nFileId+1, rspMsg.m_strFromId+"_"+std::to_string(rand())+"_"+m_fileUtil.GetFileNameFromPath(rspMsg.m_strFileName));
 	}
 }
 /**

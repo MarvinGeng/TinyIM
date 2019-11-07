@@ -1,7 +1,7 @@
 #include "CUdpClient.h"
 namespace ClientCore {
 	std::shared_ptr<spdlog::logger> CUdpClient::ms_loger;
-	CUdpClient::CUdpClient(asio::io_context& ioService, const std::string strIp, const int port)
+	CUdpClient::CUdpClient(asio::io_context& ioService, const std::string strIp, const int port, UDP_CALL_BACK&& callBack):m_callBack(callBack)
 	{
 		m_udpServerIp = strIp;
 		m_udpServerPort = port;
@@ -62,9 +62,9 @@ namespace ClientCore {
 		send_msg(endPt, pMsg);
 	}
 	
-	void CUdpClient::sendToServer(TransBaseMsg_t* pMsg)
+	void CUdpClient::sendToServer(const BaseMsg* pMsg)
 	{
-		send_msg(m_udpServerPt, pMsg);
+		send_msg(m_udpServerIp,m_udpServerPort, pMsg);
 	}
 	void CUdpClient::send_msg(const std::string strIp, const int port, const BaseMsg* pMsg)
 	{
@@ -84,7 +84,11 @@ namespace ClientCore {
 		std::string strResult = endPt.address().to_string() + ":" + std::to_string(endPt.port());
 		return strResult;
 	}
-	
+	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, const BaseMsg* pMsg)
+	{
+		TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
+		send_msg(endPt, &trans);
+	}
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
 		if (m_udpSocket)

@@ -160,7 +160,11 @@ int CClientSess::do_read()
 	}
 	return 0;
 }
-
+bool CClientSess::SendMsg(const BaseMsg* pMsg)
+{
+	auto pSend = std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
+	return SendMsg(pSend);
+}
 /**
  * @brief 发送消息到对端
  *

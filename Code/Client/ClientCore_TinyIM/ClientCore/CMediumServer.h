@@ -66,7 +66,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	CMsgPersistentUtil_SHARED_PTR m_msgPersisUtil;
     void SetTimer(int nSeconds);
     void OnTimer();
-
+	void CheckWaitMsgVec();
     std::error_code m_ec;
 
     void do_accept();
@@ -78,6 +78,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	void HandleFileVerifyReq(const FileVerifyReqMsg& msg);
 	void HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg& reqMsg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const FileDataRecvReqMsg& reqMsg);
   public:
     static std::shared_ptr<spdlog::logger> ms_loger;
     inline IpPortCfg &config() { return m_serverCfg; }
@@ -87,6 +88,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void SendFoward(const std::shared_ptr<CServerSess>& pServerSess,const TransBaseMsg_t& msg);
 
 	void Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspMsg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
     void CheckAllConnect();
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserName);
@@ -103,8 +106,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 		m_httpServer = std::make_shared<CHttpServer>(m_ioService,this);
 		m_msgPersisUtil = std::make_shared<CMsgPersistentUtil>();
 		m_msgPersisUtil->InitDataBase();
-
-		m_udpClient = std::make_shared<CUdpClient>(io_service, "127.0.0.1", 9000);
+		m_timeCount = 0;
     }
 
 	void start(const std::function<void(const std::error_code &)> &callback);
@@ -112,10 +114,15 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
     void loadConfig(const json11::Json &cfg, std::error_code &ec);
     //获取server的ip和端口,
     std::string getServerIpPort();
+
 private:
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
 	std::shared_ptr<CUdpClient> m_udpClient;
+	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
+
+	long long m_timeCount;
+	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;
 };
 } // namespace MediumServer
 

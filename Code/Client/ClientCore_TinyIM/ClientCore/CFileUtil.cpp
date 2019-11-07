@@ -127,7 +127,12 @@ bool CFileUtil::OnReadData(const int nFileId, char * pData, int& nReadLen, const
 	}
 	return false;
 }
-
+std::string CFileUtil::GetFileNameFromPath(const std::string strFullPath)
+{
+	std::string::size_type iPos = strFullPath.find_last_of('\\') + 1;
+	std::string filename = strFullPath.substr(iPos, strFullPath.length() - iPos);
+	return filename;
+}
 /**
  * @brief 根据文件ID关闭文件
  * 

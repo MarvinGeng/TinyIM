@@ -57,6 +57,8 @@ namespace ClientCore {
 		void On_RemoveFriendRspMsg(const RemoveFriendRspMsg& msg);
 
 		void On_SendFriendFileOnlineRspMsg(const FriendSendFileMsgRspMsg& msg);
+
+		void On_GetFriendListRsp(const GetFriendListRspMsg& msg);
 		//Group
 		void On_FindGroupRsp(const FindGroupRspMsg& msg);
 
@@ -118,6 +120,8 @@ namespace ClientCore {
 		void Get_SendFileOnlineNotifyReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
 		void Post_SendFileOnlineNotifyRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+		
+		void Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		//Friend End
 
 		//Group Msg
