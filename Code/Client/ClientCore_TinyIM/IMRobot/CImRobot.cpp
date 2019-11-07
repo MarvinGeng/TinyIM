@@ -69,7 +69,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 3;
+		int nChoice = rand() % 4;
 		switch (nChoice)
 		{
 		case 0:
@@ -78,7 +78,7 @@ void CIMRobot::Run()
 		}break;
 		case 1:
 		{
-			//GetRecvMsg();
+			GetRecvMsg();
 		}break;
 		case 2:
 		{
@@ -100,32 +100,31 @@ void CIMRobot::Run()
 
 void CIMRobot::UserLogin()
 {
-	if (m_strUserId.empty())
-	{
-		UserLoginRspMsg rspMsg;
-		try {
-			UserLoginReqMsg reqMsg;
-			reqMsg.m_strMsgId = "1234567890";
-			reqMsg.m_strUserName = m_strUserName;
-			reqMsg.m_strPassword = m_strPassWord;
-			reqMsg.m_eNetType = CLIENT_NET_TYPE::C_NET_TYPE_WIFI;
-			reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
-			reqMsg.m_eOsType = CLIENT_OS_TYPE::OS_TYPE_WINDOWS;
-			auto rsp = g_httpClient->request("POST", "/user_login", reqMsg.ToString());
-			std::string strRsp = rsp->content.string();
-			std::cout << strRsp << std::endl;
-			if (rspMsg.FromString(strRsp))
-			{
-				m_strUserId = rspMsg.m_strUserId;
-			}
+	std::cout << __FUNCTION__ << std::endl;
+	UserLoginRspMsg rspMsg;
+	try {
+		UserLoginReqMsg reqMsg;
+		reqMsg.m_strMsgId = "1234567890";
+		reqMsg.m_strUserName = m_strUserName;
+		reqMsg.m_strPassword = m_strPassWord;
+		reqMsg.m_eNetType = CLIENT_NET_TYPE::C_NET_TYPE_WIFI;
+		reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
+		reqMsg.m_eOsType = CLIENT_OS_TYPE::OS_TYPE_WINDOWS;
+		auto rsp = g_httpClient->request("POST", "/user_login", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (rspMsg.FromString(strRsp))
+		{
+			m_strUserId = rspMsg.m_strUserId;
 		}
-		catch (const SimpleWeb::system_error& e) {
-			std::cerr << "Client Req Error " << e.what() << std::endl;
-		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
 void CIMRobot::UserLogout()
 {
+	std::cout << __FUNCTION__ << std::endl;
 	UserLogoutRspMsg rspMsg;
 	try {
 		UserLogoutReqMsg reqMsg;
@@ -145,6 +144,7 @@ void CIMRobot::UserLogout()
 }
 void CIMRobot::GetFriendList()
 {
+	std::cout << __FUNCTION__ << std::endl;
 	GetFriendListRspMsg rspMsg;
 	try {
 		std::string strUrl = "/get_friend_list?UserId=" + m_strUserId;
@@ -169,6 +169,7 @@ void CIMRobot::GetFriendList()
 }
 void CIMRobot::SendMsg()
 {
+	std::cout << __FUNCTION__ << std::endl;
 	FriendChatSendTxtReqMsg sendReq;
 	FriendChatRecvTxtRspMsg sendRsp;
 	for (auto friId : m_strFriendVec)
@@ -194,6 +195,7 @@ void CIMRobot::SendMsg()
 }
 void CIMRobot::GetRecvMsg()
 {
+	std::cout << __FUNCTION__ << std::endl;
 	FriendChatRecvTxtReqMsg reqMsg;
 	try {
 		for (int i = 0; i < 10; i++)

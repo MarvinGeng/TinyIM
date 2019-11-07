@@ -54,7 +54,7 @@ namespace ClientCore
 		{
 			reqMsg.m_strMsgId = GenerateMsgId();
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserName);
+			auto pClientSess = m_pServer->GetClientSess("");
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
@@ -77,7 +77,7 @@ namespace ClientCore
 		{
 			reqMsg.m_strMsgId = GenerateMsgId();
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserName);
+			auto pClientSess = m_pServer->GetClientSess("");
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
@@ -101,7 +101,7 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserName);
+			auto pClientSess = m_pServer->GetClientSess("");
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
@@ -347,6 +347,7 @@ namespace ClientCore
 	 */
 	void CHttpServer::Get_RecvGroupTextMsgReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
+		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		RecvGroupTextMsgReqMsg reqMsg;
 		auto msgUtil = m_pServer->GetMsgPersisUtil();
 		if (msgUtil && msgUtil->Get_RecvGroupTextMsgReqMsg(reqMsg))
@@ -359,6 +360,7 @@ namespace ClientCore
 
 	void CHttpServer::Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
+		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		std::string strUserId = GetHttpParamUserId(request);
 		if (strUserId.length() > 0)
 		{
@@ -370,8 +372,17 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n"<<"";
+			}
+
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 	/**
@@ -382,6 +393,7 @@ namespace ClientCore
 	 */
 	void CHttpServer::Post_RecvGroupTextMsgRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
+		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		std::string  strReq = request->content.string();
 		RecvGroupTextMsgRspMsg reqMsg;
 		if (reqMsg.FromString(strReq))
@@ -606,7 +618,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -624,7 +636,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -641,7 +653,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -659,7 +671,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -676,7 +688,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -693,7 +705,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -711,7 +723,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -728,7 +740,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -745,7 +757,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -763,7 +775,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -781,7 +793,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -799,7 +811,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -812,7 +824,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -829,7 +841,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}
@@ -847,7 +859,7 @@ namespace ClientCore
 				std::string strContent = msg.ToString();
 				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
 					<< strContent;
-				m_httpRspMap.erase(item);
+				m_httpRspMap.erase(msg.m_strMsgId);
 			}
 		}
 	}

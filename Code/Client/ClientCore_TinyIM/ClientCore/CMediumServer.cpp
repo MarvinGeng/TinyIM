@@ -286,6 +286,18 @@ void CMediumServer::do_accept()
         });
 }
 
+std::string CMediumServer::GetUserId(const std::string strUserName)
+{
+	auto item = m_userNameUserIdMap.find(strUserName);
+	if (item != m_userNameUserIdMap.end())
+	{
+		return item->second;
+	}
+	else
+	{
+		return "";
+	}
+}
 /**
  * @brief 根据用户ID或用户名获取客户端会话连接
  * 
@@ -306,7 +318,7 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 			m_clientCfgVec[0].m_nPort, this);
 
 		m_freeClientSess->StartConnect();
-		m_userClientSessMap.insert(std::pair<std::string, CClientSess_SHARED_PTR>(strUserName, pReturn));
+		//m_userClientSessMap.insert(std::pair<std::string, CClientSess_SHARED_PTR>(strUserName, pReturn));
 		return pReturn;
 	}
 	
@@ -409,6 +421,7 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				pClientSess->SetUserName(rspMsg.m_strUserName);
 				m_userStateMap.erase(rspMsg.m_strUserId);
 				m_userStateMap.insert({ rspMsg.m_strUserId,CLIENT_SESS_STATE::SESS_LOGIN_FINISHED });
+				m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
 			}
 			if (!m_fileUtil.IsFolder(rspMsg.m_strUserName))
 			{
@@ -437,9 +450,9 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 					m_userStateMap.insert({ pClientSess->UserId(),CLIENT_SESS_STATE::SESS_LOGIN_SEND });
 				}
 			}
-			m_userClientSessMap.erase(pClientSess->UserName());
+			m_userClientSessMap.erase(pClientSess->UserId());
 			
-			auto pSess = GetClientSess(pClientSess->UserName());
+			auto pSess = GetClientSess(pClientSess->UserId());
 			pSess->SetUserId(pClientSess->UserId());
 			pSess->SetUserName(pClientSess->UserName());
 		}

@@ -58,7 +58,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	std::map<std::shared_ptr<CClientSess>, std::shared_ptr<CServerSess>> m_BackSessMap;
 
 	std::map<std::string, std::shared_ptr<CClientSess>> m_userClientSessMap;
-
+	std::map<std::string, std::string> m_userNameUserIdMap;
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
 
 	std::shared_ptr<CHttpServer> m_httpServer;
@@ -96,6 +96,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	CMsgPersistentUtil_SHARED_PTR GetMsgPersisUtil() {
 		return m_msgPersisUtil;
 	}
+
+	std::string GetUserId(const std::string strUserName);
     CMediumServer(asio::io_service &io_service)
         : m_ioService(io_service), m_socket(io_service), m_acceptor(io_service)
     {

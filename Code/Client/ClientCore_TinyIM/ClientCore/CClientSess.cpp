@@ -183,19 +183,19 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 			[this, self, pMsg](std::error_code ec, std::size_t length) mutable {
 				if (ec)
 				{
-					LOG_WARN(ms_loger, " {} Send Failed", GetConnectInfo());
+					LOG_WARN(ms_loger, " {} TCP Send Failed {}", GetConnectInfo(),pMsg->to_string());
 					StopConnect();
 				}
 				else
 				{
-					LOG_WARN(ms_loger, " {} Send Succeed {}", GetConnectInfo(),
-						 length);
+					LOG_WARN(ms_loger, " {} TCP Send Succeed {}", GetConnectInfo(),
+						pMsg->to_string());
 				}
 			});
 	}
 	else
 	{
-		//LOG_WARN(ms_loger, "{} Not Connect", GetConnectInfo());
+		LOG_WARN(ms_loger, "{} Not TCP Connect {}", GetConnectInfo(), pMsg->to_string());
 		StartConnect();
 	}
 	return true;
