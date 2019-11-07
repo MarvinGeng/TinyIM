@@ -99,7 +99,6 @@ public:
 
 	void HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSess, const QueryUserUdpAddrReqMsg& reqMsg);
 	void OnSessClose(const std::shared_ptr<CServerSess>& pSess) {
-		
 		auto item = m_UserSessVec.find(pSess->UserId());
 		if (item != m_UserSessVec.end() &&
 			item->second == pSess)
