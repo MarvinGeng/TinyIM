@@ -97,6 +97,7 @@ public:
 
 	void HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg);
 
+	void HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSess, const QueryUserUdpAddrReqMsg& reqMsg);
 	void OnSessClose(const std::shared_ptr<CServerSess>& pSess) {
 		
 		auto item = m_UserSessVec.find(pSess->UserId());
@@ -142,6 +143,9 @@ public:
 
 	AddToGroupRspMsg DoAddToGroupReqMsg(const AddToGroupReqMsg& reqMsg);
 	QuitFromGroupRspMsg DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg);
+
+	void Handle_UdpFileDataSendReqMsg(const FileDataSendReqMsg& reqMsg);
+
 	//
   protected:
     //asio的主循环类
@@ -203,6 +207,7 @@ private:
 	std::map<std::string, std::shared_ptr<CServerSess>> m_KickOffSessMap;  //保存UserId和Sess的对应关系
 
 	std::shared_ptr<CUdpServer> m_udpServer;
+	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
 	std::string GenerateUserId();
 
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);

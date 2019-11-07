@@ -59,6 +59,7 @@ namespace ChatServer
 		void HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg);
 
 		std::string EndPoint(const asio::ip::udp::endpoint senderPt);
+		void sendMsg(const std::string strIp, const int port, const BaseMsg* pMsg);
 	private:
 		asio::ip::udp::endpoint m_senderPt;
 		int do_read();

@@ -155,18 +155,22 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 			KeepAliveReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string()))
 			{
-				/*auto item = m_UserSessVec.find(reqMsg.m_strClientId);
+				auto item = m_UserSessVec.find(reqMsg.m_strClientId);
 				if (item != m_UserSessVec.end())
-				{*/
-				for(auto item:m_UserSessVec)
 				{
-					NotifyUserUdpAddrReqMsg udpReqMsg;
-					udpReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
-					udpReqMsg.m_strUserId = reqMsg.m_strClientId;
-					udpReqMsg.m_udpEndPt.m_strServerIp = sendPt.address().to_string();
-					udpReqMsg.m_udpEndPt.m_nPort = sendPt.port();
-					item.second->SendMsg(&udpReqMsg);
+					m_userIdUdpAddrMap.erase(reqMsg.m_strClientId);
+					IpPortCfg udpIp;
+					udpIp.m_strServerIp = sendPt.address().to_string();
+					udpIp.m_nPort = sendPt.port();
+					m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
 				}
+			}
+		}break;
+		case MessageType::FileSendDataReq_Type:
+		{
+			FileDataSendReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_UdpFileDataSendReqMsg(reqMsg);
 			}
 		}break;
 		default:
@@ -1570,7 +1574,45 @@ void CChatServer::HandleAddToGroupReq(const std::shared_ptr<CServerSess>& pSess,
 	}
 }
 
+void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSess, const QueryUserUdpAddrReqMsg& reqMsg)
+{
+	QueryUserUdpAddrRspMsg rspMsg;
+	rspMsg.m_strUdpUserId = reqMsg.m_strUdpUserId;
+	rspMsg.m_strUserId = reqMsg.m_strUserId;
+	auto item = m_userIdUdpAddrMap.find(reqMsg.m_strUdpUserId);
+	if (item != m_userIdUdpAddrMap.end()) {
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_udpEndPt = item->second;
+	}
+	else
+	{
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+	}
+	pSess->SendMsg(&rspMsg);
+}
 
+void CChatServer::Handle_UdpFileDataSendReqMsg(const FileDataSendReqMsg& reqMsg)
+{
+	FileDataRecvReqMsg sendReqMsg;
+	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
+	sendReqMsg.m_strToId = reqMsg.m_strToId;
+	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
+	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
+	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
+
+	auto item = m_userIdUdpAddrMap.find(reqMsg.m_strToId);
+	if (item != m_userIdUdpAddrMap.end())
+	{
+		m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
+	}
+	else
+	{
+		LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]", reqMsg.m_strToId, __FILENAME__, __LINE__);
+	}
+}
 /**
  * @brief 处理文件数据发送请求消息,转为文件数据接收消息发送到对端
  * 
@@ -1602,6 +1644,7 @@ void CChatServer::HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& p
 		}
 	}
 }
+
 
 /**
  * @brief 处理文件验证请求消息，直接转发到文件接收端

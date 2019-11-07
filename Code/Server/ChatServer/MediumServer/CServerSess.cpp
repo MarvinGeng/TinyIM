@@ -304,6 +304,14 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 			m_server->HandleUpdateGroupListRsp(shared_from_this(),rspMsg);
 		}
 	}break;
+	case MessageType::QueryUserUdpAddrReq_Type:
+	{
+		QueryUserUdpAddrReqMsg reqMsg;
+		if (reqMsg.FromString(hdr->to_string())) {
+
+		}
+
+	}break;
 	default:
 	{
 		LOG_ERR(ms_loger, "User:{} Unhandle MsgType:{} [ {} {} ]", UserId(), MsgType(hdr->GetType()), __FILENAME__, __LINE__);

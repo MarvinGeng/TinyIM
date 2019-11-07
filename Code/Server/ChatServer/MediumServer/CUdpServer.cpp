@@ -52,6 +52,18 @@ namespace ChatServer
 		}
 		return 0;
 	}
+
+	void CUdpServer::sendMsg(const std::string strIp, const int port, const BaseMsg* pMsg)
+	{
+		asio::ip::udp::resolver resolver(m_socket->get_io_context());
+		asio::ip::udp::resolver::results_type endpoints =
+			resolver.resolve(asio::ip::udp::v4(), strIp, std::to_string(port));
+
+		if (!endpoints.empty())
+		{
+			SendMsg(*endpoints.begin(), pMsg);
+		}
+	}
 	void CUdpServer::SendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg)
 	{
 		if (m_socket)
