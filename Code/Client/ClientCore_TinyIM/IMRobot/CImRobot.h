@@ -15,6 +15,12 @@ private:
 	void GetFriendList();
 	void SendMsg();
 	void GetRecvMsg();
+
+	//Group Begin
+	void GetGroupList();
+	void SendGroupMsg();
+	void GetRecvGroupMsg();
+	//Group End
 	//Load From Client
 	std::string m_strHttpIp;
 	int m_nHttpPort;
@@ -24,5 +30,6 @@ private:
 	//Http Data
 	std::string m_strUserId;
 	std::vector<std::string> m_strFriendVec;
+	std::vector<std::string> m_strGroupVec;
 };
 #endif

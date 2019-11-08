@@ -60,6 +60,7 @@ namespace ClientCore {
 
 		void On_GetFriendListRsp(const GetFriendListRspMsg& msg);
 		//Group
+		void On_GetGroupListRsp(const GetGroupListRspMsg& msg);
 		void On_FindGroupRsp(const FindGroupRspMsg& msg);
 
 		void On_AddToGroupRsp(const AddToGroupRspMsg& msg);
@@ -125,6 +126,8 @@ namespace ClientCore {
 		//Friend End
 
 		//Group Msg
+
+		void Get_GroupListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		void Post_FindGroupReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
 		void Post_SendAddToGroupReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);

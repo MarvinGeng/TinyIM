@@ -744,6 +744,15 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
+		case MessageType::GetGroupListRsp_Type:
+		{
+			GetGroupListRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_GetGroupListRsp(rspMsg);
+				}
+			}
+		}break;
 		case MessageType::DestroyGroupRsp_Type:
 		{
 			DestroyGroupRspMsg rspMsg;

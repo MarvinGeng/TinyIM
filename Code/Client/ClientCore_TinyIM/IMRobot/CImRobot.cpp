@@ -69,7 +69,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 4;
+		int nChoice = rand() % 8;
 		switch (nChoice)
 		{
 		case 0:
@@ -87,6 +87,18 @@ void CIMRobot::Run()
 		case 3:
 		{
 			UserLogin();
+		}break;
+		case 4:
+		{
+			GetGroupList();
+		}break;
+		case 5:
+		{
+			SendGroupMsg();
+		}break;
+		case 6:
+		{
+			GetRecvGroupMsg();
 		}break;
 		default:
 		{
@@ -220,4 +232,57 @@ void CIMRobot::GetRecvMsg()
 	catch (const SimpleWeb::system_error& e) {
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
+}
+
+
+void CIMRobot::GetGroupList()
+{
+	GetGroupListReqMsg reqMsg;
+	GetGroupListRspMsg rspMsg;
+	try {
+		reqMsg.m_strMsgId = "33333333";
+		reqMsg.m_strUserId = m_strUserId;
+
+		auto rsp = g_httpClient->request("POST", "/send_group_text_msg", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (rspMsg.FromString(strRsp)) {
+			m_strGroupVec.clear();
+			for (const auto item : rspMsg.m_GroupList) {
+				m_strGroupVec.push_back(item.m_strGroupId);
+			}
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::SendGroupMsg()
+{
+	SendGroupTextMsgRspMsg rspMsg;
+	SendGroupTextMsgReqMsg reqMsg;
+	for (const auto item : m_strGroupVec)
+	{
+		try {
+			reqMsg.m_strMsgId = "33333333";
+			reqMsg.m_strSenderId = m_strUserId;
+			reqMsg.m_strGroupId = item;
+			reqMsg.m_strContext = m_strUserId + " Send Msg To " + item;
+
+
+			auto rsp = g_httpClient->request("POST", "/send_group_text_msg", reqMsg.ToString());
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+}
+
+void CIMRobot::GetRecvGroupMsg()
+{
+
 }

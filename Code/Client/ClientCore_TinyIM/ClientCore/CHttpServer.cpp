@@ -693,6 +693,46 @@ namespace ClientCore
 		}
 	}
 
+
+	void CHttpServer::Get_GroupListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
+		std::string strUserId = GetHttpParamUserId(request);
+		if (strUserId.length() > 0)
+		{
+			GetGroupListReqMsg reqMsg;
+			reqMsg.m_strUserId = strUserId;
+			reqMsg.m_strMsgId = GenerateMsgId();
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserId);
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+			}
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
+	}
+
+	void CHttpServer::On_GetGroupListRsp(const GetGroupListRspMsg& msg)
+	{
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(msg.m_strMsgId);
+			}
+		}
+	}
 	/**
 	 * @brief 响应用户登录消息回复，TCP消息转HTTP消息
 	 * 
@@ -1038,6 +1078,10 @@ namespace ClientCore
 			this->Post_FindGroupReq(response, request);
 		};
 
+		m_httpServer.resource["/get_group_list"]["GET"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_GroupListReq(response, request);
+		};
+		
 		m_httpServer.resource["/add_to_group"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			this->Post_SendAddToGroupReq(response, request);
 		};
