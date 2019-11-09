@@ -69,7 +69,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 8;
+		int nChoice = rand() % 10;
 		switch (nChoice)
 		{
 		case 0:
@@ -99,6 +99,18 @@ void CIMRobot::Run()
 		case 6:
 		{
 			GetRecvGroupMsg();
+		}break;
+		case 7:
+		{
+			AddFriendTeam();
+		}break;
+		case 8:
+		{
+			RemoveFriendTeam();
+		}break;
+		case 9:
+		{
+			MoveFriendToTeam();
 		}break;
 		default:
 		{
@@ -232,6 +244,67 @@ void CIMRobot::GetRecvMsg()
 	catch (const SimpleWeb::system_error& e) {
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
+}
+
+void CIMRobot::AddFriendTeam()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	AddTeamRspMsg rspMsg;
+	try {
+		AddTeamReqMsg reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strTeamName = m_strUserName+std::to_string(rand()%100);
+
+		auto rsp = g_httpClient->request("POST", "/create_friend_team", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::RemoveFriendTeam()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	RemoveTeamRspMsg rspMsg;
+	try {
+		RemoveTeamReqMsg reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strTeamId = "1234568";
+
+		auto rsp = g_httpClient->request("POST", "/destroy_friend_team", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::MoveFriendToTeam()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	MoveFriendToTeamRspMsg rspMsg;
+	try {
+		MoveFriendToTeamReqMsg reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = *(m_strFriendVec.begin());
+		reqMsg.m_strDstTeamId = "11111111";
+		reqMsg.m_strSrcTeamId = "22222222";
+
+
+		auto rsp = g_httpClient->request("POST", "/move_friend_to_team", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+
 }
 
 

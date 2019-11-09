@@ -12,9 +12,16 @@ public:
 private:
 	void UserLogin();
 	void UserLogout();
+
+	//Friend Begin
 	void GetFriendList();
 	void SendMsg();
 	void GetRecvMsg();
+
+	void AddFriendTeam();
+	void RemoveFriendTeam();
+	void MoveFriendToTeam();
+	//Friend End
 
 	//Group Begin
 	void GetGroupList();
