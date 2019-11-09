@@ -721,6 +721,111 @@ namespace ClientCore
 		}
 	}
 
+	void CHttpServer::Post_AddFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		AddTeamReqMsg reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			reqMsg.m_strMsgId = GenerateMsgId();
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess("");
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+			}
+			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
+	}
+
+	void CHttpServer::Post_DestroyFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		RemoveTeamReqMsg reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			reqMsg.m_strMsgId = GenerateMsgId();
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess("");
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+			}
+			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
+	}
+
+	void CHttpServer::Post_MoveFriendToTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		MoveFriendToTeamReqMsg reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			reqMsg.m_strMsgId = GenerateMsgId();
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess("");
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+			}
+			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
+	}
+
+	void CHttpServer::On_AddFriendTeamRsp(const AddTeamRspMsg& msg)
+	{
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(msg.m_strMsgId);
+			}
+		}
+	}
+
+	void CHttpServer::On_RemoveFriendTeamRsp(const RemoveTeamRspMsg& msg)
+	{
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(msg.m_strMsgId);
+			}
+		}
+	}
+
+
+
+	void CHttpServer::On_MoveFriendToTeamRsp(const MoveFriendToTeamRspMsg& msg)
+	{
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(msg.m_strMsgId);
+			}
+		}
+	}
+
+
 	void CHttpServer::On_GetGroupListRsp(const GetGroupListRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {
@@ -1042,6 +1147,18 @@ namespace ClientCore
 
 		m_httpServer.resource["/on_friend_chat_recv_text_msg"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			this->Post_FriendChatRecvTxtRsp(response, request);
+		};
+
+		m_httpServer.resource["/create_friend_team"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Post_AddFriendTeamReq(response, request);
+		};
+
+		m_httpServer.resource["/destroy_friend_team"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Post_DestroyFriendTeamReq(response, request);
+		};
+
+		m_httpServer.resource["/move_friend_to_team"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Post_MoveFriendToTeamReq(response, request);
 		};
 
 		//File相关

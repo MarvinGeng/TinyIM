@@ -59,6 +59,13 @@ namespace ClientCore {
 		void On_SendFriendFileOnlineRspMsg(const FriendSendFileMsgRspMsg& msg);
 
 		void On_GetFriendListRsp(const GetFriendListRspMsg& msg);
+		
+		void On_AddFriendTeamRsp(const AddTeamRspMsg& msg);
+
+		void On_RemoveFriendTeamRsp(const RemoveTeamRspMsg& msg);
+
+		void On_MoveFriendToTeamRsp(const MoveFriendToTeamRspMsg& msg);
+
 		//Group
 		void On_GetGroupListRsp(const GetGroupListRspMsg& msg);
 		void On_FindGroupRsp(const FindGroupRspMsg& msg);
@@ -111,6 +118,10 @@ namespace ClientCore {
 		void Post_FriendChatRecvTxtRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		
 		void Post_SendFileOnlineReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+
+		void Post_AddFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+		void Post_DestroyFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+		void Post_MoveFriendToTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
 		//void Get_SendFileOnlineRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 

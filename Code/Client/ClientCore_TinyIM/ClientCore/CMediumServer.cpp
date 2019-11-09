@@ -726,6 +726,33 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
+		case MessageType::AddTeamRsp_Type:
+		{
+			AddTeamRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_AddFriendTeamRsp(rspMsg);
+				}
+			}
+		}break;
+		case MessageType::RemoveTeamRsp_Type:
+		{
+			RemoveTeamRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_RemoveFriendTeamRsp(rspMsg);
+				}
+			}
+		}break;
+		case MessageType::MoveFriendToTeamRsp_Type:
+		{
+			MoveFriendToTeamRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_MoveFriendToTeamRsp(rspMsg);
+				}
+			}
+		}break;
 		case MessageType::AddToGroupRsp_Type:
 		{
 			AddToGroupRspMsg rspMsg;
