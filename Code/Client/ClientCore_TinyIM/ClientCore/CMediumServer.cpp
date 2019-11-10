@@ -312,17 +312,21 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 	}
 	else
 	{
-		auto pReturn = m_freeClientSess;
+		return nullptr;
+	}
+}
+
+	CClientSess_SHARED_PTR CMediumServer::CreateClientSess()
+	{
+		//auto pReturn = m_freeClientSess;
 		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
 			m_clientCfgVec[0].m_strServerIp,
 			m_clientCfgVec[0].m_nPort, this);
 
 		m_freeClientSess->StartConnect();
 		//m_userClientSessMap.insert(std::pair<std::string, CClientSess_SHARED_PTR>(strUserName, pReturn));
-		return pReturn;
+		return m_freeClientSess;
 	}
-	
-}
 
 void CMediumServer::CheckWaitMsgVec()
 {
@@ -357,6 +361,10 @@ void CMediumServer::OnTimer()
 	CheckAllConnect();
 	CheckWaitMsgVec();
 	m_timeCount++;
+	if (m_httpServer)
+	{
+		m_httpServer->OnTimer();
+	}
 }
 
 /**
@@ -422,6 +430,9 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				m_userStateMap.erase(rspMsg.m_strUserId);
 				m_userStateMap.insert({ rspMsg.m_strUserId,CLIENT_SESS_STATE::SESS_LOGIN_FINISHED });
 				m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
+
+				m_strUserNameUserIdMap.erase(rspMsg.m_strUserName);
+				m_strUserNameUserIdMap.insert(rspMsg.m_strUserName, rspMsg.m_strUserId);
 			}
 			if (!m_fileUtil.IsFolder(rspMsg.m_strUserName))
 			{

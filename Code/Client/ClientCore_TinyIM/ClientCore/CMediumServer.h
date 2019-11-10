@@ -92,7 +92,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
     void CheckAllConnect();
 
-	CClientSess_SHARED_PTR GetClientSess(const std::string strUserName);
+	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
+	CClientSess_SHARED_PTR CreateClientSess();
 	CMsgPersistentUtil_SHARED_PTR GetMsgPersisUtil() {
 		return m_msgPersisUtil;
 	}
@@ -118,6 +119,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
     std::string getServerIpPort();
 
 private:
+	std::map<std::string, std::string> m_strUserNameUserIdMap;
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
 	std::shared_ptr<CUdpClient> m_udpClient;

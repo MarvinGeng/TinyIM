@@ -17,8 +17,21 @@
 #include "CClientSess.h"
 #include "SnowFlake.h"
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
-using HTTP_RSP_MAP_PAIR =std::pair<std::string, std::shared_ptr < HttpServer::Response>>;
-using HTTP_RSP_MAP = std::map<std::string, std::shared_ptr<HttpServer::Response>>;
+class RSP_SECOND {
+public:
+	time_t m_recvTime;
+	std::shared_ptr<HttpServer::Response> m_response;
+	
+	RSP_SECOND(time_t curTime, std::shared_ptr<HttpServer::Response> rsp)
+	{
+		m_recvTime=curTime;
+		m_response=rsp;
+	}
+};
+using HTTP_RSP_SECOND = RSP_SECOND;
+using HTTP_RSP_MAP = std::map<std::string, HTTP_RSP_SECOND>;
+using HTTP_RSP_MAP_PAIR = std::pair<std::string, HTTP_RSP_SECOND>;
+
 namespace ClientCore {
 	class CMediumServer;
 	class CHttpServer : public std::enable_shared_from_this<CHttpServer>
@@ -38,6 +51,8 @@ namespace ClientCore {
 		{
 			m_httpServer.stop();
 		}
+
+		void OnTimer();
 
 		void On_UserRegisterRsp(const UserRegisterRspMsg& msg);
 

@@ -357,5 +357,28 @@ void CIMRobot::SendGroupMsg()
 
 void CIMRobot::GetRecvGroupMsg()
 {
-
+	std::cout << __FUNCTION__ << std::endl;
+	RecvGroupTextMsgReqMsg reqMsg;
+	try {
+		for (int i = 0; i < 10; i++)
+		{
+			auto rsp = g_httpClient->request("GET", "/get_recv_group_text_msg", "");
+			std::string strRsp = rsp->content.string();
+			if (reqMsg.FromString(strRsp))
+			{
+				RecvGroupTextMsgRspMsg rspMsg;
+				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+				auto rsp = g_httpClient->request("POST", "/on_recv_group_text_msg", rspMsg.ToString());
+				std::string strRsp = rsp->content.string();
+				std::cout << strRsp << std::endl;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
 }
