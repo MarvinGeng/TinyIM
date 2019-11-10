@@ -432,7 +432,7 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 				m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
 
 				m_strUserNameUserIdMap.erase(rspMsg.m_strUserName);
-				m_strUserNameUserIdMap.insert(rspMsg.m_strUserName, rspMsg.m_strUserId);
+				m_strUserNameUserIdMap.insert({ rspMsg.m_strUserName, rspMsg.m_strUserId });
 			}
 			if (!m_fileUtil.IsFolder(rspMsg.m_strUserName))
 			{

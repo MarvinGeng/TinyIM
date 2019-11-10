@@ -38,12 +38,12 @@ namespace ClientCore
 			}
 			else
 			{
-
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 			}
 		}
 		else
 		{
-
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -70,12 +70,12 @@ namespace ClientCore
 			}
 			else
 			{
-
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 			}
 		}
 		else
 		{
-
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -104,7 +104,7 @@ namespace ClientCore
 				}
 				else
 				{
-
+					*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 				}
 			}
 			m_userLoginMsgMap.erase(reqMsg.m_strUserName);
@@ -112,7 +112,7 @@ namespace ClientCore
 		}
 		else
 		{
-
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -137,12 +137,12 @@ namespace ClientCore
 			}
 			else
 			{
-
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 			}
 		}
 		else
 		{
-
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -186,6 +186,14 @@ namespace ClientCore
 			{
 				pClientSess->SendMsg(pSendMsg);
 			}
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -208,8 +216,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -231,9 +247,18 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
 		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
+
 	}
 
 
@@ -255,8 +280,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -278,8 +311,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr), response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -301,8 +342,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -324,8 +373,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr), response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -348,8 +405,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -370,8 +435,17 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId,HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+
 		}
 	}
 
@@ -445,7 +519,14 @@ namespace ClientCore
 			{
 				pClientSess->SendMsg(pSendMsg);
 			}
-			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -488,8 +569,16 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr),response)));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
 
@@ -523,6 +612,10 @@ namespace ClientCore
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
 		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+		}
 	}
 
 
@@ -552,6 +645,10 @@ namespace ClientCore
 				{
 					pClientSess->SendMsg(pSendMsg);
 				}
+				else
+				{
+					LOG_ERR(ms_loger, "Can find UserID:{} ", reqMsg.m_strUserId);
+				}
 				msgUtil->Remove_AddFriendNotifyReqMsg(reqMsg);
 			}
 		}
@@ -559,8 +656,6 @@ namespace ClientCore
 		{
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 		}
-
-		
 	}
 
 	/**
@@ -587,9 +682,18 @@ namespace ClientCore
 					queryReq.m_strUdpUserId = reqMsg.m_strToId;
 					pClientSess->SendMsg(&queryReq);
 				}
+				m_httpRspMap.insert(std::pair<std::string, HTTP_RSP_SECOND>(reqMsg.m_strMsgId, { time(nullptr), response }));
+
 			}
-			m_httpRspMap.insert(std::pair<std::string, HTTP_RSP_SECOND>(reqMsg.m_strMsgId, { time(nullptr), response }));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
+			}
 			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 		}
 	}
 
@@ -638,9 +742,17 @@ namespace ClientCore
 			{
 				pClientSess->SendMsg(pSendMsg);
 			}
+			else
+			{
+				LOG_ERR(ms_loger, "{} ", rspMsg.m_strFromId);
+			}
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
 			m_pServer->Handle_RecvFileOnlineRsp(rspMsg);
+		}
+		else
+		{
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 		}
 	}
 
@@ -794,8 +906,12 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, { time(nullptr),response }));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, { time(nullptr),response }));
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
+			}
 		}
 		else
 		{
@@ -815,8 +931,8 @@ namespace ClientCore
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, { time(nullptr), response }));
 			}
-			m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, { time(nullptr), response }));
 		}
 		else
 		{
