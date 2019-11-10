@@ -14,6 +14,7 @@
 #include "CommonDef.h"
 #include <stdlib.h>
 #include <string.h>
+
  //用户基本信息
 struct UserBaseInfo {
 	std::string m_strUserId;    //用户编号
@@ -25,13 +26,14 @@ struct UserBaseInfo {
 	std::string m_strBirthDate; //用户出生日期
 	std::string m_strEmail;     //用户邮箱
 	std::string m_strGender;    //用户性别
-	CLIENT_ONLINE_TYPE m_eOnlineState;
+	CLIENT_ONLINE_TYPE m_eOnlineState;//用户在线状态
 };
 
+//好友分组的基本信息
 struct TeamBaseInfo {
-	std::string m_strTeamId;
-	std::string m_strTeamName;
-	std::vector<UserBaseInfo> m_teamUsers;
+	std::string m_strTeamId;	//好友分组ID
+	std::string m_strTeamName;	//好友分组名称
+	std::vector<UserBaseInfo> m_teamUsers;//该分组中的所有好友
 };
 
 /**
@@ -51,9 +53,9 @@ struct GroupInfo {
 struct Header
 {
 	//消息类型
-	int32_t   m_type;
+	int32_t   m_type;//消息类型
 	//消息长度
-	int32_t    m_length;
+	int32_t    m_length;//消息长度
 };
 
 
@@ -95,26 +97,6 @@ public:
 
 	/**
 	 * @brief 使用消息类型和字符串构造传输的消息,发送消息的时候使用
-	 * 
-	 * @param type 消息类型
-	 * @param strMsg  消息字符串
-	 */
-	/*explicit TransBaseMsg_t(const MessageType& type,const std::string& strMsg)
-	{
-		std::size_t strLen = strMsg.length();
-		Header head;
-		head.m_type = type;
-		head.m_length = static_cast<uint32_t>(strLen+sizeof(head));
-		m_data = new char[head.m_length];
-		memset(m_data,0,head.m_length);
-		memcpy(m_data,&head,sizeof(head));
-		memcpy(m_data+sizeof(head),strMsg.c_str(),strLen);
-		m_selfData = true;
-	}*/
-	
-
-	/**
-	 * @brief 使用消息类型和字符串构造传输的消息,发送消息的时候使用
 	 *
 	 * @param type 消息类型
 	 * @param strMsg  消息字符串
@@ -135,114 +117,7 @@ protected:
 	bool m_selfData = false;
 };
 
-/**
- * @brief 用来传输消息的类型，将消息先转化为字符串，然后放入这个类型中，在实际的代码中使用std::shared_ptr来保存
- *
- */
-class CTransMessage final
-{
-public:
-	
 
-	/**
-	 * @brief 获取消息体的长度
-	 *
-	 * @return std::size_t
-	 */
-	int GetSize() const
-	{
-		return m_dataLen;
-	}
-
-	
-	/**
-	 * @brief 获取消息的实际数据
-	 *
-	 * @return const char*
-	 */
-	const char * GetData() const
-	{
-		return m_data;
-	}
-
-	/**
-	 * @brief 使用消息类型和字符串构造传输的消息,发送消息的时候使用
-	 *
-	 * @param type 消息类型
-	 * @param strMsg  消息字符串
-	 */
-	explicit CTransMessage(const char * data,const int length)
-	{
-		if (length > 0)
-		{
-			m_data = new char[length];
-			memcpy(m_data, data, length);
-			m_dataLen = length;
-			m_selfData = true;
-		}
-		else
-		{
-			m_dataLen = 0;
-			m_data = nullptr;
-			m_selfData = false;
-		}
-	}
-
-	/**
-	 * @brief 从内存直接构造消息，接收消息的时候使用
-	 *
-	 * @param data 消息接收端的内存
-	 */
-	explicit CTransMessage(char * data)
-	{
-		m_data = data;
-		m_selfData = false;
-	}
-
-	virtual ~CTransMessage()
-	{
-		if (m_selfData)
-		{
-			if (nullptr != m_data)
-			{
-				delete m_data;
-				m_data = nullptr;
-			}
-		}
-	}
-
-
-	std::string ToHexString() const {
-		if (m_dataLen > 0 && m_data != nullptr)
-		{
-			const std::string HEX_ARRAY = "0123456789ABCDEF";
-			std::string strResult;
-			unsigned char * pChar = reinterpret_cast<unsigned char *>(m_data);
-			for (int i = 0; i < m_dataLen; i++) {
-				strResult += HEX_ARRAY[(*(pChar + i))%256 / 16];
-				strResult += HEX_ARRAY[(*(pChar + i)) % 16];
-			}
-
-			return strResult;
-		}
-		else
-		{
-			return "";
-		}
-	}
-
-	bool FromHexString(const std::string strHex) const {
-		return false;
-	}
-protected:
-	//数据块内容
-	char *   m_data;
-	int   m_dataLen;
-	//是否自己保存了数据
-	bool m_selfData = false;
-};
-
-using CTransMsg_SHARED_PTR = std::shared_ptr<CTransMessage>;
 /**
  * @brief Ip端口配置类
  * 
@@ -370,6 +245,7 @@ public:
  */
 struct KeepAliveReqMsg final:public BaseMsg
 {
+public:
 	std::string m_strClientId;//客户端标识，用来标识是哪个客户端的发送的心跳请求
 public:
 	explicit KeepAliveReqMsg();
@@ -431,9 +307,9 @@ public:
 class UserLoginRspMsg final :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
 	ERROR_CODE_TYPE m_eErrCode; //错误代码
 	std::string m_strErrMsg; //错误信息
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
 	std::string m_strUserName; //用户名
 	UserBaseInfo m_userInfo;//用户的基本信息
@@ -456,7 +332,7 @@ public:
 class UserLogoutReqMsg final :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserName; //用户名
 	std::string m_strPassword; //密码
 	CLIENT_OS_TYPE m_eOsType;  //操作系统平台类型
@@ -478,9 +354,9 @@ public:
 class UserLogoutRspMsg final :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
 	ERROR_CODE_TYPE m_eErrCode; //错误代码
 	std::string m_strErrMsg;    //错误消息
+	std::string m_strMsgId;     //消息ID
 	std::string m_strUserName;  //用户名
 public:
 	UserLogoutRspMsg();
@@ -525,9 +401,9 @@ public:
 class UserRegisterRspMsg final :public BaseMsg
 {
 public:
-	std::string m_strMsgId;//消息ID
 	ERROR_CODE_TYPE m_eErrCode; //错误代码
-	std::string m_strErrMsg;   //错误消息
+	std::string m_strErrMsg;   //错误信息
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserName; //用户名
 public:
 	UserRegisterRspMsg();
@@ -548,7 +424,7 @@ public:
 class UserUnRegisterReqMsg final :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserName;//用户名
 	std::string m_strPassword;//密码
 	std::string m_strVerifyCode;//验证码，暂不使用
@@ -596,16 +472,16 @@ public:
 	std::string m_strFontName; //字体名称
 	int			m_nFontSize;   //字体大小
 	std::string m_strFontColorHex;  //字体颜色
-	int         m_nFontStyle;
+	int         m_nFontStyle;//字体风格，粗体、斜体、下划线
 	explicit FontInfo_s();
 	bool IsBold() const ;//是否粗体
 	bool IsItalic() const ;//是否斜体
 	bool IsUnderScore() const ;//是否是下划线
-	void SetBold();
-	void SetItalic();
-	void SetUnderScore();
-	bool FromString(const std::string& strJson);
-	std::string ToString() const;
+	void SetBold();//设置粗体
+	void SetItalic();//设置斜体
+	void SetUnderScore();//设置下划线
+	bool FromString(const std::string& strJson);//从json构造
+	std::string ToString() const;//转为json
 
 public:
 
@@ -622,7 +498,7 @@ public:
 	std::string m_strSenderId;   //发送者
 	std::string m_strReceiverId; //接收者
 	std::string m_strContext;  //信息内容
-	FontInfo_s  m_fontInfo;
+	FontInfo_s  m_fontInfo;//字体信息
 public:
 	FriendChatSendTxtReqMsg();
 
@@ -640,12 +516,11 @@ public:
  */
 class FriendChatSendTxtRspMsg final :public BaseMsg {
 public:
+	ERROR_CODE_TYPE m_eErrCode;//错误代码
+	std::string m_strErrMsg;  //错误信息
 	std::string m_strMsgId; //消息ID，由服务器生成
 	std::string m_strSenderId; //发送方ID
 	std::string m_strReceiverId;//接收方ID
-	ERROR_CODE_TYPE m_eErrCode;//错误代码
-	std::string m_strErrMsg;  //错误信息
-
 	std::string m_strContext ;  //信息内容
 	FontInfo_s  m_fontInfo   ;  //字体信息
 	std::string m_strMsgTime ;  //消息接收时间
@@ -713,8 +588,8 @@ public:
 */
 class GetFriendListReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
 public:
 	GetFriendListReqMsg();
 	
@@ -732,9 +607,11 @@ public:
 class GetFriendListRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::vector<TeamBaseInfo> m_teamVec;
+	ERROR_CODE_TYPE m_errCode;//错误代码
+	std::string m_strErrMsg;//错误消息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::vector<TeamBaseInfo> m_teamVec;//分组数据
 public:
 	GetFriendListRspMsg();
 
@@ -754,9 +631,9 @@ public:
 class AddFriendSendReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strFriendId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//被添加的用户ID
 public:
 	AddFriendSendReqMsg();
 
@@ -775,11 +652,11 @@ public:
 class AddFriendSendRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
 	ERROR_CODE_TYPE m_eErrCode; //错误码
-	std::string m_strErrMsg; //错误信息
-	std::string m_strUserId;     //
-	std::string m_strFriendId;   //
+	std::string m_strErrMsg;	//错误信息
+	std::string m_strMsgId;		//消息ID
+	std::string m_strUserId;     //用户ID
+	std::string m_strFriendId;   //好友ID
 
 public:
 	AddFriendSendRspMsg();
@@ -801,8 +678,8 @@ public:
 class AddFriendRecvReqMsg :public BaseMsg {
 public:
 	std::string m_strMsgId; //消息ID
-	std::string m_strUserId;
-	std::string m_strFriendId;
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
 public:
 	AddFriendRecvReqMsg();
 	
@@ -821,6 +698,8 @@ public:
  */
 class AddFriendRecvRspMsg :public BaseMsg {
 public:
+	ERROR_CODE_TYPE m_errCode;//错误码
+	std::string m_errMsg;//错误代码
 	std::string m_strMsgId; //消息ID
 	std::string m_strUserId; //用户ID
 	std::string m_strFriendId; //好友ID
@@ -844,14 +723,13 @@ public:
 class AddFriendNotifyReqMsg :public BaseMsg {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strUserId;
-	std::string m_strFriendId;
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
 	
 	E_FRIEND_OPTION m_option;//用户选择[同意/拒绝]
 public:
 	AddFriendNotifyReqMsg();
 	
-
 	virtual std::string ToString() const override;
 
 	virtual bool FromString(const std::string& strJson) override;
@@ -905,7 +783,7 @@ class RemoveFriendRspMsg :public BaseMsg {
 public:
 	ERROR_CODE_TYPE m_eErrCode; //错误码
 	std::string m_strErrMsg; //错误信息
-	std::string m_strMsgId;
+	std::string m_strMsgId;  //消息ID
 	std::string m_strUserId; //用户名
 	std::string m_strFriendId; //好友用户名
 public:
@@ -926,8 +804,8 @@ public:
  */
 class FindFriendReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
 	std::string m_strWantedName;//被查找的用户名
 public:
 	FindFriendReqMsg();
@@ -949,9 +827,10 @@ public:
 class FindFriendRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
 	ERROR_CODE_TYPE m_eErrCode;//错误码
-	std::string m_strUserId;//用户名
+	std::string m_errMsg;//错误消息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
 	std::vector<UserBaseInfo> m_friendInfoVec;//符合的所有用户
 public:
 	FindFriendRspMsg();
@@ -965,7 +844,7 @@ public:
 /* 添加好友分组请求*/
 class AddTeamReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId; //用户名
 	std::string m_strTeamName; //群组名称
 public:
@@ -981,9 +860,9 @@ public:
 /* 添加好友分组回复*/
 class AddTeamRspMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
 	ERROR_CODE_TYPE m_eErrCode; //错误码
 	std::string m_strErrMsg; //错误信息
+	std::string m_strMsgId;//消息ID
 
 	std::string m_strUserId;//用户名
 	std::string m_strTeamId; //分组编号
@@ -1001,7 +880,7 @@ public:
 /* 删除好友分组请求*/
 class RemoveTeamReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户名
 	std::string m_strTeamId;//分组编号
 public:
@@ -1017,7 +896,7 @@ class RemoveTeamRspMsg :public BaseMsg {
 public:
 	ERROR_CODE_TYPE m_eErrorCode;//错误码
 	std::string m_strErrMsg;//错误信息
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户名
 	std::string m_strTeamId;//分组编号
 	std::string m_strTeamName;//分组名
@@ -1035,7 +914,7 @@ public:
 /* 移动好友分组请求*/
 class MoveFriendToTeamReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户名
 	std::string m_strFriendId;//好友用户名
 	std::string m_strSrcTeamId;//现在的分组ID
@@ -1055,7 +934,7 @@ class MoveFriendToTeamRspMsg :public BaseMsg {
 public:
 	ERROR_CODE_TYPE m_eErrCode;//错误码
 	std::string m_strErrMsg;//错误信息
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户名
 	std::string m_strFriendId;//好友用户名
 	std::string m_strSrcTeamId;//原来的分组ID
@@ -1074,9 +953,9 @@ public:
 /* 创建群聊请求*/
 class CreateGroupReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strGroupName;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupName;//群组名称
 public:
 	CreateGroupReqMsg();
 
@@ -1094,12 +973,12 @@ public:
 /* 创建群聊回复*/
 class CreateGroupRspMsg :public BaseMsg {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	std::string m_strErrMsg;
-	std::string m_strMsgId;
-	std::string m_strGroupId;
-	std::string m_strGroupName;
-	std::string m_strUserId;
+	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_strErrMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strGroupName;//群组名称
 public:
 	CreateGroupRspMsg();
 
@@ -1112,16 +991,13 @@ public:
 };
 
 
-
-
-
 /* 解散群聊请求*/
 class DestroyGroupReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
-	std::string m_strGroupName;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strGroupName;//群组名称
 public:
 	DestroyGroupReqMsg();
 
@@ -1135,12 +1011,12 @@ public:
 /* 删除群聊回复*/
 class DestroyGroupRspMsg :public BaseMsg {
 public:
-	ERROR_CODE_TYPE m_eErrorCode;
-	std::string m_strErrMsg;
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
-	std::string m_strGroupName;
+	ERROR_CODE_TYPE m_eErrorCode;//错误代码
+	std::string m_strErrMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strGroupName;//群组名称
 public:
 	DestroyGroupRspMsg();
 
@@ -1159,7 +1035,7 @@ public:
 class FindGroupReqMsg :public BaseMsg 
 {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户名
 	std::string m_strGroupName;//被查找的用户名
 public:
@@ -1180,12 +1056,13 @@ public:
 class FindGroupRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	std::string m_strUserId;
-	std::string m_strMsgId;
-	std::string m_strGroupId;
-	std::string m_strGroupName;
-	std::string m_strGroupOwner;
+	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strGroupName;//群组名称
+	std::string m_strGroupOwner;//群组创建者
 public:
 	FindGroupRspMsg();
 
@@ -1204,7 +1081,7 @@ public:
 class AddToGroupReqMsg :public BaseMsg 
 {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//请求者的用户名
 	std::string m_strGroupId; //要加入的群组的ID
 public:
@@ -1227,6 +1104,7 @@ class AddToGroupRspMsg :public BaseMsg
 {
 public:
 	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
 	std::string m_strGroupId;//群组ID
@@ -1249,7 +1127,7 @@ public:
  */
 class AddToGroupRecvReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;
+	std::string m_strMsgId;//消息ID
 	std::string m_strAdminId;//群组的管理者
 	std::string m_strUserId;//请求者的用户名
 	std::string m_strGroupId; //要加入的群组的ID
@@ -1272,11 +1150,12 @@ public:
 class AddToGroupRecvRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	E_FRIEND_OPTION m_eOption;
-	std::string m_strAdminId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
+	E_FRIEND_OPTION m_eOption;//管理员的选择
+	std::string m_strAdminId;//管理员ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
 public:
 	AddToGroupRecvRspMsg();
 
@@ -1295,7 +1174,7 @@ public:
  */
 class AddToGroupNotifyReqMsg :public BaseMsg {
 public:
-	std::string m_strMsgId;//
+	std::string m_strMsgId;//消息ID
 	std::string m_strAdminId;//群组的管理者
 	std::string m_strUserId;//请求者的用户名
 	std::string m_strGroupId; //要加入的群组的ID
