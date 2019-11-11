@@ -1198,12 +1198,13 @@ public:
 class AddToGroupNotifyRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	E_FRIEND_OPTION m_eOption;
-	std::string m_strMsgId;
-	std::string m_strAdminId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
+	E_FRIEND_OPTION m_eOption;//用户选择
+	std::string m_strMsgId;//消息ID
+	std::string m_strAdminId;//群组管理员ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
 public:
 	AddToGroupNotifyRspMsg();
 	
@@ -1241,11 +1242,12 @@ public:
 class InviteFriendToGroupRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strReciverId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_eErrCode;//错误代码
+	std::string m_errMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strReciverId;//接收者ID
+	std::string m_strGroupId;//群组ID
 public:
 	InviteFriendToGroupRspMsg();
 
@@ -1263,10 +1265,10 @@ public:
 class InviteFriendToGroupRecvReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strReciverId;
-	std::string m_strGroupId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strReciverId;//接收者ID
+	std::string m_strGroupId;//群组ID
 public:
 	InviteFriendToGroupRecvReqMsg();
 	
@@ -1284,11 +1286,13 @@ public:
 class InviteFriendToGroupRecvRspMsg :public BaseMsg
 {
 public:
-	E_FRIEND_OPTION m_eOption;
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strReciverId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_errCode;//错误码
+	std::string m_errMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strReciverId;//接收者ID
+	std::string m_strGroupId;//群组ID
+	E_FRIEND_OPTION m_eOption;//用户选择
 public:
 	InviteFriendToGroupRecvRspMsg();
 
@@ -1306,11 +1310,11 @@ public:
 class InviteFriendToGroupNotifyReqMsg :public BaseMsg
 {
 public:
-	E_FRIEND_OPTION m_eOption;
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strReciverId;
-	std::string m_strGroupId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strReciverId;//接收者ID
+	std::string m_strGroupId;//群组ID
+	E_FRIEND_OPTION m_eOption;//用户的选择
 public:
 	InviteFriendToGroupNotifyReqMsg();
 
@@ -1327,10 +1331,10 @@ public:
 class InviteFriendToGroupNotifyRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strReciverId;
-	std::string m_strGroupId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strReciverId;//接收者ID
+	std::string m_strGroupId;//群组ID
 public:
 	InviteFriendToGroupNotifyRspMsg();
 
@@ -1340,12 +1344,14 @@ public:
 
 };
 
+
+/* 退出群组请求 */
 class QuitFromGroupReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//群组ID
 public:
 	QuitFromGroupReqMsg();
 
@@ -1354,12 +1360,15 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/* 退出群组回复 */
 class QuitFromGroupRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_errCode; //错误代码
+	std::string m_errMsg;      //错误回复
+	std::string m_strMsgId;    //消息ID
+	std::string m_strUserId;   //用户ID
+	std::string m_strGroupId;  //群组ID
 public:
 	QuitFromGroupRspMsg();
 
@@ -1374,11 +1383,11 @@ public:
 class SendGroupTextMsgReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strGroupId;
-	std::string m_strContext;
-	FontInfo_s m_stFontInfo;
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strContext;//消息内容
+	FontInfo_s m_stFontInfo;//字体信息
 public:
 	SendGroupTextMsgReqMsg();
 
@@ -1396,10 +1405,11 @@ public:
 class SendGroupTextMsgRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
-	std::string m_strMsgId;
-	std::string m_strSenderId;
-	std::string m_strGroupId;
+	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
+	std::string m_strMsgId;//消息ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strGroupId;//群组ID
 
 	std::string m_strContext;  //信息内容
 	FontInfo_s  m_fontInfo;  //字体信息
@@ -1421,13 +1431,13 @@ public:
 class RecvGroupTextMsgReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strSenderId;
-	std::string m_strGroupId;
-	std::string m_strContext;
-	FontInfo_s  m_stFontInfo;
-	std::string m_strMsgTime;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strSenderId;//发送者ID
+	std::string m_strGroupId;//群组ID
+	std::string m_strContext;//消息内容
+	FontInfo_s  m_stFontInfo;//字体信息
+	std::string m_strMsgTime;//消息时间
 public:
 	RecvGroupTextMsgReqMsg();
 
@@ -1444,10 +1454,10 @@ public:
 class RecvGroupTextMsgRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strSenderId;
-	std::string m_strGroupId;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strSenderId;//接收者ID
+	std::string m_strGroupId;//群组ID
 public:
 	RecvGroupTextMsgRspMsg();
 
@@ -1487,6 +1497,7 @@ class FriendSendFileMsgRspMsg :public BaseMsg
 {
 public:
 	ERROR_CODE_TYPE m_eErrCode;//错误码
+	std::string m_errMsg;//错误信息
 	std::string m_strMsgId;//消息ID
 	std::string m_strFromId;//发送者ID
 	std::string m_strToId;//接受者ID
@@ -1528,7 +1539,8 @@ public:
 class FriendRecvFileMsgRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eErrCode;
+	ERROR_CODE_TYPE m_eErrCode;//错误代码
+	std::string m_errMsg;//错误信息
 	std::string m_strMsgId;//消息ID
 	std::string m_strFromId;//文件发送者ID
 	std::string m_strToId;//文件接收者ID
@@ -1612,9 +1624,11 @@ public:
 class GetGroupListRspMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::vector<GroupInfo> m_GroupList;
+	ERROR_CODE_TYPE m_errCode;//错误代码
+	std::string m_errMsg;//错误消息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::vector<GroupInfo> m_GroupList;//群组列表
 public:
 	GetGroupListRspMsg();
 
@@ -1842,6 +1856,9 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/*
+更新好友列表通知的回复
+*/
 class UpdateFriendListNotifyRspMsg :public BaseMsg
 {
 public:
@@ -1856,7 +1873,7 @@ public:
 
 
 /*
-更新好友列表通知请求 [服务器]----->[客户端]
+更新群组列表通知请求 [服务器]----->[客户端]
 */
 class UpdateGroupListNotifyReqMsg :public BaseMsg
 {
@@ -1870,6 +1887,9 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/*
+更新群组列表通知回复
+*/
 class UpdateGroupListNotifyRspMsg :public BaseMsg
 {
 public:
@@ -1882,6 +1902,9 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/*
+好友的UDP的地址查询请求
+*/
 class QueryUserUdpAddrReqMsg :public BaseMsg
 {
 public:
@@ -1895,14 +1918,17 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/*
+好友的UDP地址查询回复
+*/
 class QueryUserUdpAddrRspMsg :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_errCode;
+	ERROR_CODE_TYPE m_errCode;//错误代码
 	std::string m_strMsgId; //消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strUdpUserId;
-	IpPortCfg	m_udpEndPt;
+	std::string m_strUdpUserId;//好友ID
+	IpPortCfg	m_udpEndPt;//好友UDP地址
 	QueryUserUdpAddrRspMsg();
 
 	virtual std::string ToString() const override;

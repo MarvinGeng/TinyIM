@@ -4451,6 +4451,7 @@ std::string AddToGroupNotifyRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"Code", static_cast<int>(m_eErrCode)},
+		{"Message",m_errMsg},
         {"Option", static_cast<int>(m_eOption)},
         {"MsgId", m_strMsgId},
         {"UserId", m_strUserId},
@@ -4479,6 +4480,15 @@ bool AddToGroupNotifyRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
     if (json["Option"].is_number())
     {
         m_eOption = static_cast<E_FRIEND_OPTION>(json["Option"].int_value());
@@ -4624,6 +4634,7 @@ std::string InviteFriendToGroupRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"Code", static_cast<int>(m_eErrCode)},
+		{"Message",m_errMsg},
         {"MsgId", m_strMsgId},
         {"Sender", m_strSenderId},
         {"GroupId", m_strGroupId},
@@ -4652,6 +4663,14 @@ bool InviteFriendToGroupRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["Sender"].is_string())
     {
@@ -4773,6 +4792,8 @@ std::string InviteFriendToGroupRecvRspMsg::ToString() const
 
     Json clientObj = Json::object(
     {
+		{"Code",static_cast<int>(m_errCode)},
+		{"Message",m_errMsg},
         {"Option", static_cast<int>(m_eOption)},
         {"MsgId", m_strMsgId},
         {"Sender", m_strSenderId},
@@ -4792,6 +4813,27 @@ bool InviteFriendToGroupRecvRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["Code"].is_number())
+	{
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+
+
 
     if (json["Option"].is_number())
     {
@@ -4996,6 +5038,8 @@ std::string QuitFromGroupRspMsg::ToString() const
 
 	Json clientObj = Json::object(
 		{
+			{"Code",static_cast<int>(m_errCode)},
+			{"Message",m_errMsg},
 			{"MsgId", m_strMsgId},
 			{"UserId", m_strUserId},
 			{"GroupId", m_strGroupId},
@@ -5014,6 +5058,23 @@ bool QuitFromGroupRspMsg::FromString(const std::string &strJson)
 		return false;
 	}
 
+	if (json["Code"].is_number())
+	{
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
 
 	if (json["UserId"].is_string())
@@ -5215,6 +5276,7 @@ std::string SendGroupTextMsgRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"Code", static_cast<int>(m_eErrCode)},
+		{"Message",m_errMsg},
         {"MsgId", m_strMsgId},
         {"Sender", m_strSenderId},
         {"GroupId", m_strGroupId},
@@ -5244,6 +5306,15 @@ bool SendGroupTextMsgRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["Sender"].is_string())
     {
@@ -5579,6 +5650,8 @@ std::string FriendSendFileMsgRspMsg::ToString() const
 
     Json clientObj = Json::object(
     {
+		{"Code",static_cast<int>(m_eErrCode)},
+		{"Message",m_errMsg},
         {"MsgId", m_strMsgId},
         {"FromId", m_strFromId},
         {"ToId", m_strToId},
@@ -5598,6 +5671,24 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["Code"].is_number())
+	{
+		m_eErrCode = static_cast<ERROR_CODE_TYPE>(m_eErrCode);
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["MsgId"].is_string())
     {
@@ -5742,7 +5833,7 @@ std::string FriendRecvFileMsgRspMsg::ToString() const
     using namespace json11;
 
     Json clientObj = Json::object(
-    {
+	{
         {"MsgId", m_strMsgId},
         {"FromId", m_strFromId},
         {"ToId", m_strToId},
@@ -6066,6 +6157,8 @@ std::string GetGroupListRspMsg::ToString() const
     }
     Json clientObj = Json::object(
     {
+		{"Code",static_cast<int>(m_errCode)},
+		{"Message",m_errMsg},
         {"MsgId", m_strMsgId},
         {"UserId", m_strUserId},
         {"GroupList", groupListArray},
@@ -6084,7 +6177,23 @@ bool GetGroupListRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["Code"].is_number())
+	{
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
 
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 
     if (json["UserId"].is_string())
     {
