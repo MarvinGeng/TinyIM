@@ -7504,5 +7504,109 @@ bool NormalRspMsg::FromString(const std::string& strJson)
 		return false;
 	}
 	return true;
+}
+
+GetFriendChatHistoryReq::GetFriendChatHistoryReq()
+{
+	
+}
+
+std::string GetFriendChatHistoryReq::ToString() const
+{
+	return "";
+}
+
+bool GetFriendChatHistoryReq::FromString(const std::string& strJson)
+{
+	return false;
+}
+
+GetFriendChatHistoryRsp::GetFriendChatHistoryRsp()
+{
 
 }
+
+std::string GetFriendChatHistoryRsp::ToString() const
+{
+	return "";
+}
+
+bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
+{
+	return false;
+}
+
+GetGroupChatHistoryReq::GetGroupChatHistoryReq()
+{
+
+}
+
+std::string GetGroupChatHistoryReq::ToString() const
+{
+	return "";
+}
+
+bool GetGroupChatHistoryReq::FromString(const std::string& strJson)
+{
+	return false;
+}
+
+GetGroupChatHistoryRsp::GetGroupChatHistoryRsp()
+{
+
+}
+
+std::string GetGroupChatHistoryRsp::ToString() const
+{
+	return "";
+}
+
+bool GetGroupChatHistoryRsp::FromString(const std::string& strJson)
+{
+	return false;
+}
+
+
+SearchChatHistoryReq::SearchChatHistoryReq()
+{
+
+}
+
+std::string SearchChatHistoryReq::ToString() const
+{
+	return "";
+}
+
+bool SearchChatHistoryReq::FromString(const std::string& strJson)
+{
+	return false;
+}
+
+SearchChatHistoryRsp::SearchChatHistoryRsp()
+{
+
+}
+
+std::string SearchChatHistoryRsp::ToString() const
+{
+	return "";
+}
+
+bool SearchChatHistoryRsp::FromString(const std::string& strJson)
+{
+	return false;
+}
+//GetFriendChatHistoryReq::GetFriendChatHistoryReq()
+//{
+//
+//}
+//
+//std::string GetFriendChatHistoryReq::ToString() const
+//{
+//	return "";
+//}
+//
+//bool GetFriendChatHistoryReq::FromString(const std::string& strJson)
+//{
+//	return false;
+//}

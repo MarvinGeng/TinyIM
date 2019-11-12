@@ -532,8 +532,9 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 
 	virtual bool Valid() const override;
-
 };
+
+
 
 
 /**
@@ -1945,9 +1946,91 @@ public:
 	NormalRspMsg(const ERROR_CODE_TYPE type);
 	NormalRspMsg();
 	virtual std::string ToString() const override;
-
 	virtual bool FromString(const std::string& strJson) override;
+};
 
+//获取好友的聊天消息记录
+class GetFriendChatHistoryReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
+	std::string m_strChatMsgId;//聊天消息的最后一条ID
+	HISTORY_DIRECTION m_eDirection;
+public:
+	GetFriendChatHistoryReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class GetFriendChatHistoryRsp :public BaseMsg {
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
+	std::string m_strChatMsgId;//聊天消息的最后一条ID
+	HISTORY_DIRECTION m_eDirection;
+	std::vector<FriendChatSendTxtRspMsg> m_msgHistory;
+public:
+	GetFriendChatHistoryRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+//获取好友的聊天消息记录
+class GetGroupChatHistoryReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strGroupId;//好友ID
+	std::string m_strChatMsgId;//聊天消息的最后一条ID
+	HISTORY_DIRECTION m_eDirection;
+public:
+	GetGroupChatHistoryReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class GetGroupChatHistoryRsp :public BaseMsg {
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
+	std::string m_strChatMsgId;//聊天消息的最后一条ID
+	HISTORY_DIRECTION m_eDirection;
+	std::vector<SendGroupTextMsgRspMsg> m_msgHistory;
+public:
+	GetGroupChatHistoryRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+//查找
+class SearchChatHistoryReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strSearchWord;//查找的内容
+public:
+	SearchChatHistoryReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class SearchChatHistoryRsp :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::vector<FriendChatSendTxtRspMsg> m_friendChatMsgVec;
+	std::vector<SendGroupTextMsgRspMsg> m_groupChatMsgVec;
+public:
+	SearchChatHistoryRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
 };
 
 /**

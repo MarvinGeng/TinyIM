@@ -435,6 +435,15 @@ enum class CHAT_MSG_TYPE
 	E_CHAT_IMAGE_TYPE,//图片消息
 };
 
+//消息记录的方向
+enum class HISTORY_DIRECTION
+{
+	E_FIRST_MSG,//第一条消息
+	E_PREV_MSG,//上一条消息
+	E_NEXT_MSG,//下一条消息
+	E_LAST_MSG,//最后一条消息
+};
+
 std::string FriendOption(const E_FRIEND_OPTION& option);
 E_FRIEND_OPTION FriendOption(const std::string strOption);
 
