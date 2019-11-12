@@ -7608,68 +7608,505 @@ std::string GetFriendChatHistoryRsp::ToString() const
 
 bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
 {
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgHistory"].is_array())
+	{
+		auto jsonArray = json["MsgHistory"].array_items();
+			
+		FriendChatSendTxtRspMsg rspMsg;
+		for (auto itemJson : jsonArray)
+		{
+			if (itemJson["MsgId"].is_string()) {
+				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["Content"].is_string()) {
+				rspMsg.m_strContext = itemJson["Content"].string_value();
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["FontInfo"].is_string()) {
+				if(rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())){
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["MsgTime"].is_string()) {
+				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["SenderId"].is_string()) {
+				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
+			}
+			else {
+				break;
+			}
+
+			m_msgHistory.push_back(rspMsg);
+		}
+	}
 	return false;
 }
 
 GetGroupChatHistoryReq::GetGroupChatHistoryReq()
 {
-
+	m_type = MessageType::GetGroupChatHistoryReq_Type;
 }
 
 std::string GetGroupChatHistoryReq::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json rspJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"GroupId",m_strGroupId},
+		{"ChatMsgId",m_strChatMsgId},
+		{"HistoryDirection",static_cast<int>(m_eDirection)},
+		});
+	return rspJson.dump();
 }
 
 bool GetGroupChatHistoryReq::FromString(const std::string& strJson)
 {
-	return false;
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["GroupId"].is_string())
+	{
+		m_strGroupId = json["GroupId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["ChatMsgId"].is_string()) {
+		m_strChatMsgId = json["ChatMsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["HistoryDirection"].is_number()) {
+		m_eDirection = static_cast<HISTORY_DIRECTION>(json["HistoryDirection"].int_value());
+	}
+	else {
+		return false;
+	}
+	return true;
 }
 
 GetGroupChatHistoryRsp::GetGroupChatHistoryRsp()
 {
-
+	m_type = MessageType::GetGroupChatHistoryRsp_Type;
 }
 
 std::string GetGroupChatHistoryRsp::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json::array msgArray;
+	for (const auto item : m_msgHistory)
+	{
+		Json itemJson = Json::object({
+			{"MsgId",item.m_strMsgId},
+			{"Content",item.m_strContext},
+			{"FontInfo",item.m_fontInfo.ToString()},
+			{"MsgTime",item.m_strMsgTime},
+			{"SenderId",item.m_strSenderId},
+			});
+		msgArray.push_back(itemJson);
+	}
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"GroupId",m_strGroupId},
+		{"MsgHistory",msgArray},
+		});
+	return msgJson.dump();
 }
 
 bool GetGroupChatHistoryRsp::FromString(const std::string& strJson)
 {
-	return false;
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgHistory"].is_array())
+	{
+		auto jsonArray = json["MsgHistory"].array_items();
+
+		SendGroupTextMsgRspMsg rspMsg;
+		for (auto itemJson : jsonArray)
+		{
+			if (itemJson["MsgId"].is_string()) {
+				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["Content"].is_string()) {
+				rspMsg.m_strContext = itemJson["Content"].string_value();
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["FontInfo"].is_string()) {
+				if (rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())) {
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["MsgTime"].is_string()) {
+				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["SenderId"].is_string()) {
+				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
+			}
+			else {
+				break;
+			}
+
+			m_msgHistory.push_back(rspMsg);
+		}
+	}
+	return true;
 }
 
 
 SearchChatHistoryReq::SearchChatHistoryReq()
 {
-
+	m_type = MessageType::SearchChatMsgReq_Type;
 }
 
 std::string SearchChatHistoryReq::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json reqJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"SearchWord",m_strSearchWord},
+	});
+	return reqJson.dump();
 }
 
 bool SearchChatHistoryReq::FromString(const std::string& strJson)
 {
-	return false;
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["SearchWord"].is_string()) {
+		m_strSearchWord = json["SearchWord"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
 }
 
 SearchChatHistoryRsp::SearchChatHistoryRsp()
 {
-
+	m_type = MessageType::SearchChatMsgRsp_Type;
 }
 
 std::string SearchChatHistoryRsp::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json::array friendMsgJsonArray;
+	for (const auto item : m_friendChatMsgVec)
+	{
+		Json itemJson = Json::object({
+			{"MsgId",item.m_strMsgId},
+			{"Content",item.m_strContext},
+			{"FontInfo",item.m_fontInfo.ToString()},
+			{"MsgTime",item.m_strMsgTime},
+			{"SenderId",item.m_strSenderId},
+			});
+		friendMsgJsonArray.push_back(itemJson);
+	}
+
+	Json::array groupMsgJsonArray;
+	{
+		for (const auto item : m_groupChatMsgVec)
+		{
+			Json itemJson = Json::object({
+				{"MsgId",item.m_strMsgId},
+				{"Content",item.m_strContext},
+				{"FontInfo",item.m_fontInfo.ToString()},
+				{"MsgTime",item.m_strMsgTime},
+				{"SenderId",item.m_strSenderId},
+				{"GroupId",item.m_strGroupId},
+				});
+
+			groupMsgJsonArray.push_back(itemJson);
+		}
+	}
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"FriendMsgArray",friendMsgJsonArray},
+		{"GroupMsgArray",groupMsgJsonArray},
+		});
+	return msgJson.dump();
 }
 
 bool SearchChatHistoryRsp::FromString(const std::string& strJson)
 {
-	return false;
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["GroupMsgArray"].is_array())
+	{
+		auto jsonArray = json["GroupMsgArray"].array_items();
+
+		SendGroupTextMsgRspMsg rspMsg;
+		for (auto itemJson : jsonArray)
+		{
+			if (itemJson["MsgId"].is_string()) {
+				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["Content"].is_string()) {
+				rspMsg.m_strContext = itemJson["Content"].string_value();
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["FontInfo"].is_string()) {
+				if (rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())) {
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["MsgTime"].is_string()) {
+				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["SenderId"].is_string()) {
+				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["GroupId"].is_string()) {
+				rspMsg.m_strGroupId = itemJson["GroupId"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			m_groupChatMsgVec.push_back(rspMsg);
+		}
+	}
+
+	if (json["FriendMsgArray"].is_array())
+	{
+		auto jsonArray = json["FriendMsgArray"].array_items();
+
+		FriendChatSendTxtRspMsg rspMsg;
+		for (auto itemJson : jsonArray)
+		{
+			if (itemJson["MsgId"].is_string()) {
+				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["Content"].is_string()) {
+				rspMsg.m_strContext = itemJson["Content"].string_value();
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["FontInfo"].is_string()) {
+				if (rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())) {
+				}
+				else {
+					break;
+				}
+			}
+			else {
+				break;
+			}
+
+			if (itemJson["MsgTime"].is_string()) {
+				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
+			}
+			else
+			{
+				break;
+			}
+
+			if (itemJson["SenderId"].is_string()) {
+				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
+			}
+			else {
+				break;
+			}
+
+			m_friendChatMsgVec.push_back(rspMsg);
+		}
+	}
+
+	return true;
 }
 //GetFriendChatHistoryReq::GetFriendChatHistoryReq()
 //{

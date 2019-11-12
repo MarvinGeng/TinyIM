@@ -1997,7 +1997,7 @@ class GetGroupChatHistoryRsp :public BaseMsg {
 public:
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strFriendId;//好友ID
+	std::string m_strGroupId;//好友ID
 	std::string m_strChatMsgId;//聊天消息的最后一条ID
 	HISTORY_DIRECTION m_eDirection;
 	std::vector<SendGroupTextMsgRspMsg> m_msgHistory;
