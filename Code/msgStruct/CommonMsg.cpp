@@ -7451,3 +7451,58 @@ bool QueryUserUdpAddrRspMsg::FromString(const std::string& strJson) {
 	}
 	return true;
 }
+
+NormalRspMsg::NormalRspMsg(): NormalRspMsg(ERROR_CODE_TYPE::E_CODE_SUCCEED)
+{
+}
+
+NormalRspMsg::NormalRspMsg(const ERROR_CODE_TYPE type)
+{
+	m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+	m_errMsg = ErrMsg(m_errCode);
+
+}
+
+
+std::string NormalRspMsg::ToString() const
+{
+	using namespace json11;
+
+	Json clientObj = Json::object(
+		{
+			{"Code",static_cast<int>(m_errCode)},
+			{"Message",m_errMsg},
+		});
+
+	return clientObj.dump();
+}
+
+bool NormalRspMsg::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["Code"].is_number()) {
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string())
+	{
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+
+}

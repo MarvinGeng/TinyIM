@@ -1936,6 +1936,19 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+class NormalRspMsg :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_errCode;
+	std::string m_errMsg;
+public:
+	NormalRspMsg(const ERROR_CODE_TYPE type);
+	NormalRspMsg();
+	virtual std::string ToString() const override;
+
+	virtual bool FromString(const std::string& strJson) override;
+
+};
 
 /**
  * @brief 服务器配置
