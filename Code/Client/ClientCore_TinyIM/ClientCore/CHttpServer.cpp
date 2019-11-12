@@ -43,7 +43,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -75,7 +76,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -112,7 +114,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -142,7 +145,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -164,7 +168,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -193,7 +198,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 
@@ -225,7 +231,8 @@ namespace ClientCore
 		}
 		else
 		{
-			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 		}
 	}
 

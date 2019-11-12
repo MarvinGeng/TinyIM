@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file CHttpServer.h
  * @author DennisMi (https://www.dennisthink.com/)
  * @brief 用来处理HTTP请求的类
@@ -16,6 +16,7 @@
 #include "server_http.hpp"
 #include "CClientSess.h"
 #include "SnowFlake.h"
+#include "CommonMsg.h"
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 class RSP_SECOND {
 public:
@@ -37,7 +38,13 @@ namespace ClientCore {
 	class CHttpServer : public std::enable_shared_from_this<CHttpServer>
 	{
 	public:
-		explicit CHttpServer(asio::io_service& ioService,CMediumServer* pServer) :m_httpServer(ioService),m_pServer(pServer),m_msgIdUtil(2,2) {
+		explicit CHttpServer(asio::io_service& ioService,CMediumServer* pServer) :
+			m_httpServer(ioService),
+			m_pServer(pServer),
+			m_msgIdUtil(2,2),
+			m_wrongRequestFormatRsp(ERROR_CODE_TYPE::E_CODE_BAD_REQUEST_FORMAT), 
+			m_userNotLoginRsp(ERROR_CODE_TYPE::E_CODE_USER_NOT_LOGIN)
+		{
 
 		}
 
@@ -180,6 +187,9 @@ namespace ClientCore {
 		HTTP_RSP_MAP m_httpRspMap;
 
 		std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
+
+		NormalRspMsg m_wrongRequestFormatRsp;//请求格式错误的回复
+		NormalRspMsg m_userNotLoginRsp;//用户未登录的请的回复
 	};
 }
 #endif
