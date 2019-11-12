@@ -1000,4 +1000,22 @@ void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,c
 	}
 }
 
+GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg)
+{
+	GetFriendChatHistoryRsp result;
+	return result;
+}
+GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
+{
+	GetGroupChatHistoryRsp result;
+	return result;
+}
+
+SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg)
+{
+	SearchChatHistoryRsp result;
+	return result;
+}
+
+
 }

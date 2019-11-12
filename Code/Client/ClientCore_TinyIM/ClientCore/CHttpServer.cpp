@@ -203,6 +203,66 @@ namespace ClientCore
 		}
 	}
 
+	void CHttpServer::Get_FriendChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		GetFriendChatHistoryReq reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			if(m_pServer)
+			{
+				auto rsp = m_pServer->HandleFriendChatHistoryReq(reqMsg);
+				std::string strRsp = rsp.ToString();
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+			}
+		}
+		else
+		{
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+		}
+	}
+
+	void CHttpServer::Get_GroupChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		GetGroupChatHistoryReq reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			if(m_pServer)
+			{
+				auto rspMsg = m_pServer->HandleGroupChatHistoryReq(reqMsg);
+				std::string strRsp = rspMsg.ToString();
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+			}
+		}
+		else
+		{
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+		}
+	}
+
+	void CHttpServer::Get_SearchChatMsgReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string  strReq = request->content.string();
+		SearchChatHistoryReq reqMsg;
+		if (reqMsg.FromString(strReq))
+		{
+			if(m_pServer)
+			{
+				auto rspMsg = m_pServer->HandleSearchChatHistoryReq(reqMsg);
+				std::string strRsp = rspMsg.ToString();
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+			}
+		}
+		else
+		{
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+		}
+	}
+
 
 	/**
 	 * @brief 处理添加好友的HTTP请求
@@ -1370,6 +1430,10 @@ namespace ClientCore
 		m_httpServer.resource["/get_friend_list"]["GET"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			this->Get_FriendListReq(response, request);
 		};
+
+		m_httpServer.resource["/friend_chat_history"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_FriendChatHistoryReq(response, request);
+		};
 		//Friend End
 
 		//GroupBegin 
@@ -1405,7 +1469,14 @@ namespace ClientCore
 			this->Post_RecvGroupTextMsgRsp(response, request);
 		};
 
+		m_httpServer.resource["/group_chat_history_req"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_GroupChatHistoryReq(response, request);
+		};
 		//Group End
+
+		m_httpServer.resource["/search_chat_msg"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_SearchChatMsgReq(response, request);
+		};
 	}
 
 	UserLoginReqMsg CHttpServer::GetUserLoginReq(const std::string strUserName) const {

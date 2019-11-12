@@ -156,6 +156,9 @@ namespace ClientCore {
 		void Post_SendFileOnlineNotifyRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		
 		void Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+		
+		void Get_FriendChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+
 		//Friend End
 
 		//Group Msg
@@ -175,6 +178,10 @@ namespace ClientCore {
 
 		void Post_RecvGroupTextMsgRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
+		void Get_GroupChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+
+		void Get_SearchChatMsgReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
+		
 		void Init(const int port);
 
 		std::string GetHttpParamUserId(std::shared_ptr<HttpServer::Request> request);

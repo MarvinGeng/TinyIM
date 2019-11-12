@@ -117,6 +117,9 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
     void loadConfig(const json11::Json &cfg, std::error_code &ec);
     //获取server的ip和端口,
     std::string getServerIpPort();
+	GetFriendChatHistoryRsp HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg);
+	GetGroupChatHistoryRsp HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg);
+	SearchChatHistoryRsp HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
 
 private:
 	std::map<std::string, std::string> m_strUserNameUserIdMap;
