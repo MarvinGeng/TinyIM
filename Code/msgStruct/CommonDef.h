@@ -303,6 +303,24 @@ QueryUserUdpAddrReq_Type,
 //查询用户的UDP地址的回复
 QueryUserUdpAddrRsp_Type,
 
+//获取好友聊天的历史记录的请求
+GetFriendChatHistroyReq_Type,
+
+//获取好友聊天的历史记录的回复
+GetFriendChatHistoryRsp_Type,
+
+//获取群组聊天的历史记录的请求
+GetGroupChatHistoryReq_Type,
+
+//获取群组聊天的历史记录的回复
+GetGroupChatHistoryRsp_Type,
+
+//查找聊天记录的请求
+SearchChatMsgReq_Type,
+
+//查找聊天记录的回复
+SearchChatMsgRsp_Type,
+
 };
 
 //客户端会话状态

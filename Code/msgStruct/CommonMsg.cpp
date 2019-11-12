@@ -7508,27 +7508,102 @@ bool NormalRspMsg::FromString(const std::string& strJson)
 
 GetFriendChatHistoryReq::GetFriendChatHistoryReq()
 {
-	
+	m_type = MessageType::GetFriendChatHistroyReq_Type;
 }
 
 std::string GetFriendChatHistoryReq::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json msgJson = Json::object(
+		{
+			{"MsgId",m_strMsgId},
+			{"UserId",m_strUserId},
+			{"FriendId",m_strFriendId},
+			{"ChatMsgId",m_strChatMsgId},
+			{"HistoryDirection",static_cast<int>(m_eDirection)},
+		});
+	return msgJson.dump();
 }
 
 bool GetFriendChatHistoryReq::FromString(const std::string& strJson)
 {
-	return false;
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string())
+	{
+		m_strFriendId = json["FriendId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["ChatMsgId"].is_string()) {
+		m_strChatMsgId = json["ChatMsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["HistoryDirection"].is_number()) {
+		m_eDirection = static_cast<HISTORY_DIRECTION>(json["HistoryDirection"].int_value());
+	}
+	else {
+		return false;
+	}
+	return true;
 }
 
 GetFriendChatHistoryRsp::GetFriendChatHistoryRsp()
 {
-
+	m_type = MessageType::GetFriendChatHistoryRsp_Type;
 }
 
 std::string GetFriendChatHistoryRsp::ToString() const
 {
-	return "";
+	using namespace json11;
+	Json::array msgArray;
+	for (const auto item : m_msgHistory)
+	{
+		Json itemJson = Json::object({
+			{"MsgId",item.m_strMsgId},
+			{"Content",item.m_strContext},
+			{"FontInfo",item.m_fontInfo.ToString()},
+			{"MsgTime",item.m_strMsgTime},
+			{"SenderId",item.m_strSenderId},
+		});
+		msgArray.push_back(itemJson);
+	}
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"MsgHistory",msgArray},
+	});
+	return msgJson.dump();
 }
 
 bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
