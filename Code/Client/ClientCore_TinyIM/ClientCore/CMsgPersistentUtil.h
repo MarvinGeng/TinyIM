@@ -1,4 +1,4 @@
-
+﻿
 /**
  * @file CMsgPersistentUtil.h
  * @author DennisMi (https://www.dennisthink.com/)
@@ -58,6 +58,12 @@ public:
 
 	bool Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg);
 
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistory(const GetGroupChatHistoryReq&  reqMsg);
+ 
+	std::vector<FriendChatSendTxtRspMsg> Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg);
+	std::vector<SendGroupTextMsgRspMsg> Get_SearchGroupChatMsg(const SearchChatHistoryReq&  reqMsg);
+
 	//RecvGroupTextMsgReqMsg
 	bool Save_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReqMsg& msg);
 
@@ -75,6 +81,19 @@ private:
 	std::map<std::string, FriendRecvFileMsgReqMsg> m_FriendRecvFileMsgReqMsgMap;
 	std::map<std::string, FriendNotifyFileMsgReqMsg> m_FriendNotifyFileMsgReqMsgMap;
 
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg);
+
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg);
+
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg);
+
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg);
+
+	
 	
 	SQLite::Database*    m_pDb;    ///< Database connection
 	//FriendChat Msg
@@ -88,6 +107,28 @@ private:
 	SQLite::Statement*   m_pGroupChatSelect; ///< Database prepared SQL query
 
 	SQLite::Statement*   m_pGroupChatUpdate; ///< Database prepared SQL query
+
+	SQLite::Statement*   m_pGroupChatSelectRangeFirst;//首页消息
+
+	SQLite::Statement*   m_pGroupChatSelectRangeLast;//最后一页的消息
+
+	SQLite::Statement*   m_pGroupChatSelectRangePrev;//上一页
+
+	SQLite::Statement*   m_pGroupChatSelectRangeNext;//群组消息下一页
+
+	//好友历史消息
+	SQLite::Statement*   m_pFriendChatSelectRangeFirst;  //首页消息
+
+	SQLite::Statement*   m_pFriendChatSelectRangeLast;  //最后一页的消息
+
+	SQLite::Statement*   m_pFriendChatSelectRangePrev;  //上一页
+
+	SQLite::Statement*   m_pFriendChatSelectRangeNext;  //好友消息下一页
+
+	//消息查询
+	SQLite::Statement*   m_pFriendChatSelectByWord; //好友聊天关键字查询
+
+	SQLite::Statement*   m_pGroupChatSelectByWord;  //群组聊天关键字查询
 
 };
 using CMsgPersistentUtil_SHARED_PTR = std::shared_ptr<CMsgPersistentUtil>;

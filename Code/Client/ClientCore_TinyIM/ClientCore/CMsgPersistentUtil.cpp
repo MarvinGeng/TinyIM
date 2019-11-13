@@ -431,3 +431,90 @@ bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFile
 	m_FriendNotifyFileMsgReqMsgMap.erase(m_FriendNotifyFileMsgReqMsgMap.begin());
 	return true;
 }
+
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistory(const GetGroupChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+	
+	return result;
+}
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+
+std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(const SearchChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+
+	return result;
+}
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+
+	return result;
+}
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+
+	return result;
+}
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+
+	return result;
+}
+
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+
+	return result;
+}
+
