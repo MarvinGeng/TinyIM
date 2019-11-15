@@ -101,6 +101,58 @@ bool CMsgPersistentUtil::InitDataBase()
 		m_pFriendChatSelectByWord = new SQLite::Statement(*m_pDb, strSqlTemplate);
 	}
 
+	//Group Msg History
+	{
+		if (nullptr == m_pGroupChatSelectRangeFirst)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? LIMIT 15)";
+			m_pGroupChatSelectRangeFirst = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pGroupChatSelectRangeLast)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? LIMIT 15)";
+			m_pGroupChatSelectRangeLast = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pGroupChatSelectRangePrev)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? LIMIT 15)";
+			m_pGroupChatSelectRangePrev = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pGroupChatSelectRangeNext)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? LIMIT 15)";
+			m_pGroupChatSelectRangeNext = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+	}
+
+	{
+		if (nullptr == m_pFriendChatSelectRangeFirst)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			m_pFriendChatSelectRangeFirst = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pFriendChatSelectRangeLast)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			m_pFriendChatSelectRangeLast = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pFriendChatSelectRangePrev)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			m_pFriendChatSelectRangePrev = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+
+		if (nullptr == m_pFriendChatSelectRangeNext)
+		{
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			m_pFriendChatSelectRangeNext = new SQLite::Statement(*m_pDb, strSqlTemplate);
+		}
+	}
 	return false;
 }
 
@@ -547,9 +599,7 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPre
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg)
 {
-	std::vector<FriendChatSendTxtRspMsg> result;
-
-	return result;
+	return Get_FriendChatHistoryCore(m_pFriendChatSelectRangeNext);
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg)
@@ -559,3 +609,43 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNex
 	return result;
 }
 
+std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLite::Statement* pState)
+{
+	std::vector<FriendChatSendTxtRspMsg> result;
+	FriendChatSendTxtRspMsg rspMsg;
+	while (pState->executeStep())
+	{
+		int nColumCount = pState->getColumnCount();
+		rspMsg.m_strMsgId = pState->getColumn(0).getString();
+		rspMsg.m_strSenderId = pState->getColumn(2).getString();
+		rspMsg.m_strReceiverId = pState->getColumn(3).getString();
+		rspMsg.m_strContext = pState->getColumn(4).getString();
+		rspMsg.m_fontInfo.FromString(pState->getColumn(5).getString());
+		rspMsg.m_strMsgTime = pState->getColumn(6).getString();
+
+		result.push_back(rspMsg);
+	}
+	return result;
+}
+
+std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCore(SQLite::Statement* pState)
+{
+	std::vector<SendGroupTextMsgRspMsg> result;
+	SendGroupTextMsgRspMsg rspMsg;
+	while (pState->executeStep())
+	{
+		int nColumCount = pState->getColumnCount();
+		rspMsg.m_strMsgId = pState->getColumn(0).getString();
+		rspMsg.m_strSenderId = pState->getColumn(2).getString();
+		rspMsg.m_strGroupId = pState->getColumn(3).getString();
+		rspMsg.m_strContext = pState->getColumn(4).getString();
+		rspMsg.m_fontInfo.FromString(pState->getColumn(5).getString());
+		rspMsg.m_strMsgTime = pState->getColumn(6).getString();
+
+		result.push_back(rspMsg);
+	}
+
+	return result;
+
+	return result;
+}

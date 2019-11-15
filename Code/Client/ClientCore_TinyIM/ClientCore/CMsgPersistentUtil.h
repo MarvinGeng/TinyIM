@@ -93,8 +93,8 @@ private:
 	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg);
 
-	
-	
+	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryCore(SQLite::Statement* pState);
+	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryCore(SQLite::Statement* pState);
 	SQLite::Database*    m_pDb;    ///< Database connection
 	//FriendChat Msg
 	SQLite::Statement*   m_pFriendChatCreate; ///< Database prepared SQL query
