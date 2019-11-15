@@ -500,16 +500,56 @@ bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFile
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg)
 {
-	std::vector<FriendChatSendTxtRspMsg> result;
-
-	return result;
+	switch (reqMsg.m_eDirection)
+	{
+	case HISTORY_DIRECTION::E_FIRST_MSG:
+	{
+		return Get_FriendChatHistoryFirst(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_LAST_MSG:
+	{
+		return Get_FriendChatHistoryLast(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_NEXT_MSG:
+	{
+		return Get_FriendChatHistoryNext(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_PREV_MSG:
+	{
+		return Get_FriendChatHistoryPrev(reqMsg);
+	}break;
+	default:
+	{
+		return Get_FriendChatHistoryLast(reqMsg);
+	}break;
+	}
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistory(const GetGroupChatHistoryReq&  reqMsg)
 {
-	std::vector<SendGroupTextMsgRspMsg> result;
-	
-	return result;
+	switch (reqMsg.m_eDirection)
+	{
+	case HISTORY_DIRECTION::E_FIRST_MSG:
+	{
+		return Get_GroupChatHistoryFirst(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_LAST_MSG:
+	{
+		return Get_GroupChatHistoryLast(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_NEXT_MSG:
+	{
+		return Get_GroupChatHistoryNext(reqMsg);
+	}break;
+	case HISTORY_DIRECTION::E_PREV_MSG:
+	{
+		return Get_GroupChatHistoryPrev(reqMsg);
+	}break;
+	default:
+	{
+		return Get_GroupChatHistoryLast(reqMsg);
+	}break;
+	}
 }
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg)
@@ -557,44 +597,32 @@ std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(c
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg)
 {
-	std::vector<FriendChatSendTxtRspMsg> result;
-
-	return result;
+	return Get_FriendChatHistoryCore(m_pFriendChatSelectRangeFirst);
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg)
 {
-	std::vector<SendGroupTextMsgRspMsg> result;
-
-	return result;
+	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeFirst);
 }
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg)
 {
-	std::vector<FriendChatSendTxtRspMsg> result;
-
-	return result;
+	return Get_FriendChatHistoryCore(m_pFriendChatSelectRangeLast);
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg)
 {
-	std::vector<SendGroupTextMsgRspMsg> result;
-
-	return result;
+	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeLast);
 }
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg)
 {
-	std::vector<FriendChatSendTxtRspMsg> result;
-
-	return result;
+	return Get_FriendChatHistoryCore(m_pFriendChatSelectRangePrev);
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg)
 {
-	std::vector<SendGroupTextMsgRspMsg> result;
-
-	return result;
+	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangePrev);
 }
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg)
@@ -604,9 +632,7 @@ std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryNe
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg)
 {
-	std::vector<SendGroupTextMsgRspMsg> result;
-
-	return result;
+	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeNext);
 }
 
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLite::Statement* pState)
@@ -644,8 +670,6 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCor
 
 		result.push_back(rspMsg);
 	}
-
-	return result;
 
 	return result;
 }
