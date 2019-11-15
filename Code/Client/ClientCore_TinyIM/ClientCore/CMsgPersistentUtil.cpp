@@ -88,6 +88,19 @@ bool CMsgPersistentUtil::InitDataBase()
 		std::string strSQLTemplate = R"(INSERT INTO T_GROUP_CHAT_MSG VALUES (?,?,?,?,?,?,?,?) )";
 		m_pGroupChatInsert = new SQLite::Statement(*m_pDb, strSQLTemplate);
 	}
+
+	if (nullptr == m_pGroupChatSelectByWord)
+	{
+		std::string strSqlTemplate = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_MSG_CONTEXT LIKE "%?%")";
+		m_pGroupChatSelectByWord = new SQLite::Statement(*m_pDb, strSqlTemplate);
+	}
+
+	if (nullptr == m_pFriendChatSelectByWord)
+	{
+		std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE F_MSG_CONTEXT LIKE "%?%")";
+		m_pFriendChatSelectByWord = new SQLite::Statement(*m_pDb, strSqlTemplate);
+	}
+
 	return false;
 }
 
@@ -450,7 +463,21 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistory(co
 std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg)
 {
 	std::vector<FriendChatSendTxtRspMsg> result;
+	SQLite::bind(*m_pFriendChatSelectByWord, reqMsg.m_strSearchWord);
+	
+	FriendChatSendTxtRspMsg rspMsg;
+	while (m_pFriendChatSelectByWord->executeStep())
+	{
+		int nColumCount = m_pFriendChatSelectByWord->getColumnCount();
+		rspMsg.m_strMsgId = m_pFriendChatSelectByWord->getColumn(0).getString();
+		rspMsg.m_strSenderId = m_pFriendChatSelectByWord->getColumn(2).getString();
+		rspMsg.m_strReceiverId = m_pFriendChatSelectByWord->getColumn(3).getString();
+		rspMsg.m_strContext = m_pFriendChatSelectByWord->getColumn(4).getString();
+		rspMsg.m_fontInfo.FromString(m_pFriendChatSelectByWord->getColumn(5).getString());
+		rspMsg.m_strMsgTime = m_pFriendChatSelectByWord->getColumn(6).getString();
 
+		result.push_back(rspMsg);
+	}
 	return result;
 }
 
@@ -458,7 +485,21 @@ std::vector<FriendChatSendTxtRspMsg> CMsgPersistentUtil::Get_SearchFriendChatMsg
 std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(const SearchChatHistoryReq&  reqMsg)
 {
 	std::vector<SendGroupTextMsgRspMsg> result;
+	SQLite::bind(*m_pGroupChatSelectByWord, reqMsg.m_strSearchWord);
 
+	SendGroupTextMsgRspMsg rspMsg;
+	while (m_pGroupChatSelectByWord->executeStep())
+	{
+		int nColumCount = m_pGroupChatSelectByWord->getColumnCount();
+		rspMsg.m_strMsgId = m_pGroupChatSelectByWord->getColumn(0).getString();
+		rspMsg.m_strSenderId = m_pGroupChatSelectByWord->getColumn(2).getString();
+		rspMsg.m_strGroupId = m_pGroupChatSelectByWord->getColumn(3).getString();
+		rspMsg.m_strContext = m_pGroupChatSelectByWord->getColumn(4).getString();
+		rspMsg.m_fontInfo.FromString(m_pGroupChatSelectByWord->getColumn(5).getString());
+		rspMsg.m_strMsgTime = m_pGroupChatSelectByWord->getColumn(6).getString();
+
+		result.push_back(rspMsg);
+	}
 	return result;
 }
 
