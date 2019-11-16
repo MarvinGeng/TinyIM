@@ -125,7 +125,7 @@ BOOL CMultiChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	// set icons
 	m_hDlgIcon = AtlLoadIconImage(IDI_MULTICHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDI_MULTICHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDI_MULTI_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	CMessageLoop* pLoop = _Module.GetMessageLoop();

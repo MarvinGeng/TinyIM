@@ -25,7 +25,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	enum { IDD = IDD_SELECTMULTICHATTARGET };
+	enum { IDD = IDD_SELECT_MULTI_CHAT_TARGET };
 
 	BEGIN_MSG_MAP_EX(CMultiChatMemberSelectionDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

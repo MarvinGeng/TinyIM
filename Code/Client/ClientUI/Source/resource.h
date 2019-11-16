@@ -55,11 +55,11 @@
 #define IDD_MOBILE_STATUS                239
 #define IDD_MODIFY_MARK_NAME              241
 #define IDD_TEAM                        242
-#define IDD_MODIFYPASSWORD              243
-#define IDD_CREATENEWGROUP              244
-#define IDD_SELECTMULTICHATTARGET       245
-#define IDD_MULTICHATDLG                246
-#define IDI_MULTICHATDLG_16             247
+#define IDD_MODIFY_PASS_WORD              243
+#define IDD_CREATE_NEW_GROUP              244
+#define IDD_SELECT_MULTI_CHAT_TARGET       245
+#define IDD_MULTI_CHAT_DLG                246
+#define IDI_MULTI_CHAT_DLG_16             247
 #define IDI_MULTICHATDLG_32             251
 #define IDD_DIALOG2                     252
 #define IDD_REMOTEDESKTOP               252

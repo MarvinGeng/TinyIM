@@ -27,7 +27,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	enum { IDD = IDD_MODIFYPASSWORD };
+	enum { IDD = IDD_MODIFY_PASS_WORD };
 
 	BEGIN_MSG_MAP_EX(CModifyPasswordDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

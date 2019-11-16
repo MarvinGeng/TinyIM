@@ -28,7 +28,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_CREATENEWGROUP };
+	enum { IDD = IDD_CREATE_NEW_GROUP };
 
 	BEGIN_MSG_MAP_EX(CCreateNewGroupDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

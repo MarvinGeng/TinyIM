@@ -36,7 +36,7 @@ public:
 
 	enum
 	{
-		IDD = IDD_MULTICHATDLG
+		IDD = IDD_MULTI_CHAT_DLG
 	};
 
 	virtual BOOL PreTranslateMessage(MSG *pMsg);
