@@ -682,7 +682,7 @@ BOOL CMainDlg::InitTopToolBar()
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTopToolBar(4, 80, 4+210, 80+20);
-	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_TOP);
+	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_TOP);
 
 	return TRUE;
 }
@@ -703,7 +703,7 @@ BOOL CMainDlg::InitBottomToolBar()
 	GetClientRect(&rcClient);
 
 	CRect rcBottomToolBar(46, rcClient.bottom-60, 46+212, (rcClient.bottom-60)+22);
-	m_tbBottom.Create(m_hWnd, rcBottomToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_BOTTOM);
+	m_tbBottom.Create(m_hWnd, rcBottomToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_BOTTOM);
 
 	return TRUE;
 }
@@ -742,7 +742,7 @@ BOOL CMainDlg::InitTabCtrl()
 	m_TabCtrl.SetItemsArrowPic(_T("MainTabCtrl\\main_tabbtn_highlight.png"), _T("MainTabCtrl\\main_tabbtn_down.png"));
 
 	CRect rcTabCtrl(0, 154, rcClient.right, 154+48);
-	m_TabCtrl.Create(m_hWnd, rcTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TABCTRL_MAIN, NULL);
+	m_TabCtrl.Create(m_hWnd, rcTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TAB_CTRL_MAIN, NULL);
 
 	m_TabCtrl.SetCurSel(1);
 
@@ -782,7 +782,7 @@ BOOL CMainDlg::InitBuddyListCtrl()
 	GetClientRect(&rcClient);
 
 	CRect rcListCtrl(0, 200, rcClient.Width(), 200+rcClient.Height()-236);
-	m_BuddyListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_LISTCTRL_BUDDY);
+	m_BuddyListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_LIST_CTRL_BUDDY);
 
 	return TRUE;
 }
@@ -816,7 +816,7 @@ BOOL CMainDlg::InitGroupListCtrl()
 	GetClientRect(&rcClient);
 
 	CRect rcListCtrl(0, 200, rcClient.Width(), 200+rcClient.Height());
-	m_GroupListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD, NULL, ID_LISTCTRL_GROUP);
+	m_GroupListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD, NULL, ID_LIST_CTRL_GROUP);
 
 	return TRUE;
 }
@@ -860,7 +860,7 @@ BOOL CMainDlg::InitRecentListCtrl()
 	GetClientRect(&rcClient);
 
 	CRect rcListCtrl(0, 200, rcClient.Width(), 200+rcClient.Height()-236);
-	m_RecentListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD, NULL, ID_LISTCTRL_RECENT);
+	m_RecentListCtrl.Create(m_hWnd, rcListCtrl, NULL, WS_CHILD, NULL, ID_LIST_CTRL_RECENT);
 
 	return TRUE;
 }

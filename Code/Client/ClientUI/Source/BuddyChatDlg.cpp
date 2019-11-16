@@ -2900,7 +2900,7 @@ BOOL CBuddyChatDlg::InitTopToolBar()
 	//m_tbTop.SetBgPic(_T("BuddyTopToolBar\\buddyChatDlg_tbTopBg.png"), CRect(0, 0, 0, 0));
 
 	CRect rcTopToolBar(3, 70, CHAT_DLG_WIDTH-3, 102);
-	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_TOP);
+	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_TOP);
 	
 	return TRUE;
 }
@@ -3034,7 +3034,7 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	m_tbMid.SetBgPic(_T("MidToolBar\\bg.png"), CRect(0,0,0,0));
 
 	CRect rcMidToolBar(2, CHAT_DLG_HEIGHT-168, CHAT_DLG_WIDTH-2, CHAT_DLG_HEIGHT-136);
-	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_MID);
+	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_MID);
 
 	return TRUE;
 }
@@ -3108,7 +3108,7 @@ BOOL CBuddyChatDlg::InitRichEditOleCallback()
 BOOL CBuddyChatDlg::InitRightTabWindow()
 {
 	CRect rcRightTabCtrl(CHAT_DLG_WIDTH, 70, CHAT_DLG_WIDTH-3, 102);
-	//m_RightTabCtrl.Create(m_hWnd, rcRightTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TABCTRL_CHAT, NULL);
+	//m_RightTabCtrl.Create(m_hWnd, rcRightTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TAB_CTRL_CHAT, NULL);
 	//m_RightTabCtrl.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 	//m_RightTabCtrl.ShowWindow(SW_HIDE);
 

@@ -98,7 +98,7 @@ BOOL CChangePicHead::InitTabCtrl()
 	m_TabCtrl.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTabCtrl(2, 69, rcClient.right - 2, 69 + 32);
-	m_TabCtrl.Create(m_hWnd, rcTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TABCTRL_MAIN, NULL);
+	m_TabCtrl.Create(m_hWnd, rcTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TAB_CTRL_MAIN, NULL);
 
 	m_TabCtrl.SetCurSel(0);
 

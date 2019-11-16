@@ -22,7 +22,7 @@ public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
 
     //在资源文件里面增加对话框资源模板
-    enum { IDD = IDD_REMOTEDESKTOP };
+    enum { IDD = IDD_REMOTE_DESKTOP };
 
     BEGIN_MSG_MAP_EX(CRemoteDesktopDlg)
         MSG_WM_INITDIALOG(OnInitDialog)

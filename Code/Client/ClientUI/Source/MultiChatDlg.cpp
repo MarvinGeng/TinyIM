@@ -123,7 +123,7 @@ BOOL CMultiChatDlg::PreTranslateMessage(MSG* pMsg)
 BOOL CMultiChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 {
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDI_MULTICHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDI_MULTI_CHAT_DLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
 	m_hDlgSmallIcon = AtlLoadIconImage(IDI_MULTI_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
@@ -1344,7 +1344,7 @@ BOOL CMultiChatDlg::InitTopToolBar()
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTopToolBar(3, 70, MULTICHATDLG_WIDTH-1, 102);
-	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_TOP);
+	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_TOP);
 
 	return TRUE;
 }
@@ -1400,7 +1400,7 @@ BOOL CMultiChatDlg::InitMidToolBar()
 	GetClientRect(&rcClient);
 
 	CRect rcMidToolBar(2, MULTICHATDLG_HEIGHT-167, MULTICHATDLG_WIDTH-MULTICHATDLG_MEMBER_LIST_WIDTH, MULTICHATDLG_HEIGHT-136);
-	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_MID);
+	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_MID);
 
 	return TRUE;
 }

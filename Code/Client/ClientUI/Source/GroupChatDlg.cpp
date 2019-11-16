@@ -1841,7 +1841,7 @@ BOOL CGroupChatDlg::InitTopToolBar()
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTopToolBar(3, 70, GROUP_CHAT_DLG_WIDTH-1, 102);
-	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_TOP);
+	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_TOP);
 
 	return TRUE;
 }
@@ -1901,7 +1901,7 @@ BOOL CGroupChatDlg::InitMidToolBar()
 	GetClientRect(&rcClient);
 
 	CRect rcMidToolBar(2, GROUP_CHAT_DLG_HEIGHT-167, GROUP_CHAT_DLG_WIDTH-GROUP_MEMBER_LIST_WIDTH, GROUP_CHAT_DLG_HEIGHT-136);
-	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_MID);
+	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_MID);
 
 	return TRUE;
 }
@@ -2246,7 +2246,7 @@ BOOL CGroupChatDlg::Init()
 BOOL CGroupChatDlg::InitRightTabWindow()
 {
 	CRect rcRightTabCtrl(GROUP_CHAT_DLG_WIDTH, 75, GROUP_CHAT_DLG_WIDTH+GROUP_MSG_LOG_WIDTH-3, 102);
-	m_RightTabCtrl.Create(m_hWnd, rcRightTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TABCTRL_CHAT, NULL);
+	m_RightTabCtrl.Create(m_hWnd, rcRightTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TAB_CTRL_CHAT, NULL);
 	m_RightTabCtrl.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 	//m_RightTabCtrl.ShowWindow(SW_HIDE);
 

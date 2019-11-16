@@ -466,7 +466,7 @@ BEGIN
     CONTROL         "  »∫≥…‘±(0/0)",ID_STATIC_MERBERTITLE,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,240,100,46,12
 END
 
-IDD_REMOTEDESKTOP DIALOGEX 0, 0, 309, 177
+IDD_REMOTE_DESKTOP DIALOGEX 0, 0, 309, 177
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -706,7 +706,7 @@ BEGIN
         BOTTOMMARGIN, 173
     END
 
-    IDD_REMOTEDESKTOP, DIALOG
+    IDD_REMOTE_DESKTOP, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 302
@@ -1153,7 +1153,7 @@ IDI_GROUPCHATDLG_16     ICON                    "res\\Group16.ico"
 IDI_SYS                 ICON                    "res\\sys.ico"
 IDI_BUDDY               ICON                    "res\\100.ico"
 IDI_MULTI_CHAT_DLG_16     ICON                    "res\\Multi16.ico"
-IDI_MULTICHATDLG_32     ICON                    "res\\Multi32.ico"
+IDI_MULTI_CHAT_DLG_32     ICON                    "res\\Multi32.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

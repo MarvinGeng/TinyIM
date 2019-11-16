@@ -1147,7 +1147,7 @@ BOOL CSessChatDlg::InitTopToolBar()
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTopToolBar(3, 70, SESSIONCHATDLG_WIDTH-3, 102);
-	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_TOP);
+	m_tbTop.Create(m_hWnd, rcTopToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_TOP);
 
 	return TRUE;
 }
@@ -1284,7 +1284,7 @@ BOOL CSessChatDlg::InitMidToolBar()
 	GetClientRect(&rcClient);
 
 	CRect rcMidToolBar(1, rcClient.bottom-155, 1+(rcClient.Width()-1-152), (rcClient.bottom-155)+27);
-	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_MID);
+	m_tbMid.Create(m_hWnd, rcMidToolBar, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_MID);
 
 	return TRUE;
 }
