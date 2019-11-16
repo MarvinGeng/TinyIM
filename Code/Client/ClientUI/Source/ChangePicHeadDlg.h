@@ -22,7 +22,7 @@ public:
 	CChangePicHeadDlg();
 	virtual ~CChangePicHeadDlg();
 
-	enum { IDD = IDD_CHANGEPICDLG };
+	enum { IDD = IDD_CHANGE_PIC_DLG };
 
 	BEGIN_MSG_MAP_EX(CChangePicHeadDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

@@ -21,7 +21,7 @@ public:
 	virtual ~CClosePromptDlg();
 
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_CLOSEPROMPT };
+	enum { IDD = IDD_CLOSE_PROMPT };
 
 	BEGIN_MSG_MAP_EX(CClosePromptDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

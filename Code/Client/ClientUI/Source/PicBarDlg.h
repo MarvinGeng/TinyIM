@@ -23,7 +23,7 @@ public:
 	CPicBarDlg(void);
 	~CPicBarDlg(void);
 
-	enum { IDD = IDD_PICBARDLG };
+	enum { IDD = IDD_PIC_BAR_DLG };
 
 	BEGIN_MSG_MAP_EX(CPicBarDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

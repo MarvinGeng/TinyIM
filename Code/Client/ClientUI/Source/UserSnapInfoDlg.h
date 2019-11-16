@@ -12,7 +12,7 @@ public:
 	CUserSnapInfoDlg();
 	~CUserSnapInfoDlg();
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_USERSNAPINFO };
+	enum { IDD = IDD_USER_SNAP_INFO };
 
 	BEGIN_MSG_MAP_EX(CUserSnapInfoDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

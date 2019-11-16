@@ -152,9 +152,9 @@ BOOL CSessChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	m_lpCascadeWinManager->Add(m_hWnd, SESSIONCHATDLG_WIDTH, SESSIONCHATDLG_HEIGHT);
 
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	// register object for message filtering and idle updates
@@ -1383,7 +1383,7 @@ BOOL CSessChatDlg::Init()
 	m_btnArrow.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnArrow.MoveWindow(SESSIONCHATDLG_WIDTH-33, SESSIONCHATDLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_SkinMenu.LoadMenu(ID_MENU_BUDDYCHAT);
+	m_SkinMenu.LoadMenu(ID_MENU_BUDDY_CHAT);
 	m_SkinMenu.SetBgPic(_T("Menu\\menu_left_bg.png"), _T("Menu\\menu_right_bg.png"));
 	m_SkinMenu.SetSelectedPic(_T("Menu\\menu_selected.png"));
 	m_SkinMenu.SetSepartorPic(_T("Menu\\menu_separtor.png"));

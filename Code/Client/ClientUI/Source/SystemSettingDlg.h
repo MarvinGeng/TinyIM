@@ -24,7 +24,7 @@ public:
 	CSystemSettingDlg(void);
 	virtual ~CSystemSettingDlg(void);
 
-	enum { IDD = IDD_SYSTEMSETTINGS };
+	enum { IDD = IDD_SYSTEM_SETTINGS };
 
 	BEGIN_MSG_MAP_EX(CSystemSettingDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

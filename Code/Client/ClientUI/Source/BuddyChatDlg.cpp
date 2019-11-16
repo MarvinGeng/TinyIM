@@ -408,8 +408,8 @@ void CBuddyChatDlg::OnUpdateBuddyHeadPic()
 	m_hDlgSmallIcon = m_hDlgIcon;
 	if(m_hDlgIcon == NULL)
 	{
-		m_hDlgIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
-		m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+		m_hDlgIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+		m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	}
 	SetIcon(m_hDlgIcon, TRUE);
 	SetIcon(m_hDlgSmallIcon, FALSE);
@@ -466,8 +466,8 @@ BOOL CBuddyChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	m_hDlgSmallIcon = m_hDlgIcon;
 	if(m_hDlgIcon == NULL)
 	{
-		m_hDlgIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
-		m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDYCHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+		m_hDlgIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+		m_hDlgSmallIcon = AtlLoadIconImage(IDI_BUDDY_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	}
 	SetIcon(m_hDlgIcon, TRUE);
 	SetIcon(m_hDlgSmallIcon, FALSE);
@@ -1397,7 +1397,7 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 	switch(nID)
 	{
 	//消息记录第一条消息记录
-	case IDC_FIRSTMSGLOG:
+	case IDC_FIRST_MSG_LOG:
 		{
 			if(m_nMsgLogCurrentPageIndex == 1)
 			{
@@ -1408,7 +1408,7 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}break;
 
 	//消息记录上一条消息
-	case IDC_PREVMSGLOG:
+	case IDC_PREV_MSG_LOG:
 		{
 			if(m_nMsgLogCurrentPageIndex == 1)
 			{
@@ -1424,7 +1424,7 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}break;
 
 	//消息记录下一条消息
-	case IDC_NEXTMSGLOG:
+	case IDC_NEXT_MSG_LOG:
 		{
 			if(m_nMsgLogCurrentPageIndex == nPageCount)
 			{
@@ -1440,7 +1440,7 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}break;
 
 	//消息记录最后一条消息
-	case IDC_LASTMSGLOG:
+	case IDC_LAST_MSG_LOG:
 		{
 			if(m_nMsgLogCurrentPageIndex == nPageCount)
 			{
@@ -3569,14 +3569,14 @@ BOOL CBuddyChatDlg::Init()
 	m_btnArrow.MoveWindow(CHAT_DLG_WIDTH-33, CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
 	//消息记录的四个按钮
-	m_btnFirstMsgLog.SubclassWindow(GetDlgItem(IDC_FIRSTMSGLOG));
+	m_btnFirstMsgLog.SubclassWindow(GetDlgItem(IDC_FIRST_MSG_LOG));
 	m_btnFirstMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnFirstMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnFirstMsgLog.SetToolTipText(_T("第一页"));
 	//m_btnFirstMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnFirstMsgLog.MoveWindow(CHAT_DLG_WIDTH+110, CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_btnPrevMsgLog.SubclassWindow(GetDlgItem(IDC_PREVMSGLOG));
+	m_btnPrevMsgLog.SubclassWindow(GetDlgItem(IDC_PREV_MSG_LOG));
 	m_btnPrevMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnPrevMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnPrevMsgLog.SetToolTipText(_T("上一页"));
@@ -3587,14 +3587,14 @@ BOOL CBuddyChatDlg::Init()
 	m_staMsgLogPage.SetTransparent(TRUE, hDlgBgDC);
 	m_staMsgLogPage.MoveWindow(CHAT_DLG_WIDTH+170, CHAT_DLG_HEIGHT-24, 60, 25, FALSE);
 
-	m_btnNextMsgLog.SubclassWindow(GetDlgItem(IDC_NEXTMSGLOG));
+	m_btnNextMsgLog.SubclassWindow(GetDlgItem(IDC_NEXT_MSG_LOG));
 	m_btnNextMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnNextMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnNextMsgLog.SetToolTipText(_T("下一页"));
 	//m_btnNextMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnNextMsgLog.MoveWindow(CHAT_DLG_WIDTH+240, CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_btnLastMsgLog.SubclassWindow(GetDlgItem(IDC_LASTMSGLOG));
+	m_btnLastMsgLog.SubclassWindow(GetDlgItem(IDC_LAST_MSG_LOG));
 	m_btnLastMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnLastMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnLastMsgLog.SetToolTipText(_T("最后页"));
@@ -3603,7 +3603,7 @@ BOOL CBuddyChatDlg::Init()
 
 	ShowMsgLogButtons(FALSE);
 
-	m_SkinMenu.LoadMenu(ID_MENU_BUDDYCHAT);
+	m_SkinMenu.LoadMenu(ID_MENU_BUDDY_CHAT);
 	m_SkinMenu.SetBgPic(_T("Menu\\menu_left_bg.png"), _T("Menu\\menu_right_bg.png"));
 	m_SkinMenu.SetSelectedPic(_T("Menu\\menu_selected.png"));
 	m_SkinMenu.SetSepartorPic(_T("Menu\\menu_separtor.png"));

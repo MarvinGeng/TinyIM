@@ -26,7 +26,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_LOGSETDLG };
+	enum { IDD = IDD_LOG_SET_DLG };
 
 	BEGIN_MSG_MAP_EX(CLoginSettingsDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

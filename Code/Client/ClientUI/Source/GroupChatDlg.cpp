@@ -207,8 +207,8 @@ void CGroupChatDlg::OnUpdateGMemberHeadPic(WPARAM wParam, LPARAM lParam)
 	UINT nUTalkUin = (UINT)lParam;
 
 	C_UI_BuddyInfo* lpBuddyInfo = NULL;
-	if ((NULL == lpBuddyInfo) ||
-		(0 == lpBuddyInfo->m_uUserID))
+	if ((NULL == lpBuddyInfo) )
+//		(0 == lpBuddyInfo->m_uUserID))
 	{
 		return;
 	}
@@ -241,9 +241,9 @@ BOOL CGroupChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	m_lpCascadeWinManager->Add(m_hWnd, GROUP_CHAT_DLG_WIDTH, GROUP_CHAT_DLG_HEIGHT);
 
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDI_GROUPCHATDLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDI_GROUP_CHAT_DLG_32, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDI_GROUPCHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDI_GROUP_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	CMessageLoop* pLoop = _Module.GetMessageLoop();
@@ -2093,14 +2093,14 @@ BOOL CGroupChatDlg::Init()
 	//CRect rtClient;
 	//GetClientRect(&rtClient);
 	//消息记录的四个按钮
-	m_btnFirstMsgLog.SubclassWindow(GetDlgItem(IDC_FIRSTMSGLOG));
+	m_btnFirstMsgLog.SubclassWindow(GetDlgItem(IDC_FIRST_MSG_LOG));
 	m_btnFirstMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnFirstMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnFirstMsgLog.SetToolTipText(_T("第一页"));
 	//m_btnFirstMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnFirstMsgLog.MoveWindow(GROUP_CHAT_DLG_WIDTH+110, GROUP_CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_btnPrevMsgLog.SubclassWindow(GetDlgItem(IDC_PREVMSGLOG));
+	m_btnPrevMsgLog.SubclassWindow(GetDlgItem(IDC_PREV_MSG_LOG));
 	m_btnPrevMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnPrevMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnPrevMsgLog.SetToolTipText(_T("上一页"));
@@ -2111,14 +2111,14 @@ BOOL CGroupChatDlg::Init()
 	m_staMsgLogPage.SetTransparent(TRUE, hDlgBgDC);
 	m_staMsgLogPage.MoveWindow(GROUP_CHAT_DLG_WIDTH+170, GROUP_CHAT_DLG_HEIGHT-24, 60, 25, FALSE);
 
-	m_btnNextMsgLog.SubclassWindow(GetDlgItem(IDC_NEXTMSGLOG));
+	m_btnNextMsgLog.SubclassWindow(GetDlgItem(IDC_NEXT_MSG_LOG));
 	m_btnNextMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnNextMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnNextMsgLog.SetToolTipText(_T("下一页"));
 	//m_btnNextMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnNextMsgLog.MoveWindow(GROUP_CHAT_DLG_WIDTH+240, GROUP_CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_btnLastMsgLog.SubclassWindow(GetDlgItem(IDC_LASTMSGLOG));
+	m_btnLastMsgLog.SubclassWindow(GetDlgItem(IDC_LAST_MSG_LOG));
 	m_btnLastMsgLog.SetTransparent(TRUE, hDlgBgDC);
 	m_btnLastMsgLog.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnLastMsgLog.SetToolTipText(_T("最后页"));
@@ -2127,7 +2127,7 @@ BOOL CGroupChatDlg::Init()
 
 	ShowMsgLogButtons(FALSE);
 
-	m_SkinMenu.LoadMenu(ID_MENU_GROUPCHAT);
+	m_SkinMenu.LoadMenu(ID_MENU_GROUP_CHAT);
 	m_SkinMenu.SetBgPic(_T("Menu\\menu_left_bg.png"), _T("Menu\\menu_right_bg.png"));
 	m_SkinMenu.SetSelectedPic(_T("Menu\\menu_selected.png"));
 	m_SkinMenu.SetSepartorPic(_T("Menu\\menu_separtor.png"));
@@ -4014,7 +4014,7 @@ void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	switch(nID)
 	{
-	case IDC_FIRSTMSGLOG:
+	case IDC_FIRST_MSG_LOG:
 	{
 		if (m_nMsgLogCurrentPageIndex == 1)
 		{
@@ -4024,7 +4024,7 @@ void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		m_nMsgLogCurrentPageIndex = 1;
 	}break;
 
-	case IDC_PREVMSGLOG:
+	case IDC_PREV_MSG_LOG:
 	{
 		if (m_nMsgLogCurrentPageIndex == 1)
 		{
@@ -4040,7 +4040,7 @@ void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 	}break;
 
-	case IDC_NEXTMSGLOG:
+	case IDC_NEXT_MSG_LOG:
 	{
 		if (m_nMsgLogCurrentPageIndex == nPageCount)
 		{
@@ -4055,7 +4055,7 @@ void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 	}break;
 
-	case IDC_LASTMSGLOG:
+	case IDC_LAST_MSG_LOG:
 		{
 			if(m_nMsgLogCurrentPageIndex == nPageCount)
 				return;

@@ -37,9 +37,9 @@ BOOL CSystemSettingDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	::SetForegroundWindow(m_hWnd);
 
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	InitUI();

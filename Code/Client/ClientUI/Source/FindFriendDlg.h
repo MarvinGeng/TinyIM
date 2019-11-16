@@ -27,7 +27,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_FINDFRIENDDLG };
+	enum { IDD = IDD_FIND_FRIEND_DLG };
 
 	BEGIN_MSG_MAP_EX(CFindFriendDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

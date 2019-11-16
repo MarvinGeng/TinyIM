@@ -23,7 +23,7 @@ public:
 	CFaceSelDlg(void);
 	~CFaceSelDlg(void);
 
-	enum { IDD = IDD_FACESELDLG };
+	enum { IDD = IDD_FACE_SEL_DLG };
 
 	BEGIN_MSG_MAP_EX(CFaceSelDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

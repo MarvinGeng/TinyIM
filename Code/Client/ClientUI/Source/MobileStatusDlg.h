@@ -19,7 +19,7 @@ public:
 	CMobileStatusDlg(void);
 	virtual ~CMobileStatusDlg(void);
 
-	enum { IDD = IDD_MOBILESTATUS };
+	enum { IDD = IDD_LOGON_USER_INFO };
 
 	BEGIN_MSG_MAP_EX(CMobileStatusDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

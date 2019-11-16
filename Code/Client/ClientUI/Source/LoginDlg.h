@@ -28,7 +28,7 @@ public:
     CLoginDlg();
 	virtual ~CLoginDlg(void);
 
-	enum { IDD = IDD_LOGINDLG };
+	enum { IDD = IDD_LOGIN_DLG };
 
     BEGIN_MSG_MAP_EX(CLoginDlg)
         MSG_WM_INITDIALOG(OnInitDialog)

@@ -19,7 +19,7 @@
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
 public:
-	enum { IDD = IDD_ABOUTBOX };
+	enum { IDD = IDD_ABOUT_BOX };
 
 	BEGIN_MSG_MAP(CAboutDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)

@@ -34,7 +34,7 @@ public:
 	CGroupChatDlg(void);
 	~CGroupChatDlg(void);
 
-	enum { IDD = IDD_GROUPCHATDLG };
+	enum { IDD = IDD_GROUP_CHAT_DLG };
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -68,7 +68,7 @@ public:
 		COMMAND_ID_HANDLER_EX(ID_GROUP_CHAT_DLG_PRESS_ENTER_MENU, OnPressEnterMenuItem)					//回车键发送消息
 		COMMAND_ID_HANDLER_EX(ID_GROUP_CHAT_DLG_PRESS_CTRL_ENTER_MENU, OnPressCtrlEnterMenuItem)				//Ctrl+回车发送消息
 
-		COMMAND_RANGE_HANDLER_EX(IDC_FIRSTMSGLOG, IDC_LASTMSGLOG, OnMsgLogPage) //消息记录最前一条，上一条，下一条，最后一条四个按钮
+		COMMAND_RANGE_HANDLER_EX(IDC_FIRST_MSG_LOG, IDC_LAST_MSG_LOG, OnMsgLogPage) //消息记录最前一条，上一条，下一条，最后一条四个按钮
 
 		NOTIFY_HANDLER_EX(ID_TOOLBAR_TOP, TBN_DROPDOWN, OnToolbarDropDown)
 		NOTIFY_HANDLER_EX(ID_TOOLBAR_MID, TBN_DROPDOWN, OnToolbarDropDown)

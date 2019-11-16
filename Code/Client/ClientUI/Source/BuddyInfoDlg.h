@@ -26,7 +26,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	enum { IDD = IDD_BUDDYINFODLG };
+	enum { IDD = IDD_BUDDY_INFO_DLG };
 
 	BEGIN_MSG_MAP_EX(CBuddyInfoDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

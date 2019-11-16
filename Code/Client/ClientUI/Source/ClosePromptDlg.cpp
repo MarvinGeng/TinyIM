@@ -35,11 +35,11 @@ BOOL CClosePromptDlg::InitUI()
 	CString strPath;
 	strPath.Format(_T("%sSkins\\Skin0\\MsgBoxIcon\\question.png"), g_szHomePath);
 	m_picInfoIcon.SetBitmap(strPath);
-	m_picInfoIcon.SubclassWindow(GetDlgItem(IDC_INFOICON));
+	m_picInfoIcon.SubclassWindow(GetDlgItem(IDC_INFO_ICON));
 	m_picInfoIcon.MoveWindow(50, 35, 32, 32, FALSE);
 	
 	m_staInfoText.SetTransparent(TRUE, hDlgBgDC);
-	m_staInfoText.SubclassWindow(GetDlgItem(IDC_INFOTEXT));
+	m_staInfoText.SubclassWindow(GetDlgItem(IDC_INFO_TEXT));
 	m_staInfoText.SetTextColor(RGB(0, 0, 0));
 	m_staInfoText.MoveWindow(85, 40, 270, 20, FALSE);
 	

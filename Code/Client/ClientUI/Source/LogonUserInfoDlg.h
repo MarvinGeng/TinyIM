@@ -25,7 +25,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	enum { IDD = IDD_LOGONUSERINFO };
+	enum { IDD = IDD_LOGON_USER_INFO };
 
 	BEGIN_MSG_MAP_EX(CLogonUserInfoDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

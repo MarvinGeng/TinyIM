@@ -46,9 +46,9 @@ BOOL CLogonUserInfoDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	
 	SetWindowPos(::GetForegroundWindow(), 0, 0, 420, 420, SWP_NOMOVE);
 
-	m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	Init();		
@@ -406,8 +406,8 @@ BOOL CLogonUserInfoDlg::Init()
 	//m_edtSign.SetMultiLine(TRUE);
 
 
-	m_btnGenderMale.Attach(GetDlgItem(IDC_GENDERMALE));
-	m_btnGenderFemale.Attach(GetDlgItem(IDC_GENDERFEMALE));
+	m_btnGenderMale.Attach(GetDlgItem(IDC_GENDER_MALE));
+	m_btnGenderFemale.Attach(GetDlgItem(IDC_GENDER_FEMALE));
 
 	m_dtpBirthday.Attach(GetDlgItem(IDC_BIRTHDAY));
 	m_dtpBirthday.ModifyStyle(0, DTS_UPDOWN, 0);

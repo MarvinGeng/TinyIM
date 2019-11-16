@@ -83,7 +83,7 @@ public:
 	CMainDlg(void);
 	~CMainDlg(void);
 
-	enum { IDD = IDD_MAINDLG };
+	enum { IDD = IDD_MAIN_DLG };
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnIdle();

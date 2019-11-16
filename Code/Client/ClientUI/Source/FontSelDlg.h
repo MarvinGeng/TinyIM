@@ -35,7 +35,7 @@ public:
 	CFontSelDlg(void);
 	~CFontSelDlg(void);
 
-	enum { IDD = IDD_FONTSELDLG };
+	enum { IDD = IDD_FONT_SEL_DLG };
 
 	BEGIN_MSG_MAP_EX(CFontSelDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

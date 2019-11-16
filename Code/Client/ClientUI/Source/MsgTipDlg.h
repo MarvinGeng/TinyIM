@@ -25,7 +25,7 @@ public:
 	CMsgTipDlg(void);
 	~CMsgTipDlg(void);
 
-	enum { IDD = IDD_MSGTIPDLG };
+	enum { IDD = IDD_MSG_TIP_DLG };
 
 	BEGIN_MSG_MAP_EX(CMsgTipDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

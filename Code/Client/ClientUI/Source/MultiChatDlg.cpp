@@ -1501,7 +1501,7 @@ BOOL CMultiChatDlg::Init()
 	m_btnArrow.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnArrow.MoveWindow(MULTICHATDLG_WIDTH-235, MULTICHATDLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_SkinMenu.LoadMenu(ID_MENU_GROUPCHAT);
+	m_SkinMenu.LoadMenu(ID_MENU_GROUP_CHAT);
 	m_SkinMenu.SetBgPic(_T("Menu\\menu_left_bg.png"), _T("Menu\\menu_right_bg.png"));
 	m_SkinMenu.SetSelectedPic(_T("Menu\\menu_selected.png"));
 	m_SkinMenu.SetSepartorPic(_T("Menu\\menu_separtor.png"));

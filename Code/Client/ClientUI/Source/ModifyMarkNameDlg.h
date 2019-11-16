@@ -27,7 +27,7 @@ public:
 	virtual ~CModifyMarkNameDlg();
 
 	//在资源文件里面增加对话框资源模板
-	enum { IDD = IDD_MODIFYMARKNAME };
+	enum { IDD = IDD_MODIFY_MARK_NAME };
 
 	BEGIN_MSG_MAP_EX(CModifyMarkNameDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

@@ -165,9 +165,9 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 {
 	// set icons
 	{
-		m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+		m_hDlgIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 		SetIcon(m_hDlgIcon, TRUE);
-		m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+		m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 		SetIcon(m_hDlgSmallIcon, FALSE);
 	}
 	
@@ -5968,7 +5968,7 @@ void CMainDlg::UpdateMsgIcon()
 			if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_BUDDY == nMsgType || E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_SESS == nMsgType)
 				m_hMsgIcon = AtlLoadIconImage(IDI_BUDDY, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 			else if (E_UI_CHAT_MSG_TYPE::FMG_MSG_TYPE_GROUP == nMsgType)
-				m_hMsgIcon = AtlLoadIconImage(IDI_GROUPCHATDLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+				m_hMsgIcon = AtlLoadIconImage(IDI_GROUP_CHAT_DLG_16, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 			//else if (long_SYSGROUP == nMsgType)
 			//	m_hMsgIcon = AtlLoadIconImage(IDI_SYS, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 		}

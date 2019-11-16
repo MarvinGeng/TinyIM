@@ -30,7 +30,7 @@ public:
 
 	bool IsAgree() { return m_bAgree; }
 	//资源ID
-	enum { IDD = IDD_ADDFRIENDCONFIRMDLG };
+	enum { IDD = IDD_ADD_FRIEND_CONFIRM_DLG };
 
 	BEGIN_MSG_MAP_EX(CFindFriendDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

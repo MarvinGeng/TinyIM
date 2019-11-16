@@ -28,7 +28,7 @@ public:
 	CUpdateDlg();
 	virtual ~CUpdateDlg();
 
-	enum {IDD = IDD_UPDATEDLG};
+	enum {IDD = IDD_UPDATE_DLG};
 
 	BEGIN_MSG_MAP_EX(CUpdateDlg)
 		MSG_WM_INITDIALOG(OnInitDialog)

@@ -50,9 +50,9 @@ void CLoginDlg::SetDefaultPassword(PCTSTR pszDefaultPassword)
 BOOL CLoginDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 {
 	// set icons
-	m_hDlgIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	m_hDlgIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(m_hDlgIcon, TRUE);
-	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	m_hDlgSmallIcon = AtlLoadIconImage(IDR_MAIN_FRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(m_hDlgSmallIcon, FALSE);
 
 	m_bFirstModify = FALSE;
@@ -415,7 +415,7 @@ BOOL CLoginDlg::InitUI()
 	m_SkinMenu.SetCheckPic(_T("Menu\\menu_check.png"));
 	m_SkinMenu.SetTextColor(RGB(0, 20, 35));
 	m_SkinMenu.SetSelTextColor(RGB(254, 254, 254));
-	m_SkinMenu.LoadMenu(ID_MENU_LOGINSTATUS);
+	m_SkinMenu.LoadMenu(ID_MENU_LOGIN_STATUS);
 
 	DWORD dwMenuIDs[] = {ID_MENU_IMONLINE, ID_MENU_QME, 
 		ID_MENU_AWAY, ID_MENU_BUSY, ID_MENU_MUTE, ID_MENU_INVISIBLE};
