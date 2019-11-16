@@ -1003,11 +1003,29 @@ void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,c
 GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg)
 {
 	GetFriendChatHistoryRsp result;
+	if (m_msgPersisUtil)
+	{
+		auto rspMsgVec = m_msgPersisUtil->Get_FriendChatHistory(reqMsg);
+		result.m_msgHistory = rspMsgVec;
+	}
+	result.m_strMsgId = reqMsg.m_strMsgId;
+	result.m_strUserId = reqMsg.m_strUserId;
+	result.m_strFriendId = reqMsg.m_strFriendId;
+	result.m_strChatMsgId = reqMsg.m_strChatMsgId;
 	return result;
 }
 GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
 {
 	GetGroupChatHistoryRsp result;
+	if (m_msgPersisUtil)
+	{
+		auto rspMsgVec = m_msgPersisUtil->Get_GroupChatHistory(reqMsg);
+		result.m_msgHistory = rspMsgVec;
+	}
+	result.m_strMsgId = reqMsg.m_strMsgId;
+	result.m_strUserId = reqMsg.m_strUserId;
+	result.m_strGroupId = reqMsg.m_strGroupId;
+	result.m_strChatMsgId = reqMsg.m_strChatMsgId;
 	return result;
 }
 
