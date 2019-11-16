@@ -1398,7 +1398,7 @@ BOOL CSessChatDlg::Init()
 
 	CRect rcRecv(6, 107, 583, 366);
 	DWORD dwStyle = WS_CHILD|WS_VISIBLE|WS_TABSTOP|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|ES_WANTRETURN;
-	m_richRecv.Create(m_hWnd, rcRecv, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_RECV);
+	m_richRecv.Create(m_hWnd, rcRecv, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_RECV);
 	m_richRecv.SetTransparent(TRUE, hDlgBgDC);	
 	DWORD dwMask = m_richRecv.GetEventMask();
 	dwMask = dwMask | ENM_LINK  | ENM_MOUSEEVENTS | ENM_SCROLLEVENTS | ENM_KEYEVENTS;
@@ -1407,7 +1407,7 @@ BOOL CSessChatDlg::Init()
 	m_richRecv.SetReadOnly();
 
 	CRect rcSend(6, 402, 583, 502);
-	m_richSend.Create(m_hWnd, rcSend, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_SEND);
+	m_richSend.Create(m_hWnd, rcSend, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_SEND);
 	m_richSend.SetTransparent(TRUE, hDlgBgDC);
 
 	UpdateData();

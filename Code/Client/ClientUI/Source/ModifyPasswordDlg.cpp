@@ -106,7 +106,7 @@ BOOL CModifyPasswordDlg::InitUI()
 	m_edtOldPassword.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtOldPassword.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtOldPassword.SetTransparent(TRUE, hDlgBgDC);
-	m_edtOldPassword.SubclassWindow(GetDlgItem(IDC_EDIT_OLDPASSWORD));
+	m_edtOldPassword.SubclassWindow(GetDlgItem(IDC_EDIT_OLD_PASS_WORD));
 	m_edtOldPassword.SetPasswordChar(0x25CF);
 
 	m_edtNewPassword.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));

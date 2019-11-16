@@ -2045,13 +2045,13 @@ BOOL CGroupChatDlg::Init()
 	m_lnkGroupName.SetNormalFont(hFontGroupNameLink);
 	
 	HFONT hFontGroupCategory = CGDIFactory::GetFont(18);
-	m_staGroupCategory.SubclassWindow(GetDlgItem(ID_STATIC_GROUPCATEGORY));
+	m_staGroupCategory.SubclassWindow(GetDlgItem(ID_STATIC_GROUP_CATEGORY));
 	m_staGroupCategory.MoveWindow(70, 38, 537, 20, FALSE);
 	m_staGroupCategory.SetTransparent(TRUE, hDlgBgDC);
 	m_staGroupCategory.SetFont(hFontGroupCategory);
 	m_staGroupCategory.SetWindowText(_T("分类：我的群"));
 
-	m_staMemoTitle.SubclassWindow(GetDlgItem(ID_STATIC_MEMOTITLE));
+	m_staMemoTitle.SubclassWindow(GetDlgItem(ID_STATIC_MEMO_TITLE));
 	m_staMemoTitle.MoveWindow(rcClient.right-200, 98, GROUP_MEMBER_LIST_WIDTH-2, 30, FALSE);
 	m_staMemoTitle.SetTransparent(TRUE, hDlgBgDC);
 	m_staMemoTitle.SetNormalBgPic(_T("MemoTitleBg.png"));
@@ -2060,7 +2060,7 @@ BOOL CGroupChatDlg::Init()
 	m_edtMemo.SubclassWindow(GetDlgItem(ID_EDIT_MEMO));
 	m_edtMemo.MoveWindow(rcClient.right-200, 124, GROUP_MEMBER_LIST_WIDTH-2, 156, FALSE);
 
-	m_staMemberTitle.SubclassWindow(GetDlgItem(ID_STATIC_MERBERTITLE));
+	m_staMemberTitle.SubclassWindow(GetDlgItem(ID_STATIC_MERBER_TITLE));
 	m_staMemberTitle.MoveWindow(rcClient.right-200, 267, GROUP_MEMBER_LIST_WIDTH-2, 35, FALSE);
 	m_staMemberTitle.SetTransparent(TRUE, hDlgBgDC);
 	m_staMemberTitle.SetNormalBgPic(_T("MemoTitleBg.png"));
@@ -2143,7 +2143,7 @@ BOOL CGroupChatDlg::Init()
 	//CRect rcRecv = CRect(CPoint(6, rcClient.top+44+44), CSize(rcClient.Width()-6-209, rcClient.Height()-228));
 	CRect rcRecv(6, 107, 583-GROUP_MEMBER_LIST_WIDTH-2, 366);
 	DWORD dwStyle = WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_CLIPCHILDREN|WS_CLIPSIBLINGS|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|ES_WANTRETURN;
-	m_richRecv.Create(m_hWnd, rcRecv, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_RECV);
+	m_richRecv.Create(m_hWnd, rcRecv, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_RECV);
 	m_richRecv.SetTransparent(TRUE, hDlgBgDC);
 
 	//接收richedit与midToolbar之间的分隔条
@@ -2151,7 +2151,7 @@ BOOL CGroupChatDlg::Init()
 	m_SplitterCtrl.Create(m_hWnd, rcSplitter, NULL, WS_CHILD|WS_VISIBLE, 0, ID_SPLITTER_CTRL);
 	
 	CRect rcSend(6, 407, 583-GROUP_MEMBER_LIST_WIDTH-2, 502);
-	m_richSend.Create(m_hWnd, rcSend, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_SEND);
+	m_richSend.Create(m_hWnd, rcSend, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_SEND);
 	m_richSend.SetTransparent(TRUE, hDlgBgDC);
 
 	if(!m_FontSelDlg.IsWindow())

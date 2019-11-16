@@ -89,7 +89,7 @@ BOOL CTeamDlg::InitUI()
 	m_edtTeamName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtTeamName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtTeamName.SetTransparent(TRUE, hDlgBgDC);
-	m_edtTeamName.SubclassWindow(GetDlgItem(IDC_EDIT_TEAMNAME));
+	m_edtTeamName.SubclassWindow(GetDlgItem(IDC_EDIT_TEAM_NAME));
 	if(m_nOperationType == TEAM_OPERATION_MODIFY_TEAM_NAME)
 	{
 		/*C_UI_BuddyTeamInfo* pBuddyTeamInfo = m_pFMGClient->m_UserMgr.m_BuddyList.GetBuddyTeamByIndex(m_nTeamIndex);

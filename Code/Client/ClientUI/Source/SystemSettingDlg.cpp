@@ -117,7 +117,7 @@ BOOL CSystemSettingDlg::InitUI()
 	m_edtAutoReply.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtAutoReply.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtAutoReply.SetTransparent(TRUE, hDlgBgDC);
-	m_edtAutoReply.SubclassWindow(GetDlgItem(IDC_AUTOREPLYCONTENT));
+	m_edtAutoReply.SubclassWindow(GetDlgItem(IDC_AUTO_REPLY_CONTENT));
 	//m_edtAutoReply.SetWindowText(m_pFMGClient->m_UserConfig.GetAutoReplyContent());
 	m_edtAutoReply.EnableWindow(m_btnAutoReply.GetCheck());
 

@@ -275,7 +275,7 @@ BOOL CFontSelDlg::InitFontClassToolBar()
 // 初始化字体名称组合框
 BOOL CFontSelDlg::InitFontNameComboBox()
 {
-	m_cboFontName.SubclassWindow(GetDlgItem(ID_COMBO_FONTNAME));
+	m_cboFontName.SubclassWindow(GetDlgItem(ID_COMBO_FONT_NAME));
 
 	m_cboFontName.SetRedraw(FALSE);
 	m_cboFontName.m_Edit.EnableWindow(FALSE);
@@ -320,7 +320,7 @@ BOOL CFontSelDlg::InitFontNameComboBox()
 // 初始化字体大小组合框
 BOOL CFontSelDlg::InitFontSizeComboBox()
 {
-	m_cboFontSize.SubclassWindow(GetDlgItem(ID_COMBO_FONTSIZE));
+	m_cboFontSize.SubclassWindow(GetDlgItem(ID_COMBO_FONT_SIZE));
 
 	m_cboFontSize.SetRedraw(FALSE);
 	m_cboFontSize.m_Edit.EnableWindow(FALSE);

@@ -39,7 +39,7 @@ BOOL CModifyMarkNameDlg::InitUI()
 	m_edtMarkName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtMarkName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtMarkName.SetTransparent(TRUE, hDlgBgDC);
-	m_edtMarkName.SubclassWindow(GetDlgItem(IDC_EDIT_MARKNAME));
+	m_edtMarkName.SubclassWindow(GetDlgItem(IDC_EDIT_MARK_NAME));
 
 	m_btnOK.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnOK.SetTransparent(TRUE, hDlgBgDC);

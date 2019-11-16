@@ -126,7 +126,7 @@ BOOL CLoginSettingsDlg::InitUI()
 	m_editSrvAddr.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_editSrvAddr.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_editSrvAddr.SetTransparent(TRUE, hDlgBgDC);
-	m_editSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_SERADDRESS));
+	m_editSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_SER_ADDRESS));
 	//m_editSrvAddr.MoveWindow(55, 90, 127, 30, TRUE);
 	CString strTemp;
 	iniFile.ReadString(_T("server"), _T("server"), _T("flamingo.hootina.org"), strTemp.GetBuffer(64), 64, strIniPath);
