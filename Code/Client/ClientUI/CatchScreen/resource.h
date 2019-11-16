@@ -3,7 +3,7 @@
 // Used by CatchScreen.rc
 //
 #define IDD_CATCHSCREEN_DIALOG          102
-#define IDR_MAINFRAME                   128
+#define IDR_MAIN_FRAME                   128
 #define IDC_CURSOR1                     129
 #define IDB_BITMAP1                     131
 #define IDC_CURSOR2                     132

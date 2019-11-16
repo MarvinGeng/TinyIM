@@ -52,7 +52,7 @@ CCatchScreenDlg::CCatchScreenDlg(CWnd* pParent /*=NULL*/)
     m_rgn.CreateRectRgn(0,0,50,50);
 //*******************************************************************************
 
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAIN_FRAME);
 }
 
 void CCatchScreenDlg::DoDataExchange(CDataExchange* pDX)
