@@ -1014,6 +1014,7 @@ GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFrien
 	result.m_strChatMsgId = reqMsg.m_strChatMsgId;
 	return result;
 }
+
 GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
 {
 	GetGroupChatHistoryRsp result;
@@ -1032,6 +1033,16 @@ GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupCh
 SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg)
 {
 	SearchChatHistoryRsp result;
+	
+	if (m_msgPersisUtil)
+	{
+		auto friendMsgVec = m_msgPersisUtil->Get_SearchFriendChatMsg(reqMsg);
+		auto groupMsgVec = m_msgPersisUtil->Get_SearchGroupChatMsg(reqMsg);
+		result.m_friendChatMsgVec = friendMsgVec;
+		result.m_groupChatMsgVec = groupMsgVec;
+	}
+	result.m_strMsgId = reqMsg.m_strMsgId;
+	result.m_strUserId = reqMsg.m_strUserId;
 	return result;
 }
 
