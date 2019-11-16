@@ -1459,7 +1459,7 @@ BOOL CMultiChatDlg::Init()
 	WString strFileName(Hootina::CPath::GetAppPath() + _T("Image\\DefMultiChatHeadPic.png"));
 	m_picHead.SetBitmap(strFileName.c_str());
 
-	m_lnkGroupName.SubclassWindow(GetDlgItem(ID_LINK_GROUPNAME));
+	m_lnkGroupName.SubclassWindow(GetDlgItem(ID_LINK_GROUP_NAME));
 	m_lnkGroupName.MoveWindow(70, 12, 60, 14, FALSE);
 	m_lnkGroupName.SetTransparent(TRUE, hDlgBgDC);
 	m_lnkGroupName.SetLinkColor(RGB(0,0,0));

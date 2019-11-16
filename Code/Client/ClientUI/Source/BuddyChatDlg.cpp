@@ -3133,7 +3133,7 @@ BOOL CBuddyChatDlg::InitRightTabWindow()
 	rcMsgLog.right = rcRightTabCtrl.right;
 	rcMsgLog.bottom = rcRightTabCtrl.bottom+300;
 	DWORD dwStyle = WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_CLIPCHILDREN|WS_CLIPSIBLINGS|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|ES_WANTRETURN;
-	m_richMsgLog.Create(m_hWnd, rcMsgLog, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_MSGLOG);
+	m_richMsgLog.Create(m_hWnd, rcMsgLog, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_MSG_LOG);
 	m_richMsgLog.SetTransparent(FALSE, m_SkinDlg.GetBgDC());
 	m_richMsgLog.SetAutoURLDetect();
 	m_richMsgLog.SetReadOnly();
@@ -3526,7 +3526,7 @@ BOOL CBuddyChatDlg::Init()
 	//strTooltip.Format(_T("点击查看%s的资料"), strNickName.c_str());
 	m_picHead.SetToolTipText(strTooltip);
 
-	m_lnkBuddyName.SubclassWindow(GetDlgItem(ID_LINK_BUDDYNAME));
+	m_lnkBuddyName.SubclassWindow(GetDlgItem(ID_LINK_BUDDY_NAME));
 	m_lnkBuddyName.SetTransparent(TRUE, hDlgBgDC);
 	m_lnkBuddyName.SetLinkColor(RGB(0,0,0));
 	m_lnkBuddyName.SetHoverLinkColor(RGB(0,0,0));
@@ -3536,7 +3536,7 @@ BOOL CBuddyChatDlg::Init()
 	HFONT hFontBuddyNameLink = CGDIFactory::GetFont(22);
 	m_lnkBuddyName.SetNormalFont(hFontBuddyNameLink);
 	
-	m_staBuddySign.SubclassWindow(GetDlgItem(ID_STATIC_BUDDYSIGN));
+	m_staBuddySign.SubclassWindow(GetDlgItem(ID_STATIC_BUDDY_SIGN));
 	m_staBuddySign.SetTransparent(TRUE, hDlgBgDC);
 	m_staBuddySign.MoveWindow(70, 38, CHAT_DLG_WIDTH-50, 20, FALSE);
 

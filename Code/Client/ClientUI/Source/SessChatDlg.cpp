@@ -1345,7 +1345,7 @@ BOOL CSessChatDlg::Init()
 		strFileName = Hootina::CPath::GetAppPath() + _T("Image\\DefBuddyHeadPic.png");
 	m_picHead.SetBitmap(strFileName.c_str());
 
-	m_lnkBuddyName.SubclassWindow(GetDlgItem(ID_LINK_BUDDYNAME));
+	m_lnkBuddyName.SubclassWindow(GetDlgItem(ID_LINK_BUDDY_NAME));
 	m_lnkBuddyName.MoveWindow(70, 12, 60, 14, FALSE);
 	m_lnkBuddyName.SetTransparent(TRUE, hDlgBgDC);
 	m_lnkBuddyName.SetLinkColor(RGB(0,0,0));
@@ -1360,7 +1360,7 @@ BOOL CSessChatDlg::Init()
 	m_fontBuddyNameLink = ::CreateFontIndirect(&lf); 
 	m_lnkBuddyName.SetNormalFont(m_fontBuddyNameLink);
 
-	m_staGroupName.SubclassWindow(GetDlgItem(ID_STATIC_BUDDYSIGN));
+	m_staGroupName.SubclassWindow(GetDlgItem(ID_STATIC_BUDDY_SIGN));
 	m_staGroupName.MoveWindow(70, 38, SESSIONCHATDLG_WIDTH-50, 20, FALSE);
 	m_staGroupName.SetTransparent(TRUE, hDlgBgDC);
 

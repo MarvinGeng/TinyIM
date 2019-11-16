@@ -955,7 +955,7 @@ BOOL CMainDlg::InitUI()
 	{
 		m_staNickName.SetTransparent(TRUE, hDlgBgDC);
 		m_staNickName.SetTextColor(RGB(255, 255, 255));
-		m_staNickName.SubclassWindow(GetDlgItem(ID_STATIC_NICKNAME));
+		m_staNickName.SubclassWindow(GetDlgItem(ID_STATIC_NICK_NAME));
 		m_staNickName.SetWindowText(_T("用户昵称"));
 		HFONT hFontNickName = CGDIFactory::GetBoldFont(20);
 		m_staNickName.SetFont(hFontNickName);

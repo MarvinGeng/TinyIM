@@ -2034,7 +2034,7 @@ BOOL CGroupChatDlg::Init()
 
 	m_picHead.SetBitmap(strFileName.c_str());
 
-	m_lnkGroupName.SubclassWindow(GetDlgItem(ID_LINK_GROUPNAME));
+	m_lnkGroupName.SubclassWindow(GetDlgItem(ID_LINK_GROUP_NAME));
 	m_lnkGroupName.MoveWindow(70, 12, 60, 14, FALSE);
 	m_lnkGroupName.SetTransparent(TRUE, hDlgBgDC);
 	m_lnkGroupName.SetLinkColor(RGB(0,0,0));
@@ -2273,7 +2273,7 @@ BOOL CGroupChatDlg::InitRightTabWindow()
 	rcMsgLog.right = rcRightTabCtrl.right;
 	rcMsgLog.bottom = rtClient.Height()-30;
 	DWORD dwStyle = WS_CHILD|WS_VISIBLE|WS_TABSTOP|WS_CLIPCHILDREN|WS_CLIPSIBLINGS|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|ES_WANTRETURN;
-	m_richMsgLog.Create(m_hWnd, rcMsgLog, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICHEDIT_MSGLOG);
+	m_richMsgLog.Create(m_hWnd, rcMsgLog, NULL, dwStyle, WS_EX_TRANSPARENT, ID_RICH_EDIT_MSG_LOG);
 	m_richMsgLog.ShowWindow(SW_HIDE);
 	m_richMsgLog.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 	m_richMsgLog.SetAutoURLDetect();
