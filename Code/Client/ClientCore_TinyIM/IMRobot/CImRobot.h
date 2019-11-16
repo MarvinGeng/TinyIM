@@ -32,6 +32,14 @@ private:
 	void GetGroupList();
 	void SendGroupMsg();
 	void GetRecvGroupMsg();
+
+
+	void GetGroupHistroyFirst();
+	void GetGroupHistoryLast();
+	void GetGroupHistoryPrev();
+	void GetGroupHistoryNext();
+
+	void SearchChatMsg();
 	//Group End
 	//Load From Client
 	std::string m_strHttpIp;

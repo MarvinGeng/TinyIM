@@ -112,6 +112,42 @@ void CIMRobot::Run()
 		{
 			MoveFriendToTeam();
 		}break;
+		case 10:
+		{
+			GetFriendHistoryLast();
+		}break;
+		case 11:
+		{
+			GetFriendHistoryNext();
+		}break;
+		case 12:
+		{
+			GetFriendHistoryPrev();
+		}break;
+		case 13:
+		{
+			GetFriendHistroyFirst();
+		}break;
+		case 14:
+		{
+			GetGroupHistoryLast();
+		}break;
+		case 15:
+		{
+			GetGroupHistoryNext();
+		}break;
+		case 16:
+		{
+			GetGroupHistroyFirst();
+		}break;
+		case 17:
+		{
+			SearchChatMsg();
+		}break;
+		case 18:
+		{
+
+		}break;
 		default:
 		{
 
@@ -385,20 +421,181 @@ void CIMRobot::GetRecvGroupMsg()
 
 void CIMRobot::GetFriendHistroyFirst()
 {
+	std::cout << __FUNCTION__ << std::endl;
+	GetFriendChatHistoryRsp rspMsg;
+	try {
+		GetFriendChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_FIRST_MSG;
 
+		auto rsp = g_httpClient->request("POST", "/friend_chat_history", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
 }
 
 void CIMRobot::GetFriendHistoryLast()
 {
+	std::cout << __FUNCTION__ << std::endl;
+	GetFriendChatHistoryRsp rspMsg;
+	try {
+		GetFriendChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_LAST_MSG;
 
+		auto rsp = g_httpClient->request("POST", "/friend_chat_history", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
 }
 
 void CIMRobot::GetFriendHistoryPrev()
 {
+	std::cout << __FUNCTION__ << std::endl;
+	GetFriendChatHistoryRsp rspMsg;
+	try {
+		GetFriendChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_PREV_MSG;
 
+		auto rsp = g_httpClient->request("POST", "/friend_chat_history", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
 }
 
 void CIMRobot::GetFriendHistoryNext()
 {
+	std::cout << __FUNCTION__ << std::endl;
+	GetFriendChatHistoryRsp rspMsg;
+	try {
+		GetFriendChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_NEXT_MSG;
 
+		auto rsp = g_httpClient->request("POST", "/friend_chat_history", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+
+
+void CIMRobot::GetGroupHistroyFirst()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	GetGroupChatHistoryRsp rspMsg;
+	try {
+		GetGroupChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strGroupId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_FIRST_MSG;
+
+		auto rsp = g_httpClient->request("POST", "/group_chat_history_req", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::GetGroupHistoryLast()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	GetGroupChatHistoryRsp rspMsg;
+	try {
+		GetGroupChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strGroupId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_LAST_MSG;
+
+		auto rsp = g_httpClient->request("POST", "/group_chat_history_req", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::GetGroupHistoryPrev()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	GetGroupChatHistoryRsp rspMsg;
+	try {
+		GetGroupChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strGroupId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_PREV_MSG;
+
+		auto rsp = g_httpClient->request("POST", "/group_chat_history_req", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::GetGroupHistoryNext()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	GetGroupChatHistoryRsp rspMsg;
+	try {
+		GetGroupChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strGroupId = m_strUserId;
+		reqMsg.m_eDirection = HISTORY_DIRECTION::E_NEXT_MSG;
+
+		auto rsp = g_httpClient->request("POST", "/group_chat_history_req", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::SearchChatMsg()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	SearchChatHistoryRsp rspMsg;
+	try {
+		SearchChatHistoryReq reqMsg;
+		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strSearchWord = "ÄãºÃ";
+
+		auto rsp = g_httpClient->request("POST", "/search_chat_msg", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
 }
