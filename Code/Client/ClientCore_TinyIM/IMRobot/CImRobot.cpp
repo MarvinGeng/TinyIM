@@ -382,3 +382,23 @@ void CIMRobot::GetRecvGroupMsg()
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
+
+void CIMRobot::GetFriendHistroyFirst()
+{
+
+}
+
+void CIMRobot::GetFriendHistoryLast()
+{
+
+}
+
+void CIMRobot::GetFriendHistoryPrev()
+{
+
+}
+
+void CIMRobot::GetFriendHistoryNext()
+{
+
+}

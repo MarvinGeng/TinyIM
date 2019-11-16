@@ -18,6 +18,11 @@ private:
 	void SendMsg();
 	void GetRecvMsg();
 
+	void GetFriendHistroyFirst();
+	void GetFriendHistoryLast();
+	void GetFriendHistoryPrev();
+	void GetFriendHistoryNext();
+
 	void AddFriendTeam();
 	void RemoveFriendTeam();
 	void MoveFriendToTeam();
