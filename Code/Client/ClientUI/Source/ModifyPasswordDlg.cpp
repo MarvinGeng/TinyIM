@@ -111,12 +111,12 @@ BOOL CModifyPasswordDlg::InitUI()
 
 	m_edtNewPassword.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtNewPassword.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtNewPassword.SubclassWindow(GetDlgItem(IDC_EDIT_NEWPASSWORD));
+	m_edtNewPassword.SubclassWindow(GetDlgItem(IDC_EDIT_NEW_PASS_WORD));
 	m_edtNewPassword.SetPasswordChar(0x25CF);
 
 	m_edtNewPasswordConfirm.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtNewPasswordConfirm.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtNewPasswordConfirm.SubclassWindow(GetDlgItem(IDC_EDIT_NEWPASSCONFIRM));
+	m_edtNewPasswordConfirm.SubclassWindow(GetDlgItem(IDC_EDIT_NEW_PASS_CONFIRM));
 	m_edtNewPasswordConfirm.SetPasswordChar(0x25CF);
 
 	m_btnOK.SetButtonType(SKIN_PUSH_BUTTON);

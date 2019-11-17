@@ -992,9 +992,9 @@ BOOL CMainDlg::InitUI()
 	m_SkinMenu.SetSelTextColor(RGB(254, 254, 254));
 	m_SkinMenu.LoadMenu(ID_MENU_MAIN_PANEL);
 
-	DWORD dwMenuIDs[] = {ID_MENU_IMONLINE, ID_MENU_QME, ID_MENU_AWAY, 
-		ID_MENU_BUSY, ID_MENU_MUTE, ID_MENU_INVISIBLE, ID_MENU_IMOFFLINE, 
-		ID_MENU_LOCK, ID_MENU_GROUP_HOMEPAGE};
+	DWORD dwMenuIDs[] = {ID_MENU_IM_ONLINE, ID_MENU_QME, ID_MENU_AWAY, 
+		ID_MENU_BUSY, ID_MENU_MUTE, ID_MENU_INVISIBLE, ID_MENU_IM_OFFLINE, 
+		ID_MENU_LOCK, ID_MENU_GROUP_HOME_PAGE};
 	CString strFileNames[] = {_T("Status\\imonline.png"), _T("Status\\Qme.png"), 
 		_T("Status\\away.png"), _T("Status\\busy.png"), _T("Status\\mute.png"), 
 		_T("Status\\invisible.png"), _T("Status\\imoffline.png"), _T("lock20.png"),
@@ -1821,7 +1821,7 @@ LRESULT CMainDlg::OnBuddyListRButtonUp(LPNMHDR pnmh)
 		PopupMenu = m_SkinMenu.GetSubMenu(MAIN_PANEL_BUDDYLIST_CONTEXT_SUBMENU_INDEX);
 		if (GetFriendList())
 		{
-			PopupMenu.EnableMenuItem(IDM_MOVEITEM, MF_ENABLED|MF_BYCOMMAND);
+			PopupMenu.EnableMenuItem(IDM_MOVE_ITEM, MF_ENABLED|MF_BYCOMMAND);
 			InsertTeamMenuItem(PopupMenu);
 		}
 		else
@@ -6175,11 +6175,11 @@ E_UI_ONLINE_STATUS CMainDlg::GetStatusFromMenuID(int nMenuID)
 {
 	switch (nMenuID)
 	{
-		case ID_MENU_IMONLINE:
+		case ID_MENU_IM_ONLINE:
 		{
 			return E_UI_ONLINE_STATUS::STATUS_ONLINE;
 		}break;
-		case ID_MENU_IMOFFLINE:
+		case ID_MENU_IM_OFFLINE:
 		{
 			return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 		}break;
@@ -6306,9 +6306,9 @@ void CMainDlg::ShowAddFriendConfirmDlg()
 
 	//int nRet = AddFriendConfirmDlg.DoModal(m_hWnd, NULL);
 	//
-	//if(nRet==ID_ADDCONFIRM_REFUSE || nRet==ID_ADDCONFIRM_AGREE)
+	//if(nRet==ID_ADDCONFIRM_REFUSE || nRet==ID_ADD_CONFIRM_AGREE)
 	//{		
-	//	E_UI_OPERATE_FRIEND uCmd = (nRet==ID_ADDCONFIRM_AGREE ? E_UI_OPERATE_FRIEND::Agree : E_UI_OPERATE_FRIEND::Refuse);
+	//	E_UI_OPERATE_FRIEND uCmd = (nRet==ID_ADD_CONFIRM_AGREE ? E_UI_OPERATE_FRIEND::Agree : E_UI_OPERATE_FRIEND::Refuse);
 	//	//m_FMGClient.ResponseAddFriendApply(pAddFriendInfo->uAccountID, uCmd);
 	//}
 	//

@@ -1032,7 +1032,7 @@ void CBuddyChatDlg::OnClose()
 
 	//模拟关闭消息记录窗口动作，以使再次打开该窗口时尺寸正常
 	//m_bMsgLogWindowVisible = FALSE;
-	//PostMessage(WM_COMMAND, IDC_BTN_MSGLOG, 0);
+	//PostMessage(WM_COMMAND, IDC_BTN_MSG_LOG, 0);
 
 	RecordWindowSize();
 
@@ -1602,7 +1602,7 @@ void CBuddyChatDlg::OnBtn_Arrow(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 
 		
-		PopupMenu.CheckMenuItem(IDM_AUTOREPLY, m_bEnableAutoReply ? MF_CHECKED : MF_UNCHECKED);
+		PopupMenu.CheckMenuItem(IDM_AUTO_REPLY, m_bEnableAutoReply ? MF_CHECKED : MF_UNCHECKED);
 		
 
 		PopupMenu.TrackPopupMenu(TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_VERTICAL, 
@@ -1625,11 +1625,11 @@ void CBuddyChatDlg::OnOpenTransferFileItem(UINT uNotifyCode, int nID, CWindow wn
 		return;
 	}	
 
-	if(nID == IDM_OPENFILE)
+	if(nID == IDM_OPEN_FILE)
 	{
 		::ShellExecute(NULL, _T("open"), m_strLinkUrl, NULL, NULL, SW_SHOWNORMAL);
 	}	
-	else if(nID == IDM_OPENDIRECTORY)
+	else if(nID == IDM_OPEN_DIRECTORY)
 	{
 		//参考：http://zhidao.baidu.com/link?url=uEc51-5yf52fP2PHVl7mvAx2CpA8s1R5j8cyCWhYR8AaNE7KQaswGoguJtCI-ZlXMtiD02Iq6K_hBrbCvXoHfGy8ez3t3KtdHeIydox8wDu
 		CString strCmdLine;
@@ -1936,32 +1936,32 @@ void CBuddyChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	switch (nID)
 	{
-	case ID_MENU_ZOOMRATIO_400:
+	case ID_MENU_ZOOM_RATIO_400:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 16, 4);
 		}break;
-	case ID_MENU_ZOOMRATIO_200:
+	case ID_MENU_ZOOM_RATIO_200:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 8, 4);
 		}break;
-	case ID_MENU_ZOOMRATIO_150:
+	case ID_MENU_ZOOM_RATIO_150:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 6, 4);
 		}break;
-	case ID_MENU_ZOOMRATIO_125:
+	case ID_MENU_ZOOM_RATIO_125:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 5, 4);
 		}break;
-	case ID_MENU_ZOOMRATIO_100:
+	case ID_MENU_ZOOM_RATIO_100:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 0, 0);
 		}
 		break;
-	case ID_MENU_ZOOMRATIO_75:
+	case ID_MENU_ZOOM_RATIO_75:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 3, 4);
 		}break;
-	case ID_MENU_ZOOMRATIO_50:
+	case ID_MENU_ZOOM_RATIO_50:
 		{
 			::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 1, 2);
 		}break;
@@ -1970,7 +1970,7 @@ void CBuddyChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 	}
 
 	CSkinMenu menuPopup = m_SkinMenu.GetSubMenu(10);
-	for (int i = ID_MENU_ZOOMRATIO_400; i <= ID_MENU_ZOOMRATIO_50; i++)
+	for (int i = ID_MENU_ZOOM_RATIO_400; i <= ID_MENU_ZOOM_RATIO_50; i++)
 	{
 		if (i != nID)
 		{
@@ -2661,7 +2661,7 @@ BOOL CBuddyChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		
 		if (pImageOle != NULL)
 		{
@@ -2689,7 +2689,7 @@ BOOL CBuddyChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		if (pImageOle != NULL)
 		{
 			pImageOle->Release();
@@ -3544,7 +3544,7 @@ BOOL CBuddyChatDlg::Init()
 	m_staBuddySign.SetFont(hFontBuddySignature);
 
 	//图片上传进度信息文本
-	m_staPicUploadProgress.SubclassWindow(GetDlgItem(IDC_STATIC_PICPROGRESS));
+	m_staPicUploadProgress.SubclassWindow(GetDlgItem(IDC_STATIC_PIC_PROGRESS));
 	m_staPicUploadProgress.SetTransparent(TRUE, hDlgBgDC);
 	m_staPicUploadProgress.MoveWindow(10, CHAT_DLG_HEIGHT-25, 380, 25, FALSE);
 	m_staPicUploadProgress.ShowWindow(SW_HIDE);
@@ -3583,7 +3583,7 @@ BOOL CBuddyChatDlg::Init()
 	//m_btnPrevMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnPrevMsgLog.MoveWindow(CHAT_DLG_WIDTH+140, CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_staMsgLogPage.SubclassWindow(GetDlgItem(IDC_STATIC_MSGLOGPAGE));
+	m_staMsgLogPage.SubclassWindow(GetDlgItem(IDC_STATIC_MSG_LOG_PAGE));
 	m_staMsgLogPage.SetTransparent(TRUE, hDlgBgDC);
 	m_staMsgLogPage.MoveWindow(CHAT_DLG_WIDTH+170, CHAT_DLG_HEIGHT-24, 60, 25, FALSE);
 

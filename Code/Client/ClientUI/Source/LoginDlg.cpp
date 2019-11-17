@@ -417,7 +417,7 @@ BOOL CLoginDlg::InitUI()
 	m_SkinMenu.SetSelTextColor(RGB(254, 254, 254));
 	m_SkinMenu.LoadMenu(ID_MENU_LOGIN_STATUS);
 
-	DWORD dwMenuIDs[] = {ID_MENU_IMONLINE, ID_MENU_QME, 
+	DWORD dwMenuIDs[] = {ID_MENU_IM_ONLINE, ID_MENU_QME, 
 		ID_MENU_AWAY, ID_MENU_BUSY, ID_MENU_MUTE, ID_MENU_INVISIBLE};
 	CString strFileNames[] = {_T("Status\\imonline.png"), _T("Status\\Qme.png"), 
 		_T("Status\\away.png"), _T("Status\\busy.png"), _T("Status\\mute.png"), 
@@ -647,9 +647,9 @@ E_UI_ONLINE_STATUS CLoginDlg::GetStatusFromMenuID(int nMenuID)
 {
 	switch (nMenuID)
 	{
-	case ID_MENU_IMONLINE:
+	case ID_MENU_IM_ONLINE:
 		return E_UI_ONLINE_STATUS::STATUS_ONLINE;
-	case ID_MENU_IMOFFLINE:
+	case ID_MENU_IM_OFFLINE:
 		return E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 	default:
 		return E_UI_ONLINE_STATUS::STATUS_OFFLINE;

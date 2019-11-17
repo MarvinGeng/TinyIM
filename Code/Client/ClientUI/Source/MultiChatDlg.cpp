@@ -813,25 +813,25 @@ void CMultiChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	switch (nID)
 	{
-	case ID_MENU_ZOOMRATIO_400:
+	case ID_MENU_ZOOM_RATIO_400:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 16, 4);
 		break;
-	case ID_MENU_ZOOMRATIO_200:
+	case ID_MENU_ZOOM_RATIO_200:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 8, 4);
 		break;
-	case ID_MENU_ZOOMRATIO_150:
+	case ID_MENU_ZOOM_RATIO_150:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 6, 4);
 		break;
-	case ID_MENU_ZOOMRATIO_125:
+	case ID_MENU_ZOOM_RATIO_125:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 5, 4);
 		break;
-	case ID_MENU_ZOOMRATIO_100:
+	case ID_MENU_ZOOM_RATIO_100:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 0, 0);
 		break;
-	case ID_MENU_ZOOMRATIO_75:
+	case ID_MENU_ZOOM_RATIO_75:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 3, 4);
 		break;
-	case ID_MENU_ZOOMRATIO_50:
+	case ID_MENU_ZOOM_RATIO_50:
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 1, 2);
 		break;
 	default:
@@ -839,7 +839,7 @@ void CMultiChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 	}
 
 	CSkinMenu menuPopup = m_SkinMenu.GetSubMenu(8);
-	for (int i = ID_MENU_ZOOMRATIO_400; i <= ID_MENU_ZOOMRATIO_50; i++)
+	for (int i = ID_MENU_ZOOM_RATIO_400; i <= ID_MENU_ZOOM_RATIO_50; i++)
 	{
 		if (i != nID)
 			menuPopup.CheckMenuItem(i, MF_BYCOMMAND|MF_UNCHECKED);
@@ -1121,7 +1121,7 @@ BOOL CMultiChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		if (pImageOle != NULL)
 			pImageOle->Release();
 
@@ -1143,7 +1143,7 @@ BOOL CMultiChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		if (pImageOle != NULL)
 			pImageOle->Release();
 

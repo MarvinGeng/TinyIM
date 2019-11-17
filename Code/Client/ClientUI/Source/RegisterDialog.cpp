@@ -77,7 +77,7 @@ BOOL CRegisterDialog::InitUI()
 
 	m_edtCheckPwd.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtCheckPwd.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtCheckPwd.SubclassWindow(GetDlgItem(IDC_EDIT_CHECKPWD));
+	m_edtCheckPwd.SubclassWindow(GetDlgItem(IDC_EDIT_CHECK_PWD));
 	m_edtCheckPwd.MoveWindow(200, 170 + 55, 190, 30, TRUE);
 	m_edtCheckPwd.SetPasswordChar(0x25CF);
 

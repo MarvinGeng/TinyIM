@@ -76,7 +76,7 @@ BOOL CTeamDlg::InitUI()
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
 
 	m_staTeamName.SetTransparent(TRUE, hDlgBgDC);
-	m_staTeamName.SubclassWindow(GetDlgItem(IDC_STATIC_TEAMNAME));
+	m_staTeamName.SubclassWindow(GetDlgItem(IDC_STATIC_TEAM_NAME));
 	if(m_nOperationType == TEAM_OPERATION_ADD_TEAM)
 	{
 		m_staTeamName.SetWindowText(_T("新分组名称"));

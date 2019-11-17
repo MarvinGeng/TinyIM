@@ -114,7 +114,7 @@ BOOL CAddFriendConfirmDlg::InitUI()
 	m_btnAgree.SetTransparent(TRUE, hDlgBgDC);
 	m_btnAgree.SetBgPic(_T("Button\\btn_normal.png"), _T("Button\\btn_focus.png"),_T("Button\\btn_focus.png"), _T("Button\\btn_focus.png"));
 	m_btnAgree.SetRound(4, 4);
-	m_btnAgree.SubclassWindow(GetDlgItem(ID_ADDCONFIRM_AGREE));
+	m_btnAgree.SubclassWindow(GetDlgItem(ID_ADD_CONFIRM_AGREE));
 	m_btnAgree.ShowWindow(m_bShowAgreeButton? SW_SHOW : SW_HIDE);
 
 	m_btnRefuse.SetButtonType(SKIN_PUSH_BUTTON);
@@ -132,7 +132,7 @@ BOOL CAddFriendConfirmDlg::InitUI()
 	m_staticAddConfirmInfo.SetTransparent(TRUE, hDlgBgDC);
 	m_staticAddConfirmInfo.SetLinkColor(RGB(225, 0, 0));
 	m_staticAddConfirmInfo.SetLinkType(SKIN_LINK_ADDNEW);
-	m_staticAddConfirmInfo.SubclassWindow(GetDlgItem(IDC_ADDCONFIRM));
+	m_staticAddConfirmInfo.SubclassWindow(GetDlgItem(IDC_ADD_CONFIRM));
 	
 	m_staticAddConfirmInfo.SetWindowText(m_strWindowInfo);
 

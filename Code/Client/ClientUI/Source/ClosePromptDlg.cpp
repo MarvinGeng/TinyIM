@@ -45,7 +45,7 @@ BOOL CClosePromptDlg::InitUI()
 	
 	m_btnRememberChoice.SetButtonType(SKIN_CHECKBOX);
 	m_btnRememberChoice.SetTransparent(TRUE, hDlgBgDC);
-	m_btnRememberChoice.SubclassWindow(GetDlgItem(IDC_REMEMBERCHOICE));
+	m_btnRememberChoice.SubclassWindow(GetDlgItem(IDC_REMEMBER_CHOICE));
 	m_btnRememberChoice.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
 	//m_btnRememberChoice.SetCheck(!m_pFMGClient->m_UserConfig.IsEnableExitPrompt());
 

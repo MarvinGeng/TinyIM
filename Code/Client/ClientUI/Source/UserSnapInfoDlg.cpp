@@ -152,7 +152,7 @@ BOOL CUserSnapInfoDlg::InitUI()
 	
 	{
 		m_staUserAccountName.SetTransparent(TRUE, hDlgBgDC);
-		m_staUserAccountName.SubclassWindow(GetDlgItem(IDC_ACCOUNTNAME));
+		m_staUserAccountName.SubclassWindow(GetDlgItem(IDC_ACCOUNT_NAME));
 		m_staUserAccountName.SetTextColor(RGB(0, 0, 0));
 		m_staUserAccountName.SetWindowText(m_strAccountName);
 		m_staUserAccountName.MoveWindow(150, 55, 270, 20, FALSE);
@@ -160,7 +160,7 @@ BOOL CUserSnapInfoDlg::InitUI()
 
 	{
 		m_staUserNickName.SetTransparent(TRUE, hDlgBgDC);
-		m_staUserNickName.SubclassWindow(GetDlgItem(IDC_NICKNAME));
+		m_staUserNickName.SubclassWindow(GetDlgItem(IDC_NICK_NAME));
 		m_staUserNickName.SetTextColor(RGB(0, 0, 0));
 		m_staUserNickName.SetWindowText(m_strNickName);
 		m_staUserNickName.MoveWindow(150, 80, 270, 20, FALSE);

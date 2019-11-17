@@ -87,8 +87,8 @@ BEGIN
     PUSHBUTTON      "<",IDC_PREV_MSG_LOG,223,148,17,14
     PUSHBUTTON      ">",IDC_NEXT_MSG_LOG,263,148,15,14
     PUSHBUTTON      ">|",IDC_LAST_MSG_LOG,282,148,17,14
-    LTEXT           "100%",IDC_STATIC_PICPROGRESS,67,55,224,8
-    CTEXT           "10/10",IDC_STATIC_MSGLOGPAGE,242,151,20,8
+    LTEXT           "100%",IDC_STATIC_PIC_PROGRESS,67,55,224,8
+    CTEXT           "10/10",IDC_STATIC_MSG_LOG_PAGE,242,151,20,8
 END
 
 IDD_GROUPCHATDLG DIALOGEX 0, 0, 316, 180
@@ -109,7 +109,7 @@ BEGIN
     PUSHBUTTON      "<",IDC_PREV_MSG_LOG,223,148,17,14
     PUSHBUTTON      ">",IDC_NEXT_MSG_LOG,263,148,15,14
     PUSHBUTTON      ">|",IDC_LAST_MSG_LOG,282,148,17,14
-    CTEXT           "10/10",IDC_STATIC_MSGLOGPAGE,242,151,20,8
+    CTEXT           "10/10",IDC_STATIC_MSG_LOG_PAGE,242,151,20,8
 END
 
 IDD_VERIFYCODEDLG DIALOGEX 0, 0, 180, 78
@@ -195,7 +195,7 @@ BEGIN
     LTEXT           "邮       箱：",IDC_STATIC,18,204,38,8
     LTEXT           "地      址 :",IDC_STATIC,18,161,38,8
     EDITTEXT        IDC_ACCOUNT,65,24,200,16,ES_AUTOHSCROLL | ES_READONLY
-    EDITTEXT        IDC_NICKNAME,65,46,200,16,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_NICK_NAME,65,46,200,16,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_SIGNATURE,65,68,200,40,ES_MULTILINE | ES_READONLY
     EDITTEXT        IDC_GENDER,65,114,200,16,ES_AUTOHSCROLL | ES_READONLY
     EDITTEXT        IDC_BIRTHDAY,65,136,200,16,ES_AUTOHSCROLL | ES_READONLY
@@ -219,13 +219,13 @@ BEGIN
     EDITTEXT        IDC_EDIT_REGID,160,28,60,20,ES_MULTILINE | ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_REG_NAME,159,58,60,20,ES_MULTILINE | ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_REG_PWD,159,84,60,20,ES_MULTILINE | ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_CHECKPWD,160,118,61,14,ES_MULTILINE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_CHECK_PWD,160,118,61,14,ES_MULTILINE | ES_AUTOHSCROLL
     DEFPUSHBUTTON   "注册",ID_BTN_REGIST,36,164,50,14
     PUSHBUTTON      "取消",ID_BTN_CANCEL,143,164,50,14
     LTEXT           "注册手机号 :",IDC_STATIC_REG_NEW_ID,57,34,53,10
     LTEXT           "注册昵称 :",IDC_STATIC_NAME,57,62,45,10
     LTEXT           "账号密码 :",IDC_STATIC_REG_NEW_PWD,57,90,45,10
-    LTEXT           "确认密码 :",IDC_STATIC_CHECKPWD,57,118,45,10
+    LTEXT           "确认密码 :",IDC_STATIC_CHECK_PWD,57,118,45,10
 END
 
 IDD_FIND_FRIEND_DLG DIALOGEX 0, 0, 248, 140
@@ -235,8 +235,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "查找",IDC_BTN_ADD,171,29,50,14
     EDITTEXT        IDC_EDIT_ADD,15,29,144,14,ES_MULTILINE | ES_AUTOHSCROLL
-    CONTROL         "找人",IDC_RADIO_FINDTYPE1,"Button",BS_AUTORADIOBUTTON,67,59,32,10
-    CONTROL         "找群",IDC_RADIO_FINDTYPE2,"Button",BS_AUTORADIOBUTTON,116,59,32,10
+    CONTROL         "找人",IDC_RADIO_FIND_TYPE1,"Button",BS_AUTORADIOBUTTON,67,59,32,10
+    CONTROL         "找群",IDC_RADIO_FIND_TYPE2,"Button",BS_AUTORADIOBUTTON,116,59,32,10
     CTEXT           "",IDC_STATIC_ADD_INFO,10,89,199,12
     LTEXT           "查找类型：",IDC_STATIC,17,59,40,8
 END
@@ -250,20 +250,20 @@ BEGIN
     PUSHBUTTON      "取消",ID_LOGIN_SETTING_CANCEL,169,167,50,14
     EDITTEXT        IDC_EDIT_SER_ADDRESS,24,50,68,14,ES_MULTILINE | ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_SERVER_PORT,97,50,61,14,ES_MULTILINE | ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_FILESERVER,162,50,71,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_FILEPORT,238,51,61,14,ES_MULTILINE | ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_IMGSERVER,24,87,68,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_IMGPORT,97,87,61,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FILE_SERVER,162,50,71,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_FILE_PORT,238,51,61,14,ES_MULTILINE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_IMG_SERVER,24,87,68,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_IMG_PORT,97,87,61,14,ES_AUTOHSCROLL
     COMBOBOX        IDC_COMBO_PROTYPE,26,124,56,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_PRO_ADD,97,124,82,14,ES_MULTILINE | ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_PRO_PORT,193,124,58,14,ES_MULTILINE | ES_AUTOHSCROLL
     LTEXT           "聊天服务地址 :",IDC_STATIC_SERVER_ADDRESS,24,32,55,8
     LTEXT           "聊天服务端口 :",IDC_STATIC_SERVER_PORT,97,32,50,8
-    LTEXT           "文件服务端口 :",IDC_STATIC_FILEPORT,241,32,47,8
+    LTEXT           "文件服务端口 :",IDC_STATIC_FILE_PORT,241,32,47,8
     LTEXT           "代理服务器类型:",IDC_STA_PROTYPE,24,109,60,9
     LTEXT           "代理服务器地址:",IDC_STA_PROADD,98,109,60,9
     LTEXT           "代理服务器端口:",IDC_STA_PROPORT,193,109,60,9
-    LTEXT           "文件服务地址：",IDC_STATIC_FILESERVER,164,32,55,8
+    LTEXT           "文件服务地址：",IDC_STATIC_FILE_SERVER,164,32,55,8
     LTEXT           "图片服务地址：",IDC_STATIC,24,73,49,8
     LTEXT           "图片服务端口：",IDC_STATIC,97,75,56,8
 END
@@ -283,9 +283,9 @@ IDD_ADD_FRIEND_CONFIRM_DLG DIALOGEX 0, 0, 316, 94
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "同意",ID_ADDCONFIRM_AGREE,70,68,50,14
+    DEFPUSHBUTTON   "同意",ID_ADD_CONFIRM_AGREE,70,68,50,14
     PUSHBUTTON      "拒绝",ID_ADDCONFIRM_REFUSE,162,68,50,14
-    LTEXT           "静态",IDC_ADDCONFIRM,19,19,229,25
+    LTEXT           "静态",IDC_ADD_CONFIRM,19,19,229,25
     PUSHBUTTON      "确定",IDOK,110,68,50,14
 END
 
@@ -306,15 +306,15 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,205,238,50,14
     PUSHBUTTON      "取消",IDCANCEL,259,238,50,14
     CONTROL         "关闭所有声音",IDC_MUTE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,36,204,10
-    CONTROL         "自动回复聊天消息",IDC_AUTOREPLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,52,97,10
+    CONTROL         "自动回复聊天消息",IDC_AUTO_REPLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,52,97,10
     EDITTEXT        IDC_AUTO_REPLY_CONTENT,47,68,227,31,ES_MULTILINE | ES_WANTRETURN
-    CONTROL         "启用阅后即焚",IDC_DESTROYAFTERREAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,104,64,10
-    COMBOBOX        IDC_DESTROYDURATION,97,119,87,54,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "启用消息撤回功能",IDC_ENABLEREVOKECHATMSG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,149,144,10
-    LTEXT           "持续时间：",IDC_DESTRORAFTERREADLABEL,47,121,41,8
-    CONTROL         "退出时弹出提示对话框",IDC_EXITPROMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,169,96,10
-    CONTROL         "点击主界面关闭按钮最小化到托盘",IDC_MINIMIZEWHENCLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,188,202,10
-    CONTROL         "聊天窗口显示上次聊天记录",IDC_CHECK_SHOWLASTMSG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,207,134,10
+    CONTROL         "启用阅后即焚",IDC_DESTROY_AFTER_READ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,104,64,10
+    COMBOBOX        IDC_DESTROY_DURATION,97,119,87,54,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "启用消息撤回功能",IDC_ENABLE_REVOKE_CHAT_MSG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,149,144,10
+    LTEXT           "持续时间：",IDC_DESTROY_AFTER_READ_LABEL,47,121,41,8
+    CONTROL         "退出时弹出提示对话框",IDC_EXIT_PROMP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,169,96,10
+    CONTROL         "点击主界面关闭按钮最小化到托盘",IDC_MINIMIZE_WHEN_CLOSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,188,202,10
+    CONTROL         "聊天窗口显示上次聊天记录",IDC_CHECK_SHOW_LAST_MSG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,207,134,10
 END
 
 IDD_CLOSE_PROMPT DIALOGEX 0, 0, 248, 87
@@ -324,7 +324,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "最小化",IDC_MINIMIZE,45,66,50,14
     PUSHBUTTON      "退出",IDC_EXIT,133,66,50,14
-    CONTROL         "下次不再提示",IDC_REMEMBERCHOICE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,47,47,137,10
+    CONTROL         "下次不再提示",IDC_REMEMBER_CHOICE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,47,47,137,10
     LTEXT           "信息图标",IDC_INFO_ICON,36,20,36,20
     LTEXT           "退出程序还是最小化到托盘？",IDC_INFO_TEXT,69,21,134,8
 END
@@ -336,7 +336,7 @@ IDD_MESSAGE_BOX DIALOGEX 0, 0, 248, 87
 	BEGIN
 	DEFPUSHBUTTON   "最小化", IDC_MINIMIZE, 45, 66, 50, 14
 	PUSHBUTTON      "退出", IDC_EXIT, 133, 66, 50, 14
-	CONTROL         "下次不再提示", IDC_REMEMBERCHOICE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 47, 47, 137, 10
+	CONTROL         "下次不再提示", IDC_REMEMBER_CHOICE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 47, 47, 137, 10
 	LTEXT           "信息图标", IDC_INFO_ICON, 36, 20, 36, 20
 	LTEXT           "退出程序还是最小化到托盘？", IDC_INFO_TEXT, 69, 21, 134, 8
 END
@@ -349,8 +349,8 @@ BEGIN
     DEFPUSHBUTTON   "加为好友",IDOK,49,139,50,14
     PUSHBUTTON      "关闭",IDCANCEL,134,139,50,14
     LTEXT           "头像",IDC_THUMB,27,20,57,41
-    LTEXT           "账户名：13917043320",IDC_ACCOUNTNAME,101,20,115,8
-    LTEXT           "昵称：忧伤的张远龙",IDC_NICKNAME,101,43,77,8
+    LTEXT           "账户名：13917043320",IDC_ACCOUNT_NAME,101,20,115,8
+    LTEXT           "昵称：忧伤的张远龙",IDC_NICK_NAME,101,43,77,8
     LTEXT           "Static",IDC_DESC,26,87,171,27
 END
 
@@ -361,7 +361,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,60,216,52,18
     PUSHBUTTON      "取消",IDCANCEL,120,216,52,18
-    EDITTEXT        IDC_NICKNAME,60,35,80,16,ES_AUTOHSCROLL
+    EDITTEXT        IDC_NICK_NAME,60,35,80,16,ES_AUTOHSCROLL
     EDITTEXT        IDC_SIGNATURE,60,116,200,32,ES_MULTILINE | ES_WANTRETURN
     CONTROL         "男",IDC_GENDER_MALE,"Button",BS_AUTORADIOBUTTON,60,77,24,10
     CONTROL         "女",IDC_GENDER_FEMALE,"Button",BS_AUTORADIOBUTTON,92,77,24,10
@@ -373,14 +373,14 @@ BEGIN
     RTEXT           "昵 称：",IDC_STATIC,16,37,34,8
     RTEXT           "签 名：",IDC_STATIC,16,119,34,8
     CTEXT           "头像",IDC_HEAD,164,18,75,75,SS_CENTERIMAGE
-    PUSHBUTTON      "系统头像",IDC_SYSHEAD,146,95,56,18
+    PUSHBUTTON      "系统头像",IDC_SYS_HEAD,146,95,56,18
     RTEXT           "性 别：",IDC_STATIC,16,77,34,8
     RTEXT           "生 日：",IDC_STATIC,16,97,34,8
     RTEXT           "地 址：",IDC_STATIC,16,155,34,8
     RTEXT           "电 话：",IDC_STATIC,16,175,34,8
     RTEXT           "邮 箱：",IDC_STATIC,16,195,34,8
-    PUSHBUTTON      "自定义头像",IDC_CUSTOMHEAD,204,95,56,18
-    EDITTEXT        IDC_ACCOUNTNAME,60,59,80,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    PUSHBUTTON      "自定义头像",IDC_CUSTOM_HEAD,204,95,56,18
+    EDITTEXT        IDC_ACCOUNT_NAME,60,59,80,12,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
 END
 
 IDD_MOBILE_STATUS DIALOGEX 0, 0, 186, 117
@@ -398,7 +398,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,37,63,50,14
     PUSHBUTTON      "取消",IDCANCEL,121,63,50,14
-    LTEXT           "请输入备注姓名：",IDC_STATIC_MARKNAME,14,23,104,8
+    LTEXT           "请输入备注姓名：",IDC_STATIC_MARK_NAME,14,23,104,8
     EDITTEXT        IDC_EDIT_MARK_NAME,16,36,171,14,ES_AUTOHSCROLL
 END
 
@@ -409,7 +409,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,24,61,50,14
     PUSHBUTTON      "取消",IDCANCEL,91,61,50,14
-    LTEXT           "新分组名：",IDC_STATIC_TEAMNAME,19,23,85,8
+    LTEXT           "新分组名：",IDC_STATIC_TEAM_NAME,19,23,85,8
     EDITTEXT        IDC_EDIT_TEAM_NAME,19,37,133,14,ES_AUTOHSCROLL
 END
 
@@ -419,8 +419,8 @@ CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     EDITTEXT        IDC_EDIT_OLD_PASS_WORD,99,28,94,14,ES_PASSWORD | ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_NEWPASSWORD,99,61,94,14,ES_PASSWORD | ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_NEWPASSCONFIRM,99,92,94,14,ES_PASSWORD | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_NEW_PASS_WORD,99,61,94,14,ES_PASSWORD | ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_NEW_PASS_CONFIRM,99,92,94,14,ES_PASSWORD | ES_AUTOHSCROLL
     DEFPUSHBUTTON   "确定",IDOK,59,147,50,14
     PUSHBUTTON      "放弃",IDCANCEL,141,146,50,14
     LTEXT           "旧密码：",IDC_STATIC,40,30,39,8
@@ -446,7 +446,7 @@ FONT 10, "微软雅黑", 400, 0, 0x86
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,205,162,50,14
     PUSHBUTTON      "取消",IDCANCEL,258,162,50,14
-    CONTROL         "",IDC_TREE_MEMBERLIST,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,16,31,122,127
+    CONTROL         "",IDC_TREE_MEMBER_LIST,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,16,31,122,127
     CONTROL         "",IDC_LIST_SELECTED,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,167,31,129,127
     LTEXT           "好友列表：",IDC_STATIC,19,19,76,8
     LTEXT           "群发目标：",IDC_STATIC,169,19,48,8
@@ -726,7 +726,7 @@ ID_MENU_LOGINSTATUS MENU
 BEGIN
     POPUP "登录状态"
     BEGIN
-        MENUITEM "我在线上",                        ID_MENU_IMONLINE
+        MENUITEM "我在线上",                        ID_MENU_IM_ONLINE
     END
 END
 
@@ -749,10 +749,10 @@ BEGIN
     END
     POPUP "传送文件"
     BEGIN
-        MENUITEM "发送文件",                        IDM_SENDFILE, GRAYED
-        MENUITEM "发送离线文件",                      IDM_SENDOFFLINEFILE
-        MENUITEM "发送文件夹",                       IDM_SENDDIRECTORY, GRAYED
-        MENUITEM "传文件设置",                       IDM_SENDFILESETTINGS, GRAYED
+        MENUITEM "发送文件",                        IDM_SEND_FILE, GRAYED
+        MENUITEM "发送离线文件",                      IDM_SEND_OFF_LINE_FILE
+        MENUITEM "发送文件夹",                       IDM_SEND_DIRECTORY, GRAYED
+        MENUITEM "传文件设置",                       IDM_SEND_FILE_SETTINGS, GRAYED
     END
     POPUP "举报"
     BEGIN
@@ -789,13 +789,13 @@ BEGIN
             MENUITEM "放大 Ctrl+滚轮",                  ID_32841
             MENUITEM "缩小",                          ID_32842
             MENUITEM SEPARATOR
-            MENUITEM "400%",                        ID_MENU_ZOOMRATIO_400
-            MENUITEM "200%",                        ID_MENU_ZOOMRATIO_200
-            MENUITEM "150%",                        ID_MENU_ZOOMRATIO_150
-            MENUITEM "125%",                        ID_MENU_ZOOMRATIO_125
-            MENUITEM "100%",                        ID_MENU_ZOOMRATIO_100, CHECKED
-            MENUITEM "75%",                         ID_MENU_ZOOMRATIO_75
-            MENUITEM "50%",                         ID_MENU_ZOOMRATIO_50
+            MENUITEM "400%",                        ID_MENU_ZOOM_RATIO_400
+            MENUITEM "200%",                        ID_MENU_ZOOM_RATIO_200
+            MENUITEM "150%",                        ID_MENU_ZOOM_RATIO_150
+            MENUITEM "125%",                        ID_MENU_ZOOM_RATIO_125
+            MENUITEM "100%",                        ID_MENU_ZOOM_RATIO_100, CHECKED
+            MENUITEM "75%",                         ID_MENU_ZOOM_RATIO_75
+            MENUITEM "50%",                         ID_MENU_ZOOM_RATIO_50
         END
         MENUITEM SEPARATOR
         MENUITEM "清屏",                          ID_MENU_CLEAR
@@ -805,7 +805,7 @@ BEGIN
     BEGIN
         MENUITEM "按Enter键发送消息",				  ID_BUDDY_DLG_PRESS_ENTER_MENU
         MENUITEM "按Ctrl+Enter键发送消息",            ID_BUDDY_DLG_PRESS_CTRL_ENTER_MENU, CHECKED
-        MENUITEM "自动回复",                        IDM_AUTOREPLY
+        MENUITEM "自动回复",                        IDM_AUTO_REPLY
         MENUITEM "启用阅后即焚",                      IDM_DESTROY_AFTER_READ
     END
     POPUP "右键菜单1"
@@ -813,28 +813,28 @@ BEGIN
         MENUITEM "剪切(&T)",                      ID_MENU_CUT
         MENUITEM "复制(&C)",                      ID_MENU_COPY
         MENUITEM "粘贴(&P)",                      ID_MENU_PASTE
-        MENUITEM "全部选择(&A)",                    ID_MENU_SELALL
+        MENUITEM "全部选择(&A)",                    ID_MENU_SELECT_ALL
         MENUITEM SEPARATOR
-        MENUITEM "另存为(&S)...",                  ID_MENU_SAVEAS
+        MENUITEM "另存为(&S)...",                  ID_MENU_SAVE_AS
         MENUITEM SEPARATOR
         MENUITEM "字体(&F)",                      ID_MENU_FONT
     END
     POPUP "右键菜单2"
     BEGIN
         MENUITEM "复制(&C)",                      ID_MENU_COPY
-        MENUITEM "全部选择(&A)",                    ID_MENU_SELALL
+        MENUITEM "全部选择(&A)",                    ID_MENU_SELECT_ALL
         MENUITEM SEPARATOR
         POPUP "显示比例"
         BEGIN
-            MENUITEM "400%",                        ID_MENU_ZOOMRATIO_400
-            MENUITEM "200%",                        ID_MENU_ZOOMRATIO_200
-            MENUITEM "150%",                        ID_MENU_ZOOMRATIO_150
-            MENUITEM "125%",                        ID_MENU_ZOOMRATIO_125
-            MENUITEM "100%",                        ID_MENU_ZOOMRATIO_100, CHECKED
-            MENUITEM "75%",                         ID_MENU_ZOOMRATIO_75
-            MENUITEM "50%",                         ID_MENU_ZOOMRATIO_50
+            MENUITEM "400%",                        ID_MENU_ZOOM_RATIO_400
+            MENUITEM "200%",                        ID_MENU_ZOOM_RATIO_200
+            MENUITEM "150%",                        ID_MENU_ZOOM_RATIO_150
+            MENUITEM "125%",                        ID_MENU_ZOOM_RATIO_125
+            MENUITEM "100%",                        ID_MENU_ZOOM_RATIO_100, CHECKED
+            MENUITEM "75%",                         ID_MENU_ZOOM_RATIO_75
+            MENUITEM "50%",                         ID_MENU_ZOOM_RATIO_50
         END
-        MENUITEM "另存为(&S)...",                  ID_MENU_SAVEAS
+        MENUITEM "另存为(&S)...",                  ID_MENU_SAVE_AS
         MENUITEM SEPARATOR
         MENUITEM "清屏",                          ID_MENU_CLEAR
     END
@@ -842,18 +842,18 @@ BEGIN
     BEGIN
         MENUITEM "复制",                          ID_MENU_COPY
         MENUITEM SEPARATOR
-        MENUITEM "查找",                          IDM_FINDINMSGLOG
+        MENUITEM "查找",                          IDM_FIND_IN_MSG_LOG
         MENUITEM SEPARATOR
-        MENUITEM "导出消息记录",                      IDM_EXPORT_MSGLOG
+        MENUITEM "导出消息记录",                      IDM_EXPORT_MSG_LOG
         MENUITEM SEPARATOR
-        MENUITEM "删除选中消息记录",                    IDM_DELETESELECTMSGLOG
+        MENUITEM "删除选中消息记录",                    IDM_DELETE_SELECT_MSG_LOG
         MENUITEM SEPARATOR
-        MENUITEM "删除所有消息记录",                    IDM_CLEARMSGLOG
+        MENUITEM "删除所有消息记录",                    IDM_CLEAR_MSG_LOG
     END
     POPUP "打开文件右键菜单"
     BEGIN
-        MENUITEM "打开",                          IDM_OPENFILE
-        MENUITEM "打开文件夹",                       IDM_OPENDIRECTORY
+        MENUITEM "打开",                          IDM_OPEN_FILE
+        MENUITEM "打开文件夹",                       IDM_OPEN_DIRECTORY
     END
 END
 
@@ -920,13 +920,13 @@ BEGIN
             MENUITEM "放大 Ctrl+滚轮",                  ID_32890,MFT_STRING,MFS_ENABLED
             MENUITEM "缩小",                          ID_32891,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
-            MENUITEM "400%",                        ID_MENU_ZOOMRATIO_400,MFT_STRING,MFS_ENABLED
-            MENUITEM "200%",                        ID_MENU_ZOOMRATIO_200,MFT_STRING,MFS_ENABLED
-            MENUITEM "150%",                        ID_MENU_ZOOMRATIO_150,MFT_STRING,MFS_ENABLED
-            MENUITEM "125%",                        ID_MENU_ZOOMRATIO_125,MFT_STRING,MFS_ENABLED
-            MENUITEM "100%",                        ID_MENU_ZOOMRATIO_100,MFT_STRING,MFS_CHECKED
-            MENUITEM "75%",                         ID_MENU_ZOOMRATIO_75,MFT_STRING,MFS_ENABLED
-            MENUITEM "50%",                         ID_MENU_ZOOMRATIO_50,MFT_STRING,MFS_ENABLED
+            MENUITEM "400%",                        ID_MENU_ZOOM_RATIO_400,MFT_STRING,MFS_ENABLED
+            MENUITEM "200%",                        ID_MENU_ZOOM_RATIO_200,MFT_STRING,MFS_ENABLED
+            MENUITEM "150%",                        ID_MENU_ZOOM_RATIO_150,MFT_STRING,MFS_ENABLED
+            MENUITEM "125%",                        ID_MENU_ZOOM_RATIO_125,MFT_STRING,MFS_ENABLED
+            MENUITEM "100%",                        ID_MENU_ZOOM_RATIO_100,MFT_STRING,MFS_CHECKED
+            MENUITEM "75%",                         ID_MENU_ZOOM_RATIO_75,MFT_STRING,MFS_ENABLED
+            MENUITEM "50%",                         ID_MENU_ZOOM_RATIO_50,MFT_STRING,MFS_ENABLED
         END
         MENUITEM MFT_SEPARATOR
         MENUITEM "清屏",                          ID_MENU_CLEAR,MFT_STRING,MFS_ENABLED
@@ -947,28 +947,28 @@ BEGIN
         MENUITEM "剪切(&T)",                      ID_MENU_CUT,MFT_STRING,MFS_ENABLED
         MENUITEM "复制(&C)",                      ID_MENU_COPY,MFT_STRING,MFS_ENABLED
         MENUITEM "粘贴(&P)",                      ID_MENU_PASTE,MFT_STRING,MFS_ENABLED
-        MENUITEM "全部选择(&A)",                    ID_MENU_SELALL,MFT_STRING,MFS_ENABLED
+        MENUITEM "全部选择(&A)",                    ID_MENU_SELECT_ALL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        MENUITEM "另存为(&S)...",                  ID_MENU_SAVEAS,MFT_STRING,MFS_ENABLED
+        MENUITEM "另存为(&S)...",                  ID_MENU_SAVE_AS,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "字体(&F)",                      ID_MENU_FONT,MFT_STRING,MFS_ENABLED
     END
     POPUP "右键菜单2",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
         MENUITEM "复制(&C)",                      ID_MENU_COPY,MFT_STRING,MFS_ENABLED
-        MENUITEM "全部选择(&A)",                    ID_MENU_SELALL,MFT_STRING,MFS_ENABLED
+        MENUITEM "全部选择(&A)",                    ID_MENU_SELECT_ALL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         POPUP "显示比例",                           65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "400%",                        ID_MENU_ZOOMRATIO_400,MFT_STRING,MFS_ENABLED
-            MENUITEM "200%",                        ID_MENU_ZOOMRATIO_200,MFT_STRING,MFS_ENABLED
-            MENUITEM "150%",                        ID_MENU_ZOOMRATIO_150,MFT_STRING,MFS_ENABLED
-            MENUITEM "125%",                        ID_MENU_ZOOMRATIO_125,MFT_STRING,MFS_ENABLED
-            MENUITEM "100%",                        ID_MENU_ZOOMRATIO_100,MFT_STRING,MFS_CHECKED
-            MENUITEM "75%",                         ID_MENU_ZOOMRATIO_75,MFT_STRING,MFS_ENABLED
-            MENUITEM "50%",                         ID_MENU_ZOOMRATIO_50,MFT_STRING,MFS_ENABLED
+            MENUITEM "400%",                        ID_MENU_ZOOM_RATIO_400,MFT_STRING,MFS_ENABLED
+            MENUITEM "200%",                        ID_MENU_ZOOM_RATIO_200,MFT_STRING,MFS_ENABLED
+            MENUITEM "150%",                        ID_MENU_ZOOM_RATIO_150,MFT_STRING,MFS_ENABLED
+            MENUITEM "125%",                        ID_MENU_ZOOM_RATIO_125,MFT_STRING,MFS_ENABLED
+            MENUITEM "100%",                        ID_MENU_ZOOM_RATIO_100,MFT_STRING,MFS_CHECKED
+            MENUITEM "75%",                         ID_MENU_ZOOM_RATIO_75,MFT_STRING,MFS_ENABLED
+            MENUITEM "50%",                         ID_MENU_ZOOM_RATIO_50,MFT_STRING,MFS_ENABLED
         END
-        MENUITEM "另存为(&S)...",                  ID_MENU_SAVEAS,MFT_STRING,MFS_ENABLED
+        MENUITEM "另存为(&S)...",                  ID_MENU_SAVE_AS,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "清屏",                          ID_MENU_CLEAR,MFT_STRING,MFS_ENABLED
     END
@@ -976,8 +976,8 @@ BEGIN
     BEGIN
         MENUITEM "复制",                          ID_MENU_COPY,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        MENUITEM "删除选中消息记录",                    IDM_DELETESELECTMSGLOG,MFT_STRING,MFS_ENABLED
-        MENUITEM "删除所有消息记录",                    IDM_CLEARMSGLOG,MFT_STRING,MFS_ENABLED
+        MENUITEM "删除选中消息记录",                    IDM_DELETE_SELECT_MSG_LOG,MFT_STRING,MFS_ENABLED
+        MENUITEM "删除所有消息记录",                    IDM_CLEAR_MSG_LOG,MFT_STRING,MFS_ENABLED
     END
 END
 
@@ -985,8 +985,8 @@ ID_MENU_MAIN_PANEL MENU
 BEGIN
     POPUP "状态"
     BEGIN
-        MENUITEM "我在线上",                        ID_MENU_IMONLINE
-        MENUITEM "离线",                          ID_MENU_IMOFFLINE
+        MENUITEM "我在线上",                        ID_MENU_IM_ONLINE
+        MENUITEM "离线",                          ID_MENU_IM_OFFLINE
     END
     POPUP "系统托盘菜单一"
     BEGIN
@@ -996,8 +996,8 @@ BEGIN
     END
     POPUP "系统托盘菜单二"
     BEGIN
-        MENUITEM "我在线上",                        ID_MENU_IMONLINE
-        MENUITEM "离线",                          ID_MENU_IMOFFLINE
+        MENUITEM "我在线上",                        ID_MENU_IM_ONLINE
+        MENUITEM "离线",                          ID_MENU_IM_OFFLINE
         MENUITEM SEPARATOR
         MENUITEM "锁定 Flamingo ",                ID_MENU_LOCK
         MENUITEM SEPARATOR
@@ -1016,17 +1016,17 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "漫游最近联系人列表",                   ID_32976, GRAYED
-        MENUITEM "清空最近联系人列表",                   IDM_CLEARRECENTLIST
+        MENUITEM "清空最近联系人列表",                   IDM_CLEAR_RECENT_LIST
     END
     POPUP "联系人"
     BEGIN
         POPUP "头像显示"
         BEGIN
-            MENUITEM "大头像",                         ID_MENU_BIGHEADPIC, CHECKED
-            MENUITEM "小头像",                         ID_MENU_SMALLHEADPIC
-            MENUITEM "标准头像",                        ID_MENU_STDHEADPIC
+            MENUITEM "大头像",                         ID_MENU_BIG_HEAD_PIC, CHECKED
+            MENUITEM "小头像",                         ID_MENU_SMALL_HEAD_PIC
+            MENUITEM "标准头像",                        ID_MENU_STD_HEAD_PIC
             MENUITEM SEPARATOR
-            MENUITEM "选中时显示大头像",                    ID_MENU_SHOWBIGHEADPICINSEL
+            MENUITEM "选中时显示大头像",                    ID_MENU_SHOW_BIG_HEAD_PIC_IN_SEL
             MENUITEM SEPARATOR
             MENUITEM "显示我的头像",                      ID_32909, CHECKED
         END
@@ -1044,19 +1044,19 @@ BEGIN
             MENUITEM "按昵称排序",                       ID_32920, CHECKED
             MENUITEM "按账户名排序",                      ID_32921
         END
-        MENUITEM "刷新好友列表",                      IDM_REFRESH_BUDDYLIST
+        MENUITEM "刷新好友列表",                      IDM_REFRESH_BUDDY_LIST
         MENUITEM SEPARATOR
-        MENUITEM "显示在线联系人",                     IDM_SHOW_ONLINEBUDDY_ONLY
+        MENUITEM "显示在线联系人",                     IDM_SHOW_ONLINE_BUDDY_ONLY
     END
     POPUP "群/讨论组"
     BEGIN
         POPUP "图标显示"
         BEGIN
-            MENUITEM "大图标",                         ID_MENU_BIGHEADPIC
-            MENUITEM "小图标",                         ID_MENU_SMALLHEADPIC, CHECKED
-            MENUITEM "标准图标",                        ID_MENU_STDHEADPIC
+            MENUITEM "大图标",                         ID_MENU_BIG_HEAD_PIC
+            MENUITEM "小图标",                         ID_MENU_SMALL_HEAD_PIC, CHECKED
+            MENUITEM "标准图标",                        ID_MENU_STD_HEAD_PIC
             MENUITEM SEPARATOR
-            MENUITEM "选中时显示大图标",                    ID_MENU_SHOWBIGHEADPICINSEL, CHECKED
+            MENUITEM "选中时显示大图标",                    ID_MENU_SHOW_BIG_HEAD_PIC_IN_SEL, CHECKED
         END
         MENUITEM SEPARATOR
         POPUP "所有群消息设置"
@@ -1077,21 +1077,21 @@ BEGIN
     END
     POPUP "好友右键菜单"
     BEGIN
-        MENUITEM "发送即时消息",                      IDM_SENDMSG
+        MENUITEM "发送即时消息",                      IDM_SEND_MSG
         MENUITEM SEPARATOR
-        MENUITEM "查看用户资料",                      IDM_VIEWBUDDYINFO
+        MENUITEM "查看用户资料",                      IDM_VIEW_BUDDY_INFO
         MENUITEM SEPARATOR
-        MENUITEM "修改备注姓名",                      IDM_MODIFY_BUDDY_MARKNAME
+        MENUITEM "修改备注姓名",                      IDM_MODIFY_BUDDY_MARK_NAME
         MENUITEM SEPARATOR
-        MENUITEM "删除好友",                        IDM_DELETEFRIEND
+        MENUITEM "删除好友",                        IDM_DELETE_FRIEND
         MENUITEM SEPARATOR
         MENUITEM "移动联系人至",                      65535
     END
     POPUP "主菜单"
     BEGIN
-        MENUITEM "系统设置",                        IDM_SYSTEMSETTINGS
+        MENUITEM "系统设置",                        IDM_SYSTEM_SETTINGS
         MENUITEM SEPARATOR
-        MENUITEM "修改密码",                        IDM_MODIFYPASSWORD
+        MENUITEM "修改密码",                        IDM_MODIFY_PASS_WORD
         MENUITEM SEPARATOR
         MENUITEM "关于",                          ID_TOOL
     END
@@ -1103,36 +1103,36 @@ BEGIN
     END
     POPUP "最近联系人会话右键菜单"
     BEGIN
-        MENUITEM "发送即时消息",                      IDM_SENDMSGFROMRECENTLIST
+        MENUITEM "发送即时消息",                      IDM_SEND_MSG_FROM_RECENT_LIST
         MENUITEM SEPARATOR
-        MENUITEM "查看用户资料",                      IDM_VIEWBUDDYINFO_FROMRECENTLIST
+        MENUITEM "查看用户资料",                      IDM_VIEW_BUDDY_INFO_FROM_RECENT_LIST
         MENUITEM SEPARATOR
-        MENUITEM "从会话列表移除",                     IDM_DELETERECENTITEM
+        MENUITEM "从会话列表移除",                     IDM_DELETE_RECENT_ITEM
     END
     POPUP "群组右键菜单"
     BEGIN
-        MENUITEM "发送群消息",                       IDM_SENDGROUP_MSG
+        MENUITEM "发送群消息",                       IDM_SEND_GROUP_MSG
         MENUITEM SEPARATOR
-        MENUITEM "查看群资料",                       IDM_VIEW_GROUPINFO
+        MENUITEM "查看群资料",                       IDM_VIEW_GROUP_INFO
         MENUITEM SEPARATOR
         MENUITEM "退出该群",                        IDM_EXIT_GROUP
     END
     POPUP "分组右键菜单"
     BEGIN
-        MENUITEM "添加分组",                        IDM_ADDTEAM
-        MENUITEM "删除分组",                        IDM_DELETETEAM
+        MENUITEM "添加分组",                        IDM_ADD_TEAM
+        MENUITEM "删除分组",                        IDM_DELETE_TEAM
         MENUITEM SEPARATOR
         MENUITEM "修改分组名",                       33103
     END
     POPUP "好友列表空白处右键菜单"
     BEGIN
-        MENUITEM "添加分组",                        IDM_ADDTEAM
+        MENUITEM "添加分组",                        IDM_ADD_TEAM
         MENUITEM SEPARATOR
-        MENUITEM "刷新好友列表",                      IDM_REFRESH_BUDDYLIST
+        MENUITEM "刷新好友列表",                      IDM_REFRESH_BUDDY_LIST
     END
     POPUP "群组列表空白处右键菜单"
     BEGIN
-        MENUITEM "创建群",                         IDM_CREATENEWGROUP
+        MENUITEM "创建群",                         IDM_CREATE_NEW_GROUP
 		MENUITEM "刷新群组列表"					   IDM_REFRESH_GROUP_LIST
     END
 END

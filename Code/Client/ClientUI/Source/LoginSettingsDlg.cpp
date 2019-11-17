@@ -80,11 +80,11 @@ BOOL CLoginSettingsDlg::InitUI()
 	//m_staticSrvPort.SetTransparent(TRUE, hDlgBgDC);
 	//m_staticSrvPort.MoveWindow(215, 65, 60, 25, TRUE);
 
-	//m_staticFileSrvAddr.SubclassWindow(GetDlgItem(IDC_STATIC_FILESERVER));
+	//m_staticFileSrvAddr.SubclassWindow(GetDlgItem(IDC_STATIC_FILE_SERVER));
 	//m_staticFileSrvAddr.SetTransparent(TRUE, hDlgBgDC);
 	//m_staticFileSrvAddr.MoveWindow(250, 65, 60, 25, TRUE);
 
-	//m_staticFilePort.SubclassWindow(GetDlgItem(IDC_STATIC_FILEPORT));
+	//m_staticFilePort.SubclassWindow(GetDlgItem(IDC_STATIC_FILE_PORT));
 	//m_staticFilePort.SetTransparent(TRUE, hDlgBgDC);
 	//m_staticFilePort.MoveWindow(370, 65, 60, 25, TRUE);
 
@@ -136,7 +136,7 @@ BOOL CLoginSettingsDlg::InitUI()
 	m_editFileSrvAddr.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_editFileSrvAddr.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_editFileSrvAddr.SetTransparent(TRUE, hDlgBgDC);
-	m_editFileSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_FILESERVER));
+	m_editFileSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_FILE_SERVER));
 	iniFile.ReadString(_T("server"), _T("fileserver"), _T("flamingo.hootina.org"), strTemp.GetBuffer(64), 64, strIniPath);
 	strTemp.ReleaseBuffer();
 	m_editFileSrvAddr.SetWindowText(strTemp);
@@ -144,7 +144,7 @@ BOOL CLoginSettingsDlg::InitUI()
     m_editImgSrvAddr.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2, 2, 2, 2));
     m_editImgSrvAddr.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2, 2, 2, 2));
     m_editImgSrvAddr.SetTransparent(TRUE, hDlgBgDC);
-    m_editImgSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_IMGSERVER));
+    m_editImgSrvAddr.SubclassWindow(GetDlgItem(IDC_EDIT_IMG_SERVER));
     iniFile.ReadString(_T("server"), _T("imgserver"), _T("flamingo.hootina.org"), strTemp.GetBuffer(64), 64, strIniPath);
     strTemp.ReleaseBuffer();
     m_editImgSrvAddr.SetWindowText(strTemp);
@@ -159,7 +159,7 @@ BOOL CLoginSettingsDlg::InitUI()
 
 	m_editFilePort.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
     m_editFilePort.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2, 2, 2, 2));
-    m_editFilePort.SubclassWindow(GetDlgItem(IDC_EDIT_FILEPORT));
+    m_editFilePort.SubclassWindow(GetDlgItem(IDC_EDIT_FILE_PORT));
 	//m_edtFilePort.MoveWindow(370, 90, 126, 30, TRUE);
 	iniFile.ReadString(_T("server"), _T("fileport"), _T("20001"), strTemp.GetBuffer(32), 32, strIniPath);
 	strTemp.ReleaseBuffer();
@@ -167,7 +167,7 @@ BOOL CLoginSettingsDlg::InitUI()
 
     m_editImgPort.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2, 2, 2, 2));
     m_editImgPort.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2, 2, 2, 2));
-    m_editImgPort.SubclassWindow(GetDlgItem(IDC_EDIT_IMGPORT));
+    m_editImgPort.SubclassWindow(GetDlgItem(IDC_EDIT_IMG_PORT));
     iniFile.ReadString(_T("server"), _T("imgport"), _T("20002"), strTemp.GetBuffer(32), 32, strIniPath);
     strTemp.ReleaseBuffer();
     m_editImgPort.SetWindowText(strTemp);

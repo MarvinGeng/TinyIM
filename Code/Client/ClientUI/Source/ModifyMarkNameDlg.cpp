@@ -34,7 +34,7 @@ BOOL CModifyMarkNameDlg::InitUI()
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
 
 	m_staMarkName.SetTransparent(TRUE, hDlgBgDC);
-	m_staMarkName.SubclassWindow(GetDlgItem(IDC_STATIC_MARKNAME));
+	m_staMarkName.SubclassWindow(GetDlgItem(IDC_STATIC_MARK_NAME));
 
 	m_edtMarkName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtMarkName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));

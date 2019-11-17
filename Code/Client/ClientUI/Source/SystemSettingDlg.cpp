@@ -110,7 +110,7 @@ BOOL CSystemSettingDlg::InitUI()
 	m_btnAutoReply.SetButtonType(SKIN_CHECKBOX);
 	m_btnAutoReply.SetTransparent(TRUE, hDlgBgDC);
 	m_btnAutoReply.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnAutoReply.SubclassWindow(GetDlgItem(IDC_AUTOREPLY));
+	m_btnAutoReply.SubclassWindow(GetDlgItem(IDC_AUTO_REPLY));
 	//m_btnAutoReply.SetCheck(m_pFMGClient->m_UserConfig.IsEnableAutoReply());
 
 	//自动回复内容编辑框
@@ -125,13 +125,13 @@ BOOL CSystemSettingDlg::InitUI()
 	m_btnDestroyAfterRead.SetButtonType(SKIN_CHECKBOX);
 	m_btnDestroyAfterRead.SetTransparent(TRUE, hDlgBgDC);
 	m_btnDestroyAfterRead.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnDestroyAfterRead.SubclassWindow(GetDlgItem(IDC_DESTROYAFTERREAD));
+	m_btnDestroyAfterRead.SubclassWindow(GetDlgItem(IDC_DESTROY_AFTER_READ));
 
 	
 	m_cboDurationRead.SetTransparent(TRUE, hDlgBgDC);
 	m_cboDurationRead.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_cboDurationRead.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_cboDurationRead.SubclassWindow(GetDlgItem(IDC_DESTROYDURATION));
+	m_cboDurationRead.SubclassWindow(GetDlgItem(IDC_DESTROY_DURATION));
 	m_cboDurationRead.SetArrowNormalPic(_T("ComboBox\\inputbtn_normal_bak.png"));
 	m_cboDurationRead.SetArrowHotPic(_T("ComboBox\\inputbtn_highlight.png"));
 	m_cboDurationRead.SetArrowPushedPic(_T("ComboBox\\inputbtn_down.png"));
@@ -139,7 +139,7 @@ BOOL CSystemSettingDlg::InitUI()
 	m_cboDurationRead.SetTransparent(TRUE, hDlgBgDC);
 	m_cboDurationRead.SetItemHeight(-1, 18);
 	m_cboDurationRead.SetReadOnly(TRUE);
-	::EnableWindow(GetDlgItem(IDC_DESTRORAFTERREADLABEL), m_btnDestroyAfterRead.GetCheck());
+	::EnableWindow(GetDlgItem(IDC_DESTROY_AFTER_READ_LABEL), m_btnDestroyAfterRead.GetCheck());
 	m_cboDurationRead.EnableWindow(m_btnDestroyAfterRead.GetCheck());
 	
 	const TCHAR szDuration[][8] = {_T("5Ãë"), _T("6Ãë"), _T("7Ãë"), _T("8Ãë"), _T("9Ãë"), _T("10Ãë")};
@@ -153,27 +153,27 @@ BOOL CSystemSettingDlg::InitUI()
 	m_btnRevokeChatMsg.SetButtonType(SKIN_CHECKBOX);
 	m_btnRevokeChatMsg.SetTransparent(TRUE, hDlgBgDC);
 	m_btnRevokeChatMsg.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnRevokeChatMsg.SubclassWindow(GetDlgItem(IDC_ENABLEREVOKECHATMSG));
+	m_btnRevokeChatMsg.SubclassWindow(GetDlgItem(IDC_ENABLE_REVOKE_CHAT_MSG));
 
 	//立即退出按钮
 	m_btnExitPrompt.SetButtonType(SKIN_CHECKBOX);
 	m_btnExitPrompt.SetTransparent(TRUE, hDlgBgDC);
 	m_btnExitPrompt.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnExitPrompt.SubclassWindow(GetDlgItem(IDC_EXITPROMP));
+	m_btnExitPrompt.SubclassWindow(GetDlgItem(IDC_EXIT_PROMP));
 	//m_btnExitPrompt.SetCheck(m_pFMGClient->m_UserConfig.IsEnableExitPrompt());
 
 	//关闭时退出按钮设置
 	m_btnExitWhenClose.SetButtonType(SKIN_CHECKBOX);
 	m_btnExitWhenClose.SetTransparent(TRUE, hDlgBgDC);
 	m_btnExitWhenClose.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnExitWhenClose.SubclassWindow(GetDlgItem(IDC_MINIMIZEWHENCLOSE));
+	m_btnExitWhenClose.SubclassWindow(GetDlgItem(IDC_MINIMIZE_WHEN_CLOSE));
 	//m_btnExitWhenClose.SetCheck(!m_pFMGClient->m_UserConfig.IsEnableExitWhenCloseMainDlg());
 
 	//显示最近的消息按钮设置
 	m_btnShowLastMsg.SetButtonType(SKIN_CHECKBOX);
 	m_btnShowLastMsg.SetTransparent(TRUE, hDlgBgDC);
 	m_btnShowLastMsg.SetCheckBoxPic(_T("CheckBox\\checkbox_normal.png"), _T("CheckBox\\checkbox_hightlight.png"), _T("CheckBox\\checkbox_tick_normal.png"), _T("CheckBox\\checkbox_tick_highlight.png"));
-	m_btnShowLastMsg.SubclassWindow(GetDlgItem(IDC_CHECK_SHOWLASTMSG));
+	m_btnShowLastMsg.SubclassWindow(GetDlgItem(IDC_CHECK_SHOW_LAST_MSG));
 	//m_btnShowLastMsg.SetCheck(m_pFMGClient->m_UserConfig.IsEnableShowLastMsgInChatDlg());
 
 	//OK按钮设置
@@ -217,7 +217,7 @@ void CSystemSettingDlg::OnCheckAutoReply(UINT uNotifyCode, int nID, CWindow wndC
  */
 void CSystemSettingDlg::OnCheckDestroyAfterRead(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	::EnableWindow(GetDlgItem(IDC_DESTRORAFTERREADLABEL), m_btnDestroyAfterRead.GetCheck());
+	::EnableWindow(GetDlgItem(IDC_DESTROY_AFTER_READ_LABEL), m_btnDestroyAfterRead.GetCheck());
 	m_cboDurationRead.EnableWindow(m_btnDestroyAfterRead.GetCheck());
 }
 

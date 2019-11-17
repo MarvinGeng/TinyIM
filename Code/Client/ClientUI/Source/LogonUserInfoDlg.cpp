@@ -281,7 +281,7 @@ LRESULT CLogonUserInfoDlg::OnUploadUserThumbResult(UINT uMsg, WPARAM wParam, LPA
 void CLogonUserInfoDlg::UpdateCtrlData()
 {
 	//账户名
-	SetDlgItemText(IDC_ACCOUNTNAME, m_userMgr.m_UserInfo.m_strAccount.c_str());
+	SetDlgItemText(IDC_ACCOUNT_NAME, m_userMgr.m_UserInfo.m_strAccount.c_str());
 	
 	m_bUseCustomThumb = m_userMgr.m_UserInfo.m_bUseCustomFace;
 	CString strThumbPath;
@@ -385,18 +385,18 @@ BOOL CLogonUserInfoDlg::Init()
 	m_btnSysHead.SetTransparent(TRUE, hDlgBgDC);
 	m_btnSysHead.SetBgPic(_T("Button\\btn_normal.png"), _T("Button\\btn_highlight.png"),
 		_T("Button\\btn_down.png"), _T("Button\\btn_focus.png"));
-	m_btnSysHead.SubclassWindow(GetDlgItem(IDC_SYSHEAD));
+	m_btnSysHead.SubclassWindow(GetDlgItem(IDC_SYS_HEAD));
 
 	m_btnCustomHead.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnCustomHead.SetTransparent(TRUE, hDlgBgDC);
 	m_btnCustomHead.SetBgPic(_T("Button\\btn_normal.png"), _T("Button\\btn_highlight.png"),
 		_T("Button\\btn_down.png"), _T("Button\\btn_focus.png"));
-	m_btnCustomHead.SubclassWindow(GetDlgItem(IDC_CUSTOMHEAD));
+	m_btnCustomHead.SubclassWindow(GetDlgItem(IDC_CUSTOM_HEAD));
 
 	m_edtNickName.SetTransparent(TRUE, hDlgBgDC);
 	m_edtNickName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtNickName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtNickName.SubclassWindow(GetDlgItem(IDC_NICKNAME));
+	m_edtNickName.SubclassWindow(GetDlgItem(IDC_NICK_NAME));
 	
 	m_edtSign.SetTransparent(TRUE, hDlgBgDC);
 	m_edtSign.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));

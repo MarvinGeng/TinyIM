@@ -52,7 +52,7 @@ BOOL CMultiChatMemberSelectionDlg::InitUI()
 
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
 
-	m_treeBuddyList.Attach(GetDlgItem(IDC_TREE_MEMBERLIST));
+	m_treeBuddyList.Attach(GetDlgItem(IDC_TREE_MEMBER_LIST));
 	m_treeBuddyList.ModifyStyle(0, TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT);
 
 	m_listSelectedBuddyList.Attach(GetDlgItem(IDC_LIST_SELECTED));

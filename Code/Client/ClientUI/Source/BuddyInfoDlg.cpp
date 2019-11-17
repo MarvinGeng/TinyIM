@@ -141,7 +141,7 @@ void CBuddyInfoDlg::UpdateCtrls()
 	}	
 
 	SetDlgItemText(IDC_ACCOUNT, pBuddyInfo->m_strAccount.c_str());
-	SetDlgItemText(IDC_NICKNAME, pBuddyInfo->m_strNickName.c_str());
+	SetDlgItemText(IDC_NICK_NAME, pBuddyInfo->m_strNickName.c_str());
 	SetDlgItemText(IDC_SIGNATURE, pBuddyInfo->m_strSign.c_str());
 	if(pBuddyInfo->m_nGender != 0)
 	{

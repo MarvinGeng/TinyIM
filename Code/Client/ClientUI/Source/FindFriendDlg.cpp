@@ -91,11 +91,11 @@ BOOL CFindFriendDlg::InitUI()
 
 	//单选按钮绑定
 	{
-		m_btnFindTypeSingle.Attach(GetDlgItem(IDC_RADIO_FINDTYPE1));
+		m_btnFindTypeSingle.Attach(GetDlgItem(IDC_RADIO_FIND_TYPE1));
 		m_btnFindTypeSingle.SetCheck(TRUE);
 		//m_btnFindTypeSingle.SetTransparent(TRUE, hDlgBgDC);
 
-		m_btnFindTypeGroup.Attach(GetDlgItem(IDC_RADIO_FINDTYPE2));
+		m_btnFindTypeGroup.Attach(GetDlgItem(IDC_RADIO_FIND_TYPE2));
 		//m_btnFindTypeGroup.SetTransparent(TRUE, hDlgBgDC)
 	}
 ;

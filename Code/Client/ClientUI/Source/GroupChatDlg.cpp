@@ -1181,31 +1181,31 @@ void CGroupChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	switch (nID)
 	{
-	case ID_MENU_ZOOMRATIO_400:
+	case ID_MENU_ZOOM_RATIO_400:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 16, 4);
 	}break;
-	case ID_MENU_ZOOMRATIO_200:
+	case ID_MENU_ZOOM_RATIO_200:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 8, 4);
 	}break;
-	case ID_MENU_ZOOMRATIO_150:
+	case ID_MENU_ZOOM_RATIO_150:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 6, 4);
 	}break;
-	case ID_MENU_ZOOMRATIO_125:
+	case ID_MENU_ZOOM_RATIO_125:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 5, 4);
 	}break;
-	case ID_MENU_ZOOMRATIO_100:
+	case ID_MENU_ZOOM_RATIO_100:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 0, 0);
 	}break;
-	case ID_MENU_ZOOMRATIO_75:
+	case ID_MENU_ZOOM_RATIO_75:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 3, 4);
 	}break;
-	case ID_MENU_ZOOMRATIO_50:
+	case ID_MENU_ZOOM_RATIO_50:
 	{
 		::SendMessage(m_richRecv.m_hWnd, EM_SETZOOM, 1, 2);
 	}break;
@@ -1216,7 +1216,7 @@ void CGroupChatDlg::OnMenu_ZoomRatio(UINT uNotifyCode, int nID, CWindow wndCtl)
 	}
 
 	CSkinMenu menuPopup = m_SkinMenu.GetSubMenu(8);
-	for (int i = ID_MENU_ZOOMRATIO_400; i <= ID_MENU_ZOOMRATIO_50; i++)
+	for (int i = ID_MENU_ZOOM_RATIO_400; i <= ID_MENU_ZOOM_RATIO_50; i++)
 	{
 		if (i != nID)
 		{
@@ -1539,7 +1539,7 @@ BOOL CGroupChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		if (pImageOle != NULL)
 		{
 			pImageOle->Release();
@@ -1563,7 +1563,7 @@ BOOL CGroupChatDlg::OnRichEdit_RBtnDown(MSG* pMsg)
 		IImageOle* pImageOle = NULL;
 		BOOL bRet = RichEdit_GetImageOle(pMsg->hwnd, m_ptRBtnDown, &pImageOle);
 		UINT nSaveAs = ((bRet && pImageOle != NULL) ? 0 : MF_GRAYED) ;
-		menuPopup.EnableMenuItem(ID_MENU_SAVEAS, MF_BYCOMMAND|nSaveAs);
+		menuPopup.EnableMenuItem(ID_MENU_SAVE_AS, MF_BYCOMMAND|nSaveAs);
 		if (pImageOle != NULL)
 		{
 			pImageOle->Release();
@@ -2085,7 +2085,7 @@ BOOL CGroupChatDlg::Init()
 	m_btnArrow.MoveWindow(GROUP_CHAT_DLG_WIDTH-235, GROUP_CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
 	////图片上传进度信息文本
-	//m_staPicUploadProgress.SubclassWindow(GetDlgItem(IDC_STATIC_PICPROGRESS));
+	//m_staPicUploadProgress.SubclassWindow(GetDlgItem(IDC_STATIC_PIC_PROGRESS));
 	//m_staPicUploadProgress.SetTransparent(TRUE, hDlgBgDC);
 	//m_staPicUploadProgress.MoveWindow(10, CHATDLG_HEIGHT-25, 380, 25, FALSE);
 	//m_staPicUploadProgress.ShowWindow(SW_HIDE);
@@ -2107,7 +2107,7 @@ BOOL CGroupChatDlg::Init()
 	//m_btnPrevMsgLog.SetBgPic(_T("Button\\btnright_normal.png"), _T("Button\\btnright_highlight.png"),_T("Button\\btnright_down.png"), _T("Button\\btnright_fouce.png"));
 	m_btnPrevMsgLog.MoveWindow(GROUP_CHAT_DLG_WIDTH+140, GROUP_CHAT_DLG_HEIGHT-30, 28, 25, FALSE);
 
-	m_staMsgLogPage.SubclassWindow(GetDlgItem(IDC_STATIC_MSGLOGPAGE));
+	m_staMsgLogPage.SubclassWindow(GetDlgItem(IDC_STATIC_MSG_LOG_PAGE));
 	m_staMsgLogPage.SetTransparent(TRUE, hDlgBgDC);
 	m_staMsgLogPage.MoveWindow(GROUP_CHAT_DLG_WIDTH+170, GROUP_CHAT_DLG_HEIGHT-24, 60, 25, FALSE);
 
