@@ -147,13 +147,13 @@ void CGroupInfoDlg::UpdateCtrls()
 		SetDlgItemText(ID_EDIT_CREATER, _T("zhangyl"));
 		TCHAR cTime[32] = {0};
 		FormatTime(lpGroupInfo->m_nCreateTime, _T("%Y-%m-%d"), cTime, sizeof(cTime)/sizeof(TCHAR));
-		//SetDlgItemText(ID_EDIT_CREATETIME, cTime);
-		SetDlgItemText(ID_EDIT_CREATETIME, _T("2015年12月24日"));
+		//SetDlgItemText(ID_EDIT_CREATE_TIME, cTime);
+		SetDlgItemText(ID_EDIT_CREATE_TIME, _T("2015年12月24日"));
 		strText.Format(_T("%u"), lpGroupInfo->m_nClass);
 		SetDlgItemText(ID_EDIT_CLASS, _T(""));
 		SetDlgItemText(ID_EDIT_REMARK, _T(""));
 		SetDlgItemText(ID_EDIT_MEMO, lpGroupInfo->m_strMemo.c_str());
-		SetDlgItemText(ID_EDIT_FINGERMEMO, lpGroupInfo->m_strFingerMemo.c_str());
+		SetDlgItemText(ID_EDIT_FINGER_MEMO, lpGroupInfo->m_strFingerMemo.c_str());
 
 		//lpBuddyInfo = m_lpFMGClient->GetUserInfo();
 		if (lpBuddyInfo != NULL)
@@ -161,7 +161,7 @@ void CGroupInfoDlg::UpdateCtrls()
 			lpBuddyInfo = NULL;// lpGroupInfo->GetMemberByUin(lpBuddyInfo->m_uUserID);
 			if (lpBuddyInfo != NULL)
 			{
-				SetDlgItemText(ID_EDIT_CARDNAME, lpBuddyInfo->m_strNickName.c_str());
+				SetDlgItemText(ID_EDIT_CARD_NAME, lpBuddyInfo->m_strNickName.c_str());
 				SetDlgItemText(ID_EDIT_GENDER, lpBuddyInfo->m_nGender==0? _T("男"):_T("女"));
 				SetDlgItemText(ID_EDIT_PHONE, lpBuddyInfo->m_strMobile.c_str());
 				SetDlgItemText(ID_EDIT_EMAIL, lpBuddyInfo->m_strEmail.c_str());
@@ -192,15 +192,15 @@ BOOL CGroupInfoDlg::Init()
 	m_staNumber.SetTransparent(TRUE, hDlgBgDC);
 	m_staNumber.SubclassWindow(GetDlgItem(ID_STATIC_NUMBER));
 	m_staCreateTime.SetTransparent(TRUE, hDlgBgDC);
-	m_staCreateTime.SubclassWindow(GetDlgItem(ID_STATIC_CREATETIME));
+	m_staCreateTime.SubclassWindow(GetDlgItem(ID_STATIC_CREATE_TIME));
 	m_staRemark.SetTransparent(TRUE, hDlgBgDC);
 	m_staRemark.SubclassWindow(GetDlgItem(ID_STATIC_REMARK));
 	m_staMemo.SetTransparent(TRUE, hDlgBgDC);
 	m_staMemo.SubclassWindow(GetDlgItem(ID_STATIC_MEMO));
 	m_staFingerMemo.SetTransparent(TRUE, hDlgBgDC);
-	m_staFingerMemo.SubclassWindow(GetDlgItem(ID_STATIC_FINGERMEMO));
+	m_staFingerMemo.SubclassWindow(GetDlgItem(ID_STATIC_FINGER_MEMO));
 	m_staCardName.SetTransparent(TRUE, hDlgBgDC);
-	m_staCardName.SubclassWindow(GetDlgItem(ID_STATIC_CARDNAME));
+	m_staCardName.SubclassWindow(GetDlgItem(ID_STATIC_CARD_NAME));
 	m_staPhone.SetTransparent(TRUE, hDlgBgDC);
 	m_staPhone.SubclassWindow(GetDlgItem(ID_STATIC_PHONE));
 	m_staGender.SetTransparent(TRUE, hDlgBgDC);
@@ -229,7 +229,7 @@ BOOL CGroupInfoDlg::Init()
 	m_edtCreateTime.SetTransparent(TRUE, hDlgBgDC);
 	m_edtCreateTime.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtCreateTime.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtCreateTime.SubclassWindow(GetDlgItem(ID_EDIT_CREATETIME));
+	m_edtCreateTime.SubclassWindow(GetDlgItem(ID_EDIT_CREATE_TIME));
 	m_edtRemark.SetTransparent(TRUE, hDlgBgDC);
 	m_edtRemark.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtRemark.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
@@ -243,11 +243,11 @@ BOOL CGroupInfoDlg::Init()
 	m_edtFingerMemo.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtFingerMemo.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtFingerMemo.SetMultiLine(TRUE);
-	m_edtFingerMemo.SubclassWindow(GetDlgItem(ID_EDIT_FINGERMEMO));
+	m_edtFingerMemo.SubclassWindow(GetDlgItem(ID_EDIT_FINGER_MEMO));
 	m_edtCardName.SetTransparent(TRUE, hDlgBgDC);
 	m_edtCardName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtCardName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtCardName.SubclassWindow(GetDlgItem(ID_EDIT_CARDNAME));
+	m_edtCardName.SubclassWindow(GetDlgItem(ID_EDIT_CARD_NAME));
 	m_edtPhone.SetTransparent(TRUE, hDlgBgDC);
 	m_edtPhone.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtPhone.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));

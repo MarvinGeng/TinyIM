@@ -104,7 +104,7 @@ BOOL CFindFriendDlg::InitUI()
 		m_staticAddInfo.SetTransparent(TRUE, hDlgBgDC);
 		m_staticAddInfo.SetLinkColor(RGB(225, 0, 0));
 		m_staticAddInfo.SetLinkType(SKIN_LINK_ADDNEW);
-		m_staticAddInfo.SubclassWindow(GetDlgItem(IDC_STATIC_ADDINFO));
+		m_staticAddInfo.SubclassWindow(GetDlgItem(IDC_STATIC_ADD_INFO));
 	}
 
 	return TRUE;

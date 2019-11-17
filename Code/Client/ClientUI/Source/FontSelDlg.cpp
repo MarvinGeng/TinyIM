@@ -267,7 +267,7 @@ BOOL CFontSelDlg::InitFontClassToolBar()
 	m_tbFontClass.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcFontClass(4, 7, 4+55, 7+32);
-	m_tbFontClass.Create(m_hWnd, rcFontClass, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_FONTCLASS);
+	m_tbFontClass.Create(m_hWnd, rcFontClass, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_FONT_CLASS);
 
 	return TRUE;
 }
@@ -390,7 +390,7 @@ BOOL CFontSelDlg::InitFontAttrToolBar()
 	m_tbFontAttr.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcFontAttr(217 - 48, 6, 217+104, 6+32);
-	m_tbFontAttr.Create(m_hWnd, rcFontAttr, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOLBAR_FONTATTR);
+	m_tbFontAttr.Create(m_hWnd, rcFontAttr, NULL, WS_CHILD|WS_VISIBLE, NULL, ID_TOOL_BAR_FONT_ATTR);
 
 	m_tbFontAttr.SetItemCheckState(0, m_fontInfo.m_bBold);
 	m_tbFontAttr.SetItemCheckState(1, m_fontInfo.m_bItalic);

@@ -66,12 +66,12 @@ BOOL CRegisterDialog::InitUI()
 
 	m_edtRegName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtRegName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtRegName.SubclassWindow(GetDlgItem(IDC_EDIT_REGNAME));
+	m_edtRegName.SubclassWindow(GetDlgItem(IDC_EDIT_REG_NAME));
 	m_edtRegName.MoveWindow(200, 115, 190, 30, TRUE);
 
 	m_edtPwd.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtPwd.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_edtPwd.SubclassWindow(GetDlgItem(IDC_EDIT_REGPWD));
+	m_edtPwd.SubclassWindow(GetDlgItem(IDC_EDIT_REG_PWD));
 	m_edtPwd.MoveWindow(200, 170, 190, 30, TRUE);
 	m_edtPwd.SetPasswordChar(0x25CF);
 

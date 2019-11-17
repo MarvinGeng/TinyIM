@@ -39,7 +39,7 @@ BOOL CLoginSettingsDlg::PreTranslateMessage(MSG* pMsg)
 	//支持Esc键关闭对话框
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam==VK_ESCAPE)
  	{
-		PostMessage(WM_COMMAND, (WPARAM)ID_LOGINSETTINGCANCEL, 0);
+		PostMessage(WM_COMMAND, (WPARAM)ID_LOGIN_SETTING_CANCEL, 0);
 		return TRUE;
  	}
 
@@ -71,12 +71,12 @@ BOOL CLoginSettingsDlg::InitUI()
 	
 
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
-	//m_staticSrvAddr.SubclassWindow(GetDlgItem(IDC_STATIC_SERADDRESS));
+	//m_staticSrvAddr.SubclassWindow(GetDlgItem(IDC_STATIC_SERVER_ADDRESS));
 	//m_staticSrvAddr.SetTransparent(TRUE, hDlgBgDC);
 	//m_staticSrvAddr.MoveWindow(60, 65, 60, 25, TRUE);
 	//m_staticSrvAddr.SetFocus();
 
-	//m_staticSrvPort.SubclassWindow(GetDlgItem(IDC_STATIC_SERPORT));
+	//m_staticSrvPort.SubclassWindow(GetDlgItem(IDC_STATIC_SERVER_PORT));
 	//m_staticSrvPort.SetTransparent(TRUE, hDlgBgDC);
 	//m_staticSrvPort.MoveWindow(215, 65, 60, 25, TRUE);
 
@@ -151,7 +151,7 @@ BOOL CLoginSettingsDlg::InitUI()
 
 	m_editSrvPort.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_editSrvPort.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_editSrvPort.SubclassWindow(GetDlgItem(IDC_EDIT_SERPORT));
+	m_editSrvPort.SubclassWindow(GetDlgItem(IDC_EDIT_SERVER_PORT));
 	//m_edtSrvPort.MoveWindow(215, 90, 126, 30, TRUE);
 	iniFile.ReadString(_T("server"), _T("port"), _T("20000"), strTemp.GetBuffer(32), 32, strIniPath);
 	strTemp.ReleaseBuffer();
@@ -174,7 +174,7 @@ BOOL CLoginSettingsDlg::InitUI()
 	
 	m_editProxyAddr.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_editProxyAddr.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_editProxyAddr.SubclassWindow(GetDlgItem(IDC_EDIT_PROADD));
+	m_editProxyAddr.SubclassWindow(GetDlgItem(IDC_EDIT_PRO_ADD));
 	m_editProxyAddr.SetTransparent(TRUE, hDlgBgDC);
 	//m_editProxyAddr.MoveWindow(212, 180, 126, 30, TRUE);
 	if(nSel > USE_BROWSER_PROXY)
@@ -186,7 +186,7 @@ BOOL CLoginSettingsDlg::InitUI()
 
 	m_editProxyPort.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_editProxyPort.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
-	m_editProxyPort.SubclassWindow(GetDlgItem(IDC_EDIT_PROPORT));
+	m_editProxyPort.SubclassWindow(GetDlgItem(IDC_EDIT_PRO_PORT));
 	//m_edtProxyPort.MoveWindow(368, 180, 127, 30, TRUE);
 	if(nSel > USE_BROWSER_PROXY)
 	{
@@ -199,14 +199,14 @@ BOOL CLoginSettingsDlg::InitUI()
 	m_btnOK.SetTransparent(TRUE, hDlgBgDC);
 	m_btnOK.SetBgPic(_T("Button\\btn_normal.png"), _T("Button\\btn_highlight.png"), _T("Button\\btn_down.png"), _T("Button\\btn_focus.png"));
 	m_btnOK.SetRound(4, 4);
-	m_btnOK.SubclassWindow(GetDlgItem(ID_LOGINSETTING));
+	m_btnOK.SubclassWindow(GetDlgItem(ID_LOGIN_SETTING));
 	//m_btnOK.MoveWindow(165, 265, 94, 30, TRUE);
 
 	m_btnCancel.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnCancel.SetTransparent(TRUE, hDlgBgDC);
 	m_btnCancel.SetBgPic(_T("Button\\btn_normal.png"), _T("Button\\btn_highlight.png"), _T("Button\\btn_down.png"), _T("Button\\btn_focus.png"));
 	m_btnCancel.SetRound(4, 4);
-	m_btnCancel.SubclassWindow(GetDlgItem(ID_LOGINSETTINGCANCEL));
+	m_btnCancel.SubclassWindow(GetDlgItem(ID_LOGIN_SETTING_CANCEL));
 	//m_btnCancel.MoveWindow(290, 265, 94, 30, TRUE);
 
 	BOOL bEnabled = (m_comboProxyType.GetCurSel() > USE_BROWSER_PROXY ? TRUE : FALSE);

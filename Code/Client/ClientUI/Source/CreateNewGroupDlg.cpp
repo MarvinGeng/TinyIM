@@ -59,7 +59,7 @@ BOOL CCreateNewGroupDlg::InitUI()
 	m_edtGroupName.SetBgNormalPic(_T("frameBorderEffect_normalDraw.png"), CRect(2,2,2,2));
 	m_edtGroupName.SetBgHotPic(_T("frameBorderEffect_mouseDownDraw.png"), CRect(2,2,2,2));
 	m_edtGroupName.SetTransparent(TRUE, hDlgBgDC);
-	m_edtGroupName.SubclassWindow(GetDlgItem(IDC_EDIT_GROUPNAME));
+	m_edtGroupName.SubclassWindow(GetDlgItem(IDC_EDIT_GROUP_NAME));
 
 	m_btnOK.SetButtonType(SKIN_PUSH_BUTTON);
 	m_btnOK.SetTransparent(TRUE, hDlgBgDC);

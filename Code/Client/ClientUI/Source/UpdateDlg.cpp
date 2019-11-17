@@ -46,20 +46,20 @@ BOOL CUpdateDlg::InitUI()
 	
 	HDC hDlgBgDC = m_SkinDlg.GetBgDC();
 
-	m_UpdateFileName.SubclassWindow(GetDlgItem(IDC_UPFILENAME));
+	m_UpdateFileName.SubclassWindow(GetDlgItem(IDC_UP_LOAD_FILE_NAME));
 	m_UpdateFileName.SetTransparent(TRUE, hDlgBgDC);
 
 	m_UpdateRate.SubclassWindow(GetDlgItem(IDC_UPRATE));
 	m_UpdateRate.SetWindowText(_T("00%"));
 	m_UpdateRate.SetTransparent(TRUE, hDlgBgDC);
 
-	m_UpdateProgressBar.m_hWnd = GetDlgItem(IDC_UPPROGRESS);
+	m_UpdateProgressBar.m_hWnd = GetDlgItem(IDC_UP_LOAD_PROGRESS);
 	m_UpdateProgressBar.SetPos(0);
 	//m_UpdateProgressBar.SetStep(10);
 	//m_UpdateProgressBar.SetRange(0, 100);
 	m_UpdateProgressBar.SetBarColor(RGB(231, 179, 37));
 	
-	m_UpdateListCtrl.SubclassWindow(GetDlgItem(IDC_UPFILELIST));
+	m_UpdateListCtrl.SubclassWindow(GetDlgItem(IDC_UP_LOAD_FILE_LIST));
 	m_UpdateListCtrl.ModifyStyleEx(0, LVS_EX_GRIDLINES);
 	m_UpdateListCtrl.SetTransparent(TRUE, hDlgBgDC);
 	
