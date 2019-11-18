@@ -46,6 +46,50 @@ struct GroupInfo {
 	std::string m_strGroupImage;//群头像
 	std::vector<UserBaseInfo> m_GroupUsers;//群组成员
 };
+const int E_FONT_BOLD = 1;
+const int E_FONT_ITALIC = 2;
+const int E_FONT_UNDER_SCORE = 4;
+struct FontInfo_s
+{
+public:
+	std::string m_strFontName; //字体名称
+	int			m_nFontSize;   //字体大小
+	std::string m_strFontColorHex;  //字体颜色
+	int         m_nFontStyle;//字体风格，粗体、斜体、下划线
+	explicit FontInfo_s();
+	bool IsBold() const;//是否粗体
+	bool IsItalic() const;//是否斜体
+	bool IsUnderScore() const;//是否是下划线
+	void SetBold();//设置粗体
+	void SetItalic();//设置斜体
+	void SetUnderScore();//设置下划线
+	bool FromString(const std::string& strJson);//从json构造
+	std::string ToString() const;//转为json
+
+public:
+
+};
+
+//好友聊天消息
+struct FriendChatMsg_s {
+	std::string m_strChatMsgId; //消息ID，由服务器生成
+	std::string m_strSenderId; //发送方ID
+	std::string m_strReceiverId;//接收方ID
+	std::string m_strContext;  //信息内容
+	FontInfo_s  m_fontInfo;  //字体信息
+	std::string m_strMsgTime;  //消息接收时间
+};
+
+//群组聊天消息
+struct GroupChatMsg_s {
+	std::string m_strChatMsgId; //消息ID，由服务器生成
+	std::string m_strSenderId; //发送方ID
+	std::string m_strGroupId;//接收方ID
+	std::string m_strContext;  //信息内容
+	FontInfo_s  m_fontInfo;  //字体信息
+	std::string m_strMsgTime;  //消息接收时间
+};
+
 /**
  * @brief 消息体的头部
  * 
@@ -463,29 +507,7 @@ public:
 	virtual bool Valid() const override;
 	
 };
-const int E_FONT_BOLD = 1;
-const int E_FONT_ITALIC = 2;
-const int E_FONT_UNDER_SCORE = 4;
-struct FontInfo_s
-{
-public:
-	std::string m_strFontName; //字体名称
-	int			m_nFontSize;   //字体大小
-	std::string m_strFontColorHex;  //字体颜色
-	int         m_nFontStyle;//字体风格，粗体、斜体、下划线
-	explicit FontInfo_s();
-	bool IsBold() const ;//是否粗体
-	bool IsItalic() const ;//是否斜体
-	bool IsUnderScore() const ;//是否是下划线
-	void SetBold();//设置粗体
-	void SetItalic();//设置斜体
-	void SetUnderScore();//设置下划线
-	bool FromString(const std::string& strJson);//从json构造
-	std::string ToString() const;//转为json
 
-public:
-
-};
 
 /**
  * @brief 好友聊天发送文字消息，发送方到服务器
@@ -2029,6 +2051,34 @@ public:
 	std::vector<SendGroupTextMsgRspMsg> m_groupChatMsgVec;
 public:
 	SearchChatHistoryRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+
+//查找
+class AsyncFriendChatMsgReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strChatMsgId;
+public:
+	AsyncFriendChatMsgReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class AsyncFriendChatMsgRsp :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_eCode;
+	std::string m_errMsg;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::vector<FriendChatMsg_s> m_chatMsgVec;
+public:
+	AsyncFriendChatMsgRsp();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };

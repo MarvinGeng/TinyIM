@@ -321,6 +321,18 @@ SearchChatMsgReq_Type,
 //查找聊天记录的回复
 SearchChatMsgRsp_Type,
 
+//好友聊天消息同步请求
+AsyncFriendChatMsgReq_Type,
+
+//好友聊天消息同步回复
+AsyncFriendChatMsgRsp_Type,
+
+//群组聊天消息同步请求
+AsyncGroupChatMsgReq_Type,
+
+//群组聊天消息同步回复
+AsyncGroupChatMsgRsp_Type,
+
 };
 
 //客户端会话状态
