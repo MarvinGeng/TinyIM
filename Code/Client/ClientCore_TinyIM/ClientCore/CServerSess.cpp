@@ -41,10 +41,10 @@ void CServerSess::do_read()
  */
 void CServerSess::handle_message(const TransBaseMsg_t& hdr)
 {
-	//LOG_INFO(ms_loger,"ServerSess READ:{}  [{}]",hdr.ToHexString(),__LINE__)
+	LOG_INFO(ms_loger,"ServerSess READ:{}  [{}]",hdr.to_string(),__LINE__)
 	if (m_server)
 	{
-		//m_server->SendFoward(shared_from_this(),hdr);
+		m_server->SendFoward(shared_from_this(),hdr);
 	}
 }
 

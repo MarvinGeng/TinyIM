@@ -411,13 +411,13 @@ std::string CMediumServer::getServerIpPort()
 void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,const TransBaseMsg_t& msg)
 {
 	auto pMsg = std::make_shared<TransBaseMsg_t>(msg.GetType(), msg.to_string());
-	/*auto item = m_BackSessMap.find(pClientSess);
+	auto item = m_BackSessMap.find(pClientSess);
 	
 	if (item != m_BackSessMap.end())
 	{
 		item->second->SendMsg(pMsg);
 	}
-	else*/
+	else
 	{
 		if (msg.GetType() == MessageType::UserLoginRsp_Type)
 		{

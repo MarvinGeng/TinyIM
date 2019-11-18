@@ -131,25 +131,25 @@ bool CMsgPersistentUtil::InitDataBase()
 	{
 		if (nullptr == m_pFriendChatSelectRangeFirst)
 		{
-			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?))";
 			m_pFriendChatSelectRangeFirst = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 
 		if (nullptr == m_pFriendChatSelectRangeLast)
 		{
-			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?))";
 			m_pFriendChatSelectRangeLast = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 
 		if (nullptr == m_pFriendChatSelectRangePrev)
 		{
-			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?))";
 			m_pFriendChatSelectRangePrev = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 
 		if (nullptr == m_pFriendChatSelectRangeNext)
 		{
-			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?)";
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?))";
 			m_pFriendChatSelectRangeNext = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 	}

@@ -114,7 +114,7 @@ int CClientSess::StopConnect()
  */
 void CClientSess::handle_message(const TransBaseMsg_t& hdr)
 {
-	LOG_INFO(ms_loger, "UserName: {}  UserId: {} Recv: MsgType:{} MsgContent:{}  [{}]", UserName(), UserId(), MsgType(hdr.GetType()), hdr.to_string(), __LINE__);
+	LOG_INFO(ms_loger, "UserId:{} MsgType:{} Recv:{} ", UserId(),MsgType(hdr.GetType()), hdr.to_string());
 	if (m_queue)
 	{
 		m_queue->SendBack(shared_from_this(),hdr);
