@@ -1095,6 +1095,22 @@ bool CMsgProto::SendChatTxtMsg(const std::string strFriendName, const std::strin
 	}
 }
 
+bool CMsgProto::GetChatHistoryReq(const std::string strFriendId, const std::string strChatMsgId, const HISTORY_DIRECTION eDirection)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	if (pSess)
+	{
+		GetFriendChatHistoryReq reqMsg;
+		reqMsg.m_eDirection = eDirection;
+		reqMsg.m_strUserId = this->m_strUserId;
+		reqMsg.m_strFriendId = strFriendId;
+		reqMsg.m_strMsgId = "1234567";
+		reqMsg.m_strChatMsgId = strChatMsgId;
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		return pSess->SendMsg(&trans);
+	}
+	return false;
+}
 /**
  * @brief 发送收到文本消息之后的回复
  * 
@@ -1122,6 +1138,26 @@ void CMsgProto::HandleUpdateFriendListNotifyReq(const std::shared_ptr<TransBaseM
 {
 	GetFriendList();
 }
+
+void CMsgProto::HandleGetFriendChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
+{
+	GetFriendChatHistoryRsp rspMsg;
+	if (rspMsg.FromString(pOrgMsg->to_string())) {
+		for (const auto& item : (rspMsg.m_msgHistory))
+		{
+			auto WndItem = m_msgMap.find(rspMsg.GetMsgType());
+			C_WND_MSG_BuddyTextMessage * pResult = new C_WND_MSG_BuddyTextMessage();
+			pResult->m_uiMsg = CoreMsgToUiMsg(item);
+
+			if (WndItem != m_msgMap.end())
+			{
+				::PostMessage(WndItem->second, FMT_MSG_FRIEND_CHAT_HISTORY, 0, (LPARAM)pResult);
+			}
+		}
+	}
+}
+
+
 /**
  * @brief 处理发送文本回复消息
  * 

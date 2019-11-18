@@ -168,4 +168,4 @@ endif()
 add_executable(DennisThinkIM ./Source/Startup.h  ./Source/Startup.cpp    ${FLAMING_GO_CLIENT_SOURCE} ${NET_SOURCE_FILE} ${UI_NET_SOURCE_FILE} ${ENCODE_UTIL_SOURCE_FILE})
 
 add_subdirectory(./CatchScreen)
-add_subdirectory(./iAutoUpdate)
+#add_subdirectory(./iAutoUpdate)

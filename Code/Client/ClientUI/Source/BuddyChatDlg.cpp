@@ -1398,35 +1398,49 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 	{
 	//消息记录第一条消息记录
 	case IDC_FIRST_MSG_LOG:
+		{	
+		if (m_pSess)
 		{
-			if(m_nMsgLogCurrentPageIndex == 1)
+			m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_FIRST_MSG);
+		}
+		/*{
+			if (m_nMsgLogCurrentPageIndex == 1)
 			{
 				return;
 			}
 			m_nMsgLogRecordOffset = 1;
 			m_nMsgLogCurrentPageIndex = 1;
+		}*/
 		}break;
 
 	//消息记录上一条消息
 	case IDC_PREV_MSG_LOG:
 		{
-			if(m_nMsgLogCurrentPageIndex == 1)
+			if (m_pSess)
 			{
-				return;
+				m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_PREV_MSG);
 			}
-			m_nMsgLogRecordOffset -= 10;
-			--m_nMsgLogCurrentPageIndex;
-			if(m_nMsgLogRecordOffset <= 0)
-			{
-				m_nMsgLogRecordOffset = 1;
-				m_nMsgLogCurrentPageIndex = 1;
-			}
+			//if(m_nMsgLogCurrentPageIndex == 1)
+			//{
+			//	return;
+			//}
+			//m_nMsgLogRecordOffset -= 10;
+			//--m_nMsgLogCurrentPageIndex;
+			//if(m_nMsgLogRecordOffset <= 0)
+			//{
+			//	m_nMsgLogRecordOffset = 1;
+			//	m_nMsgLogCurrentPageIndex = 1;
+			//}
 		}break;
 
 	//消息记录下一条消息
 	case IDC_NEXT_MSG_LOG:
 		{
-			if(m_nMsgLogCurrentPageIndex == nPageCount)
+			if (m_pSess)
+			{
+				m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_NEXT_MSG);
+			}
+			/*if(m_nMsgLogCurrentPageIndex == nPageCount)
 			{
 				return;
 			}
@@ -1436,13 +1450,17 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 			{
 				m_nMsgLogRecordOffset -= 10;
 				--m_nMsgLogCurrentPageIndex;
-			}
+			}*/
 		}break;
 
 	//消息记录最后一条消息
 	case IDC_LAST_MSG_LOG:
 		{
-			if(m_nMsgLogCurrentPageIndex == nPageCount)
+			if (m_pSess)
+			{
+				m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_NEXT_MSG);
+			}
+			/*if(m_nMsgLogCurrentPageIndex == nPageCount)
 			{
 				return;
 			}	
@@ -1456,7 +1474,7 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 					--m_nMsgLogCurrentPageIndex;
 					break;
 				}
-			}
+			}*/
 		}
 		break;
 	}

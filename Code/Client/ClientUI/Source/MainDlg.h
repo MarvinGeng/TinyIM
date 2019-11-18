@@ -210,7 +210,8 @@ public:
 		MESSAGE_HANDLER_EX(FMG_MSG_FRIEND_FILE_RECV_REQ, OnRecvFriendFileReqMsg)
 		MESSAGE_HANDLER_EX(FMG_MSG_FRIEND_FILE_SEND_RSP, OnSendFriendFileRspMsg)
 		MESSAGE_HANDLER_EX(FMG_MSG_FRIEND_FILE_NOTIFY_REQ, OnNotifyFriendFileReqMsg)
-
+		MESSAGE_HANDLER_EX(FMT_MSG_FRIEND_CHAT_HISTORY,OnRecvFriendHistoryMsg)
+		MESSAGE_HANDLER_EX(FMT_MSG_GROUP_CHAT_HISTORY,OnRecvGroupHistoryMsg)
 		//Dennis Think End
 
 		MESSAGE_HANDLER_EX(WM_TRAYICON_NOTIFY, OnTrayIconNotify)
@@ -362,7 +363,8 @@ private:
 	LRESULT OnNetFailed(UINT uMsg, WPARAM wParam, LPARAM lParam);   //网络故障，失去连接
 	LRESULT OnNetRecover(UINT uMsg, WPARAM wParam, LPARAM lParam);  //网络恢复
 	LRESULT OnRecvGroupMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);  //网络恢复
-
+	LRESULT OnRecvFriendHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);  //网络恢复
+	LRESULT OnRecvGroupHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);  //网络恢复
 	LRESULT OnSendFriendFileRspMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件请求消息
 	LRESULT OnRecvFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件回复消息
 	LRESULT OnNotifyFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件回复消息

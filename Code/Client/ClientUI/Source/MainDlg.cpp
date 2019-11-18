@@ -4041,6 +4041,30 @@ LRESULT CMainDlg::OnRecvFriendTextMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
+LRESULT CMainDlg::OnRecvFriendHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	C_WND_MSG_BuddyTextMessage * pResult = (C_WND_MSG_BuddyTextMessage*)lParam;
+	if (pResult == NULL)
+	{
+		return (LRESULT)0;
+	}
+	ShowBuddyChatDlg(pResult->m_strSender);
+	auto item = m_mapBuddyChatDlg.find(pResult->m_strSender);
+	if (item != m_mapBuddyChatDlg.end())
+	{
+		item->second->OnRecvLogMsg(pResult->m_uiMsg);
+	}
+	else
+	{
+		MessageBox(_T("DoRecvFriendChatTextMsg"), _T("DoRecvFriendChatTextMsg"));
+	}
+	return 0;
+}
+
+LRESULT CMainDlg::OnRecvGroupHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return 0;
+}
 
 /**
  * @brief 响应添加好友请求
@@ -6708,6 +6732,8 @@ void CMainDlg::InitMsgTypeMap()
 		m_netProto->AddMap(MessageType::FriendNotifyFileMsgReq_Type, m_hWnd);
 		m_netProto->AddMap(MessageType::UserKickOffReq_Type, m_hWnd);
 		m_netProto->AddMap(MessageType::RecvGroupTextMsgRsp_Type, m_hWnd);
+		m_netProto->AddMap(MessageType::GetFriendChatHistoryRsp_Type, m_hWnd);
+		m_netProto->AddMap(MessageType::GetGroupChatHistoryRsp_Type, m_hWnd);
 	}
 }
 
