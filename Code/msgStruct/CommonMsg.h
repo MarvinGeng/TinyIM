@@ -2083,6 +2083,34 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+
+//查找
+class AsyncGroupChatMsgReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strChatMsgId;
+public:
+	AsyncGroupChatMsgReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class AsyncGroupChatMsgRsp :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_eCode;
+	std::string m_errMsg;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::vector<GroupChatMsg_s> m_chatMsgVec;
+public:
+	AsyncGroupChatMsgRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
 /**
  * @brief 服务器配置
  * 

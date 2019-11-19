@@ -66,13 +66,13 @@ bool FriendChatMsg(const json11::Json & msgItem,FriendChatMsg_s& chatMsg) {
 	return true;
 }
 
-json11::Json GroupChatMsg(const FriendChatMsg_s& chatMsg) {
+json11::Json GroupChatMsg(const GroupChatMsg_s& chatMsg) {
 	using namespace json11;
 	Json clientObj = Json::object(
 		{
 			{"MsgId",chatMsg.m_strChatMsgId},
 			{"SenderId", chatMsg.m_strSenderId},
-			{"ReciverId", chatMsg.m_strReceiverId},
+			{"GroupId", chatMsg.m_strGroupId},
 			{"Context", chatMsg.m_strContext},
 			{"MsgTime",chatMsg.m_strMsgTime},
 			{"FontInfo",chatMsg.m_fontInfo.ToString()},
@@ -81,7 +81,7 @@ json11::Json GroupChatMsg(const FriendChatMsg_s& chatMsg) {
 	return clientObj;
 }
 
-bool GroupChatMsg(const json11::Json & msgItem, FriendChatMsg_s& chatMsg) {
+bool GroupChatMsg(const json11::Json & msgItem, GroupChatMsg_s& chatMsg) {
 
 	if (msgItem["MsgId"].is_string()) {
 		chatMsg.m_strChatMsgId = msgItem["MsgId"].string_value();
@@ -99,8 +99,8 @@ bool GroupChatMsg(const json11::Json & msgItem, FriendChatMsg_s& chatMsg) {
 	}
 
 
-	if (msgItem["ReciverId"].is_string()) {
-		chatMsg.m_strReceiverId = msgItem["ReciverId"].string_value();
+	if (msgItem["GroupId"].is_string()) {
+		chatMsg.m_strGroupId = msgItem["GroupId"].string_value();
 	}
 	else {
 		return false;
@@ -8375,6 +8375,136 @@ bool AsyncFriendChatMsgRsp::FromString(const std::string& strJson)
 		{
 			FriendChatMsg_s chatMsg;
 			if (FriendChatMsg(msgItem, chatMsg)) {
+				m_chatMsgVec.push_back(chatMsg);
+			}
+		}
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+AsyncGroupChatMsgReq::AsyncGroupChatMsgReq()
+{
+	m_type = MessageType::AsyncGroupChatMsgReq_Type;
+}
+
+std::string AsyncGroupChatMsgReq::ToString() const
+{
+	using namespace json11;
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"ChatMsgId",m_strChatMsgId},
+		});
+	return msgJson.dump();
+}
+
+bool AsyncGroupChatMsgReq::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["ChatMsgId"].is_string()) {
+		m_strChatMsgId = json["ChatMsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+AsyncGroupChatMsgRsp::AsyncGroupChatMsgRsp()
+{
+	m_type = MessageType::AsyncGroupChatMsgRsp_Type;
+}
+
+std::string AsyncGroupChatMsgRsp::ToString() const
+{
+	using namespace json11;
+
+	Json::array msgArray;
+	for (auto msgItem : m_chatMsgVec)
+	{
+		msgArray.push_back(GroupChatMsg(msgItem));
+	}
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"MsgList",msgArray},
+		});
+	return msgJson.dump();
+}
+
+bool AsyncGroupChatMsgRsp::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["Code"].is_number()) {
+		m_eCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgList"].is_array())
+	{
+		auto jsonArray = json["MsgList"].array_items();
+
+		for (const auto msgItem : jsonArray)
+		{
+			GroupChatMsg_s chatMsg;
+			if (GroupChatMsg(msgItem, chatMsg)) {
 				m_chatMsgVec.push_back(chatMsg);
 			}
 		}
