@@ -392,7 +392,15 @@ void CMediumServer::SetTimer(int nSeconds)
 		});
 	}
 }
+void CMediumServer::HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg)
+{
 
+}
+
+void CMediumServer::HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg)
+{
+
+}
 /**
  * @brief 获取Listen的服务器的IP和端口
  * 
@@ -412,7 +420,7 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 {
 	auto pMsg = std::make_shared<TransBaseMsg_t>(msg.GetType(), msg.to_string());
 	auto item = m_BackSessMap.find(pClientSess);
-	
+	HandleMsg(msg);
 	if (item != m_BackSessMap.end())
 	{
 		item->second->SendMsg(pMsg);
@@ -537,6 +545,7 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 		}
 		OnHttpRsp(pMsg);
 	}
+
 }
 void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 {
@@ -1046,5 +1055,28 @@ SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatH
 	return result;
 }
 
+void CMediumServer::HandleMsg(const TransBaseMsg_t& msg)
+{
+	switch (msg.GetType())
+	{
+	case MessageType::FriendChatReceiveTxtMsgReq_Type:
+	{
+		FriendChatRecvTxtReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg);
+		}
+	}break;
+	case MessageType::FriendChatSendTxtMsgRsp_Type:
+	{
+		FriendChatSendTxtRspMsg rspMsg;
+		if (rspMsg.FromString(msg.to_string())) {
+			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg);
+		}
+	}break;
+	default:
+	{
 
+	}break;
+	}
+}
 }

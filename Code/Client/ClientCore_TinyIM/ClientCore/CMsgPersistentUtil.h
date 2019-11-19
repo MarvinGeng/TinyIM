@@ -37,6 +37,7 @@ public:
 	bool Remove_AddFriendNotifyReqMsg(const AddFriendNotifyReqMsg& msg);
 
 	//FriendChatRecvTxtReqMsg
+	bool Save_FriendChatSendTxtRspMsg(const FriendChatSendTxtRspMsg& msg);
 	bool Save_FriendChatRecvTxtReqMsg(const FriendChatRecvTxtReqMsg& msg);
 
 	bool Get_FriendChatRecvTxtReqMsg(FriendChatRecvTxtReqMsg& msg);

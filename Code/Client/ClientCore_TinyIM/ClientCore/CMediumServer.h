@@ -122,6 +122,9 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	SearchChatHistoryRsp HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
 
 private:
+	void HandleMsg(const TransBaseMsg_t& msg);
+	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);
+	void HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg);
 	std::map<std::string, std::string> m_strUserNameUserIdMap;
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;

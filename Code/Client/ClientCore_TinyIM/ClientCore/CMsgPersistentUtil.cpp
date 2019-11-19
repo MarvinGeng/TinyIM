@@ -278,6 +278,24 @@ bool CMsgPersistentUtil::Remove_AddFriendNotifyReqMsg(const AddFriendNotifyReqMs
 	return true;
 }
 
+bool CMsgPersistentUtil::Save_FriendChatSendTxtRspMsg(const FriendChatSendTxtRspMsg& msg)
+{
+	std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES('{0}','{1}','{2}','{3}','{4}','{5}','UNREAD','{6}'))";
+	std::string strSql = fmt::format(strSQLTemplate,
+		msg.m_strMsgId,
+		ChatType(CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE),
+		msg.m_strSenderId,
+		msg.m_strReceiverId,
+		msg.m_strContext,
+		msg.m_fontInfo.ToString(),
+		std::to_string(time(nullptr)));
+	SQLite::Statement*   m_pInsertQuery = new SQLite::Statement(*m_pDb, strSql);
+	bool bResult = m_pInsertQuery->executeStep();
+	// Reset the query to be able to use it again later
+	m_pInsertQuery->reset();
+
+	return bResult;
+}
 /**
  * @brief 保存接收到的好友文本消息
  * 
