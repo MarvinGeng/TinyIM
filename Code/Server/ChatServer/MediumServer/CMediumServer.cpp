@@ -458,7 +458,7 @@ void CChatServer::HandleFriendChatSendTxtReq(const std::shared_ptr<CServerSess>&
 		pSess->SendMsg(&rspMsg);
 	}
 	OnUserStateCheck(reqMsg.m_strSenderId);
-	//OnUserStateCheck(reqMsg.m_strReceiverId);
+	OnUserStateCheck(reqMsg.m_strReceiverId);
 }
 
 /**
@@ -1078,6 +1078,7 @@ FriendChatSendTxtRspMsg CChatServer::DoFriendChatSendTxtReq(const FriendChatSend
 		msg.m_eChatMsgType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
 		msg.m_strF_MSG_CONTEXT = EncodeUtil::AnsiToUtf8(reqMsg.m_strContext);
 		msg.m_strF_OTHER_INFO = reqMsg.m_fontInfo.ToString();
+		msg.m_strF_CREATE_TIME = CTimeUtil::GetYMD_HMS_Time();
 		m_util.InsertFriendChatMsg(msg);
 		
 		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
