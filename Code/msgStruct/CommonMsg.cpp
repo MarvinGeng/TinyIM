@@ -1463,13 +1463,9 @@ std::string FriendChatSendTxtRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"Sender", m_strSenderId},
-        {"Receiver", m_strReceiverId},
         {"Code", static_cast<int>(m_eErrCode)},
 		{"Message", m_strErrMsg},
-		{"Context", m_strContext},
-		{"MsgTime",m_strMsgTime},
-		{"FontInfo",m_fontInfo.ToString()},
+		{"ChatMsg",FriendChatMsg(m_chatMsg)},
     });
 
     return clientObj.dump();
@@ -1493,26 +1489,6 @@ bool FriendChatSendTxtRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
-
-    if (json["Sender"].is_string())
-    {
-        m_strSenderId = json["Sender"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-    if (json["Receiver"].is_string())
-    {
-        m_strReceiverId = json["Receiver"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-
     if (json["Code"].is_number())
     {
         m_eErrCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
@@ -1532,32 +1508,13 @@ bool FriendChatSendTxtRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
-	if (json["MsgTime"].is_string())
+	if (json["ChatMsg"].is_object())
 	{
-		m_strMsgTime = json["MsgTime"].string_value();
+		FriendChatMsg(json["ChatMsg"], m_chatMsg);
 	}
 	else
 	{
 		return false;
-	}
-
-	if (json["Context"].is_string())
-	{
-		m_strContext = json["Context"].string_value();
-	}
-	else
-	{
-		return false;
-	}
-
-	if (json["FontInfo"].is_string()) {
-		if (m_fontInfo.FromString(json["FontInfo"].string_value())) {
-
-		}
-		else
-		{
-			return false;
-		}
 	}
 
     return true;
@@ -1569,17 +1526,6 @@ bool FriendChatSendTxtRspMsg::Valid() const
     {
         return false;
     }
-
-    if (m_strSenderId.empty())
-    {
-        return false;
-    }
-
-    if (m_strReceiverId.empty())
-    {
-        return false;
-    }
-
     return true;
 }
 
@@ -1595,11 +1541,7 @@ std::string FriendChatRecvTxtReqMsg::ToString() const
 	Json clientObj = Json::object(
 		{
 			{"MsgId", m_strMsgId},
-			{"FromId", m_strFromId},
-			{"ToId", m_strToId},
-			{"Context", m_strContext},
-			{"MsgTime",m_strRecvTime},
-			{"FontInfo",m_fontInfo.ToString()},
+			{"ChatMsg",FriendChatMsg(m_chatMsg)},
     });
 
     return clientObj.dump();
@@ -1623,50 +1565,8 @@ bool FriendChatRecvTxtReqMsg::FromString(const std::string &strJson)
         return false;
     }
 
-
-    if (json["FromId"].is_string())
-    {
-        m_strFromId = json["FromId"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-    if (json["ToId"].is_string())
-    {
-        m_strToId = json["ToId"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-
-    if (json["Context"].is_string())
-    {
-        m_strContext = json["Context"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-	if (json["FontInfo"].is_string()) {
-		if (m_fontInfo.FromString(json["FontInfo"].string_value())) {
-
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	if (json["MsgTime"].is_string()) {
-		m_strRecvTime = json["MsgTime"].string_value();
-	}
-	else {
-		return false;
+	if (json["ChatMsg"].is_object()) {
+		FriendChatMsg(json["ChatMsg"], m_chatMsg);
 	}
     return true;
 }
@@ -1675,20 +1575,6 @@ bool FriendChatRecvTxtReqMsg::FromString(const std::string &strJson)
 bool FriendChatRecvTxtReqMsg::Valid() const
 {
     if (m_strMsgId.empty())
-    {
-        return false;
-    }
-    if (m_strFromId.empty())
-    {
-        return false;
-    }
-
-    if (m_strToId.empty())
-    {
-        return false;
-    }
-
-    if (m_strContext.empty())
     {
         return false;
     }
@@ -7723,14 +7609,7 @@ std::string GetFriendChatHistoryRsp::ToString() const
 	Json::array msgArray;
 	for (const auto item : m_msgHistory)
 	{
-		Json itemJson = Json::object({
-			{"MsgId",item.m_strMsgId},
-			{"Content",item.m_strContext},
-			{"FontInfo",item.m_fontInfo.ToString()},
-			{"MsgTime",item.m_strMsgTime},
-			{"SenderId",item.m_strSenderId},
-		});
-		msgArray.push_back(itemJson);
+		msgArray.push_back(FriendChatMsg(item));
 	}
 	Json msgJson = Json::object({
 		{"MsgId",m_strMsgId},
@@ -7771,51 +7650,13 @@ bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
 	{
 		auto jsonArray = json["MsgHistory"].array_items();
 			
-		FriendChatSendTxtRspMsg rspMsg;
+		FriendChatMsg_s rspMsg;
 		for (auto itemJson : jsonArray)
 		{
-			if (itemJson["MsgId"].is_string()) {
-				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
-			}
-			else
+			if (FriendChatMsg(itemJson, rspMsg))
 			{
-				break;
+				m_msgHistory.push_back(rspMsg);
 			}
-
-			if (itemJson["Content"].is_string()) {
-				rspMsg.m_strContext = itemJson["Content"].string_value();
-			}
-			else {
-				break;
-			}
-
-			if (itemJson["FontInfo"].is_string()) {
-				if(rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())){
-				}
-				else {
-					break;
-				}
-			}
-			else {
-				break;
-			}
-
-			if (itemJson["MsgTime"].is_string()) {
-				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
-			}
-			else
-			{
-				break;
-			}
-
-			if (itemJson["SenderId"].is_string()) {
-				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
-			}
-			else {
-				break;
-			}
-
-			m_msgHistory.push_back(rspMsg);
 		}
 	}
 	return false;
@@ -8066,14 +7907,7 @@ std::string SearchChatHistoryRsp::ToString() const
 	Json::array friendMsgJsonArray;
 	for (const auto item : m_friendChatMsgVec)
 	{
-		Json itemJson = Json::object({
-			{"MsgId",item.m_strMsgId},
-			{"Content",item.m_strContext},
-			{"FontInfo",item.m_fontInfo.ToString()},
-			{"MsgTime",item.m_strMsgTime},
-			{"SenderId",item.m_strSenderId},
-			});
-		friendMsgJsonArray.push_back(itemJson);
+		friendMsgJsonArray.push_back(FriendChatMsg(item));
 	}
 
 	Json::array groupMsgJsonArray;
@@ -8192,51 +8026,13 @@ bool SearchChatHistoryRsp::FromString(const std::string& strJson)
 	{
 		auto jsonArray = json["FriendMsgArray"].array_items();
 
-		FriendChatSendTxtRspMsg rspMsg;
+		FriendChatMsg_s rspMsg;
 		for (auto itemJson : jsonArray)
 		{
-			if (itemJson["MsgId"].is_string()) {
-				rspMsg.m_strMsgId = itemJson["MsgId"].string_value();
-			}
-			else
+			if (FriendChatMsg(itemJson, rspMsg))
 			{
-				break;
+				m_friendChatMsgVec.push_back(rspMsg);
 			}
-
-			if (itemJson["Content"].is_string()) {
-				rspMsg.m_strContext = itemJson["Content"].string_value();
-			}
-			else {
-				break;
-			}
-
-			if (itemJson["FontInfo"].is_string()) {
-				if (rspMsg.m_fontInfo.FromString(itemJson["FontInfo"].string_value())) {
-				}
-				else {
-					break;
-				}
-			}
-			else {
-				break;
-			}
-
-			if (itemJson["MsgTime"].is_string()) {
-				rspMsg.m_strMsgTime = itemJson["MsgTime"].string_value();
-			}
-			else
-			{
-				break;
-			}
-
-			if (itemJson["SenderId"].is_string()) {
-				rspMsg.m_strSenderId = itemJson["SenderId"].string_value();
-			}
-			else {
-				break;
-			}
-
-			m_friendChatMsgVec.push_back(rspMsg);
 		}
 	}
 
