@@ -7657,9 +7657,13 @@ bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
 			{
 				m_msgHistory.push_back(rspMsg);
 			}
+			else
+			{
+				return false;
+			}
 		}
 	}
-	return false;
+	return true;
 }
 
 GetGroupChatHistoryReq::GetGroupChatHistoryReq()
