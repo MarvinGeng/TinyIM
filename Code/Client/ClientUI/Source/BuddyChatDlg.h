@@ -294,6 +294,8 @@ public:
 	std::string m_strUserId;			//本用户ID,收发消息的时候使用
 	std::string m_strFriendName; 		//好友用户名,界面显示的时候使用
 	std::string m_strChatUserName;		//本用户用户名,界面显示的时候使用
+	std::string m_strChatHistoryFirstMsgId;//历史消息记录的第一条ID
+	std::string m_strChatHistoryLastMsgId;//消息记录的最后一条ID
 private:
 	CSkinDialog			m_SkinDlg;			//聊天对话框			
 	CSkinPictureBox		m_picHead;			//头像

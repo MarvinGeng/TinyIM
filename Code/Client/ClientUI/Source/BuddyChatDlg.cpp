@@ -321,6 +321,7 @@ void CBuddyChatDlg::OnRecvMsg(const CBuddyChatUiMsg& msg)
 
 void CBuddyChatDlg::OnRecvLogMsg(const CBuddyChatUiMsg& msg)
 {
+	m_richMsgLog.ShowWindow(SW_SHOW);
 	OnRecvMsgToHandle(m_richMsgLog.m_hWnd, msg);
 }
 
@@ -4136,11 +4137,12 @@ void CBuddyChatDlg::OpenMsgLogBrowser()
 	//添加到消息记录富文本控件中*/
 	if (m_pSess)
 	{
-		CBuddyChatUiMsgVector msgVec = m_pSess->GetBuddyMsgList(m_strFriendId);
+		/*CBuddyChatUiMsgVector msgVec = m_pSess->GetBuddyMsgList(m_strFriendId);
 		for (const auto item : msgVec)
 		{
 			OnRecvLogMsg(item);
-		}
+		}*/
+		m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_LAST_MSG);
 		m_richMsgLog.Invalidate(TRUE);
 
 		ShowMsgLogButtons(TRUE);

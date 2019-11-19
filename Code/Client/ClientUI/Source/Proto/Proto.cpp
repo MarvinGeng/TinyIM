@@ -400,6 +400,10 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	{
 		HandleUpdateFriendListNotifyReq(pOrgMsg);
 	}break;
+	case MessageType::GetFriendChatHistoryRsp_Type:
+	{
+		HandleGetFriendChatHistory(pOrgMsg);
+	}break;
 	default: {
 		
 	}break;
@@ -1148,6 +1152,14 @@ void CMsgProto::HandleGetFriendChatHistory(const std::shared_ptr<TransBaseMsg_t>
 			auto WndItem = m_msgMap.find(rspMsg.GetMsgType());
 			C_WND_MSG_BuddyTextMessage * pResult = new C_WND_MSG_BuddyTextMessage();
 			pResult->m_uiMsg = CoreMsgToUiMsg(item);
+			if (item.m_strSenderId == m_strUserId)
+			{
+				pResult->m_strSender = item.m_strReceiverId;
+			}
+			else
+			{
+				pResult->m_strSender = item.m_strSenderId;
+			}
 
 			if (WndItem != m_msgMap.end())
 			{
@@ -1171,7 +1183,7 @@ void CMsgProto::HandleSendChatTxtRsp(const std::shared_ptr<TransBaseMsg_t> pOrgM
 		{
 			auto item = m_msgMap.find(rspMsg.GetMsgType());
 			C_WND_MSG_BuddyTextMessage * pResult = new C_WND_MSG_BuddyTextMessage();
-			pResult->m_strSender = rspMsg.m_chatMsg.m_strSenderId;
+			pResult->m_strSender = rspMsg.m_chatMsg.m_strReceiverId;
 			pResult->m_uiMsg = CoreMsgToUiMsg(rspMsg.m_chatMsg);
 
 			if (item != m_msgMap.end())
