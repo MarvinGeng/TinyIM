@@ -37,12 +37,11 @@ public:
 	bool Remove_AddFriendNotifyReqMsg(const AddFriendNotifyReqMsg& msg);
 
 	//FriendChatRecvTxtReqMsg
-	bool Save_FriendChatSendTxtRspMsg(const FriendChatSendTxtRspMsg& msg);
-	bool Save_FriendChatRecvTxtReqMsg(const FriendChatRecvTxtReqMsg& msg);
+	bool Save_FriendChatSendTxtRspMsg(const FriendChatMsg_s& msg);
 
-	bool Get_FriendChatRecvTxtReqMsg(FriendChatRecvTxtReqMsg& msg);
+	bool Get_FriendChatRecvTxtReqMsg(FriendChatMsg_s& msg);
 
-	bool Update_FriendChatRecvTxtReqMsg(const FriendChatRecvTxtReqMsg& msg);
+	bool Update_FriendChatRecvTxtReqMsg(const FriendChatMsg_s& msg);
 
 	//FriendRecvFileMsgReqMsg
 	bool Save_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& msg);
@@ -59,10 +58,10 @@ public:
 
 	bool Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg);
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistory(const GetGroupChatHistoryReq&  reqMsg);
  
-	std::vector<FriendChatSendTxtRspMsg> Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg);
+	std::vector<FriendChatMsg_s> Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg);
 	std::vector<SendGroupTextMsgRspMsg> Get_SearchGroupChatMsg(const SearchChatHistoryReq&  reqMsg);
 
 	//RecvGroupTextMsgReqMsg
@@ -82,19 +81,19 @@ private:
 	std::map<std::string, FriendRecvFileMsgReqMsg> m_FriendRecvFileMsgReqMsgMap;
 	std::map<std::string, FriendNotifyFileMsgReqMsg> m_FriendNotifyFileMsgReqMsgMap;
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg);
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg);
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg);
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg);
 
-	std::vector<FriendChatSendTxtRspMsg> Get_FriendChatHistoryCore(SQLite::Statement* pState);
+	std::vector<FriendChatMsg_s> Get_FriendChatHistoryCore(SQLite::Statement* pState);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryCore(SQLite::Statement* pState);
 	SQLite::Database*    m_pDb;    ///< Database connection
 	//FriendChat Msg

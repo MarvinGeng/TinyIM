@@ -928,12 +928,12 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 			FriendChatRecvTxtReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
 				if (m_msgPersisUtil) {
-					m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg);
+					//m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg.);
 				}
 				{
 					FriendChatRecvTxtRspMsg rspMsg;
-					rspMsg.m_strFromId = reqMsg.m_strFromId;
-					rspMsg.m_strToId = reqMsg.m_strToId;
+					rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strSenderId;
+					rspMsg.m_strToId = reqMsg.m_chatMsg.m_strReceiverId;
 					rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 					auto pSess = GetClientSess(rspMsg.m_strToId);
 					if (pSess != nullptr)
@@ -1063,14 +1063,14 @@ void CMediumServer::HandleMsg(const TransBaseMsg_t& msg)
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
-			m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg);
+			//m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg);
 		}
 	}break;
 	case MessageType::FriendChatSendTxtMsgRsp_Type:
 	{
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg);
+			//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg);
 		}
 	}break;
 	default:

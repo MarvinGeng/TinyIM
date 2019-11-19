@@ -160,7 +160,7 @@ namespace ClientCore
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
 		auto msgUtil = m_pServer->GetMsgPersisUtil();
-		if (msgUtil && msgUtil->Get_FriendChatRecvTxtReqMsg(reqMsg))
+		if (msgUtil && msgUtil->Get_FriendChatRecvTxtReqMsg(reqMsg.m_chatMsg))
 		{
 			std::string strContent = reqMsg.ToString();
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
