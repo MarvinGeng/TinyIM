@@ -1171,8 +1171,8 @@ void CMsgProto::HandleSendChatTxtRsp(const std::shared_ptr<TransBaseMsg_t> pOrgM
 		{
 			auto item = m_msgMap.find(rspMsg.GetMsgType());
 			C_WND_MSG_BuddyTextMessage * pResult = new C_WND_MSG_BuddyTextMessage();
-			pResult->m_strSender = rspMsg.m_strReceiverId;
-			pResult->m_uiMsg = CoreMsgToUiMsg(rspMsg);
+			pResult->m_strSender = rspMsg.m_chatMsg.m_strSenderId;
+			pResult->m_uiMsg = CoreMsgToUiMsg(rspMsg.m_chatMsg);
 
 			if (item != m_msgMap.end())
 			{
@@ -1182,8 +1182,8 @@ void CMsgProto::HandleSendChatTxtRsp(const std::shared_ptr<TransBaseMsg_t> pOrgM
 
 		{
 			{
-				auto item = m_friendMsgMap.find(rspMsg.m_strReceiverId);
-				CBuddyChatUiMsg newMsg = this->CoreMsgToUiMsg(rspMsg);
+				auto item = m_friendMsgMap.find(rspMsg.m_chatMsg.m_strReceiverId);
+				CBuddyChatUiMsg newMsg = this->CoreMsgToUiMsg(rspMsg.m_chatMsg);
 				if (item != m_friendMsgMap.end())
 				{
 					item->second.push_back(newMsg);
@@ -1192,7 +1192,7 @@ void CMsgProto::HandleSendChatTxtRsp(const std::shared_ptr<TransBaseMsg_t> pOrgM
 				{
 					CBuddyChatUiMsgVector msgVec;
 					msgVec.push_back(newMsg);
-					m_friendMsgMap.insert({ rspMsg.m_strReceiverId,msgVec });
+					m_friendMsgMap.insert({ rspMsg.m_chatMsg.m_strReceiverId,msgVec });
 				}
 			}
 		}
@@ -1242,13 +1242,13 @@ void CMsgProto::HandleNetFailedMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg
  * @param reqMsg TCP好友聊天消息
  * @return CBuddyChatUiMsg 界面好友聊天消息
  */
-CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg)
+CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatMsg_s reqMsg)
 {
 	CBuddyChatUiMsg result;
 	result.m_eMsgType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
 	result.m_strContent = EncodeUtil::Utf8ToUnicode(reqMsg.m_strContext);
-	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strFromId));
-	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strRecvTime);
+	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
+	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strMsgTime);
 	result.m_strOtherInfo = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.ToString());
 	{
 		result.m_stFontInfo.m_bBold = reqMsg.m_fontInfo.IsBold();
@@ -1267,23 +1267,23 @@ CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg)
  * @param reqMsg 
  * @return CBuddyChatUiMsg 
  */
-CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatSendTxtRspMsg reqMsg)
-{
-	CBuddyChatUiMsg result;
-	result.m_eMsgType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-	result.m_strContent = EncodeUtil::Utf8ToUnicode(reqMsg.m_strContext);
-	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
-	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strMsgTime);
-	{
-		result.m_stFontInfo.m_bBold = reqMsg.m_fontInfo.IsBold();
-		result.m_stFontInfo.m_bItalic = reqMsg.m_fontInfo.IsItalic();
-		result.m_stFontInfo.m_bUnderLine = reqMsg.m_fontInfo.IsUnderScore();
-		result.m_stFontInfo.m_nSize = reqMsg.m_fontInfo.m_nFontSize;
-		result.m_stFontInfo.ColorHexString(reqMsg.m_fontInfo.m_strFontColorHex);
-		result.m_stFontInfo.m_strName = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.m_strFontName);
-	}
-	return result;
-}
+//CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatSendTxtRspMsg reqMsg)
+//{
+//	CBuddyChatUiMsg result;
+//	result.m_eMsgType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
+//	result.m_strContent = EncodeUtil::Utf8ToUnicode(reqMsg.m_strContext);
+//	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
+//	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strMsgTime);
+//	{
+//		result.m_stFontInfo.m_bBold = reqMsg.m_fontInfo.IsBold();
+//		result.m_stFontInfo.m_bItalic = reqMsg.m_fontInfo.IsItalic();
+//		result.m_stFontInfo.m_bUnderLine = reqMsg.m_fontInfo.IsUnderScore();
+//		result.m_stFontInfo.m_nSize = reqMsg.m_fontInfo.m_nFontSize;
+//		result.m_stFontInfo.ColorHexString(reqMsg.m_fontInfo.m_strFontColorHex);
+//		result.m_stFontInfo.m_strName = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.m_strFontName);
+//	}
+//	return result;
+//}
 
 /**
  * @brief 根据好友ID获取好友名称
@@ -1315,8 +1315,8 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 	if (reqMsg.FromString(pOrgMsg->to_string())) {
 		auto item = m_msgMap.find(reqMsg.GetMsgType());
 		C_WND_MSG_BuddyTextMessage * pResult = new C_WND_MSG_BuddyTextMessage();
-		pResult->m_strSender = reqMsg.m_strFromId;
-		pResult->m_uiMsg = CoreMsgToUiMsg(reqMsg);
+		pResult->m_strSender = reqMsg.m_chatMsg.m_strSenderId;
+		pResult->m_uiMsg = CoreMsgToUiMsg(reqMsg.m_chatMsg);
 
 		if (item != m_msgMap.end())
 		{
@@ -1330,16 +1330,16 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 			auto pSess = SourceServer::CSessManager::GetManager();
 			FriendChatRecvTxtRspMsg rspMsg;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_strToId;
-			rspMsg.m_strToId = reqMsg.m_strFromId;
+			rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strReceiverId;
+			rspMsg.m_strToId = reqMsg.m_chatMsg.m_strSenderId;
 			TransBaseMsg_t trans(rspMsg.GetMsgType(), rspMsg.ToString());
 			pSess->SendMsg(&trans);
 		}
 
 		//Save To Msg Queuq
 		{
-			auto item = m_friendMsgMap.find(reqMsg.m_strFromId);
-			CBuddyChatUiMsg newMsg=CoreMsgToUiMsg(reqMsg);
+			auto item = m_friendMsgMap.find(reqMsg.m_chatMsg.m_strSenderId);
+			CBuddyChatUiMsg newMsg=CoreMsgToUiMsg(reqMsg.m_chatMsg);
 			if (item != m_friendMsgMap.end())
 			{
 				item->second.push_back(newMsg);
@@ -1348,7 +1348,7 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 			{
 				CBuddyChatUiMsgVector msgVec;
 				msgVec.push_back(newMsg);
-				m_friendMsgMap.insert({ reqMsg.m_strFromId,msgVec });
+				m_friendMsgMap.insert({ reqMsg.m_chatMsg.m_strSenderId,msgVec });
 			}
 		}
 	}

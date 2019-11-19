@@ -182,8 +182,8 @@ private:
 	std::string m_strPassword; //用户密码(重新登录时使用)
 
 	//CoreMsg To UI
-	CBuddyChatUiMsg CoreMsgToUiMsg(FriendChatRecvTxtReqMsg reqMsg);
-	CBuddyChatUiMsg CoreMsgToUiMsg(FriendChatSendTxtRspMsg rspMsg);
+	CBuddyChatUiMsg CoreMsgToUiMsg(FriendChatMsg_s reqMsg);
+	//CBuddyChatUiMsg CoreMsgToUiMsg(FriendChatSendTxtRspMsg rspMsg);
 	std::string GetFriendName(const std::string strFriendId);
 private:
 	std::vector<std::string> m_friendIdVec;
