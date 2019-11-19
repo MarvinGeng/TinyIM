@@ -204,6 +204,19 @@ void CChatServer::SendBack(const TransBaseMsg_t *msg)
 	}
 }
 
+FriendChatMsg_s DbBeanToMsgBean(const T_USER_CHAT_MSG& msgBean)
+{
+	FriendChatMsg_s result;
+	
+	result.m_strChatMsgId = msgBean.m_strF_MSG_ID;
+	result.m_strSenderId = msgBean.m_strF_FROM_ID;
+	result.m_strReceiverId = msgBean.m_strF_TO_ID;
+	result.m_strContext = msgBean.m_strF_MSG_CONTEXT;
+	result.m_strMsgTime = msgBean.m_strF_CREATE_TIME;
+	result.m_fontInfo.FromString(msgBean.m_strF_OTHER_INFO);
+
+	return result;
+}
 /**
  * @brief 响应用户收到消息，在用户登陆以后或者有人给该用户发送消息的时候调用
  * 
@@ -219,11 +232,7 @@ bool CChatServer::OnUserReceiveMsg(const std::string strUserId) {
 		{
 			FriendChatRecvTxtReqMsg reqMsg;
 			reqMsg.m_strMsgId = msgBean.m_strF_MSG_ID;
-			reqMsg.m_strFromId = msgBean.m_strF_FROM_ID;
-			reqMsg.m_strToId = msgBean.m_strF_TO_ID;
-			reqMsg.m_strContext = msgBean.m_strF_MSG_CONTEXT;
-			reqMsg.m_strRecvTime = msgBean.m_strF_CREATE_TIME;
-			reqMsg.m_fontInfo.FromString(msgBean.m_strF_OTHER_INFO);
+			reqMsg.m_chatMsg = DbBeanToMsgBean(msgBean);
 			{
 				auto item = m_UserSessVec.find(strUserId);
 				if (item != m_UserSessVec.end() && item->second->IsConnected())
@@ -1072,12 +1081,8 @@ FriendChatSendTxtRspMsg CChatServer::DoFriendChatSendTxtReq(const FriendChatSend
 		m_util.InsertFriendChatMsg(msg);
 		
 		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
-		rspMsg.m_strMsgId = msg.m_strF_MSG_ID;
-		rspMsg.m_strSenderId = msg.m_strF_FROM_ID;
-		rspMsg.m_strReceiverId = msg.m_strF_TO_ID;
-		rspMsg.m_strContext = msg.m_strF_MSG_CONTEXT;
-		rspMsg.m_fontInfo = reqMsg.m_fontInfo;
-		rspMsg.m_strMsgTime = CTimeUtil::GetYMD_HMS_Time();
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_chatMsg = DbBeanToMsgBean(msg);
 		rspMsg.m_strErrMsg = "Succeed";
 	}
 	else
