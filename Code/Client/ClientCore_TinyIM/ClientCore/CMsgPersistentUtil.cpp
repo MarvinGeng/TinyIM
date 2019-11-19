@@ -137,7 +137,7 @@ bool CMsgPersistentUtil::InitDataBase()
 
 		if (nullptr == m_pFriendChatSelectRangeLast)
 		{
-			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?))";
+			std::string strSqlTemplate = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE (F_FROM_ID=? AND F_TO_ID=?) OR (F_FROM_ID=? AND F_TO_ID=?) )";
 			m_pFriendChatSelectRangeLast = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 
@@ -625,7 +625,22 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFir
 
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg)
 {
-	return Get_FriendChatHistoryCore(m_pFriendChatSelectRangeLast);
+	std::vector<FriendChatMsg_s> result;
+	try {
+		SQLite::bind(*m_pFriendChatSelectRangeLast,
+			reqMsg.m_strUserId,
+			reqMsg.m_strFriendId,
+			reqMsg.m_strFriendId,
+			reqMsg.m_strUserId);
+		result = Get_FriendChatHistoryCore(m_pFriendChatSelectRangeLast);
+		LOG_INFO(ms_logger, "SQL:{} SQL2:{}",m_pFriendChatSelectRangeLast->getQuery(), m_pFriendChatSelectRangeLast->getExpandedSQL());
+	}
+	catch (SQLite::Exception& ec) {
+		result.clear();
+		LOG_ERR(ms_logger, " EC: {} EC message:{} SQL:{}", ec.getErrorCode(), ec.getErrorStr(), m_pFriendChatSelectRangeLast->getQuery());
+	}
+	m_pFriendChatSelectRangeLast->reset();
+	return result;
 }
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg)
@@ -665,7 +680,7 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLit
 		rspMsg.m_strReceiverId = pState->getColumn(3).getString();
 		rspMsg.m_strContext = pState->getColumn(4).getString();
 		rspMsg.m_fontInfo.FromString(pState->getColumn(5).getString());
-		rspMsg.m_strMsgTime = pState->getColumn(6).getString();
+		rspMsg.m_strMsgTime = pState->getColumn(7).getString();
 
 		result.push_back(rspMsg);
 	}

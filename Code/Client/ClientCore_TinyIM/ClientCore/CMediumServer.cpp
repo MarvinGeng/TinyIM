@@ -1000,6 +1000,22 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
  */
 void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,const TransBaseMsg_t& msg)
 {
+	{
+		if (msg.GetType() == MessageType::GetFriendChatHistroyReq_Type)
+		{
+			GetFriendChatHistoryReq reqMsg;
+			if (reqMsg.FromString(msg.to_string())) {
+				GetFriendChatHistoryRsp rspMsg;
+				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+				rspMsg.m_strUserId = reqMsg.m_strUserId;
+				rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+				rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
+				rspMsg.m_msgHistory = m_msgPersisUtil->Get_FriendChatHistory(reqMsg);
+				pServerSess->SendMsg(&rspMsg);
+			}
+			return;
+		}
+	}
 	//对于原始消息，原封不动的转发
 	auto item = m_ForwardSessMap.find(pServerSess);
 	if (item != m_ForwardSessMap.end())
@@ -1063,13 +1079,14 @@ void CMediumServer::HandleMsg(const TransBaseMsg_t& msg)
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
-			//m_msgPersisUtil->Save_FriendChatRecvTxtReqMsg(reqMsg);
+			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(reqMsg.m_chatMsg);
 		}
 	}break;
 	case MessageType::FriendChatSendTxtMsgRsp_Type:
 	{
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
+			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg.m_chatMsg);
 			//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg);
 		}
 	}break;

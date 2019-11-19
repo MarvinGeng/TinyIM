@@ -77,6 +77,36 @@ public:
 		}
     }
 
+	/**
+	* @brief 发送消息函数，所有的消息需要转为TransBaseMsg_t的类型来进行发送。
+	*
+	* @param msg 待发送的消息
+	*/
+	void SendMsg(const BaseMsg* pMsg) {
+		auto msg = std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
+		if (IsConnected())
+		{
+			LOG_INFO(ms_loger, " send message ");
+			auto self = shared_from_this();
+			asio::async_write(m_socket, asio::buffer(msg->GetData(), msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
+				if (!ec)
+				{
+					LOG_INFO(ms_loger, "Socket:{} Succeed DataLen:{}", m_connectInfo, length);
+				}
+				else
+				{
+					LOG_INFO(ms_loger, "Socket:{} SendFailed EC:{} ECValue:{} ", m_connectInfo, ec.message(), ec.value());
+					HandleErrorCode(ec);
+					//m_socket.close();
+					//m_bConnect = false;
+				}
+			});
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "Socket:{} Connect Closed", m_connectInfo);
+		}
+	}
 
 	void HandleErrorCode(const std::error_code& ec) {
 		if (ec.value() == 10054) {
