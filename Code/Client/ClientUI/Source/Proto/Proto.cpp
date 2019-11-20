@@ -1106,10 +1106,27 @@ bool CMsgProto::GetChatHistoryReq(const std::string strFriendId, const std::stri
 	{
 		GetFriendChatHistoryReq reqMsg;
 		reqMsg.m_eDirection = eDirection;
+		switch (eDirection)
+		{
+		case HISTORY_DIRECTION::E_NEXT_MSG:
+		{
+			auto item = m_friendChatLogMap.find(strFriendId);
+			if (item != m_friendChatLogMap.end()) {
+				reqMsg.m_strChatMsgId = item->second.m_strLastMsgId;
+			}
+		}break;
+		case HISTORY_DIRECTION::E_PREV_MSG:
+		{
+			auto item = m_friendChatLogMap.find(strFriendId);
+			if (item != m_friendChatLogMap.end()) {
+				reqMsg.m_strChatMsgId = item->second.m_strFirstMsgId;
+			}
+		}break;
+		}
 		reqMsg.m_strUserId = this->m_strUserId;
 		reqMsg.m_strFriendId = strFriendId;
 		reqMsg.m_strMsgId = "1234567";
-		reqMsg.m_strChatMsgId = strChatMsgId;
+
 		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 		return pSess->SendMsg(&trans);
 	}
@@ -1147,6 +1164,16 @@ void CMsgProto::HandleGetFriendChatHistory(const std::shared_ptr<TransBaseMsg_t>
 {
 	GetFriendChatHistoryRsp rspMsg;
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
+		
+
+		if (!rspMsg.m_msgHistory.empty())
+		{
+			m_friendChatLogMap.erase(rspMsg.m_strFriendId);
+			LogMsgPair secondValue;
+			secondValue.m_strFirstMsgId = rspMsg.m_msgHistory.begin()->m_strChatMsgId;
+			secondValue.m_strLastMsgId = rspMsg.m_msgHistory.rbegin()->m_strChatMsgId;
+			m_friendChatLogMap.insert({rspMsg.m_strFriendId,secondValue});
+		}
 		for (const auto& item : (rspMsg.m_msgHistory))
 		{
 			auto WndItem = m_msgMap.find(rspMsg.GetMsgType());
@@ -1262,6 +1289,7 @@ CBuddyChatUiMsg CMsgProto::CoreMsgToUiMsg(FriendChatMsg_s reqMsg)
 	result.m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(reqMsg.m_strSenderId));
 	result.m_strTime = EncodeUtil::Utf8ToUnicode(reqMsg.m_strMsgTime);
 	result.m_strOtherInfo = EncodeUtil::Utf8ToUnicode(reqMsg.m_fontInfo.ToString());
+	result.m_strChatMsgId = reqMsg.m_strChatMsgId;
 	{
 		result.m_stFontInfo.m_bBold = reqMsg.m_fontInfo.IsBold();
 		result.m_stFontInfo.m_bItalic = reqMsg.m_fontInfo.IsItalic();

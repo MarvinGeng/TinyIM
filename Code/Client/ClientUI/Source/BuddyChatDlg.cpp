@@ -1272,6 +1272,10 @@ void CBuddyChatDlg::OnBtn_MsgLog(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 		
 		m_TabMgr.AddItem(_T("消息记录"), m_richMsgLog.m_hWnd);
+		if (m_pSess)
+		{
+			m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_LAST_MSG);
+		}
 		OpenMsgLogBrowser();
 
 		m_tbMid.SetItemText(m_nMsgLogIndexInToolbar, _T("<<"));
@@ -1382,19 +1386,7 @@ void CBuddyChatDlg::OnBtn_SaveAs(UINT uNotifyCode, int nID, CWindow wndCtl)
  */
 void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	//long nTotalCount = m_MsgLogger.GetBuddyMsgLogCount(m_nUTalkUin);
-	long nTotalCount = 0;
-	long nPageCount = nTotalCount/10;
-	if(nTotalCount%10 != 0)
-	{
-		++nPageCount;
-	}	
 
-	if(nPageCount == 0)
-	{
-		return;
-	}	
-	
 	switch(nID)
 	{
 	//消息记录第一条消息记录
@@ -1481,9 +1473,9 @@ void CBuddyChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 	}
 	
 	//AtlTrace(_T("Offset: %d, PageIndex: %d, TotalPage: %d\n"), m_nMsgLogRecordOffset, m_nMsgLogCurrentPageIndex, nPageCount);
-	CString strPageInfo;
-	strPageInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
-	m_staMsgLogPage.SetWindowText(strPageInfo);
+	//CString strPageInfo;
+	//strPageInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
+	//m_staMsgLogPage.SetWindowText(strPageInfo);
 	m_staMsgLogPage.Invalidate(FALSE);
 
 	OpenMsgLogBrowser();
@@ -4142,7 +4134,8 @@ void CBuddyChatDlg::OpenMsgLogBrowser()
 		{
 			OnRecvLogMsg(item);
 		}*/
-		m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_LAST_MSG);
+		//m_pSess->GetChatHistoryReq(m_strFriendId, "", HISTORY_DIRECTION::E_LAST_MSG);
+		m_richMsgLog.SetWindowText(_T(""));
 		m_richMsgLog.Invalidate(TRUE);
 
 		ShowMsgLogButtons(TRUE);

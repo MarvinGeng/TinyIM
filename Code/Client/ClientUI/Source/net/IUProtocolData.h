@@ -120,6 +120,7 @@ class CBuddyChatUiMsg
 {
 public:
 	E_UI_CONTENT_TYPE m_eMsgType;
+	std::string m_strChatMsgId;
 	WString      m_strSenderName;
 	WString      m_strTime;
 	WString      m_strContent;

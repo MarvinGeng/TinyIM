@@ -23,6 +23,11 @@
 #include "IULog.h"
 #include "UI_USER_INFO.h"
 using ID_HANDLE_MAP = std::map<MessageType, HWND>;
+//历史消息记录使用
+struct LogMsgPair {
+	std::string m_strFirstMsgId;
+	std::string m_strLastMsgId;
+};
 
 class CMsgProto:public std::enable_shared_from_this<CMsgProto>
 {
@@ -189,6 +194,7 @@ private:
 	std::vector<std::string> m_friendIdVec;
 	E_UI_ONLINE_STATUS m_eOnLineStatus;//用户在线状态
 	std::map<std::string, CBuddyChatUiMsgVector> m_friendMsgMap;
+	std::map<std::string, LogMsgPair> m_friendChatLogMap;
 };
 
 #endif
