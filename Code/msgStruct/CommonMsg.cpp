@@ -7614,6 +7614,7 @@ std::string GetFriendChatHistoryRsp::ToString() const
 	Json msgJson = Json::object({
 		{"MsgId",m_strMsgId},
 		{"UserId",m_strUserId},
+		{"FriendId",m_strFriendId},
 		{"MsgHistory",msgArray},
 	});
 	return msgJson.dump();
@@ -7640,6 +7641,15 @@ bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
 	if (json["UserId"].is_string())
 	{
 		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string())
+	{
+		m_strFriendId = json["FriendId"].string_value();
 	}
 	else
 	{
