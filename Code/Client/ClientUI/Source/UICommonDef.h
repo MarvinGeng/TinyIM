@@ -247,6 +247,7 @@ enum class E_RichEditType
 	TEXT,
 	FACE,
 	IMAGE,
+	FILE_T,
 };
 
 #endif

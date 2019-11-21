@@ -1079,7 +1079,31 @@ bool CMsgProto::SendAddToGroupReq(const std::string strGroupId)
 		return pSess->SendMsg(&trans);
 	}
 }
+bool CMsgProto::SendFileDataBeginReq(const std::string strFriendId, const std::string strFileName)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	{
+		FileSendDataBeginReq reqMsg;
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = strFriendId;
+		reqMsg.m_strFileName = strFileName;
+		reqMsg.m_strMsgId = "123456";
+		reqMsg.m_nFileId = rand();
 
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		return pSess->SendMsg(&trans);
+	}
+}
+
+void CMsgProto::HandleFileSendDataRsp(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
+{
+	FileSendDataBeginRsp rspMsg;
+	if (rspMsg.FromString(pOrgMsg->to_string())) {
+		if (rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED) {
+
+		}
+	}
+}
 /**
  * @brief 发送文本聊天
  * 

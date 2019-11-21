@@ -81,6 +81,7 @@ public:
 	bool SendFriendOnLineFile(const std::string strFriendId, std::string strFileName);
 
 	bool SendFriendRecvFileRsp(const C_WND_MSG_FileRecvReq& reqMsg, const E_FRIEND_OPTION eOption);
+	bool SendFileDataBeginReq(const std::string strFriendId, const std::string strFileName);
 	//bool SendFriendOffLineFile(const std::string strFileName);
 
 	bool SendFriendNotifyFileRsp(const C_WND_MSG_FileNotifyReq& reqMsg);
@@ -151,6 +152,8 @@ private:
 	void HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	void HandleNetRecoverReportMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	void HandleNetFailedMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
+
+
 	
 	void HandleCreateGroupRspMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 
@@ -173,6 +176,8 @@ private:
 	void HandleFriendRecvFileReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	
 	void HandleFriendNotifyFileReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
+	
+	void HandleFileSendDataRsp(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	void HandleUpdateFriendListNotifyReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	
 	void HandleGetFriendChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);

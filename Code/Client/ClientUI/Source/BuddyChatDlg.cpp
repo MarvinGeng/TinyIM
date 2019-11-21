@@ -267,7 +267,7 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 			std::string strJson = EncodeUtil::UnicodeToAnsi(msg.m_strContent);
 			RichEditMsgList msgList = RichEditMsg(strJson);
 			RichEdit_SetSel(recvHandle, -1, -1);
-			for (const auto item : msgList)
+			for (auto item : msgList)
 			{
 				switch (item.m_eType)
 				{
@@ -296,7 +296,12 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 				}break;
 				case E_RichEditType::IMAGE:
 				{
-
+					LPCTSTR pImageName = item.m_strImageName.c_str();
+					_RichEdit_InsertFace(recvHandle,
+						pImageName,
+						-1,
+						-1);
+					
 				}break;
 				default:
 				{
@@ -1575,6 +1580,9 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	{
 		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
+		for (auto item : msgList)
+		{
+		}
 		std::string strSendText = RichEditMsg(msgList);
 		if (m_pSess) {
 			m_pSess->SendChatTxtMsg(m_strFriendId, strSendText, m_FontSelDlg.GetFontInfo());
@@ -2906,7 +2914,7 @@ BOOL CBuddyChatDlg::InitTopToolBar()
 	//	_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	//m_tbTop.SetItemIconPic(nIndex, _T("BuddyTopToolBar\\remote_assistance.png"));
 
-	m_tbTop.SetLeftTop(2, 2);
+	m_tbTop.SetLeftTop(0, 0);
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 	//m_tbTop.SetBgPic(_T("BuddyTopToolBar\\buddyChatDlg_tbTopBg.png"), CRect(0, 0, 0, 0));
 
@@ -2978,16 +2986,15 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//m_tbMid.SetItemPadding(nIndex, 1);
 	//m_tbMid.SetItemSepartorPic(nIndex, _T("aio_qzonecutline_normal.png"));
 
-	if (0)
-	{
-		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_IMAGE, STBI_STYLE_BUTTON);
-		m_tbMid.SetItemSize(nIndex, 30, 27);
-		m_tbMid.SetItemPadding(nIndex, 1);
-		m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
-		m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
-			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
-		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
-	}
+
+	nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_IMAGE, STBI_STYLE_BUTTON);
+	m_tbMid.SetItemSize(nIndex, 30, 27);
+	m_tbMid.SetItemPadding(nIndex, 1);
+	m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
+	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+		_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
+
 
 
 	if (0)

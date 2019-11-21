@@ -2118,7 +2118,7 @@ BOOL CGroupChatDlg::InitTopToolBar()
 		m_tbTop.SetItemIconPic(nIndex, _T("GroupTopToolBar\\GroupCommunity.png"));
 	}
 
-	m_tbTop.SetLeftTop(2, 2);
+	m_tbTop.SetLeftTop(0, 0);
 	m_tbTop.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 
 	CRect rcTopToolBar(3, 70, GROUP_CHAT_DLG_WIDTH-1, 102);
@@ -3635,6 +3635,7 @@ void CGroupChatDlg::OpenMsgLogBrowser()
 	{
 		m_RightTabCtrl.ShowWindow(SW_HIDE);
 		m_staGroupCategory.ShowWindow(SW_HIDE);
+		m_staMemoTitle.ShowWindow(SW_HIDE);
 		m_edtMemo.ShowWindow(SW_HIDE);
 		m_staMemberTitle.ShowWindow(SW_HIDE);
 		m_GroupMemberListCtrl.ShowWindow(SW_HIDE);
@@ -3652,11 +3653,12 @@ void CGroupChatDlg::CloseMsgLogBrowser()
 
 	CalculateMsgLogCountAndOffset();
 	{
-		{
-			m_RightTabCtrl.ShowWindow(SW_SHOW);
-			m_staGroupCategory.ShowWindow(SW_SHOW);
-			m_edtMemo.ShowWindow(SW_SHOW);
-		}
+		m_RightTabCtrl.ShowWindow(SW_SHOW);
+		m_staGroupCategory.ShowWindow(SW_SHOW);
+		m_staMemoTitle.ShowWindow(SW_SHOW);
+		m_edtMemo.ShowWindow(SW_SHOW);
+		m_staMemberTitle.ShowWindow(SW_SHOW);
+		m_GroupMemberListCtrl.ShowWindow(SW_SHOW);
 	}
 	OnSizeNotShowMsgHistory();
 }
