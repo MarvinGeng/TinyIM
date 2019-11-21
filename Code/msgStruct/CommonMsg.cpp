@@ -7803,6 +7803,15 @@ bool GetGroupChatHistoryRsp::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["GroupId"].is_string())
+	{
+		m_strGroupId = json["GroupId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
 	if (json["MsgHistory"].is_array())
 	{
 		auto jsonArray = json["MsgHistory"].array_items();
