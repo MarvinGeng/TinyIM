@@ -421,6 +421,23 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess,con
 	auto pMsg = std::make_shared<TransBaseMsg_t>(msg.GetType(), msg.to_string());
 	auto item = m_BackSessMap.find(pClientSess);
 	HandleMsg(msg);
+	if (msg.GetType() == MessageType::FileSendDataBeginReq_Type)
+	{
+		FileSendDataBeginReq reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			FileSendDataBeginRsp rspMsg;
+			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+			rspMsg.m_strFileName = reqMsg.m_strFileName;
+			rspMsg.m_strUserId = reqMsg.m_strFriendId;
+			rspMsg.m_nFileId = reqMsg.m_nFileId;
+			pClientSess->SendMsg(&rspMsg);
+			std::string strFileName = pClientSess->UserId() + "\\";
+			strFileName  += m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
+			m_fileUtil.OpenWriteFile(reqMsg.m_nFileId+1,strFileName);
+		}
+		return;
+	}
 	if (item != m_BackSessMap.end())
 	{
 		item->second->SendMsg(pMsg);
@@ -1117,6 +1134,44 @@ void CMediumServer::HandleMsg(const TransBaseMsg_t& msg)
 			m_msgPersisUtil->Save_RecvGroupTextMsgReqMsg(reqMsg);
 		}
 	}break;
+	case MessageType::FileSendDataBeginReq_Type:
+	{
+
+	}break;
+	case MessageType::FileSendDataBeginRsp_Type:
+	{
+		FileSendDataBeginRsp rspMsg;
+		if (rspMsg.FromString(msg.to_string())) {
+			int nFileId = static_cast<int>(time(nullptr));
+			std::string strFileName = rspMsg.m_strFileName;
+			int nFileSize = 0;
+			m_fileUtil.GetFileSize(nFileSize, strFileName);
+			if (m_fileUtil.OpenReadFile(rspMsg.m_nFileId, strFileName)) {
+				FileDataSendReqMsg sendReqMsg;
+				sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+				sendReqMsg.m_strFromId = rspMsg.m_strFriendId;
+				sendReqMsg.m_strToId = rspMsg.m_strUserId;
+				sendReqMsg.m_nFileId = rspMsg.m_nFileId;
+
+				sendReqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
+				sendReqMsg.m_nDataIndex = 1;
+				sendReqMsg.m_nDataLength = 0;
+				m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
+
+				{
+					auto udpItem = m_userIdUdpAddrMap.find(sendReqMsg.m_strToId);
+					if (udpItem != m_userIdUdpAddrMap.end())
+					{
+						m_udpClient->send_msg(udpItem->second.m_strServerIp, udpItem->second.m_nPort, &sendReqMsg);
+					}
+					else
+					{
+						m_udpClient->sendToServer(&sendReqMsg);
+					}
+				}
+			}
+		}
+	}
 	default:
 	{
 	}break;
