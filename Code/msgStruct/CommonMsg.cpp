@@ -8335,3 +8335,166 @@ bool AsyncGroupChatMsgRsp::FromString(const std::string& strJson)
 
 	return true;
 }
+
+FileSendDataBeginReq::FileSendDataBeginReq()
+{
+	m_type = MessageType::FileSendDataBeginReq_Type;
+}
+
+std::string FileSendDataBeginReq::ToString() const 
+{
+
+	using namespace json11;
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"FriendId",m_strFriendId},
+		{"FileName",m_strFileName},
+		{"FileId",m_nFileId},
+		});
+	return msgJson.dump();
+}
+
+bool FileSendDataBeginReq::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string()) {
+		m_strFriendId = json["FriendId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileName"].is_string()) {
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileId"].is_number())
+	{
+		m_nFileId = json["FileId"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+FileSendDataBeginRsp::FileSendDataBeginRsp()
+{
+	m_type = MessageType::FileSendDataBeginRsp_Type;
+}
+
+std::string FileSendDataBeginRsp::ToString() const
+{
+	using namespace json11;
+	Json msgJson = Json::object({
+		{"Code",static_cast<int>(m_errCode)},
+		{"Message",m_errMsg},
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"FriendId",m_strFriendId},
+		{"FileName",m_strFileName},
+		{"FileId",m_nFileId},
+	});
+	return msgJson.dump();
+}
+
+bool FileSendDataBeginRsp::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+	if (json["Code"].is_number()) {
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string()) {
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string()) {
+		m_strFriendId = json["FriendId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileName"].is_string()) {
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileId"].is_number())
+	{
+		m_nFileId = json["FileId"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}

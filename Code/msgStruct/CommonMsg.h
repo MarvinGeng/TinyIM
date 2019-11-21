@@ -2103,6 +2103,36 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+class FileSendDataBeginReq :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;
+	std::string m_strFileName;
+	int m_nFileId;
+public:
+	FileSendDataBeginReq();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class FileSendDataBeginRsp :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_errCode;
+	std::string m_errMsg;
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;
+	std::string m_strFileName;	
+	int m_nFileId;
+public:
+	FileSendDataBeginRsp();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
 /**
  * @brief 服务器配置
  * 

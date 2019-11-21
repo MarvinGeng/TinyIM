@@ -333,6 +333,12 @@ AsyncGroupChatMsgReq_Type,
 //群组聊天消息同步回复
 AsyncGroupChatMsgRsp_Type,
 
+//开始发送文件数据请求
+FileSendDataBeginReq_Type,
+
+//开始发送文件数据回复
+FileSendDataBeginRsp_Type,
+
 };
 
 //客户端会话状态
