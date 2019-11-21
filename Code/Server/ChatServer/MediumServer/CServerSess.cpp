@@ -312,6 +312,20 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 		}
 
 	}break;
+	case MessageType::FileSendDataBeginReq_Type:
+	{
+		FileSendDataBeginReq reqMsg;
+		if (reqMsg.FromString(hdr->to_string())) {
+			m_server->HandleFileSendDataBeginReq(shared_from_this(), reqMsg);
+		}
+	}break;
+	case MessageType::FileSendDataBeginRsp_Type:
+	{
+		FileSendDataBeginRsp rspMsg;
+		if (rspMsg.FromString(hdr->to_string())) {
+			m_server->HandleFileSendDataBeginRsp(shared_from_this(), rspMsg);
+		}
+	}break;
 	default:
 	{
 		LOG_ERR(ms_loger, "User:{} Unhandle MsgType:{} [ {} {} ]", UserId(), MsgType(hdr->GetType()), __FILENAME__, __LINE__);

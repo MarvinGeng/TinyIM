@@ -443,6 +443,30 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 }
 
 
+
+void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req)
+{
+	auto item = m_UserSessVec.find(req.m_strFriendId);
+	if (item != m_UserSessVec.end()) {
+		item->second->SendMsg(&req);
+	}
+	else {
+		FileSendDataBeginRsp rspMsg;
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+		pSess->SendMsg(&rspMsg);
+	}
+}
+
+void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginRsp& req)
+{
+	auto item = m_UserSessVec.find(req.m_strFriendId);
+	if (item != m_UserSessVec.end()) {
+		item->second->SendMsg(&req);
+	}
+	else {
+	}
+}
+
 /**
  * @brief 处理好友发送文本消息
  * 

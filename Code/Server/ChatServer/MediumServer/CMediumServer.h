@@ -72,6 +72,9 @@ public:
 	void HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendRecvFileMsgRspMsg& reqMsg);
 	void HandleFriendNotifyFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendNotifyFileMsgRspMsg& req);
 
+	void HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req);
+	void HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginRsp& req);
+
 	void HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req);
 	void HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req);
 	//Group
