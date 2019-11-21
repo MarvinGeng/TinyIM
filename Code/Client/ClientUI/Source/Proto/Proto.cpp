@@ -404,6 +404,10 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	{
 		HandleGetFriendChatHistory(pOrgMsg);
 	}break;
+	case MessageType::GetGroupChatHistoryRsp_Type:
+	{
+		HandleGetGroupChatHistory(pOrgMsg);
+	}break;
 	default: {
 		
 	}break;
@@ -1097,6 +1101,73 @@ bool CMsgProto::SendChatTxtMsg(const std::string strFriendName, const std::strin
 		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 		return pSess->SendMsg(&trans);
 	}
+}
+void CMsgProto::HandleGetGroupChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
+{
+	GetGroupChatHistoryRsp rspMsg;
+	if (rspMsg.FromString(pOrgMsg->to_string())) {
+
+
+		if (!rspMsg.m_msgHistory.empty())
+		{
+			m_friendChatLogMap.erase(rspMsg.m_strGroupId);
+			LogMsgPair secondValue;
+			secondValue.m_strFirstMsgId = rspMsg.m_msgHistory.begin()->m_strMsgId;
+			secondValue.m_strLastMsgId = rspMsg.m_msgHistory.rbegin()->m_strMsgId;
+			m_friendChatLogMap.insert({ rspMsg.m_strGroupId,secondValue });
+		}
+		for (const auto& item : (rspMsg.m_msgHistory))
+		{
+			auto WndItem = m_msgMap.find(rspMsg.GetMsgType());
+			C_UI_GroupMessage * pResult = new C_UI_GroupMessage();
+			pResult->m_strSenderName = EncodeUtil::Utf8ToUnicode(GetFriendName(m_strUserId));
+			pResult->m_strSenderId = EncodeUtil::AnsiToUnicode(item.m_strSenderId);
+			pResult->m_strContext = EncodeUtil::AnsiToUnicode(item.m_strContext);
+			pResult->m_strGroupId = rspMsg.m_strGroupId;
+			pResult->m_eType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
+			pResult->m_stFontInfo = CoreToUi(item.m_fontInfo);
+			pResult->m_strMsgTime = EncodeUtil::AnsiToUnicode(item.m_strMsgTime);
+			auto item = m_msgMap.find(rspMsg.GetMsgType());
+			if (item != m_msgMap.end())
+			{
+				::PostMessage(item->second, FMT_MSG_GROUP_CHAT_HISTORY, 0, (LPARAM)(pResult));
+			}
+		}
+	}
+}
+
+bool CMsgProto::GetGroupHistoryReq(const std::string strGroupId, const HISTORY_DIRECTION eDirection)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	if (pSess)
+	{
+		GetGroupChatHistoryReq reqMsg;
+		reqMsg.m_eDirection = eDirection;
+		switch (eDirection)
+		{
+		case HISTORY_DIRECTION::E_NEXT_MSG:
+		{
+			auto item = m_friendChatLogMap.find(strGroupId);
+			if (item != m_friendChatLogMap.end()) {
+				reqMsg.m_strChatMsgId = item->second.m_strLastMsgId;
+			}
+		}break;
+		case HISTORY_DIRECTION::E_PREV_MSG:
+		{
+			auto item = m_friendChatLogMap.find(strGroupId);
+			if (item != m_friendChatLogMap.end()) {
+				reqMsg.m_strChatMsgId = item->second.m_strFirstMsgId;
+			}
+		}break;
+		}
+		reqMsg.m_strUserId = this->m_strUserId;
+		reqMsg.m_strGroupId = strGroupId;
+		reqMsg.m_strMsgId = "1234567";
+
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		return pSess->SendMsg(&trans);
+	}
+	return false;
 }
 
 bool CMsgProto::GetChatHistoryReq(const std::string strFriendId, const std::string strChatMsgId, const HISTORY_DIRECTION eDirection)

@@ -105,6 +105,8 @@ public:
 	bool SendAddToGroupReq(const std::string strGroupId);
 
 	bool SendQuitFromGroupReq(const std::string strGroupId);
+
+	bool GetGroupHistoryReq(const std::string strGroupId, const HISTORY_DIRECTION eDirection);
 	//Core End
 
 	CGroupList* GetGroupList() {
@@ -172,8 +174,10 @@ private:
 	
 	void HandleFriendNotifyFileReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	void HandleUpdateFriendListNotifyReq(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
+	
 	void HandleGetFriendChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 
+	void HandleGetGroupChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	ID_HANDLE_MAP m_msgMap;      //消息类型和窗口句柄的对应关系表,收到消息的时候进行PostMessage
 
 	bool m_bRecvRegisterRsp;     //是否收到注册消息回复

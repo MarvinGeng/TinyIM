@@ -111,6 +111,7 @@ public:
 	void OnUpdateGMemberHeadPic(WPARAM wParam, LPARAM lParam);	// 更新群成员头像
 
 	void OnRecvGroupMsg(C_UI_GroupMessage* pGroupMsg);
+	void OnRecvGroupLogMsg(C_UI_GroupMessage* pGroupMsg);
 private:
 
 	BOOL OnInitDialog(CWindow wndFocus, LPARAM lInitParam);
@@ -272,7 +273,7 @@ private:
 	CSkinRichEdit			m_richRecv;//消息接收控件
 	CSkinRichEdit           m_richSend;//消息发送编辑控件
 	CSkinRichEdit           m_richMsgLog;//历史消息富文本控件
-	CSkinTabCtrl			m_RightTabCtrl;							//聊天窗口右边的Tab窗口
+	CSkinTabCtrl			m_RightTabCtrl;	//聊天窗口右边的Tab窗口
 	CSkinListCtrl			m_GroupMemberListCtrl;   //群成员列表
 
 	CSkinButton				m_btnFirstMsgLog;//跳转到第一条消息按钮
@@ -323,6 +324,7 @@ private:
 	RECT					m_rtRichSend; //发送富文本控件矩形区域
 
 	void SendGroupTextMsg_Core(WString strContext);
+	void OnSizeShowMsgHistory();
 };
 
 #endif

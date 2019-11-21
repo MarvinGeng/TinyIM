@@ -4063,6 +4063,21 @@ LRESULT CMainDlg::OnRecvFriendHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam
 
 LRESULT CMainDlg::OnRecvGroupHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	C_UI_GroupMessage * pResult = (C_UI_GroupMessage*)lParam;
+	if (pResult == NULL)
+	{
+		return (LRESULT)0;
+	}
+	ShowGroupChatDlg(pResult->m_strGroupId, TRUE);
+	auto item = m_mapGroupChatDlg.find(pResult->m_strGroupId);
+	if (item != m_mapGroupChatDlg.end())
+	{
+		item->second->OnRecvGroupLogMsg(pResult);
+	}
+	else
+	{
+		MessageBox(_T("DoRecvFriendChatTextMsg"), _T("DoRecvFriendChatTextMsg"));
+	}
 	return 0;
 }
 

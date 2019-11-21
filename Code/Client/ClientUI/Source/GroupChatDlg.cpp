@@ -362,6 +362,288 @@ void CGroupChatDlg::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
+void CGroupChatDlg::OnSizeShowMsgHistory()
+{
+
+	SetMsgHandled(FALSE);
+
+	CRect rcClient;
+	GetClientRect(&rcClient);
+	//RC_DLG = rcTitle + rcTopToolBar + rcShowArea
+	//rcTitle.Width() == rcTopToolBar.Width() + rcShowArea.Width()
+	//rcTotal.Height() = rcTitle.Height() + rcTopToolBar.Height() + rcShowArea.Height()
+
+	//标题栏区域
+	CRect rcTitle(rcClient.TopLeft(),
+		CSize(rcClient.Width(),
+			GROUP_DLG_TITLE_HEIGHT));
+
+	//顶部工具栏区域
+	CRect rcTopToolBar(
+		CPoint(rcClient.left,
+			rcTitle.bottom),
+
+		CSize(rcClient.Width(),
+			GROUP_DLG_TOOL_BAR_HEIGHT));
+	{
+		if (m_tbTop.IsWindow())
+		{
+			m_tbTop.MoveWindow(rcTopToolBar, TRUE);
+		}
+	}
+
+	//显示区域
+	CRect rcShowArea(
+		CPoint(rcTopToolBar.left,
+			rcTopToolBar.bottom),
+		CSize(rcClient.Width(),
+			rcClient.Height() - GROUP_DLG_TITLE_HEIGHT - GROUP_DLG_TOOL_BAR_HEIGHT));
+
+	{
+		//左边显示区域
+		
+			CRect rcLeftShowArea(
+			CPoint(rcShowArea.left,
+				rcShowArea.top),
+			CSize(rcShowArea.Width() - GROUP_DLG_MSG_LOG_WIDTH -GROUP_DLG_IN_BORDER_WIDTH,
+				rcShowArea.Height()));
+		//左边显示区域分解
+		{
+			//消息接收区
+			long recvEditHeight = static_cast<long>(rcLeftShowArea.Height()*GROUP_DLG_RECV_EDIT_PERCENT) - 2;
+			CRect rcRecvEdit(
+				CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+					rcLeftShowArea.top),
+				CSize(rcLeftShowArea.Width(),
+					recvEditHeight));
+			{
+				if (m_richRecv.IsWindow())
+				{
+					m_richRecv.MoveWindow(rcRecvEdit, TRUE);
+				}
+			}
+
+			//字体选择等工具栏
+			CRect rcMidToolBar(
+				CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+					rcRecvEdit.bottom),
+				CSize(rcLeftShowArea.Width() - GROUP_DLG_OUT_BORDER_WIDTH,
+					GROUP_DLG_TOOL_BAR_HEIGHT));
+			{
+				//字体工具栏
+				CRect rcFontToolBar(
+					CPoint(rcMidToolBar.left,
+						rcMidToolBar.top - GROUP_DLG_TOOL_BAR_HEIGHT),
+					rcMidToolBar.Size());
+
+				if (m_FontSelDlg.IsWindow())
+				{
+					if (m_tbMid.GetItemCheckState(0))
+					{
+						m_FontSelDlg.MoveWindow(rcFontToolBar, TRUE);
+					}
+					else
+					{
+						m_FontSelDlg.MoveWindow(rcFontToolBar, TRUE);
+						m_FontSelDlg.ShowWindow(HIDE_WINDOW);
+					}
+				}
+
+				if (m_tbMid.IsWindow())
+				{
+					m_tbMid.MoveWindow(rcMidToolBar, TRUE);
+				}
+			}
+
+
+			//消息发送区域
+			CRect rcSendEdit(
+				CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+					rcMidToolBar.bottom),
+				CSize(rcLeftShowArea.Width() - GROUP_DLG_OUT_BORDER_WIDTH,
+					rcLeftShowArea.Height() - rcRecvEdit.Height() - GROUP_DLG_TOOL_BAR_HEIGHT * 2));
+			{
+				if (m_richSend.IsWindow())
+				{
+					m_richSend.MoveWindow(rcSendEdit, TRUE);
+				}
+			}
+			//底部工具栏区域
+			CRect rcBottomToolBar(
+				CPoint(rcLeftShowArea.left,
+					rcSendEdit.bottom),
+				CSize(rcLeftShowArea.Width(),
+					GROUP_DLG_TOOL_BAR_HEIGHT));
+			//从右到左计算
+			{
+				const long GROUP_DLG_ARROW_BTN_WIDTH = 77;  //按钮宽度
+				const long GROUP_DLG_ARROW_BTN_HEIGHT = 25; //按钮高度
+				const long GROUP_DLG_BTN_DISTANCE = 10;     //按钮间距
+				CRect rcBtnArrow(
+					CPoint(rcBottomToolBar.right - GROUP_DLG_BTN_DISTANCE - GROUP_DLG_ARROW_BTN_WIDTH,
+						rcBottomToolBar.top + (rcTopToolBar.Height() - GROUP_DLG_ARROW_BTN_HEIGHT) / 2),
+					CSize(static_cast<int>(GROUP_DLG_BTN_DISTANCE * 1.5), GROUP_DLG_ARROW_BTN_HEIGHT));
+
+				CRect rcBtnSend(
+					CPoint(rcBtnArrow.left - GROUP_DLG_ARROW_BTN_WIDTH,
+						rcBtnArrow.top),
+					CSize(GROUP_DLG_ARROW_BTN_WIDTH, GROUP_DLG_ARROW_BTN_HEIGHT));
+
+
+				CRect rcBtnClose(
+					CPoint(rcBtnSend.left - GROUP_DLG_BTN_DISTANCE - GROUP_DLG_ARROW_BTN_WIDTH,
+						rcBtnArrow.top),
+					CSize(GROUP_DLG_ARROW_BTN_WIDTH, GROUP_DLG_ARROW_BTN_HEIGHT));
+
+				if (m_btnArrow.IsWindow())
+				{
+					m_btnArrow.MoveWindow(rcBtnArrow, TRUE);
+				}
+
+
+				if (m_btnSend.IsWindow())
+				{
+					m_btnSend.MoveWindow(rcBtnSend, TRUE);
+				}
+
+				if (m_btnClose.IsWindow())
+				{
+					m_btnClose.MoveWindow(rcBtnClose, TRUE);
+				}
+			}
+		}
+
+
+		//右边显示区域
+		CRect rcRightShowArea(
+			CPoint(rcLeftShowArea.right + GROUP_DLG_IN_BORDER_WIDTH,
+				rcShowArea.top),
+			CSize(GROUP_DLG_MSG_LOG_WIDTH,
+				rcShowArea.Height() - GROUP_DLG_OUT_BORDER_WIDTH));
+		
+		{
+			CRect rcMsgLog(
+				rcRightShowArea.TopLeft(),
+				CSize(rcRightShowArea.Width(),
+					rcRightShowArea.Height() -GROUP_DLG_TOOL_BAR_HEIGHT));
+			{
+				m_richMsgLog.MoveWindow(rcMsgLog, TRUE);
+			}
+			CRect rcMsgToolBar(
+				CPoint(rcRightShowArea.left, rcMsgLog.bottom),
+				CSize(rcRightShowArea.Width(), GROUP_DLG_TOOL_BAR_HEIGHT));
+			{
+				CSize btnSize(28, 25);
+				const int BTN_DISTANCE = 40;
+				//聊天记录翻页四个按钮
+				CRect rcFirstBtn(
+					CPoint(rcMsgToolBar.left + BTN_DISTANCE,
+						rcMsgToolBar.top + 5),
+					btnSize);
+				if (m_btnFirstMsgLog.IsWindow())
+				{
+					m_btnFirstMsgLog.ShowWindow(SW_SHOW);
+					m_btnFirstMsgLog.MoveWindow(rcFirstBtn, TRUE);
+				}
+
+				CRect rcPrevBtn(
+					CPoint(rcMsgToolBar.left + BTN_DISTANCE * 2,
+						rcMsgToolBar.top + 5),
+					btnSize);
+				if (m_btnPrevMsgLog.IsWindow())
+				{
+					m_btnPrevMsgLog.ShowWindow(SW_SHOW);
+					m_btnPrevMsgLog.MoveWindow(rcPrevBtn, TRUE);
+				}
+
+				//if (m_staMsgLogPage.IsWindow())
+				//	m_staMsgLogPage.MoveWindow(rcRightShowArea.left +  180, rcMsgToolBar.top, 60, 25, TRUE);
+
+				CRect rcNextBtn(
+					CPoint(rcMsgToolBar.left + BTN_DISTANCE * 3,
+						rcMsgToolBar.top + 5),
+					btnSize);
+				if (m_btnNextMsgLog.IsWindow())
+				{
+					m_btnNextMsgLog.ShowWindow(SW_SHOW);
+					m_btnNextMsgLog.MoveWindow(rcNextBtn, TRUE);
+				}
+
+				CRect rcLastBtn(
+					CPoint(rcMsgToolBar.left + BTN_DISTANCE * 4,
+						rcMsgToolBar.top + 5),
+					btnSize);
+				if (m_btnLastMsgLog.IsWindow())
+				{
+					m_btnLastMsgLog.ShowWindow(SW_SHOW);
+					m_btnLastMsgLog.MoveWindow(rcLastBtn, TRUE);
+				}
+			}
+		}
+		
+		//右边显示区域分解
+		//{
+		//	//群公告信息
+		//	CRect rcGroupNotice(
+		//		CPoint(rcRightShowArea.left,
+		//			rcRightShowArea.top),
+		//		CSize(rcRightShowArea.Width(),
+		//			GROUP_DLG_NOTICE_HEIGHT));
+		//	{
+		//		CRect rcNoticeTitle(
+		//			CPoint(rcRightShowArea.left,
+		//				rcRightShowArea.top),
+		//			CSize(rcRightShowArea.Width(),
+		//				GROUP_DLG_STATIC_TEXT_HEIGHT));
+		//		if (m_staMemoTitle.IsWindow())
+		//		{
+		//			//m_staMemoTitle.ShowWindow(HIDE_WINDOW);
+		//			m_staMemoTitle.MoveWindow(rcNoticeTitle, TRUE);
+		//		}
+
+		//		CRect rcNoticeEdit(
+		//			CPoint(rcNoticeTitle.left,
+		//				rcNoticeTitle.bottom),
+		//			CSize(rcRightShowArea.Width(),
+		//				GROUP_DLG_NOTICE_HEIGHT - GROUP_DLG_STATIC_TEXT_HEIGHT));
+		//		if (m_edtMemo.IsWindow())
+		//		{
+		//			//m_edtMemo.ShowWindow(HIDE_WINDOW);
+		//			m_edtMemo.MoveWindow(rcNoticeEdit, TRUE);
+		//		}
+		//	}
+		//	//群成员列表
+		//	CRect rcGroupMember(
+		//		CPoint(rcRightShowArea.left,
+		//			rcGroupNotice.bottom),
+		//		CSize(rcRightShowArea.Width(),
+		//			rcRightShowArea.Height() - GROUP_DLG_NOTICE_HEIGHT));
+		//	{
+		//		CRect rcMemberTitle(
+		//			CPoint(rcRightShowArea.left,
+		//				rcGroupNotice.bottom),
+		//			CSize(rcRightShowArea.Width(),
+		//				GROUP_DLG_STATIC_TEXT_HEIGHT));
+		//		if (m_staMemberTitle.IsWindow())
+		//		{
+		//			m_staMemberTitle.MoveWindow(rcMemberTitle, TRUE);
+		//		}
+
+		//		CRect rcMemberList(
+		//			CPoint(rcRightShowArea.left,
+		//				rcMemberTitle.bottom),
+		//			CSize(rcRightShowArea.Width(),
+		//				rcGroupMember.Height() - rcMemberTitle.Height()));
+
+		//		if (m_GroupMemberListCtrl.IsWindow())
+		//		{
+		//			m_GroupMemberListCtrl.MoveWindow(rcMemberList, TRUE);
+		//		}
+		//	}
+		//}
+	}
+}
+
 void CGroupChatDlg::OnSizeNotShowMsgHistory()
 {
 
@@ -581,7 +863,6 @@ void CGroupChatDlg::OnSizeNotShowMsgHistory()
 			}
 		}
 	}
-
 }
 //响应窗口大小变化
 //TODO 此函数过于复杂，要分析每种情况分别处理和提取
@@ -1884,7 +2165,7 @@ BOOL CGroupChatDlg::InitMidToolBar()
 	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_cut.png"));
 
 
-
+	*/
 	nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_MSG_LOG_BTN, STBI_STYLE_BUTTON);
 	m_nMsgLogIndexInToolbar = nIndex;
 	m_tbMid.SetItemSize(nIndex, 90, 27, 27, 0);
@@ -1893,7 +2174,7 @@ BOOL CGroupChatDlg::InitMidToolBar()
 	m_tbMid.SetItemText(nIndex, _T(">>"));
 	m_tbMid.SetItemToolTipText(nIndex, _T("点击查看消息记录"));
 	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_msglog.png"));
-	*/
+	
 	m_tbMid.SetLeftTop(2, 4);
 	m_tbMid.SetBgPic(_T("MidToolBar\\bg.png"), CRect(0,0,0,0));
 
@@ -1924,7 +2205,7 @@ void CGroupChatDlg::OnBtn_MsgLog(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 		else
 		{
-			m_SkinDlg.MoveWindow(rtWindow.left, rtWindow.top, rtWindow.Width() + GROUP_MSG_LOG_WIDTH, rtWindow.Height(), FALSE);
+			m_SkinDlg.MoveWindow(rtWindow.left, rtWindow.top, rtWindow.Width() + GROUP_DLG_MSG_LOG_WIDTH, rtWindow.Height(), FALSE);
 			//m_SkinDlg.MoveWindow(rtWindow.left, rtWindow.top, rtWindow.Width()+RIGHT_CHAT_WINDOW_WIDTH, rtWindow.Height(),FALSE);
 		}
 
@@ -1947,7 +2228,7 @@ void CGroupChatDlg::OnBtn_MsgLog(UINT uNotifyCode, int nID, CWindow wndCtl)
 		}
 		else
 		{
-			m_SkinDlg.MoveWindow(rtWindow.left, rtWindow.top, rtWindow.Width() - GROUP_MSG_LOG_WIDTH, rtWindow.Height(), FALSE);
+			m_SkinDlg.MoveWindow(rtWindow.left, rtWindow.top, rtWindow.Width() - GROUP_DLG_MSG_LOG_WIDTH, rtWindow.Height(), FALSE);
 			//m_SkinDlg.MoveWindow2(rtWindow.left, rtWindow.top, rtWindow.Width()+RIGHT_CHAT_WINDOW_WIDTH, rtWindow.Height(),FALSE);
 		}
 
@@ -2245,7 +2526,7 @@ BOOL CGroupChatDlg::Init()
 // 初始化Tab栏
 BOOL CGroupChatDlg::InitRightTabWindow()
 {
-	CRect rcRightTabCtrl(GROUP_CHAT_DLG_WIDTH, 75, GROUP_CHAT_DLG_WIDTH+GROUP_MSG_LOG_WIDTH-3, 102);
+	CRect rcRightTabCtrl(GROUP_CHAT_DLG_WIDTH, 75, GROUP_CHAT_DLG_WIDTH+ GROUP_DLG_MSG_LOG_WIDTH -3, 102);
 	m_RightTabCtrl.Create(m_hWnd, rcRightTabCtrl, NULL, WS_CHILD | WS_VISIBLE, NULL, ID_TAB_CTRL_CHAT, NULL);
 	m_RightTabCtrl.SetTransparent(TRUE, m_SkinDlg.GetBgDC());
 	//m_RightTabCtrl.ShowWindow(SW_HIDE);
@@ -2741,6 +3022,17 @@ void CGroupChatDlg::AddMsgToRecvEdit(time_t nTime, LPCTSTR lpText)
 }
 
 
+void CGroupChatDlg::OnRecvGroupLogMsg(C_UI_GroupMessage* pGroupMsg)
+{
+	if (nullptr != pGroupMsg)
+	{
+		OnRecvToHandle(m_richMsgLog.m_hWnd, pGroupMsg);
+		m_richMsgLog.ShowWindow(SW_SHOW);
+		//time_t nowTime = time(nullptr);
+		//AddUserToRecvEdit(pGroupMsg->m_strSenderId, nowTime);
+		//AddTextToRecvEdit(pGroupMsg->m_strContext);
+	}
+}
 
 void CGroupChatDlg::OnRecvGroupMsg(C_UI_GroupMessage* pGroupMsg)
 {
@@ -3312,7 +3604,7 @@ void CGroupChatDlg::SendConfirmMessage(const CUploadFileResult* pUploadFileResul
 // 打开消息记录浏览窗口
 void CGroupChatDlg::OpenMsgLogBrowser()
 {
-	CString strMsgFile;// = m_lpFMGClient->GetMsgLogFullName().c_str();
+	/*CString strMsgFile;// = m_lpFMGClient->GetMsgLogFullName().c_str();
 	strMsgFile.Replace(_T("\\"), _T("/"));
 	m_MsgLogger.SetMsgLogFileName(strMsgFile);
 
@@ -3335,7 +3627,20 @@ void CGroupChatDlg::OpenMsgLogBrowser()
 	AddMsgToMsgLogEdit(arrMsgLog);
 
 	ShowMsgLogButtons(TRUE);
-	m_richMsgLog.SetFocus();
+	m_richMsgLog.SetFocus();*/
+
+	m_richMsgLog.ShowWindow(SW_SHOW);
+	OnSizeShowMsgHistory();
+	//
+	{
+		m_RightTabCtrl.ShowWindow(SW_HIDE);
+		m_staGroupCategory.ShowWindow(SW_HIDE);
+		m_edtMemo.ShowWindow(SW_HIDE);
+		m_staMemberTitle.ShowWindow(SW_HIDE);
+		m_GroupMemberListCtrl.ShowWindow(SW_HIDE);
+	}
+	m_richMsgLog.Invalidate(TRUE);
+	//CalculateMsgLogCountAndOffset();
 }
 
 // 关闭消息记录浏览窗口
@@ -3346,6 +3651,14 @@ void CGroupChatDlg::CloseMsgLogBrowser()
 	ShowMsgLogButtons(FALSE);
 
 	CalculateMsgLogCountAndOffset();
+	{
+		{
+			m_RightTabCtrl.ShowWindow(SW_SHOW);
+			m_staGroupCategory.ShowWindow(SW_SHOW);
+			m_edtMemo.ShowWindow(SW_SHOW);
+		}
+	}
+	OnSizeNotShowMsgHistory();
 }
 
 void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
@@ -3959,125 +4272,85 @@ BOOL CGroupChatDlg::HandleFileDragResult(PCTSTR lpszFileName)
 
 void CGroupChatDlg::CalculateMsgLogCountAndOffset()
 {
-	//读取消息记录个数
-	CString strMsgFile;// = m_lpFMGClient->GetMsgLogFullName().c_str();
-	strMsgFile.Replace(_T("\\"), _T("/"));
-	m_MsgLogger.SetMsgLogFileName(strMsgFile);
-	long nTotal = 0;// m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
-
-	long nPageCount = nTotal / 10;
-	if (nTotal % 10 != 0)
-		++nPageCount;
-
-	m_nMsgLogRecordOffset = 1;
-	m_nMsgLogCurrentPageIndex = 1;
-	while (TRUE)
 	{
-		m_nMsgLogRecordOffset += 10;
-		++m_nMsgLogCurrentPageIndex;
-		if (m_nMsgLogCurrentPageIndex > nPageCount)
-		{
-			m_nMsgLogRecordOffset -= 10;
-			--m_nMsgLogCurrentPageIndex;
-			break;
-		}
-	}
-	CString strInfo;
-	if (nPageCount > 0)
-	{
-		strInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
-	}
-	else
-	{
-		strInfo = _T("0/0");
-	}
 
-	m_staMsgLogPage.SetWindowText(strInfo);
-	m_staMsgLogPage.Invalidate(FALSE);
+	}
+	////读取消息记录个数
+	//CString strMsgFile;// = m_lpFMGClient->GetMsgLogFullName().c_str();
+	//strMsgFile.Replace(_T("\\"), _T("/"));
+	//m_MsgLogger.SetMsgLogFileName(strMsgFile);
+	//long nTotal = 0;// m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
+
+	//long nPageCount = nTotal / 10;
+	//if (nTotal % 10 != 0)
+	//	++nPageCount;
+
+	//m_nMsgLogRecordOffset = 1;
+	//m_nMsgLogCurrentPageIndex = 1;
+	//while (TRUE)
+	//{
+	//	m_nMsgLogRecordOffset += 10;
+	//	++m_nMsgLogCurrentPageIndex;
+	//	if (m_nMsgLogCurrentPageIndex > nPageCount)
+	//	{
+	//		m_nMsgLogRecordOffset -= 10;
+	//		--m_nMsgLogCurrentPageIndex;
+	//		break;
+	//	}
+	//}
+	//CString strInfo;
+	//if (nPageCount > 0)
+	//{
+	//	strInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
+	//}
+	//else
+	//{
+	//	strInfo = _T("0/0");
+	//}
+
+	//m_staMsgLogPage.SetWindowText(strInfo);
+	//m_staMsgLogPage.Invalidate(FALSE);
 }
 
 
 void CGroupChatDlg::OnMsgLogPage(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
-	long nTotalCount = 0;// m_MsgLogger.GetGroupMsgLogCount(m_nGroupCode);
-	long nPageCount = nTotalCount/10;
-	
-	if (nTotalCount % 10 != 0)
+	if (m_netProto)
 	{
-		++nPageCount;
-	}
-
-	if (nPageCount == 0)
-	{
-		return;
-	}
-
-	switch(nID)
-	{
-	case IDC_FIRST_MSG_LOG:
-	{
-		if (m_nMsgLogCurrentPageIndex == 1)
+		switch (nID)
 		{
-			return;
-		}
-		m_nMsgLogRecordOffset = 1;
-		m_nMsgLogCurrentPageIndex = 1;
-	}break;
-
-	case IDC_PREV_MSG_LOG:
-	{
-		if (m_nMsgLogCurrentPageIndex == 1)
+		case IDC_FIRST_MSG_LOG:
 		{
-			return;
-		}
-		
-		m_nMsgLogRecordOffset -= 10;
-		--m_nMsgLogCurrentPageIndex;
-		if (m_nMsgLogRecordOffset <= 0)
-		{
-			m_nMsgLogRecordOffset = 1;
-			m_nMsgLogCurrentPageIndex = 1;
-		}
-	}break;
-
-	case IDC_NEXT_MSG_LOG:
-	{
-		if (m_nMsgLogCurrentPageIndex == nPageCount)
-		{
-			return;
-		}
-		m_nMsgLogRecordOffset += 10;
-		++m_nMsgLogCurrentPageIndex;
-		if (m_nMsgLogCurrentPageIndex > nPageCount)
-		{
-			m_nMsgLogRecordOffset -= 10;
-			--m_nMsgLogCurrentPageIndex;
-		}
-	}break;
-
-	case IDC_LAST_MSG_LOG:
-		{
-			if(m_nMsgLogCurrentPageIndex == nPageCount)
-				return;
-			while(TRUE)
-			{
-				m_nMsgLogRecordOffset += 10;
-				++m_nMsgLogCurrentPageIndex;
-				if(m_nMsgLogCurrentPageIndex > nPageCount)
-				{
-					m_nMsgLogRecordOffset -= 10;
-					--m_nMsgLogCurrentPageIndex;
-					break;
-				}
-			}
+			m_netProto->GetGroupHistoryReq(m_strGroupId, HISTORY_DIRECTION::E_FIRST_MSG);
 		}break;
+
+		case IDC_PREV_MSG_LOG:
+		{
+			m_netProto->GetGroupHistoryReq(m_strGroupId, HISTORY_DIRECTION::E_PREV_MSG);
+		}break;
+
+		case IDC_NEXT_MSG_LOG:
+		{
+			m_netProto->GetGroupHistoryReq(m_strGroupId, HISTORY_DIRECTION::E_NEXT_MSG);
+		}break;
+
+		case IDC_LAST_MSG_LOG:
+		{
+			m_netProto->GetGroupHistoryReq(m_strGroupId, HISTORY_DIRECTION::E_LAST_MSG);
+		}break;
+		default:
+		{
+			m_netProto->GetGroupHistoryReq(m_strGroupId, HISTORY_DIRECTION::E_LAST_MSG);
+		}break;
+		}
 	}
+
 	
-	//AtlTrace(_T("Offset: %d, PageIndex: %d, TotalPage: %d\n"), m_nMsgLogRecordOffset, m_nMsgLogCurrentPageIndex, nPageCount);
-	CString strPageInfo;
-	strPageInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
-	m_staMsgLogPage.SetWindowText(strPageInfo);
-	m_staMsgLogPage.Invalidate(FALSE);
+	////AtlTrace(_T("Offset: %d, PageIndex: %d, TotalPage: %d\n"), m_nMsgLogRecordOffset, m_nMsgLogCurrentPageIndex, nPageCount);
+	//CString strPageInfo;
+	//strPageInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
+	//m_staMsgLogPage.SetWindowText(strPageInfo);
+	//m_staMsgLogPage.Invalidate(FALSE);
 
 	OpenMsgLogBrowser();
 }
@@ -4248,7 +4521,7 @@ void CGroupChatDlg::ReCaculateCtrlPostion(long nMouseY)
 	//AtlTrace(_T("RichSend top: %d\n"), ptBase.y+rtRichRecv.bottom-rtRichRecv.top+rtSplitter.top-rtSplitter.bottom+rtMidToolbar.bottom-rtMidToolbar.top);
 	if (m_bMsgLogWindowVisible)
 	{
-		::DeferWindowPos(hdwp, m_richSend, NULL, 6, ptBase.y + rtRichRecv.Height() + rtSplitter.Height() + rtMidToolbar.Height(), rtClient.Width() - 8 - GROUP_MEMBER_LIST_WIDTH - GROUP_MSG_LOG_WIDTH, nHeightRichSend, SWP_NOZORDER);
+		::DeferWindowPos(hdwp, m_richSend, NULL, 6, ptBase.y + rtRichRecv.Height() + rtSplitter.Height() + rtMidToolbar.Height(), rtClient.Width() - 8 - GROUP_MEMBER_LIST_WIDTH - GROUP_DLG_MSG_LOG_WIDTH, nHeightRichSend, SWP_NOZORDER);
 	}
 	else
 	{
