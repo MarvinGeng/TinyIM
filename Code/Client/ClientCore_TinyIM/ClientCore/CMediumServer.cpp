@@ -1015,6 +1015,20 @@ void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,c
 			}
 			return;
 		}
+		if (msg.GetType() == MessageType::GetGroupChatHistoryReq_Type)
+		{
+			GetGroupChatHistoryReq reqMsg;
+			if (reqMsg.FromString(msg.to_string())) {
+				GetGroupChatHistoryRsp rspMsg;
+				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+				rspMsg.m_strUserId = reqMsg.m_strUserId;
+				rspMsg.m_strGroupId = reqMsg.m_strGroupId;
+				rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
+				rspMsg.m_msgHistory = m_msgPersisUtil->Get_GroupChatHistory(reqMsg);
+				pServerSess->SendMsg(&rspMsg);
+			}
+			return;
+		}
 	}
 	//对于原始消息，原封不动的转发
 	auto item = m_ForwardSessMap.find(pServerSess);
@@ -1087,12 +1101,24 @@ void CMediumServer::HandleMsg(const TransBaseMsg_t& msg)
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg.m_chatMsg);
-			//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg);
+		}
+	}break;
+	case MessageType::SendGroupTextMsgRsp_Type:
+	{
+		SendGroupTextMsgRspMsg rspMsg;
+		if (rspMsg.FromString(msg.to_string())) {
+			m_msgPersisUtil->Save_RecvGroupTextMsgReqMsg(rspMsg);
+		}
+	}break;
+	case MessageType::RecvGroupTextMsgReq_Type:
+	{
+		RecvGroupTextMsgReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			m_msgPersisUtil->Save_RecvGroupTextMsgReqMsg(reqMsg);
 		}
 	}break;
 	default:
 	{
-
 	}break;
 	}
 }

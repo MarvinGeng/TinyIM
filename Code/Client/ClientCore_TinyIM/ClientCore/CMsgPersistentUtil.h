@@ -71,6 +71,8 @@ public:
 
 	bool Update_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReqMsg& msg);
 
+	bool Save_RecvGroupTextMsgReqMsg(const SendGroupTextMsgRspMsg& msg);
+
 	static std::shared_ptr<spdlog::logger> ms_logger;
 
 private:

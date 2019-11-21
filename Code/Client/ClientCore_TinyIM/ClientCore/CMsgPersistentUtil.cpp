@@ -111,7 +111,7 @@ bool CMsgPersistentUtil::InitDataBase()
 
 		if (nullptr == m_pGroupChatSelectRangeLast)
 		{
-			std::string strSqlTemplate = R"( SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? )";
+			std::string strSqlTemplate = R"(SELECT * FROM (SELECT * FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID=? ORDER BY F_MSG_ID DESC LIMIT 15) )";
 			m_pGroupChatSelectRangeLast = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 
@@ -377,7 +377,39 @@ bool CMsgPersistentUtil::Update_FriendChatRecvTxtReqMsg(const FriendChatMsg_s& m
 	return bResult;
 }
 
+bool CMsgPersistentUtil::Save_RecvGroupTextMsgReqMsg(const SendGroupTextMsgRspMsg& msg)
+{
+	if (nullptr != m_pGroupChatInsert)
+	{
+		SQLite::bind(*m_pGroupChatInsert,
+			msg.m_strMsgId,
+			ChatType(CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE),
+			msg.m_strSenderId,
+			msg.m_strGroupId,
+			msg.m_strContext,
+			"OTHER_INFO",
+			"READ",
+			msg.m_strMsgTime);
+		int nNb = m_pGroupChatInsert->exec();
+		m_pGroupChatInsert->reset();
+		if (nNb != 0)
+		{
+			return true;
+		}
+		else
+		{
+			std::string strMsg = m_pGroupChatInsert->getErrorMsg();
+			LOG_ERR(ms_logger, "{} [{} {}]", strMsg, __FILENAME__, __LINE__);
+			// Reset the query to be able to use it again later
 
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
 //RecvGroupTextMsgReqMsg
 /**
  * @brief 保存群组聊天的文本消息
@@ -398,7 +430,7 @@ bool CMsgPersistentUtil::Save_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReqMs
 			msg.m_strContext,
 			"OTHER_INFO",
 			"UN_READ",
-			std::to_string(time(nullptr)));
+			msg.m_strMsgTime);
 		int nNb = m_pGroupChatInsert->exec();
 		m_pGroupChatInsert->reset();
 		if (nNb != 0)
@@ -635,7 +667,18 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryFirst(cons
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg)
 {
-	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeFirst);
+	std::vector<SendGroupTextMsgRspMsg> result;
+	try {
+		SQLite::bind(*m_pGroupChatSelectRangeFirst,
+			reqMsg.m_strGroupId);
+		result = Get_GroupChatHistoryCore(m_pGroupChatSelectRangeFirst);
+	}
+	catch (SQLite::Exception& ec) {
+		result.clear();
+		LOG_ERR(ms_logger, " EC: {} EC message:{} SQL:{}", ec.getErrorCode(), ec.getErrorStr(), m_pGroupChatSelectRangeFirst->getQuery());
+	}
+	m_pGroupChatSelectRangeFirst->reset();
+	return result;
 }
 
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg)
@@ -660,7 +703,18 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg)
 {
-	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeLast);
+	std::vector<SendGroupTextMsgRspMsg> result;
+	try {
+		SQLite::bind(*m_pGroupChatSelectRangeLast,
+			reqMsg.m_strGroupId);
+		result = Get_GroupChatHistoryCore(m_pGroupChatSelectRangeLast);
+	}
+	catch (SQLite::Exception& ec) {
+		result.clear();
+		LOG_ERR(ms_logger, " EC: {} EC message:{} SQL:{}", ec.getErrorCode(), ec.getErrorStr(), m_pGroupChatSelectRangeLast->getQuery());
+	}
+	m_pGroupChatSelectRangeFirst->reset();
+	return result;
 }
 
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg)
@@ -687,7 +741,19 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg)
 {
 
-	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangePrev);
+	std::vector<SendGroupTextMsgRspMsg> result;
+	try {
+		SQLite::bind(*m_pGroupChatSelectRangePrev,
+			reqMsg.m_strGroupId);
+		result = Get_GroupChatHistoryCore(m_pGroupChatSelectRangePrev);
+	}
+	catch (SQLite::Exception& ec) {
+		result.clear();
+		LOG_ERR(ms_logger, " EC: {} EC message:{} SQL:{}", ec.getErrorCode(), ec.getErrorStr(), m_pGroupChatSelectRangePrev->getQuery());
+	}
+	m_pGroupChatSelectRangePrev->reset();
+	return result;
+	//return Get_GroupChatHistoryCore(m_pGroupChatSelectRangePrev);
 }
 
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg)
@@ -713,7 +779,19 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryNext(const
 
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg)
 {
-	return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeNext);
+	//return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeNext);
+	std::vector<SendGroupTextMsgRspMsg> result;
+	try {
+		SQLite::bind(*m_pGroupChatSelectRangeNext,
+			reqMsg.m_strGroupId);
+		result = Get_GroupChatHistoryCore(m_pGroupChatSelectRangeNext);
+	}
+	catch (SQLite::Exception& ec) {
+		result.clear();
+		LOG_ERR(ms_logger, " EC: {} EC message:{} SQL:{}", ec.getErrorCode(), ec.getErrorStr(), m_pGroupChatSelectRangeNext->getQuery());
+	}
+	m_pGroupChatSelectRangeNext->reset();
+	return result;
 }
 
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLite::Statement* pState)
@@ -747,7 +825,7 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCor
 		rspMsg.m_strGroupId = pState->getColumn(3).getString();
 		rspMsg.m_strContext = pState->getColumn(4).getString();
 		rspMsg.m_fontInfo.FromString(pState->getColumn(5).getString());
-		rspMsg.m_strMsgTime = pState->getColumn(6).getString();
+		rspMsg.m_strMsgTime = pState->getColumn(7).getString();
 
 		result.push_back(rspMsg);
 	}
