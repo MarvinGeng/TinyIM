@@ -330,5 +330,8 @@ long CPath::GetFileSize(LPCTSTR lpszPath)
 
 	return nFileSize;
 }
-
+bool CPath::CopyFilePath(const std::string strSrcFile, const std::string strDstFile)
+{
+	return (CopyFileA(strSrcFile.data(), strDstFile.data(), TRUE) == TRUE);
+}
 }

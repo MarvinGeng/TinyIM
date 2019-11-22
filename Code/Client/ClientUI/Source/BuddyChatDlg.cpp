@@ -27,6 +27,7 @@
 #include "UIText.h"
 #include "UIDefaultValue.h"
 #include "UICommonStruct.h"
+#include "Path.h"
 #include <time.h>
 #include <UtilTime.h>
 
@@ -296,9 +297,10 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 				}break;
 				case E_RichEditType::IMAGE:
 				{
-					LPCTSTR pImageName = item.m_strImageName.c_str();
+					WString strNewPath = Hootina::CPath::GetAppPath() + EncodeUtil::AnsiToUnicode(m_pSess->UserName()) + _T("\\");
+					WString imgName = strNewPath + item.m_strImageName;
 					_RichEdit_InsertFace(recvHandle,
-						pImageName,
+						imgName.data(),
 						-1,
 						-1);
 					
@@ -1580,16 +1582,44 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	{
 		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
+		RichEditMsgList newMsgList;
 		for (auto item : msgList)
 		{
 			if (item.m_eType == E_RichEditType::IMAGE)
 			{
-				if (m_pSess) {
-					m_pSess->SendFileDataBeginReq(m_strFriendId, EncodeUtil::UnicodeToAnsi(item.m_strImageName));
+				RichEditMsg_st imgMsg = item;
+				std::string strOldFileName = EncodeUtil::UnicodeToAnsi(item.m_strImageName);
+				WString strNewPath = Hootina::CPath::GetAppPath() + EncodeUtil::AnsiToUnicode(m_pSess->UserName()) + _T("\\");
+
+
+				if (Hootina::CPath::IsDirectoryExist(strNewPath.data()))
+				{
+
 				}
+				else
+				{
+					Hootina::CPath::CreateDirectoryW(strNewPath.data());
+				}
+
+				std::string imageName = std::to_string(time(nullptr)) + std::to_string(rand()) + "." + EncodeUtil::UnicodeToAnsi(Hootina::CPath::GetExtension(item.m_strImageName.data()));;
+				std::string newImgName = EncodeUtil::UnicodeToAnsi(strNewPath) + imageName;
+
+				if (Hootina::CPath::CopyFilePath(strOldFileName, newImgName))
+				{
+					imgMsg.m_strImageName = EncodeUtil::AnsiToUnicode(imageName);
+					newMsgList.push_back(imgMsg);
+					if (m_pSess) {
+						m_pSess->SendFileDataBeginReq(m_strFriendId, imageName);
+					}
+				}
+
+			}
+			else
+			{
+				newMsgList.push_back(item);
 			}
 		}
-		std::string strSendText = RichEditMsg(msgList);
+		std::string strSendText = RichEditMsg(newMsgList);
 		if (m_pSess) {
 			m_pSess->SendChatTxtMsg(m_strFriendId, strSendText, m_FontSelDlg.GetFontInfo());
 		}

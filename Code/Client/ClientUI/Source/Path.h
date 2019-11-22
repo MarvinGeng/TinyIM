@@ -40,6 +40,7 @@ public:
 	static WString GetExtension(LPCTSTR lpszPath);								// 返回指定的路径字符串的扩展名
 	static WString GetFullPath(LPCTSTR lpszPath);								// 根据指定的相对路径获取绝对路径
 	static long    GetFileSize(LPCTSTR lpszPath);								// 获取文件大小
+	static bool    CopyFilePath(const std::string strSrcFile, const std::string strDstFile);
 };
 
 }
