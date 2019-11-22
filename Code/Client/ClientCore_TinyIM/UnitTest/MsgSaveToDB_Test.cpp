@@ -6,16 +6,16 @@
 static CMsgPersistentUtil util;
 TEST_CASE("FriendChatRecvTextMsgInsert") {
 	util.InitDataBase();
-	FriendChatRecvTxtReqMsg reqMsg;
-	reqMsg.m_strMsgId = "123456768";
-	reqMsg.m_strFromId = "11111111";
-	reqMsg.m_strToId = "22222222";
-	reqMsg.m_strContext = "TEXT";
-	util.Save_FriendChatRecvTxtReqMsg(reqMsg);
-	FriendChatRecvTxtReqMsg recvMsg;
-	util.Get_FriendChatRecvTxtReqMsg(recvMsg);
-	std::cout << recvMsg.ToString() << std::endl;
-	util.Update_FriendChatRecvTxtReqMsg(recvMsg);
+	//FriendChatRecvTxtReqMsg reqMsg;
+	//reqMsg.m_strMsgId = "123456768";
+	//reqMsg.m_strFromId = "11111111";
+	//reqMsg.m_strToId = "22222222";
+	//reqMsg.m_strContext = "TEXT";
+	//util.Save_FriendChatRecvTxtReqMsg(reqMsg);
+	//FriendChatRecvTxtReqMsg recvMsg;
+	//util.Get_FriendChatRecvTxtReqMsg(recvMsg);
+	//std::cout << recvMsg.ToString() << std::endl;
+	//util.Update_FriendChatRecvTxtReqMsg(recvMsg);
 }
 
 TEST_CASE("GroupChatRecvTextMsgInsert") {

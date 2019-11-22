@@ -35,5 +35,6 @@ namespace ClientCore {
 
 		UDP_CALL_BACK m_callBack;
 	};
+	using CUdpClient_PTR = std::shared_ptr< CUdpClient>;
 }
 #endif

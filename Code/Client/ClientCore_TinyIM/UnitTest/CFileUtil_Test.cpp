@@ -13,10 +13,10 @@ TEST_CASE("RemoveFile") {
 
 TEST_CASE("ReadFile") {
 	CFileUtil util;
-	std::string strReadName = "E:\\GitHub\\DennisThinkIM\\源代码\\Client\\ClientCore_TinyIM\\bin\\Debug\\Read.txt";
+	std::string strReadName = "E:\\GitHub\\TinyIM\\Code\\Client\\ClientCore_TinyIM\\bin\\Debug\\ImRobot.exe";
 	int nReadFileId = 15;
 
-	std::string strWriteName = "E:\\GitHub\\DennisThinkIM\\源代码\\Client\\ClientCore_TinyIM\\bin\\Debug\\Write.txt";
+	std::string strWriteName = "E:\\GitHub\\TinyIM\\Code\\Client\\ClientCore_TinyIM\\bin\\Debug\\ImRobot2.exe";
 	int nWriteFileId = 16;
 	CHECK(util.OpenReadFile(nReadFileId, strReadName));
 	util.RemoveFile(strWriteName);
@@ -34,5 +34,5 @@ TEST_CASE("ReadFile") {
 	}
 	CHECK(util.OnCloseFile(nReadFileId));
 	CHECK(util.OnCloseFile(nWriteFileId));
-	CHECK(util.RemoveFile(strWriteName));
+	//CHECK(util.RemoveFile(strWriteName));
 }

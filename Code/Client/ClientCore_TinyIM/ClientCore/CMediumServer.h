@@ -43,14 +43,15 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
     //服务器的IP端口设置
     IpPortCfg m_serverCfg;
+	//所有的客户端的连接客户端的IP端口设置
+	std::vector<IpPortCfg> m_clientCfgVec;
+
+	IpPortCfg m_httpCfg;
+	
+	IpPortCfg m_udpCfg;
 
 	CFileUtil m_fileUtil;
-    //所有的客户端的连接客户端的IP端口设置
-    std::vector<IpPortCfg> m_clientCfgVec;
 
-	std::vector<IpPortCfg> m_clientBinCfgVec;
-	
-	IpPortCfg m_httpCfg;
     
 	std::vector<std::shared_ptr<CServerSess>> m_listenList; //监听的套接字的列表
 
@@ -94,6 +95,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
 	CClientSess_SHARED_PTR CreateClientSess();
+	CUdpClient_PTR CreateUdpSess();
+	CUdpClient_PTR GetUdpSess(const std::string strUserId);
 	CMsgPersistentUtil_SHARED_PTR GetMsgPersisUtil() {
 		return m_msgPersisUtil;
 	}
@@ -122,13 +125,15 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	SearchChatHistoryRsp HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
 
 private:
-	void HandleMsg(const TransBaseMsg_t& msg);
+	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
+	bool HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg);
+
 	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);
 	void HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg);
 	std::map<std::string, std::string> m_strUserNameUserIdMap;
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
-	std::shared_ptr<CUdpClient> m_udpClient;
+	std::map<std::string, CUdpClient_PTR> m_userUdpSessMap;
 	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
 
 	long long m_timeCount;

@@ -17,7 +17,7 @@
 bool CFileUtil::GetFileSize(int& nFileSize, const std::string strFileName)
 {
 	FILE * pFile;
-	fopen_s(&pFile,strFileName.c_str(), "r");
+	fopen_s(&pFile,strFileName.c_str(), "rb");
 	if (nullptr != pFile) {
 		fseek(pFile, 0L, SEEK_END);
 		nFileSize = ftell(pFile);
@@ -45,7 +45,7 @@ bool CFileUtil::OpenReadFile(const int nFileId, const std::string strFileName)
 	}
 
 	FILE * pFile;
-	fopen_s(&pFile,strFileName.c_str(), "r");
+	fopen_s(&pFile,strFileName.c_str(), "rb");
 	if (nullptr != pFile) {
 		m_ReadFileMap.insert({ nFileId,pFile });
 		return true;
@@ -72,7 +72,7 @@ bool CFileUtil::OpenWriteFile(const int nFileId, const std::string strFileName)
 	}
 
 	FILE * pFile;
-	fopen_s(&pFile,strFileName.c_str(), "w");
+	fopen_s(&pFile,strFileName.c_str(), "wb");
 	if (nullptr != pFile) {
 		m_WriteFileMap.insert({ nFileId,pFile });
 		return true;

@@ -14,11 +14,11 @@ using namespace std;
 void GenerateCfgFile(std::string fileName)
 {
     std::string strConfig=R"({
-   "LogDir":"/home/test/Log/SourceServer/",
+   "LogDir":".",
    "NodeId":"MediumServer",
    "server":{
         "ip":"127.0.0.1",
-        "port":9000
+        "port":7000
       },
     
     "clients":[
@@ -27,15 +27,15 @@ void GenerateCfgFile(std::string fileName)
             "port":9000
         }
     ],
-   
-   "clientsBin":[
-        {
-            "ip":"127.0.0.1",
-            "port":9001
-        }
-    ]
-    }
-    )";
+   "httpserver":{
+		"ip":"127.0.0.1",
+		"port":8000
+   },
+	"UdpServer":{
+		"ip":"127.0.0.1",
+		"port":20000
+	}
+})";
     write_txtfile(fileName.c_str(),strConfig);
 }
 
