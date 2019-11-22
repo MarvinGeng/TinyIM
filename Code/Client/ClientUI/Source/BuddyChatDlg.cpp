@@ -1582,6 +1582,12 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
 		for (auto item : msgList)
 		{
+			if (item.m_eType == E_RichEditType::IMAGE)
+			{
+				if (m_pSess) {
+					m_pSess->SendFileDataBeginReq(m_strFriendId, EncodeUtil::UnicodeToAnsi(item.m_strImageName));
+				}
+			}
 		}
 		std::string strSendText = RichEditMsg(msgList);
 		if (m_pSess) {
