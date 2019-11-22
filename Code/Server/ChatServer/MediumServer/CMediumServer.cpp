@@ -173,6 +173,13 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 				Handle_UdpFileDataSendReqMsg(reqMsg);
 			}
 		}break;
+		case MessageType::FileRecvDataRsp_Type:
+		{
+			FileDataRecvRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				Handle_RecvUdpMsg(sendPt, rspMsg);
+			}
+		}break;
 		default:
 		{
 
@@ -1706,6 +1713,25 @@ void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess,
 		if (item != m_UserSessVec.end())
 		{
 			item->second->SendMsg(&req);
+		}
+	}
+}
+
+
+void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& rspMsg)
+{
+	{
+		auto item = m_userIdUdpAddrMap.find(rspMsg.m_strToId);
+		if (item != m_userIdUdpAddrMap.end())
+		{
+			FileDataSendRspMsg sendRsp;
+			sendRsp.m_strMsgId = rspMsg.m_strMsgId;
+			sendRsp.m_strFromId = rspMsg.m_strToId;
+			sendRsp.m_strToId = rspMsg.m_strFromId;
+			sendRsp.m_nFileId = rspMsg.m_nFileId;
+			sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+			sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
+			m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendRsp);
 		}
 	}
 }

@@ -215,6 +215,7 @@ private:
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);
 
 	void HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
+	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& pMsg);
  public:
 
     static std::shared_ptr<spdlog::logger> ms_loger; //日志指针
