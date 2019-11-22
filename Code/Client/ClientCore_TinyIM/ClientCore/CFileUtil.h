@@ -34,6 +34,7 @@ public:
 	bool OnCloseFile(const int nFileId);
 	std::string CalcHash(const std::string strFileName);
 	std::string GetFileNameFromPath(const std::string strFullPath);
+	std::string GetCurDir();
 private:
 	std::map<int, std::FILE*> m_ReadFileMap;
 	std::map<int, std::FILE*> m_WriteFileMap;

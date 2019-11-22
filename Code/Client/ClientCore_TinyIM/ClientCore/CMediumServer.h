@@ -59,7 +59,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	std::map<std::shared_ptr<CClientSess>, std::shared_ptr<CServerSess>> m_BackSessMap;
 
 	std::map<std::string, std::shared_ptr<CClientSess>> m_userClientSessMap;
-	std::map<std::string, std::string> m_userNameUserIdMap;
+	std::map<std::string, std::string> m_userId_UserNameMap;
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
 
 	std::shared_ptr<CHttpServer> m_httpServer;
@@ -130,7 +130,7 @@ private:
 
 	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);
 	void HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg);
-	std::map<std::string, std::string> m_strUserNameUserIdMap;
+	std::map<std::string, std::string> m_userName_UserIdMap;
 	std::map<std::string, CLIENT_SESS_STATE>  m_userStateMap;
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
 	std::map<std::string, CUdpClient_PTR> m_userUdpSessMap;

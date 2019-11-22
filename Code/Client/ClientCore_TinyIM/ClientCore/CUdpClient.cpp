@@ -27,11 +27,6 @@ namespace ClientCore {
 		{
 			auto pSelf = shared_from_this();
 			m_udpSocket->async_receive_from(asio::buffer(m_recvbuf, max_msg_length_udp), m_recvFromPt, [this,pSelf](std::error_code ec, std::size_t bytes) {
-				
-				if (!ec)
-				{
-					do_read();
-				}
 				if (!ec && bytes > 0)
 				{
 					TransBaseMsg_t trans(m_recvbuf);
@@ -40,6 +35,10 @@ namespace ClientCore {
 					{
 						handle_msg(m_recvFromPt, &trans);
 					}
+				}
+				if (!ec)
+				{
+					do_read();
 				}
 			});
 		}
@@ -59,11 +58,13 @@ namespace ClientCore {
 		{
 			LOG_INFO(ms_loger, "{}:{} Send :{}", endPt.address().to_string(),endPt.port(), pMsg->to_string());
 		}
-		send_msg(endPt, pMsg);
+		m_callBack(endPt, pMsg);
+		//send_msg(endPt, pMsg);
 	}
 	
 	void CUdpClient::sendToServer(const BaseMsg* pMsg)
 	{
+		LOG_INFO(ms_loger, "UDP : SEND TO {}:{} MSG:{}", m_udpServerIp, m_udpServerPort, pMsg->ToString());
 		send_msg(m_udpServerIp,m_udpServerPort, pMsg);
 	}
 	void CUdpClient::send_msg(const std::string strIp, const int port, const BaseMsg* pMsg)

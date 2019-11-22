@@ -136,6 +136,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBase
 				Handle_UdpMsg(endPt, rspMsg);
 			}
 		}break;
+		case MessageType::FileRecvDataReq_Type:
+		{
+			FileDataRecvReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_UdpMsg(endPt, reqMsg);
+			}
+		}break;
 		default:
 		{
 
@@ -234,6 +241,14 @@ void CMediumServer::CheckAllConnect()
 		item.second->StartConnect();
 		item.second->SendKeepAlive();
 	}
+
+	for (auto& item : m_userUdpSessMap)
+	{
+		KeepAliveReqMsg reqMsg;
+		reqMsg.m_strClientId = item.first;
+		item.second->sendToServer(&reqMsg);
+	}
+
 }
 
 /**
@@ -276,8 +291,8 @@ void CMediumServer::do_accept()
 
 std::string CMediumServer::GetUserId(const std::string strUserName)
 {
-	auto item = m_userNameUserIdMap.find(strUserName);
-	if (item != m_userNameUserIdMap.end())
+	auto item = m_userName_UserIdMap.find(strUserName);
+	if (item != m_userName_UserIdMap.end())
 	{
 		return item->second;
 	}
@@ -552,12 +567,16 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		auto pUdpSess = GetUdpSess(reqMsg.m_strFromId);
 		if (pUdpSess)
 		{
-			pUdpSess->send_msg(endPt, &reqMsg);
+			pUdpSess->send_msg(endPt,&rspMsg);
 		}
 		else
 		{
 			LOG_ERR(ms_loger, "UDP Sess Failed:{}", reqMsg.m_strFromId);
 		}
+	}
+	else
+	{
+		m_fileUtil.OnCloseFile(reqMsg.m_nFileId + 1);
 	}
 }
 void CMediumServer::HandleFileDataRecvReq(const FileDataRecvReqMsg& reqMsg)
@@ -765,13 +784,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				HandleFileDataRecvReq(reqMsg);
 			}
 		}break;
-		case MessageType::FileSendDataRsp_Type:
-		{
-			FileDataSendRspMsg rspMsg;
-			if (rspMsg.FromString(pMsg->to_string())) {
-				HandleFileDataSendRsp(rspMsg);
-			}
-		}break;
+
 		case MessageType::AddFriendSendRsp_Type:
 		{
 			AddFriendSendRspMsg reqMsg;
@@ -956,23 +969,40 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (reqMsg.FromString(msg.to_string())) {
 			FileSendDataBeginRsp rspMsg;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+			rspMsg.m_strFileName = reqMsg.m_strFileName;
 			rspMsg.m_strUserId = reqMsg.m_strFriendId;
 			rspMsg.m_strFriendId = reqMsg.m_strUserId;
-			rspMsg.m_strFileName = reqMsg.m_strFileName;
-			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 			rspMsg.m_nFileId = reqMsg.m_nFileId;
 			pClientSess->SendMsg(&rspMsg);
+			std::string strFileName = m_fileUtil.GetCurDir() + "\\" + pClientSess->UserName() + "\\";
+			strFileName += m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
+			if (m_fileUtil.OpenWriteFile(reqMsg.m_nFileId + 1, strFileName))
+			{
+				LOG_INFO(ms_loger, "{} Open File Succeed:{} [{} {}]", reqMsg.m_strUserId, strFileName, __FILENAME__, __LINE__);
+			}
+			else
+			{
+				LOG_ERR(ms_loger, "{} Open File Failed:{} [{} {}]", reqMsg.m_strUserId, strFileName, __FILENAME__, __LINE__);
+			}
 		}
+		return true;
 	}break;
 	case MessageType::FileSendDataBeginRsp_Type:
 	{
 		FileSendDataBeginRsp rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			int nFileId = static_cast<int>(time(nullptr));
-			std::string strFileName = rspMsg.m_strFileName;
 			int nFileSize = 0;
-			m_fileUtil.GetFileSize(nFileSize, strFileName);
-			if (m_fileUtil.OpenReadFile(rspMsg.m_nFileId, strFileName)) {
+			std::string strPath = "E:\\GitHub\\TinyIM\\Code\\Client\\ClientUI\\Bin\\Debug\\";
+			auto item = m_userId_UserNameMap.find(rspMsg.m_strFriendId);
+			std::string strImageName;
+			if (item != m_userId_UserNameMap.end())
+			{
+				strImageName = strPath + item->second + "\\" + rspMsg.m_strFileName;
+			}
+			m_fileUtil.GetFileSize(nFileSize, strImageName);
+			if (m_fileUtil.OpenReadFile(rspMsg.m_nFileId, strImageName)) {
 				FileDataSendReqMsg sendReqMsg;
 				sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
 				sendReqMsg.m_strFromId = rspMsg.m_strFriendId;
@@ -995,6 +1025,20 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 		}
 	}
+	case MessageType::FileVerifyReq_Type:
+	{
+		FileVerifyReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			HandleFileVerifyReq(reqMsg);
+		}
+	}break;
+	case MessageType::FileSendDataRsp_Type:
+	{
+		FileDataSendRspMsg rspMsg;
+		if (rspMsg.FromString(msg.to_string())) {
+			HandleFileDataSendRsp(rspMsg);
+		}
+	}break;
 	default:
 	{
 	}break;
@@ -1011,9 +1055,11 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			m_userStateMap.insert({ rspMsg.m_strUserId,CLIENT_SESS_STATE::SESS_LOGIN_FINISHED });
 			m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
 
-			m_strUserNameUserIdMap.erase(rspMsg.m_strUserName);
-			m_strUserNameUserIdMap.insert({ rspMsg.m_strUserName, rspMsg.m_strUserId });
+			m_userName_UserIdMap.erase(rspMsg.m_strUserName);
+			m_userName_UserIdMap.insert({ rspMsg.m_strUserName, rspMsg.m_strUserId });
 
+			m_userId_UserNameMap.erase(rspMsg.m_strUserId);
+			m_userId_UserNameMap.insert({ rspMsg.m_strUserId,rspMsg.m_strUserName });
 			{
 				auto pUdpSess = GetUdpSess(rspMsg.m_strUserId);
 				if (pUdpSess == nullptr)
@@ -1132,20 +1178,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 	if (msg.GetType() == MessageType::FileSendDataBeginReq_Type)
 	{
-		FileSendDataBeginReq reqMsg;
-		if (reqMsg.FromString(msg.to_string())) {
-			FileSendDataBeginRsp rspMsg;
-			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
-			rspMsg.m_strFileName = reqMsg.m_strFileName;
-			rspMsg.m_strUserId = reqMsg.m_strFriendId;
-			rspMsg.m_nFileId = reqMsg.m_nFileId;
-			pClientSess->SendMsg(&rspMsg);
-			std::string strFileName = pClientSess->UserId() + "\\";
-			strFileName += m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
-			m_fileUtil.OpenWriteFile(reqMsg.m_nFileId + 1, strFileName);
-		}
-		return true;
+		
 	}
 	return false;
 }
@@ -1222,7 +1255,7 @@ SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatH
 CUdpClient_PTR CMediumServer::CreateUdpSess()
 {
 	auto pSelf = shared_from_this();
-	auto pSess = std::make_shared<CUdpClient>(m_ioService, m_udpCfg.m_strServerIp, m_udpCfg.m_nPort, [this, pSelf](const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg) {
+	auto pSess = std::make_shared<CUdpClient>(m_ioService, m_udpCfg.m_strServerIp,m_udpCfg.m_nPort, [this, pSelf](const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg) {
 		Handle_UdpMsg(endPt, pMsg);
 	});
 	pSess->StartConnect();

@@ -274,3 +274,11 @@ std::string CFileUtil::CalcHash(const std::string strFileName)
 {
 	return "";
 }
+
+std::string CFileUtil::GetCurDir()
+{
+	char buf1[256] ={0};
+	_getcwd(buf1, sizeof(buf1));
+
+	return buf1;
+}
