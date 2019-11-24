@@ -1,6 +1,7 @@
 #include "CUdpClient.h"
 namespace ClientCore {
 	std::shared_ptr<spdlog::logger> CUdpClient::ms_loger;
+	
 	CUdpClient::CUdpClient(asio::io_context& ioService, const std::string strIp, const int port, UDP_CALL_BACK&& callBack):m_callBack(callBack)
 	{
 		m_udpServerIp = strIp;
@@ -21,6 +22,10 @@ namespace ClientCore {
 		do_read();
 	}
 
+	/**
+	 * @brief 从UDP读取数据
+	 * 
+	 */
 	void CUdpClient::do_read()
 	{
 		if (m_udpSocket)
@@ -44,6 +49,11 @@ namespace ClientCore {
 		}
 	}
 	
+	/**
+	 * @brief 
+	 * TODO:待删除
+	 * 
+	 */
 	void CUdpClient::SendKeepAlive()
 	{
 		//KeepAliveReqMsg reqMsg;
@@ -52,6 +62,12 @@ namespace ClientCore {
 		//send_msg(m_udpServerPt, &trans);
 	}
 
+	/**
+	 * @brief 处理收到的UDP消息
+	 * 
+	 * @param endPt UDP消息的发送者的地址
+	 * @param pMsg UDP消息
+	 */
 	void CUdpClient::handle_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
 		if (ms_loger && pMsg)
@@ -62,11 +78,26 @@ namespace ClientCore {
 		//send_msg(endPt, pMsg);
 	}
 	
+	
+	/**
+	 * @brief 发送消息到UDP服务器
+	 * 
+	 * @param pMsg 
+	 */
 	void CUdpClient::sendToServer(const BaseMsg* pMsg)
 	{
 		LOG_INFO(ms_loger, "UDP : SEND TO {}:{} MSG:{}", m_udpServerIp, m_udpServerPort, pMsg->ToString());
 		send_msg(m_udpServerIp,m_udpServerPort, pMsg);
 	}
+
+
+	/**
+	 * @brief 发送消息到对应的IP和端口
+	 * 
+	 * @param strIp UDP的IP
+	 * @param port UDP的端口
+	 * @param pMsg 待发送的消息
+	 */
 	void CUdpClient::send_msg(const std::string strIp, const int port, const BaseMsg* pMsg)
 	{
 		asio::ip::udp::resolver resolver(m_udpSocket->get_io_context());
@@ -80,16 +111,36 @@ namespace ClientCore {
 		}
 	}
 	
+	/**
+	 * @brief 获取UDP地址的字符串表示
+	 * 
+	 * @param endPt UDP地址
+	 * @return std::string 地址的字符串表示
+	 */
 	std::string CUdpClient::EndPoint(const asio::ip::udp::endpoint endPt)
 	{
 		std::string strResult = endPt.address().to_string() + ":" + std::to_string(endPt.port());
 		return strResult;
 	}
+	
+	/**
+	 * @brief 发送UDP消息
+	 * 
+	 * @param endPt 
+	 * @param pMsg 
+	 */
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, const BaseMsg* pMsg)
 	{
 		TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
 		send_msg(endPt, &trans);
 	}
+
+	/**
+	 * @brief 发送UDP消息
+	 * 
+	 * @param endPt 
+	 * @param pMsg 
+	 */
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
 		if (m_udpSocket)

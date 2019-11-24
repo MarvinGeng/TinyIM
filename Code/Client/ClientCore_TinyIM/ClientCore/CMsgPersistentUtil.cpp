@@ -20,6 +20,13 @@
  */
 
 std::shared_ptr<spdlog::logger> CMsgPersistentUtil::ms_logger=nullptr;
+
+/**
+ * @brief 初始化预编译的SQL
+ * 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::InitDataBase()
 {
 	if (nullptr == ms_logger)
@@ -266,7 +273,7 @@ bool CMsgPersistentUtil::Get_AddFriendNotifyReqMsg(AddFriendNotifyReqMsg& msg)
 }
 
 /**
- * @brief 移除添加好友请求消息
+ * @brief 移除添加好友请求消息,作为消息聊天记录
  * 
  * @param msg 
  * @return true 
@@ -278,6 +285,13 @@ bool CMsgPersistentUtil::Remove_AddFriendNotifyReqMsg(const AddFriendNotifyReqMs
 	return true;
 }
 
+/**
+ * @brief 保存发送好友了聊天的回复消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Save_FriendChatSendTxtRspMsg(const FriendChatMsg_s& msg)
 {
 	std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES('{0}','{1}','{2}','{3}','{4}','{5}','UNREAD','{6}'))";
@@ -377,6 +391,14 @@ bool CMsgPersistentUtil::Update_FriendChatRecvTxtReqMsg(const FriendChatMsg_s& m
 	return bResult;
 }
 
+
+/**
+ * @brief 保存收到的群组文本消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Save_RecvGroupTextMsgReqMsg(const SendGroupTextMsgRspMsg& msg)
 {
 	if (nullptr != m_pGroupChatInsert)
@@ -496,12 +518,26 @@ bool CMsgPersistentUtil::Update_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReq
 }
 
 
+/**
+ * @brief 保存收到好友发送文件的请求消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Save_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& msg)
 {
 	m_FriendRecvFileMsgReqMsgMap.insert(std::pair<std::string,FriendRecvFileMsgReqMsg>(msg.m_strToId,msg));
 	return true;
 }
 
+/**
+ * @brief 获取收到好友发送文件的请求消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Get_FriendRecvFileMsgReqMsg(FriendRecvFileMsgReqMsg& msg)
 {
 	if (!m_FriendRecvFileMsgReqMsgMap.empty())
@@ -511,6 +547,13 @@ bool CMsgPersistentUtil::Get_FriendRecvFileMsgReqMsg(FriendRecvFileMsgReqMsg& ms
 	return true;
 }
 
+/**
+ * @brief 更新收到好友发送文件的请求消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Update_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& msg)
 {
 	if (!m_FriendRecvFileMsgReqMsgMap.empty())
@@ -521,12 +564,26 @@ bool CMsgPersistentUtil::Update_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgR
 }
 
 
+/**
+ * @brief 保存好友接收文件的通知消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Save_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg)
 {
 	m_FriendNotifyFileMsgReqMsgMap.insert({msg.m_strToId, msg});
 	return false;
 }
 
+/**
+ * @brief 获取好友接收文件的通知消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Get_FriendNotifyFileMsgReqMsg(FriendNotifyFileMsgReqMsg& msg)
 {
 	if (m_FriendNotifyFileMsgReqMsgMap.empty())
@@ -537,6 +594,13 @@ bool CMsgPersistentUtil::Get_FriendNotifyFileMsgReqMsg(FriendNotifyFileMsgReqMsg
 	return true;
 }
 
+/**
+ * @brief 更新好友接收文件的通知消息
+ * 
+ * @param msg 
+ * @return true 
+ * @return false 
+ */
 bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg)
 {
 	if (m_FriendNotifyFileMsgReqMsgMap.empty())
@@ -548,6 +612,12 @@ bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFile
 }
 
 
+/**
+ * @brief 根据选项对获取好友聊天记录的请求进行分发
+ * 
+ * @param reqMsg 
+ * @return std::vector<FriendChatMsg_s> 
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistory(const GetFriendChatHistoryReq& reqMsg)
 {
 	switch (reqMsg.m_eDirection)
@@ -575,6 +645,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistory(const Get
 	}
 }
 
+/**
+ * @brief 根据选项对获取群组聊天记录的请求进行分发
+ * 
+ * @param reqMsg 
+ * @return std::vector<SendGroupTextMsgRspMsg> 
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistory(const GetGroupChatHistoryReq&  reqMsg)
 {
 	switch (reqMsg.m_eDirection)
@@ -602,6 +678,13 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistory(co
 	}
 }
 
+
+/**
+ * @brief 获取好友消息记录的搜索结果
+ * 
+ * @param reqMsg 
+ * @return std::vector<FriendChatMsg_s> 
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_SearchFriendChatMsg(const SearchChatHistoryReq&  reqMsg)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -624,6 +707,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_SearchFriendChatMsg(const S
 }
 
 
+/**
+ * @brief 获取群聊消息记录的搜索结果
+ * 
+ * @param reqMsg 
+ * @return std::vector<SendGroupTextMsgRspMsg> 
+ */
 std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(const SearchChatHistoryReq&  reqMsg)
 {
 	std::vector<SendGroupTextMsgRspMsg> result;
@@ -645,6 +734,12 @@ std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(c
 	return result;
 }
 
+/**
+ * @brief 获取好友聊天记录的首页
+ * 
+ * @param reqMsg 
+ * @return std::vector<FriendChatMsg_s> 
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryFirst(const GetFriendChatHistoryReq& reqMsg)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -665,6 +760,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryFirst(cons
 	return result;
 }
 
+/**
+ * @brief 获取群组聊天消息记录的首页
+ * 
+ * @param reqMsg 
+ * @return std::vector<SendGroupTextMsgRspMsg> 
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFirst(const GetGroupChatHistoryReq&  reqMsg)
 {
 	std::vector<SendGroupTextMsgRspMsg> result;
@@ -681,6 +782,12 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryFir
 	return result;
 }
 
+/**
+ * @brief 获取好友聊天记录的最后一页
+ * 
+ * @param reqMsg 
+ * @return std::vector<FriendChatMsg_s> 
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const GetFriendChatHistoryReq& reqMsg)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -701,6 +808,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const
 	return result;
 }
 
+/**
+ * @brief 获取群组聊天记录的最后一页
+ * 
+ * @param reqMsg 
+ * @return std::vector<SendGroupTextMsgRspMsg> 
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLast(const GetGroupChatHistoryReq&  reqMsg)
 {
 	std::vector<SendGroupTextMsgRspMsg> result;
@@ -717,6 +830,12 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryLas
 	return result;
 }
 
+/**
+ * @brief 获取好友聊天记录的上一页
+ * 
+ * @param reqMsg 
+ * @return std::vector<FriendChatMsg_s> 
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const GetFriendChatHistoryReq& reqMsg)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -738,6 +857,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryPrev(const
 	return result;
 }
 
+/**
+ * @brief 获取群组聊天消息记录的上一页
+ * 
+ * @param reqMsg 
+ * @return std::vector<SendGroupTextMsgRspMsg> 
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPrev(const GetGroupChatHistoryReq&  reqMsg)
 {
 
@@ -756,6 +881,12 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryPre
 	//return Get_GroupChatHistoryCore(m_pGroupChatSelectRangePrev);
 }
 
+/**
+ * @brief 获取好友聊天消息记录的下一页
+ * 
+ * @param reqMsg 好友聊天消息的请求
+ * @return std::vector<FriendChatMsg_s> 好友聊天消息的数组
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryNext(const GetFriendChatHistoryReq& reqMsg)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -777,6 +908,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryNext(const
 	return result;
 }
 
+/**
+ * @brief 获取群组聊天的下一页记录
+ * 
+ * @param reqMsg 获取群组聊天请求消息
+ * @return std::vector<SendGroupTextMsgRspMsg> 群组聊天消息历史记录
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNext(const GetGroupChatHistoryReq&  reqMsg)
 {
 	//return Get_GroupChatHistoryCore(m_pGroupChatSelectRangeNext);
@@ -794,6 +931,12 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryNex
 	return result;
 }
 
+/**
+ * @brief 获取好友聊天记录的核心函数
+ * 
+ * @param pState 预编译的SQL对象
+ * @return std::vector<FriendChatMsg_s> 好友聊天记录数组
+ */
 std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLite::Statement* pState)
 {
 	std::vector<FriendChatMsg_s> result;
@@ -813,6 +956,12 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLit
 	return result;
 }
 
+/**
+ * @brief 获取群聊消息历史的核心函数
+ * 
+ * @param pState 预编译的SQL对象
+ * @return std::vector<SendGroupTextMsgRspMsg> 群聊消息记录数组
+ */
 std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCore(SQLite::Statement* pState)
 {
 	std::vector<SendGroupTextMsgRspMsg> result;
