@@ -74,6 +74,26 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 		}
 	}
 }
+
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg)
+{
+	if (reqMsg.m_nDataIndex < reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnWriteData(reqMsg.m_nFileId + 1, reqMsg.m_szData, reqMsg.m_nDataLength);
+		FileDataSendRspMsg rspMsg;
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_nFileId = reqMsg.m_nFileId;
+		rspMsg.m_strFromId = reqMsg.m_strToId;
+		rspMsg.m_strToId = reqMsg.m_strFromId;
+		rspMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		rspMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+		auto pSess = GetUdpSess(reqMsg.m_strToId);
+		if (pSess)
+		{
+			pSess->send_msg(endPt, &rspMsg);
+		}
+	}
+}
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const FileDataSendRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
@@ -128,6 +148,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBase
 		{
 
 		}break;
+		case MessageType::FileSendDataReq_Type:
+		{
+			FileDataSendReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_UdpMsg(endPt, reqMsg);
+			}
+		}break;
 		case MessageType::FileSendDataRsp_Type:
 		{
 			FileDataSendRspMsg rspMsg;
@@ -143,6 +170,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBase
 				Handle_UdpMsg(endPt, reqMsg);
 			}
 		}break;
+
 		default:
 		{
 

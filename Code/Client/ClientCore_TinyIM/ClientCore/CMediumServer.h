@@ -91,6 +91,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg);
     void CheckAllConnect();
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
