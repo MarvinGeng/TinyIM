@@ -339,6 +339,7 @@ FileSendDataBeginReq_Type,
 //开始发送文件数据回复
 FileSendDataBeginRsp_Type,
 
+FileTransProgressNotifyReq_Type,
 };
 
 //客户端会话状态

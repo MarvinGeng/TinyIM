@@ -2133,6 +2133,20 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+class FileTransProgressNotifyReqMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId;
+	std::string m_strUserId;
+	std::string m_strOtherId;
+	std::string m_strFileName;
+	double m_fTransPercent;//
+	int	   m_nTransSpeed;//
+public:
+	FileTransProgressNotifyReqMsg();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
 /**
  * @brief 服务器配置
  * 
