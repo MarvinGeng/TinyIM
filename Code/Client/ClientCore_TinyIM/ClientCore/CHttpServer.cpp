@@ -203,6 +203,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理获取好友聊天记录的请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Get_FriendChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -223,6 +229,13 @@ namespace ClientCore
 		}
 	}
 
+
+	/**
+	 * @brief 处理获取群组聊天记录的请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Get_GroupChatHistoryReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -243,6 +256,13 @@ namespace ClientCore
 		}
 	}
 
+
+	/**
+	 * @brief 处理查找聊天记录的请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Get_SearchChatMsgReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -539,6 +559,13 @@ namespace ClientCore
 		}
 	}
 
+
+	/**
+	 * @brief 处理获取好友列表的请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
@@ -566,6 +593,8 @@ namespace ClientCore
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
 		}
 	}
+
+
 	/**
 	 * @brief 发送已经收到群组文本消息的回复
 	 * 
@@ -912,7 +941,12 @@ namespace ClientCore
 		}
 	}
 
-
+	/**
+	 * @brief 处理获取群组列表的HTTP请求消息
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Get_GroupListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
@@ -940,6 +974,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理添加好友分组的HTTP请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Post_AddFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -961,6 +1001,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理删除好友分组的HTTP请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Post_DestroyFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -986,6 +1032,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理移动好友到新的分组的请求
+	 * 
+	 * @param response HTTP回复
+	 * @param request HTTP请求
+	 */
 	void CHttpServer::Post_MoveFriendToTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string  strReq = request->content.string();
@@ -1007,6 +1059,11 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 响应添加好友分组回复
+	 * 
+	 * @param msg 添加好友分组回复
+	 */
 	void CHttpServer::On_AddFriendTeamRsp(const AddTeamRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {
@@ -1020,6 +1077,11 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 响应删除好友分组回复
+	 * 
+	 * @param msg 删除好友分组回复
+	 */
 	void CHttpServer::On_RemoveFriendTeamRsp(const RemoveTeamRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {
@@ -1035,6 +1097,11 @@ namespace ClientCore
 
 
 
+	/**
+	 * @brief 响应移动好友分组回复
+	 * 
+	 * @param msg 移动好友分组回复消息
+	 */
 	void CHttpServer::On_MoveFriendToTeamRsp(const MoveFriendToTeamRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {
@@ -1049,6 +1116,11 @@ namespace ClientCore
 	}
 
 
+	/**
+	 * @brief 响应获取群聊列表的回复消息
+	 * 
+	 * @param msg 群组列表关系回复消息
+	 */
 	void CHttpServer::On_GetGroupListRsp(const GetGroupListRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {

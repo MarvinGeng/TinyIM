@@ -75,6 +75,12 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 	}
 }
 
+/**
+ * @brief 处理从UDP收到的文件数据发送请求消息(点对点的方式发送文件数据)
+ * 
+ * @param endPt UDP消息的发送者地址
+ * @param reqMsg 文件数据发送请求消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg)
 {
 	if (reqMsg.m_nDataIndex < reqMsg.m_nDataTotalCount)
@@ -94,6 +100,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		}
 	}
 }
+
+/**
+ * @brief 处理从UDP收到的文件数据发送回复消息
+ * 
+ * @param endPt UDP消息的来源地址
+ * @param rspMsg 文件数据发送回复消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const FileDataSendRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
@@ -138,6 +151,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const File
 		m_fileUtil.OnCloseFile(rspMsg.m_nFileId);
 	}
 }
+
+/**
+ * @brief 处理UDP消息,用于UDP的Client的回调
+ * 
+ * @param endPt 远端UDP的地址
+ * @param pMsg 从UDP收到的消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 {
 	if (pMsg)
@@ -317,6 +337,12 @@ void CMediumServer::do_accept()
         });
 }
 
+/**
+ * @brief 根据用户名获取用户ID
+ * 
+ * @param strUserName 用户名
+ * @return std::string 用户ID
+ */
 std::string CMediumServer::GetUserId(const std::string strUserName)
 {
 	auto item = m_userName_UserIdMap.find(strUserName);
@@ -347,6 +373,11 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 	}
 }
 
+/**
+ * @brief 创建连接到服务器的TCP连接
+ * 
+ * @return CClientSess_SHARED_PTR 到服务器的TCP连接
+ */
 	CClientSess_SHARED_PTR CMediumServer::CreateClientSess()
 	{
 		//auto pReturn = m_freeClientSess;
@@ -359,6 +390,10 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
 		return m_freeClientSess;
 	}
 
+/**
+ * @brief 检查待发送消息
+ * 
+ */
 void CMediumServer::CheckWaitMsgVec()
 {
 	decltype(m_WaitMsgMap) notSendMap;
@@ -423,11 +458,23 @@ void CMediumServer::SetTimer(int nSeconds)
 		});
 	}
 }
+
+/**
+ * @brief 处理好友聊天发送文本消息的回复
+ * 
+ * @param rspMsg 
+ */
 void CMediumServer::HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg)
 {
 
 }
 
+/**
+ * @brief 
+ * TODO :待删除
+ * 
+ * @param reqMsg 
+ */
 void CMediumServer::HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg)
 {
 
@@ -468,6 +515,12 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess, co
 		}
 	}
 }
+
+/**
+ * @brief 处理文件校验请求,在发送文件完成以后进行
+ * 
+ * @param msg 文件校验请求消息
+ */
 void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 {
 	FileVerifyRspMsg rspMsg;
@@ -494,6 +547,12 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 	}
 
 }
+
+/**
+ * @brief 
+ * TODO:待删除
+ * @param rspMsg 
+ */
 void CMediumServer::HandleFileDataSendRsp(const FileDataSendRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
@@ -536,6 +595,11 @@ void CMediumServer::HandleFileDataSendRsp(const FileDataSendRspMsg& rspMsg)
 	}
 }
 
+/**
+ * @brief 处理对于已经接收或者拒绝接收文件的通知消息
+ * 
+ * @param notifyMsg 文件接收结果通知消息
+ */
 void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg& notifyMsg)
 {
 	if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
@@ -579,6 +643,12 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 	}
 }
 
+/**
+ * @brief 处理从UDP收到文件数据的接收请求消息
+ * 
+ * @param endPt 消息发送者的地址
+ * @param reqMsg 文件数据接收消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataRecvReqMsg& reqMsg)
 {
 	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
@@ -607,6 +677,12 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		m_fileUtil.OnCloseFile(reqMsg.m_nFileId + 1);
 	}
 }
+
+/**
+ * @brief 处理接收到文件数据的请求消息
+ * @TODO: 可能需要删除,待确定
+ * @param reqMsg 接收到文件数据请求消息
+ */
 void CMediumServer::HandleFileDataRecvReq(const FileDataRecvReqMsg& reqMsg)
 {
 	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
@@ -629,6 +705,8 @@ void CMediumServer::HandleFileDataRecvReq(const FileDataRecvReqMsg& reqMsg)
 		}
 	}
 }
+
+
 /**
  * @brief 将TCP的回复消息变为HTTP消息
  * 
@@ -920,6 +998,11 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 	}
 }
 
+/**
+ * @brief 处理接收在线文件请求回复消息
+ * 
+ * @param rspMsg 好友文件请求回复消息
+ */
 void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspMsg)
 {
 	if (rspMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
@@ -928,6 +1011,15 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
 	}
 }
 
+
+/**
+ * @brief 来自GUI客户端的部分消息,不需要发送到远端的服务器,在此函数进行处理
+ * 
+ * @param pServerSess GUI客户端的连接
+ * @param msg 
+ * @return true 成功处理,不需要发送到远端
+ * @return false 没有处理,需要发送到远端处理
+ */
 bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg)
 {
 	{
@@ -963,6 +1055,15 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	return false;
 }
 
+
+/**
+ * @brief 部分消息不需要返回给GUI客户端，在此函数进行处理
+ * 
+ * @param pClientSess TCP链接会话
+ * @param msg 收到的消息
+ * @return true 处理成功
+ * @return false 处理失败
+ */
 bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg)
 {
 	switch (msg.GetType())
@@ -1234,6 +1335,13 @@ void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,c
 	}
 }
 
+
+/**
+ * @brief 处理获取好友聊天记录的请求 
+ * 
+ * @param reqMsg 获取好友聊天记录的请求
+ * @return GetFriendChatHistoryRsp 获取好友聊天记录的回复
+ */
 GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg)
 {
 	GetFriendChatHistoryRsp result;
@@ -1249,6 +1357,12 @@ GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFrien
 	return result;
 }
 
+/**
+ * @brief 处理获取群组聊天记录的请求
+ * 
+ * @param reqMsg 获取群组聊天记录的请求消息
+ * @return GetGroupChatHistoryRsp 群组聊天记录的回复消息
+ */
 GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
 {
 	GetGroupChatHistoryRsp result;
@@ -1264,6 +1378,12 @@ GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupCh
 	return result;
 }
 
+/**
+ * @brief 处理聊天记录查找请求
+ * 
+ * @param reqMsg 聊天记录查找请求消息
+ * @return SearchChatHistoryRsp 聊天记录查找回复消息
+ */
 SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg)
 {
 	SearchChatHistoryRsp result;
@@ -1280,6 +1400,11 @@ SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatH
 	return result;
 }
 
+/**
+ * @brief 创建UDP链接
+ * 
+ * @return CUdpClient_PTR 
+ */
 CUdpClient_PTR CMediumServer::CreateUdpSess()
 {
 	auto pSelf = shared_from_this();
@@ -1289,6 +1414,13 @@ CUdpClient_PTR CMediumServer::CreateUdpSess()
 	pSess->StartConnect();
 	return pSess;
 }
+
+/**
+ * @brief 根据用户ID获取UDP链接
+ * 
+ * @param strUserId 用户ID
+ * @return CUdpClient_PTR UDP链接
+ */
 CUdpClient_PTR CMediumServer::GetUdpSess(const std::string strUserId) {
 	auto item = m_userUdpSessMap.find(strUserId);
 	if (item != m_userUdpSessMap.end()) {
