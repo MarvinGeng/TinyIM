@@ -1184,6 +1184,11 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 响应获取好友列表的回复
+	 * 
+	 * @param msg 获取好友列表回复消息
+	 */
 	void CHttpServer::On_GetFriendListRsp(const GetFriendListRspMsg& msg)
 	{
 		if (!msg.m_strMsgId.empty()) {
@@ -1279,6 +1284,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 推送发送文件
+	 * 
+	 * @param response 
+	 * @param request 
+	 */
 	void CHttpServer::Post_SendFileOnlineNotifyRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 
@@ -1302,6 +1313,11 @@ namespace ClientCore
 			return paramMap.equal_range("UserId").first->second;
 		}
 	}
+
+	/**
+	 * @brief HTTP响应定时消息
+	 * 
+	 */
 	void CHttpServer::OnTimer()
 	{
 		const time_t TIME_OUT_VALUE = 5;
@@ -1479,6 +1495,12 @@ namespace ClientCore
 		};
 	}
 
+	/**
+	 * @brief 根据用户名获取登录请求消息
+	 * 
+	 * @param strUserName 用户名称
+	 * @return UserLoginReqMsg 用户登录请求消息
+	 */
 	UserLoginReqMsg CHttpServer::GetUserLoginReq(const std::string strUserName) const {
 		auto item = m_userLoginMsgMap.find(strUserName);
 		if (item != m_userLoginMsgMap.end()) {
