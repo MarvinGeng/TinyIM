@@ -307,7 +307,7 @@ BOOL CGroupChatDlg::OnCopyData(CWindow wnd, PCOPYDATASTRUCT pCopyDataStruct)
 			if ( (pCopyDataStruct->lpData != NULL) &&
 				 (pCopyDataStruct->cbData > 0) )
 			{
-				AddMsgToSendEdit((LPCTSTR)pCopyDataStruct->lpData);
+				//AddMsgToSendEdit((LPCTSTR)pCopyDataStruct->lpData);
 			}
 		}
 		break;
@@ -1360,7 +1360,7 @@ LRESULT CGroupChatDlg::OnRichEdit_Send_Paste(LPNMHDR pnmh)
 		  (lpOleNotify->hdr.code == EN_PASTE) && 
 		  (lpOleNotify->hdr.hwndFrom == m_richSend.m_hWnd) )
 	{
-		AddMsgToSendEdit(lpOleNotify->lpszText);
+		//AddMsgToSendEdit(lpOleNotify->lpszText);
 	}
 	return 0;
 }
@@ -2863,163 +2863,163 @@ BOOL CGroupChatDlg::HandleCustomPic(HWND hRichEditWnd, LPCTSTR& p, CString& strT
 	return FALSE;
 }
 
-BOOL CGroupChatDlg::HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
-{
-	WString strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
-	if (!strTemp.empty())
-	{
-		LPCTSTR lpFontFmt = _T("%[^,],%d,%[^,],%d,%d,%d");
-		TCHAR szName[32] = _T("宋体");
-		TCHAR szColor[32] = _T("000000");
-		int nSize = 9;
-		BOOL bBold = FALSE, bItalic = FALSE, bUnderLine = FALSE;
+//BOOL CGroupChatDlg::HandleFontInfo(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
+//{
+//	WString strTemp = GetBetweenString(p+2, _T("[\""), _T("\"]")).c_str();
+//	if (!strTemp.empty())
+//	{
+//		LPCTSTR lpFontFmt = _T("%[^,],%d,%[^,],%d,%d,%d");
+//		TCHAR szName[32] = _T("宋体");
+//		TCHAR szColor[32] = _T("000000");
+//		int nSize = 9;
+//		BOOL bBold = FALSE, bItalic = FALSE, bUnderLine = FALSE;
+//
+//		int nCount = _stscanf(strTemp.c_str(), lpFontFmt, szName, 
+//			&nSize, &szColor, &bBold, &bItalic, &bUnderLine);
+//		if (nCount != 6)
+//			return FALSE;
+//
+//		C_UI_Content* lpContent = new C_UI_Content;
+//		if (lpContent != NULL)
+//		{
+//			lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_FONT_INFO;
+//			lpContent->m_FontInfo.m_nSize = nSize;
+//			lpContent->m_FontInfo.m_clrText = HexStrToRGB(szColor);
+//			lpContent->m_FontInfo.m_strName = szName;
+//			lpContent->m_FontInfo.m_bBold = bBold;
+//			lpContent->m_FontInfo.m_bItalic = bItalic;				
+//			lpContent->m_FontInfo.m_bUnderLine = bUnderLine;
+//			arrContent.push_back(lpContent);
+//		}
+//
+//		if (!strText.empty())
+//		{
+//			C_UI_Content* lpContent = new C_UI_Content;
+//			if (lpContent != NULL)
+//			{
+//				lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
+//				lpContent->m_strText = strText;
+//				arrContent.push_back(lpContent);
+//			}
+//			strText = _T("");
+//		}
+//
+//		p = _tcsstr(p+2, _T("\"]"));
+//		p++;
+//		return TRUE;
+//	}
+//	return FALSE;
+//}
 
-		int nCount = _stscanf(strTemp.c_str(), lpFontFmt, szName, 
-			&nSize, &szColor, &bBold, &bItalic, &bUnderLine);
-		if (nCount != 6)
-			return FALSE;
+//// "/f["系统表情id"] /s["系统表情index"] /c["自定义图片路径"]"
+//void CGroupChatDlg::AddMsg(HWND hRichEditWnd, LPCTSTR lpText)
+//{
+//	if (NULL == lpText || NULL == *lpText)
+//	{
+//		return;
+//	}
+//
+//	CString strText;
+//
+//	for (LPCTSTR p = lpText;*p != _T('\0'); p++)
+//	{
+//		if (*p == _T('/'))
+//		{
+//			if (*(p+1) == _T('/'))
+//			{
+//				strText +=*p;
+//				p++;
+//				continue;
+//			}
+//			else if (*(p+1) == _T('f'))
+//			{
+//				if (HandleSysFaceId(hRichEditWnd, p, strText))
+//				{
+//					continue;
+//				}
+//			}
+//			else if (*(p+1) == _T('s'))
+//			{
+//				if (HandleSysFaceIndex(hRichEditWnd, p, strText))
+//				{
+//					continue;
+//				}
+//			}
+//			else if (*(p+1) == _T('c'))
+//			{
+//				if (HandleCustomPic(hRichEditWnd, p, strText))
+//				{
+//					continue;
+//				}
+//			}
+//		}
+//		strText +=*p;
+//	}
+//
+//	if (!strText.IsEmpty())
+//	{
+//		//加一个@XXX效果
+//		//CString strChatContent(strText);
+//		//long nStartIndex = -1;
+//		//long nEndIndex = -1;
+//		//long nCurrentIndex = 0;
+//
+//		//C_UI_GroupInfo* pGroupInfo = GetGroupInfoPtr();
+//		//if(pGroupInfo != NULL)
+//		//{
+//		//	C_UI_BuddyInfo* pBuddyInfo = NULL;
+//		//	CString strTarget;
+//		//	CString strLeft;
+//		//	CString strRight;
+//		//	for(size_i i=0; pGroupInfo->m_arrMember.size(); ++i)
+//		//	{
+//		//		pBuddyInfo = pGroupInfo->m_arrMember[i];
+//		//		if(pBuddyInfo == NULL)
+//		//			continue;
+//		//		
+//		//		strTarget.Format(_T("@%s"), pBuddyInfo->m_strAccount.c_str());
+//		//		nStartIndex = strChatContent.Find(strTarget, nCurrentIndex)
+//		//		if(nStartIndex < 0)
+//		//			continue;
+//		//		
+//		//		strLeft = strChatContent.Left(nStartIndex);
+//		//		_RichEdit_ReplaceSel(hRichEditWnd, strText);
+//		//	}
+//		//}
+//		_RichEdit_ReplaceSel(hRichEditWnd, strText);
+//	}
+//}
 
-		C_UI_Content* lpContent = new C_UI_Content;
-		if (lpContent != NULL)
-		{
-			lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_FONT_INFO;
-			lpContent->m_FontInfo.m_nSize = nSize;
-			lpContent->m_FontInfo.m_clrText = HexStrToRGB(szColor);
-			lpContent->m_FontInfo.m_strName = szName;
-			lpContent->m_FontInfo.m_bBold = bBold;
-			lpContent->m_FontInfo.m_bItalic = bItalic;				
-			lpContent->m_FontInfo.m_bUnderLine = bUnderLine;
-			arrContent.push_back(lpContent);
-		}
+//void CGroupChatDlg::AddMsgToSendEdit(LPCTSTR lpText)
+//{
+//	AddMsg(m_richSend.m_hWnd, lpText);
+//	m_richSend.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
+//}
 
-		if (!strText.empty())
-		{
-			C_UI_Content* lpContent = new C_UI_Content;
-			if (lpContent != NULL)
-			{
-				lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-				lpContent->m_strText = strText;
-				arrContent.push_back(lpContent);
-			}
-			strText = _T("");
-		}
-
-		p = _tcsstr(p+2, _T("\"]"));
-		p++;
-		return TRUE;
-	}
-	return FALSE;
-}
-
-// "/f["系统表情id"] /s["系统表情index"] /c["自定义图片路径"]"
-void CGroupChatDlg::AddMsg(HWND hRichEditWnd, LPCTSTR lpText)
-{
-	if (NULL == lpText || NULL == *lpText)
-	{
-		return;
-	}
-
-	CString strText;
-
-	for (LPCTSTR p = lpText;*p != _T('\0'); p++)
-	{
-		if (*p == _T('/'))
-		{
-			if (*(p+1) == _T('/'))
-			{
-				strText +=*p;
-				p++;
-				continue;
-			}
-			else if (*(p+1) == _T('f'))
-			{
-				if (HandleSysFaceId(hRichEditWnd, p, strText))
-				{
-					continue;
-				}
-			}
-			else if (*(p+1) == _T('s'))
-			{
-				if (HandleSysFaceIndex(hRichEditWnd, p, strText))
-				{
-					continue;
-				}
-			}
-			else if (*(p+1) == _T('c'))
-			{
-				if (HandleCustomPic(hRichEditWnd, p, strText))
-				{
-					continue;
-				}
-			}
-		}
-		strText +=*p;
-	}
-
-	if (!strText.IsEmpty())
-	{
-		//加一个@XXX效果
-		//CString strChatContent(strText);
-		//long nStartIndex = -1;
-		//long nEndIndex = -1;
-		//long nCurrentIndex = 0;
-
-		//C_UI_GroupInfo* pGroupInfo = GetGroupInfoPtr();
-		//if(pGroupInfo != NULL)
-		//{
-		//	C_UI_BuddyInfo* pBuddyInfo = NULL;
-		//	CString strTarget;
-		//	CString strLeft;
-		//	CString strRight;
-		//	for(size_i i=0; pGroupInfo->m_arrMember.size(); ++i)
-		//	{
-		//		pBuddyInfo = pGroupInfo->m_arrMember[i];
-		//		if(pBuddyInfo == NULL)
-		//			continue;
-		//		
-		//		strTarget.Format(_T("@%s"), pBuddyInfo->m_strAccount.c_str());
-		//		nStartIndex = strChatContent.Find(strTarget, nCurrentIndex)
-		//		if(nStartIndex < 0)
-		//			continue;
-		//		
-		//		strLeft = strChatContent.Left(nStartIndex);
-		//		_RichEdit_ReplaceSel(hRichEditWnd, strText);
-		//	}
-		//}
-		_RichEdit_ReplaceSel(hRichEditWnd, strText);
-	}
-}
-
-void CGroupChatDlg::AddMsgToSendEdit(LPCTSTR lpText)
-{
-	AddMsg(m_richSend.m_hWnd, lpText);
-	m_richSend.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
-}
-
-void CGroupChatDlg::AddMsgToRecvEdit(time_t nTime, LPCTSTR lpText)
-{
-	if (NULL == lpText || NULL == *lpText)
-	{
-		return;
-	}
-
-	TCHAR cTime[32] = {0};
-	FormatTime(nTime, _T("%H:%M:%S"), cTime, sizeof(cTime)/sizeof(TCHAR));
-
-	CString strText;
-	strText.Format(_T("%s(%s)  %s\r\n"), m_strUserName, m_strAccount, cTime);
-
-	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, strText, 
-		_T("微软雅黑"), 10, RGB(0,128,64), FALSE, FALSE, FALSE, FALSE, 0);
-	strText = _T("");
-
-	AddMsg(m_richRecv.m_hWnd, lpText);
-
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
-	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
-	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
-}
+//void CGroupChatDlg::AddMsgToRecvEdit(time_t nTime, LPCTSTR lpText)
+//{
+//	if (NULL == lpText || NULL == *lpText)
+//	{
+//		return;
+//	}
+//
+//	TCHAR cTime[32] = {0};
+//	FormatTime(nTime, _T("%H:%M:%S"), cTime, sizeof(cTime)/sizeof(TCHAR));
+//
+//	CString strText;
+//	strText.Format(_T("%s(%s)  %s\r\n"), m_strUserName, m_strAccount, cTime);
+//
+//	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, strText, 
+//		_T("微软雅黑"), 10, RGB(0,128,64), FALSE, FALSE, FALSE, FALSE, 0);
+//	strText = _T("");
+//
+//	AddMsg(m_richRecv.m_hWnd, lpText);
+//
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
+//	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
+//	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
+//}
 
 
 void CGroupChatDlg::OnRecvGroupLogMsg(C_UI_GroupMessage* pGroupMsg)
@@ -3101,7 +3101,12 @@ void CGroupChatDlg::OnRecvToHandle(const HWND recvHandle,C_UI_GroupMessage* pGro
 				}break;
 				case E_RichEditType::IMAGE:
 				{
-
+					WString strNewPath = Hootina::CPath::GetAppPath() + EncodeUtil::AnsiToUnicode(m_netProto->UserName()) + _T("\\");
+					WString imgName = strNewPath + item.m_strImageName;
+					_RichEdit_InsertFace(recvHandle,
+						imgName.data(),
+						-1,
+						-1);
 				}break;
 				default:
 				{
@@ -3133,25 +3138,25 @@ void CGroupChatDlg::AddUserToRecvEdit(const std::string strUserName, const time_
 		_T("微软雅黑"), 10, RGB(0, 128, 64), FALSE, FALSE, FALSE, FALSE, 0);
 }
 
-void CGroupChatDlg::AddSendTextToRecvEdit(const CString& strContext)
-{
-	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, strContext, _T("微软雅黑"), 10, RGB(0, 0, 0), FALSE, FALSE, FALSE, FALSE, 0);
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
-	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
-	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
-}
+//void CGroupChatDlg::AddSendTextToRecvEdit(const CString& strContext)
+//{
+//	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, strContext, _T("微软雅黑"), 10, RGB(0, 0, 0), FALSE, FALSE, FALSE, FALSE, 0);
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
+//	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
+//	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
+//}
 
-void CGroupChatDlg::AddTextToRecvEdit(const std::string strContext)
-{
-	WString Context = EncodeUtil::AnsiToUnicode(strContext);
-
-	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, Context.c_str(),_T("微软雅黑"), 10, RGB(0, 0, 0), FALSE, FALSE, FALSE, FALSE, 0);
-	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
-	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
-	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
-}
+//void CGroupChatDlg::AddTextToRecvEdit(const std::string strContext)
+//{
+//	WString Context = EncodeUtil::AnsiToUnicode(strContext);
+//
+//	RichEdit_SetSel(m_richRecv.m_hWnd, -1, -1);
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, Context.c_str(),_T("微软雅黑"), 10, RGB(0, 0, 0), FALSE, FALSE, FALSE, FALSE, 0);
+//	RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
+//	RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
+//	m_richRecv.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
+//}
 
 LRESULT CGroupChatDlg::OnSendChatMsgResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -3707,7 +3712,7 @@ void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 		RichEdit_ReplaceSel(m_richMsgLog.m_hWnd, strText, _T("微软雅黑"), 10, clrNickName, FALSE, FALSE, FALSE, FALSE, 0);
 		strText = _T("");
 
-		AnalyseContent(strContent);
+		//AnalyseContent(strContent);
 		
 		//AddMsg(m_richMsgLog.m_hWnd, strContent.c_str());
 
@@ -3721,130 +3726,130 @@ void CGroupChatDlg::AddMsgToMsgLogEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 }
 
 // "/f["系统表情id"] /c["自定义表情文件名"] /o[字体名称，大小，颜色，加粗，倾斜，下划线]"
-void CGroupChatDlg::AnalyseContent(WString& strContent, HWND hRichWnd/*=NULL*/)
-{
-	//CONTENT_TYPE m_nType;			// 内容类型
-	//C_UI_FontInfo m_FontInfo;			// 字体信息
-	//WString m_strText;			// 文本信息
-	//int m_nFaceId;				// 系统表情Id
-	//C_UI_CustomFaceInfo m_CFaceInfo;	// 自定义表情信息
-
-	WString strText;
-	C_UI_Content* lpContent = NULL;
-	LPCTSTR lpMsg = strContent.c_str();
-	std::vector<C_UI_Content*> arrContent;
-
-	for (LPCTSTR p = lpMsg;*p != _T('\0'); p++)
-	{
-		arrContent.clear();
-		if (*p == _T('/'))
-		{
-			if (*(p+1) == _T('/'))
-			{
-				strText +=*p;
-				p++;
-				continue;
-			}
-			else if (*(p+1) == _T('o'))
-			{
-				//strText +=*p;
-				//arrContent.clear();
-				if (HandleFontInfo(p, strText, arrContent))
-				{
-					if (hRichWnd == NULL)
-					{
-						AddMsgToMsgLogEdit(arrContent);
-					}
-					else
-					{
-						AddMsgToRecvEdit(arrContent);
-					}
-					continue;
-				}
-			}
-			else if (*(p+1) == _T('f'))
-			{
-				//strText +=*p;
-				//arrContent.clear();
-				if (HandleSysFaceId(p, strText, arrContent))
-				{
-					if (hRichWnd == NULL)
-					{
-						AddMsgToMsgLogEdit(arrContent);
-					}
-					else
-					{
-						AddMsgToRecvEdit(arrContent);
-					}
-					continue;
-				}
-			}
-			else if (*(p+1) == _T('c'))
-			{
-				//strText +=*p;
-				//arrContent.clear();
-				if (HandleCustomPic(p, strText, arrContent))
-				{
-					if (hRichWnd == NULL)
-					{
-						AddMsgToMsgLogEdit(arrContent);
-					}
-					else
-					{
-						AddMsgToRecvEdit(arrContent);
-					}
-					continue;
-				}
-			}
-			//else if (*(p+1) == _T('s'))						//窗口抖动
-			//{
-			//	//arrContent.clear();
-			//	if (HandleShake(p, strText, arrContent))
-			//	{
-			//		if(hRichWnd == NULL)
-			//			AddMsgToMsgLogEdit(arrContent);
-			//		else
-			//			AddMsgToRecvEdit(arrContent);
-			//		continue;
-			//	}
-			//}
-			//else if (*(p+1) == _T('i'))					   //文件
-			//{
-			//	if (HandleFile(p, strText, arrContent))
-			//	{
-			//		if(hRichWnd == NULL)
-			//			AddMsgToMsgLogEdit(arrContent);
-			//		else
-			//			AddMsgToRecvEdit(arrContent);
-			//		continue;
-			//	}
-			//}
-		}
-		
-		strText +=*p;
-	}
-
-	if (!strText.empty())
-	{
-		lpContent = new C_UI_Content;
-		if (lpContent != NULL)
-		{
-			lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-			lpContent->m_strText = strText;
-			arrContent.push_back(lpContent);
-			if (hRichWnd == NULL)
-			{
-				AddMsgToMsgLogEdit(arrContent);
-			}
-			else
-			{
-				AddMsgToRecvEdit(arrContent);
-			}
-		}
-		strText = _T("");
-	}
-
-}
+//void CGroupChatDlg::AnalyseContent(WString& strContent, HWND hRichWnd/*=NULL*/)
+//{
+//	//CONTENT_TYPE m_nType;			// 内容类型
+//	//C_UI_FontInfo m_FontInfo;			// 字体信息
+//	//WString m_strText;			// 文本信息
+//	//int m_nFaceId;				// 系统表情Id
+//	//C_UI_CustomFaceInfo m_CFaceInfo;	// 自定义表情信息
+//
+//	WString strText;
+//	C_UI_Content* lpContent = NULL;
+//	LPCTSTR lpMsg = strContent.c_str();
+//	std::vector<C_UI_Content*> arrContent;
+//
+//	for (LPCTSTR p = lpMsg;*p != _T('\0'); p++)
+//	{
+//		arrContent.clear();
+//		if (*p == _T('/'))
+//		{
+//			if (*(p+1) == _T('/'))
+//			{
+//				strText +=*p;
+//				p++;
+//				continue;
+//			}
+//			else if (*(p+1) == _T('o'))
+//			{
+//				//strText +=*p;
+//				//arrContent.clear();
+//				if (HandleFontInfo(p, strText, arrContent))
+//				{
+//					if (hRichWnd == NULL)
+//					{
+//						AddMsgToMsgLogEdit(arrContent);
+//					}
+//					else
+//					{
+//						AddMsgToRecvEdit(arrContent);
+//					}
+//					continue;
+//				}
+//			}
+//			else if (*(p+1) == _T('f'))
+//			{
+//				//strText +=*p;
+//				//arrContent.clear();
+//				if (HandleSysFaceId(p, strText, arrContent))
+//				{
+//					if (hRichWnd == NULL)
+//					{
+//						AddMsgToMsgLogEdit(arrContent);
+//					}
+//					else
+//					{
+//						AddMsgToRecvEdit(arrContent);
+//					}
+//					continue;
+//				}
+//			}
+//			else if (*(p+1) == _T('c'))
+//			{
+//				//strText +=*p;
+//				//arrContent.clear();
+//				if (HandleCustomPic(p, strText, arrContent))
+//				{
+//					if (hRichWnd == NULL)
+//					{
+//						AddMsgToMsgLogEdit(arrContent);
+//					}
+//					else
+//					{
+//						AddMsgToRecvEdit(arrContent);
+//					}
+//					continue;
+//				}
+//			}
+//			//else if (*(p+1) == _T('s'))						//窗口抖动
+//			//{
+//			//	//arrContent.clear();
+//			//	if (HandleShake(p, strText, arrContent))
+//			//	{
+//			//		if(hRichWnd == NULL)
+//			//			AddMsgToMsgLogEdit(arrContent);
+//			//		else
+//			//			AddMsgToRecvEdit(arrContent);
+//			//		continue;
+//			//	}
+//			//}
+//			//else if (*(p+1) == _T('i'))					   //文件
+//			//{
+//			//	if (HandleFile(p, strText, arrContent))
+//			//	{
+//			//		if(hRichWnd == NULL)
+//			//			AddMsgToMsgLogEdit(arrContent);
+//			//		else
+//			//			AddMsgToRecvEdit(arrContent);
+//			//		continue;
+//			//	}
+//			//}
+//		}
+//		
+//		strText +=*p;
+//	}
+//
+//	if (!strText.empty())
+//	{
+//		lpContent = new C_UI_Content;
+//		if (lpContent != NULL)
+//		{
+//			lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
+//			lpContent->m_strText = strText;
+//			arrContent.push_back(lpContent);
+//			if (hRichWnd == NULL)
+//			{
+//				AddMsgToMsgLogEdit(arrContent);
+//			}
+//			else
+//			{
+//				AddMsgToRecvEdit(arrContent);
+//			}
+//		}
+//		strText = _T("");
+//	}
+//
+//}
 
 BOOL CGroupChatDlg::HandleSysFaceId(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
 {
@@ -4453,7 +4458,7 @@ void CGroupChatDlg::AddMsgToRecvEdit(std::vector<GROUP_MSG_LOG*>& arrMsgLog)
 			RichEdit_ReplaceSel(m_richRecv.m_hWnd, strText, _T("微软雅黑"), 10, RGB(0, 0, 255), FALSE, FALSE, FALSE, FALSE, 0);
 		strText = _T("");
 
-		AnalyseContent(strContent, m_richRecv.m_hWnd);
+		//AnalyseContent(strContent, m_richRecv.m_hWnd);
 		
 		RichEdit_ReplaceSel(m_richRecv.m_hWnd, _T("\r\n"));
 		RichEdit_SetStartIndent(m_richRecv.m_hWnd, 0);
