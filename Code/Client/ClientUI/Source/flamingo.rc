@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Simplified, PRC) resources
+// 中文(简体，中国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -330,15 +330,15 @@ BEGIN
 END
 
 IDD_MESSAGE_BOX DIALOGEX 0, 0, 248, 87
-	STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-	CAPTION "Dialog"
-	FONT 8, "MS Shell Dlg", 400, 0, 0x1
-	BEGIN
-	DEFPUSHBUTTON   "最小化", IDC_MINIMIZE, 45, 66, 50, 14
-	PUSHBUTTON      "退出", IDC_EXIT, 133, 66, 50, 14
-	CONTROL         "下次不再提示", IDC_REMEMBER_CHOICE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 47, 47, 137, 10
-	LTEXT           "信息图标", IDC_INFO_ICON, 36, 20, 36, 20
-	LTEXT           "退出程序还是最小化到托盘？", IDC_INFO_TEXT, 69, 21, 134, 8
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "最小化",IDC_MINIMIZE,45,66,50,14
+    PUSHBUTTON      "退出",IDC_EXIT,133,66,50,14
+    CONTROL         "下次不再提示",IDC_REMEMBER_CHOICE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,47,47,137,10
+    LTEXT           "信息图标",IDC_INFO_ICON,36,20,36,20
+    LTEXT           "退出程序还是最小化到托盘？",IDC_INFO_TEXT,69,21,134,8
 END
 
 IDD_USER_SNAP_INFO DIALOGEX 0, 0, 223, 167
@@ -749,8 +749,8 @@ BEGIN
     END
     POPUP "传送文件"
     BEGIN
-        MENUITEM "发送文件",                        IDM_SEND_FILE, GRAYED
-        MENUITEM "发送离线文件",                      IDM_SEND_OFF_LINE_FILE
+        MENUITEM "发送文件",                         IDM_SEND_FILE, GRAYED
+        MENUITEM "发送离线文件",                     IDM_SEND_OFF_LINE_FILE
         MENUITEM "发送文件夹",                       IDM_SEND_DIRECTORY, GRAYED
         MENUITEM "传文件设置",                       IDM_SEND_FILE_SETTINGS, GRAYED
     END
@@ -803,7 +803,7 @@ BEGIN
     END
     POPUP "发送"
     BEGIN
-        MENUITEM "按Enter键发送消息",				  ID_BUDDY_DLG_PRESS_ENTER_MENU
+        MENUITEM "按Enter键发送消息",                 ID_BUDDY_DLG_PRESS_ENTER_MENU
         MENUITEM "按Ctrl+Enter键发送消息",            ID_BUDDY_DLG_PRESS_CTRL_ENTER_MENU, CHECKED
         MENUITEM "自动回复",                        IDM_AUTO_REPLY
         MENUITEM "启用阅后即焚",                      IDM_DESTROY_AFTER_READ
@@ -1133,7 +1133,7 @@ BEGIN
     POPUP "群组列表空白处右键菜单"
     BEGIN
         MENUITEM "创建群",                         IDM_CREATE_NEW_GROUP
-		MENUITEM "刷新群组列表"					   IDM_REFRESH_GROUP_LIST
+        MENUITEM "刷新群组列表",                      IDM_REFRESH_GROUP_LIST
     END
 END
 
@@ -1145,15 +1145,24 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAIN_FRAME           ICON                    "res\\flamingo.ico"
-IDI_BUDDY_CHAT_DLG_16     ICON                    "res\\BCF_Title16.ico"
-IDI_BUDDY_CHAT_DLG_32     ICON                    "res\\BCF_Title32.ico"
-IDI_GROUP_CHAT_DLG_32     ICON                    "res\\Group32.ico"
-IDI_GROUP_CHAT_DLG_16     ICON                    "res\\Group16.ico"
+IDR_MAIN_FRAME          ICON                    "res\\flamingo.ico"
+
+IDI_BUDDY_CHAT_DLG_16   ICON                    "res\\BCF_Title16.ico"
+
+IDI_BUDDY_CHAT_DLG_32   ICON                    "res\\BCF_Title32.ico"
+
+IDI_GROUP_CHAT_DLG_32   ICON                    "res\\Group32.ico"
+
+IDI_GROUP_CHAT_DLG_16   ICON                    "res\\Group16.ico"
+
 IDI_SYS                 ICON                    "res\\sys.ico"
+
 IDI_BUDDY               ICON                    "res\\100.ico"
-IDI_MULTI_CHAT_DLG_16     ICON                    "res\\Multi16.ico"
-IDI_MULTI_CHAT_DLG_32     ICON                    "res\\Multi32.ico"
+
+IDI_MULTI_CHAT_DLG_16   ICON                    "res\\Multi16.ico"
+
+IDI_MULTI_CHAT_DLG_32   ICON                    "res\\Multi32.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1183,12 +1192,12 @@ BEGIN
     VK_RETURN,      ID_BTN_SEND,            VIRTKEY, CONTROL, NOINVERT
 END
 
-#endif    // Chinese (Simplified, PRC) resources
+#endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// 英语(美国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -1265,7 +1274,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDR_MAIN_FRAME           "Flamingo"
+    IDR_MAIN_FRAME          "Flamingo"
 END
 
 STRINGTABLE
@@ -1346,7 +1355,7 @@ BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
 END
 
-#endif    // English (United States) resources
+#endif    // 英语(美国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

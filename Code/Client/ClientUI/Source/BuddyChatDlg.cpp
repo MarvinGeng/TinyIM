@@ -1722,7 +1722,7 @@ LRESULT CBuddyChatDlg::OnToolbarDropDown(LPNMHDR pnmh)
 		m_tbTop.ClientToScreen(&rc);
 	}break;
 
-	case 103:
+	case IDC_BTN_SEND_FILE:
 	{
 		nIndex = 2;
 		m_tbTop.ClientToScreen(&rc);
@@ -2893,7 +2893,7 @@ BOOL CBuddyChatDlg::InitTopToolBar()
 	
 	
 	{
-		/*nIndex = m_tbTop.AddItem(103, STBI_STYLE_DROPDOWN);
+		nIndex = m_tbTop.AddItem(IDC_BTN_SEND_FILE, STBI_STYLE_DROPDOWN);
 		m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
 		m_tbTop.SetItemPadding(nIndex, 1);
 		m_tbTop.SetItemToolTipText(nIndex, _T("传送文件"));
@@ -2905,7 +2905,6 @@ BOOL CBuddyChatDlg::InitTopToolBar()
 			_T("aio_toolbar_rightdown.png"), CRect(0, 0, 0, 0));
 		m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
 		m_tbTop.SetItemIconPic(nIndex, _T("BuddyTopToolBar\\sendfile.png"));
-		*/
 		/*
 		nIndex = m_tbTop.AddItem(ID_BUDDY_DLG_REMOTE_DESKTOP_BTN, STBI_STYLE_BUTTON);
 		m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);

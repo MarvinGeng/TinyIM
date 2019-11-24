@@ -295,6 +295,8 @@
 #define IDC_LIST_SELECTED               1184
 #define IDC_EDIT_IMG_SERVER              1185
 #define IDC_EDIT_IMG_PORT                1186
+#define IDC_BTN_SEND_FILE                1187
+
 #define Flamingo_BUILD_VERSION          1526
 #define ID_32774                        32774
 #define ID_32780                        32780
@@ -672,7 +674,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        253
 #define _APS_NEXT_COMMAND_VALUE         33123
-#define _APS_NEXT_CONTROL_VALUE         1187
+#define _APS_NEXT_CONTROL_VALUE         1300
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
