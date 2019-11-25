@@ -1,4 +1,4 @@
-#include "CUdpClient.h"
+﻿#include "CUdpClient.h"
 namespace ClientCore {
 	std::shared_ptr<spdlog::logger> CUdpClient::ms_loger;
 	

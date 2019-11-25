@@ -5,6 +5,7 @@ add_definitions(-DASIO_STANDALONE)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
 include_directories(../../../msgStruct/)
+include_directories(../../../CommonFunction/)
 include_directories(../../../msgStruct/json11/)
 include_directories(../include/thirdparty/)
 include_directories(../include/thirdparty/asio/)
@@ -44,9 +45,12 @@ set(SERVER_FILES
 		../include/common/IUProtocolData.cpp
         ../include/DaemonApp/DaemonSvcApp.h 
         ../include/DaemonApp/DaemonSvcApp.cpp
-		./CHttpServer.h ./CHttpServer.cpp
-		CMsgPersistentUtil.h CMsgPersistentUtil.cpp
-		CFileUtil.h  CFileUtil.cpp
+		./CHttpServer.h 
+        ./CHttpServer.cpp
+		CMsgPersistentUtil.h 
+        CMsgPersistentUtil.cpp
+		../../../CommonFunction/CFileUtil.h  
+		../../../CommonFunction/CFileUtil.cpp
 		./CUdpClient.h ./CUdpClient.cpp
 		../../../msgStruct/CommonDef.cpp
 		../../../msgStruct/CommonMsg.cpp

@@ -3,6 +3,7 @@ project(UnitTest)
 
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
+include_directories(../../../CommonFunction/)
 include_directories(../../../msgStruct/)
 include_directories(../../../msgStruct/json11)
 include_directories(../include/thirdparty/)
@@ -36,7 +37,7 @@ endif()
 set(SERVER_FILES main.cpp
 
     ../../../msgStruct/json11/json11.cpp
-../ClientCore/CFileUtil.cpp
+    ../../../CommonFunction/CFileUtil.cpp
 ../../../msgStruct/CommonMsg.cpp
 ../../../msgStruct/CommonDef.cpp
 ../ClientCore/CMsgPersistentUtil.cpp
