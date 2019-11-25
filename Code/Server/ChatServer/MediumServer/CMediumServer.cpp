@@ -479,7 +479,7 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 		{
 			FileDataSendReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
-				Handle_UdpFileDataSendReqMsg(reqMsg);
+				Handle_UdpFileDataSendReqMsg(sendPt,reqMsg);
 			}
 		}break;
 		case MessageType::FileRecvDataRsp_Type:
@@ -762,13 +762,28 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 
 void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req)
 {
+	{
+		std::string strFolder = m_fileUtil.GetCurDir() + "\\" + req.m_strUserId + "\\";
+		if (!m_fileUtil.IsFolder(strFolder)) {
+			m_fileUtil.CreateFolder(strFolder);
+		}
+		std::string strFileName = strFolder + req.m_strFileName;
+		if (!m_fileUtil.IsFileExist(strFileName)) {
+			m_fileUtil.OpenWriteFile(req.m_nFileId, strFileName);
+		}
+	}
 	auto item = m_UserSessVec.find(req.m_strFriendId);
 	if (item != m_UserSessVec.end()) {
 		item->second->SendMsg(&req);
 	}
 	else {
 		FileSendDataBeginRsp rspMsg;
-		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_nFileId = req.m_nFileId;
+		rspMsg.m_strFileName = req.m_strFileName;
+		rspMsg.m_strFriendId = req.m_strUserId;
+		rspMsg.m_strUserId = req.m_strFriendId;
+		rspMsg.m_strMsgId = req.m_strMsgId;
 		pSess->SendMsg(&rspMsg);
 	}
 }
@@ -1950,25 +1965,37 @@ void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSe
  * TODO: 此处需要修改,以方便用于接收群组的文件消息
  * @param reqMsg 文件数据发送请求消息
  */
-void CChatServer::Handle_UdpFileDataSendReqMsg(const FileDataSendReqMsg& reqMsg)
+void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg)
 {
-	FileDataRecvReqMsg sendReqMsg;
-	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-	sendReqMsg.m_strToId = reqMsg.m_strToId;
-	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
-	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
-	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
-	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-
+	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
+	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnCloseFile(reqMsg.m_nFileId);
+	}
 	auto item = m_userIdUdpAddrMap.find(reqMsg.m_strToId);
 	if (item != m_userIdUdpAddrMap.end())
 	{
+		FileDataRecvReqMsg sendReqMsg;
+		sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+		sendReqMsg.m_strFromId = reqMsg.m_strFromId;
+		sendReqMsg.m_strToId = reqMsg.m_strToId;
+		sendReqMsg.m_nFileId = reqMsg.m_nFileId;
+		sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+		sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
+		memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
 		m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
 	}
 	else
 	{
+		FileDataSendRspMsg sendRsp;
+		sendRsp.m_strMsgId = reqMsg.m_strMsgId;
+		sendRsp.m_strFromId = reqMsg.m_strToId;
+		sendRsp.m_strToId = reqMsg.m_strFromId;
+		sendRsp.m_nFileId = reqMsg.m_nFileId;
+		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
+		m_udpServer->sendMsg(sendPt,&sendRsp);
 		LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]", reqMsg.m_strToId, __FILENAME__, __LINE__);
 	}
 }
@@ -2019,6 +2046,18 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 		{
 			item->second->SendMsg(&req);
 		}
+		else
+		{
+			FileVerifyRspMsg rspMsg;
+			rspMsg.m_strMsgId = req.m_strMsgId;
+			rspMsg.m_strFileName = req.m_strFileName;
+			rspMsg.m_strFromId = req.m_strToId;
+			rspMsg.m_strToId = req.m_strFromId;
+			rspMsg.m_nFileId = req.m_nFileId;
+			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+			pSess->SendMsg(&rspMsg);
+		}
+		m_fileUtil.OnCloseFile(req.m_nFileId);
 	}
 }
 

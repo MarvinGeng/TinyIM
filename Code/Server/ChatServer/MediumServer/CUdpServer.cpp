@@ -82,7 +82,7 @@ namespace ChatServer
 
 		if (!endpoints.empty())
 		{
-			SendMsg(*endpoints.begin(), pMsg);
+			sendMsg(*endpoints.begin(), pMsg);
 		}
 	}
 
@@ -92,7 +92,7 @@ namespace ChatServer
 	 * @param senderPt 接收方的UDP地址
 	 * @param pMsg 待发送的消息
 	 */
-	void CUdpServer::SendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg)
+	void CUdpServer::sendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg)
 	{
 		if (m_socket)
 		{
@@ -145,7 +145,7 @@ namespace ChatServer
 			case MessageType::KeepAliveReq_Type:
 			{
 				KeepAliveRspMsg rspMsg;
-				SendMsg(senderPt, &rspMsg);
+				sendMsg(senderPt, &rspMsg);
 			}break;
 			default:
 			{

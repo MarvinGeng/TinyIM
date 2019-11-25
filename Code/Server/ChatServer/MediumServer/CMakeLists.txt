@@ -3,6 +3,7 @@ project(MediumServer)
 
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_COMPILER g++)
+include_directories(../../../CommonFunction/)
 include_directories(../../../msgStruct/)
 include_directories(../../../msgStruct/json11/)
 include_directories(../include/thirdparty/)
@@ -48,6 +49,8 @@ set(SERVER_FILES
 		../../../msgStruct/CommonMsg.cpp
 		./CUdpServer.h 
 		./CUdpServer.cpp
+		../../../CommonFunction/CFileUtil.h
+		../../../CommonFunction/CFileUtil.cpp
 		CTimeUtil.h 
 		CTimeUtil.cpp
         CMySqlConnect.cpp

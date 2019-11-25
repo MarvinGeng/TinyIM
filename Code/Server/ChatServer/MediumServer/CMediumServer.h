@@ -28,6 +28,7 @@
 #include "planform.h"
 #include "CMySqlConnect.h"
 #include "SnowFlake.h"
+#include "CFileUtil.h"
 namespace ChatServer
 {
 using tcp = asio::ip::tcp;
@@ -82,7 +83,7 @@ public:
 	AddToGroupRspMsg DoAddToGroupReqMsg(const AddToGroupReqMsg& reqMsg);
 	QuitFromGroupRspMsg DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg);
 
-	void Handle_UdpFileDataSendReqMsg(const FileDataSendReqMsg& reqMsg);
+	void Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg);
 
 	//
   protected:
@@ -108,7 +109,7 @@ public:
 
     //定时器
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
-    
+	CFileUtil m_fileUtil;
     void SetTimer(int nSeconds);
     
     void OnTimer();

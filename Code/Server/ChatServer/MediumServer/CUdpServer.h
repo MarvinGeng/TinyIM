@@ -60,12 +60,10 @@ namespace ChatServer
 
 		std::string EndPoint(const asio::ip::udp::endpoint senderPt);
 		void sendMsg(const std::string strIp, const int port, const BaseMsg* pMsg);
+		void sendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg);
 	private:
 		asio::ip::udp::endpoint m_senderPt;
 		int do_read();
-		
-
-		void SendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg);
 		void handleKeepAliveReq(const KeepAliveReqMsg& reqMsg);
 
 		void handleKeepAliveRsp(const KeepAliveRspMsg& rspMsg);
