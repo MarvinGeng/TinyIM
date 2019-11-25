@@ -482,6 +482,13 @@ enum class HISTORY_DIRECTION
 	E_LAST_MSG,//最后一条消息
 };
 
+//数据接收者类型
+enum class DATA_RECIVER_TYPE
+{
+	E_GROUP_DATA,//群组数据
+	E_FRIEND_DATA,//好友数据
+};
+
 std::string FriendOption(const E_FRIEND_OPTION& option);
 E_FRIEND_OPTION FriendOption(const std::string strOption);
 
