@@ -122,7 +122,7 @@ bool CFileUtil::OnReadData(const int nFileId, char * pData, int& nReadLen, const
 		{
 			return false;
 		}
-		nReadLen = readSize;
+		nReadLen = static_cast<int>(readSize);
 		return true;
 	}
 	return false;
