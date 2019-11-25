@@ -57,6 +57,12 @@ void CChatServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 	}
 }
 
+/**
+ * @brief 处理心跳请求消息
+ * 
+ * @param pSess 
+ * @param reqMsg 
+ */
 void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess, const KeepAliveReqMsg& reqMsg)
 {
 	if (pSess)
@@ -66,6 +72,13 @@ void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSes
 		pSess->SendMsg(&rspMsg);
 	}
 }
+
+/**
+ * @brief 处理心跳回复消息
+ * 
+ * @param pSess 
+ * @param rspMsg 
+ */
 void CChatServer::HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess, const KeepAliveRspMsg& rspMsg)
 {
 	if (pSess)
@@ -144,6 +157,13 @@ void CChatServer::SetTimer(int nSeconds)
 	}
 }
 
+
+/**
+ * @brief 处理接收的UDP消息
+ * 在此函数完成UDP消息的分发
+ * @param sendPt UDP消息的发送地址
+ * @param pMsg 
+ */
 void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg)
 {
 	if (pMsg)
@@ -1611,6 +1631,12 @@ void CChatServer::HandleAddToGroupReq(const std::shared_ptr<CServerSess>& pSess,
 	}
 }
 
+/**
+ * @brief 处理查询用户的UDP地址的请求
+ * 
+ * @param pSess 会话连接
+ * @param reqMsg 查询用户的UDP地址的请求消息
+ */
 void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSess, const QueryUserUdpAddrReqMsg& reqMsg)
 {
 	QueryUserUdpAddrRspMsg rspMsg;
@@ -1628,6 +1654,13 @@ void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSe
 	pSess->SendMsg(&rspMsg);
 }
 
+
+/**
+ * @brief 处理UDP端口发送的文件数据发送请求
+ * 
+ * TODO: 此处需要修改,以方便用于接收群组的文件消息
+ * @param reqMsg 文件数据发送请求消息
+ */
 void CChatServer::Handle_UdpFileDataSendReqMsg(const FileDataSendReqMsg& reqMsg)
 {
 	FileDataRecvReqMsg sendReqMsg;
@@ -1718,6 +1751,13 @@ void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess,
 }
 
 
+/**
+ * @brief 处理收到的接收文件数据回复消息
+ * 
+ * TODO: 可能需要在此函数区分是好友数据还是群组数据
+ * @param sendPt 消息发送者的地址
+ * @param rspMsg 接收文件数据回复消息
+ */
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& rspMsg)
 {
 	{

@@ -9,7 +9,12 @@
 #include "EncodingUtil.h"
 
 
-
+/**
+ * @brief 
+ * 
+ * @param lpszStr 
+ * @return wchar_t* 
+ */
 wchar_t* EncodeUtil::AnsiToUnicode(const char* lpszStr)
 {
     wchar_t* lpUnicode;

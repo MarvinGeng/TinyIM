@@ -17,16 +17,30 @@ namespace ChatServer
 		m_socket = std::make_shared<asio::ip::udp::socket>(ioService, endPt);
 	}
 
+	/**
+	 * @brief 启动连接
+	 * 
+	 * @return int 
+	 */
 	int CUdpServer::StartConnect() {
 		return do_read();
 	}
 
+	/**
+	 * @brief 停止连接
+	 * 
+	 * @return int 
+	 */
 	int CUdpServer::StopConnect() {
 		return 0;
 	}
-	bool SendMessage(std::shared_ptr<TransBaseMsg_t> pMsg) {
-		return false;
-	}
+
+	
+	/**
+	 * @brief 从UDP端口读取接收到的数据
+	 * 
+	 * @return int 
+	 */
 	int CUdpServer::do_read() {
 		if (m_socket)
 		{
@@ -53,6 +67,13 @@ namespace ChatServer
 		return 0;
 	}
 
+	/**
+	 * @brief 发送UDP消息到对应的IP和端口
+	 * 
+	 * @param strIp 对端的IP地址
+	 * @param port 对端的端口
+	 * @param pMsg 待发送的消息
+	 */
 	void CUdpServer::sendMsg(const std::string strIp, const int port, const BaseMsg* pMsg)
 	{
 		asio::ip::udp::resolver resolver(m_socket->get_io_context());
@@ -64,6 +85,13 @@ namespace ChatServer
 			SendMsg(*endpoints.begin(), pMsg);
 		}
 	}
+
+	/**
+	 * @brief 发送UDP消息到senderPt
+	 * 
+	 * @param senderPt 接收方的UDP地址
+	 * @param pMsg 待发送的消息
+	 */
 	void CUdpServer::SendMsg(const asio::ip::udp::endpoint senderPt, const BaseMsg* pMsg)
 	{
 		if (m_socket)
@@ -85,11 +113,24 @@ namespace ChatServer
 		}
 	}
 
+	/**
+	 * @brief UDP地址转字符串
+	 * 
+	 * @param senderPt UDP地址
+	 * @return std::string 地址的字符串表示
+	 */
 	std::string CUdpServer::EndPoint(const asio::ip::udp::endpoint senderPt)
 	{
 		std::string strResult = senderPt.address().to_string() + ":" + std::to_string(senderPt.port());
 		return strResult;
 	}
+
+	/**
+	 * @brief 处理收到的UDP消息
+	 * 
+	 * @param senderPt UDP发送者的地址
+	 * @param msg UDP消息
+	 */
 	void CUdpServer::HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg)
 	{
 		if (ms_loger && msg )

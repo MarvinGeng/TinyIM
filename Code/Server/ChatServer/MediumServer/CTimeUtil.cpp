@@ -1,5 +1,22 @@
+/**
+ * @file CTimeUtil.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief 处理和时间有关的问题
+ * @version 0.1
+ * @date 2019-11-25
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include "CTimeUtil.h"
 #include <time.h>
+
+/**
+ * @brief 获取当前时间 返回格式为 YYYY-MM-DD hh:mm:ss
+ * 
+ * @return std::string 
+ */
 std::string CTimeUtil::GetYMD_HMS_Time() {
 	time_t nowTime = time(nullptr);
 	struct tm nowTm;
