@@ -1951,6 +1951,10 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 用作HTTP请求的超时回复
+ * 
+ */
 class NormalRspMsg :public BaseMsg
 {
 public:
@@ -1963,7 +1967,12 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
-//获取好友的聊天消息记录
+
+
+/**
+ * @brief 获取好友的聊天消息记录的请求消息
+ * 
+ */
 class GetFriendChatHistoryReq :public BaseMsg
 {
 public:
@@ -1978,6 +1987,10 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 获取好友聊天记录的回复消息
+ * 
+ */
 class GetFriendChatHistoryRsp :public BaseMsg {
 public:
 	std::string m_strMsgId;//消息ID
@@ -1992,7 +2005,11 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
-//获取好友的聊天消息记录
+
+/**
+ * @brief 获取群组聊天记录的请求
+ * 
+ */
 class GetGroupChatHistoryReq :public BaseMsg
 {
 public:
@@ -2007,6 +2024,10 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 获取群组聊天记录的回复
+ * 
+ */
 class GetGroupChatHistoryRsp :public BaseMsg {
 public:
 	std::string m_strMsgId;//消息ID
@@ -2021,7 +2042,10 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
-//查找
+/**
+ * @brief 查找聊天记录的请求
+ * 
+ */
 class SearchChatHistoryReq :public BaseMsg
 {
 public:
@@ -2034,6 +2058,10 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 查找聊天记录回复
+ * 
+ */
 class SearchChatHistoryRsp :public BaseMsg
 {
 public:
@@ -2048,24 +2076,31 @@ public:
 };
 
 
-//查找
+/**
+ * @brief 同步好友聊天记录的消息请求
+ * TODO: 需要增加好友的ID?
+ */
 class AsyncFriendChatMsgReq :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strChatMsgId;
+	std::string m_strChatMsgId;//最后一条聊天记录的ID
 public:
 	AsyncFriendChatMsgReq();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 同步好友聊天消息记录的回复
+ * 
+ */
 class AsyncFriendChatMsgRsp :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eCode;
-	std::string m_errMsg;
+	ERROR_CODE_TYPE m_eCode;//错误代码
+	std::string m_errMsg;//错误消息
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
 	std::vector<FriendChatMsg_s> m_chatMsgVec;
@@ -2076,72 +2111,92 @@ public:
 };
 
 
-//查找
+/**
+ * @brief 同步群聊消息记录请求
+ * TODO:是否需要分不同的群组同步
+ */
 class AsyncGroupChatMsgReq :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strChatMsgId;
+	std::string m_strChatMsgId;//最后一条消息记录的ID
 public:
 	AsyncGroupChatMsgReq();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 同步群聊消息回复
+ * 
+ */
 class AsyncGroupChatMsgRsp :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_eCode;
-	std::string m_errMsg;
+	ERROR_CODE_TYPE m_eCode;//错误代码
+	std::string m_errMsg;//错误消息
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::vector<GroupChatMsg_s> m_chatMsgVec;
+	std::vector<GroupChatMsg_s> m_chatMsgVec;//群组聊天消息数组
 public:
 	AsyncGroupChatMsgRsp();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 开始发送文件数据请求消息[文件发送方---->文件接收方]
+ * 为发送图片而设置
+ */
 class FileSendDataBeginReq :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strFriendId;
-	std::string m_strFileName;
-	int m_nFileId;
+	std::string m_strFriendId;//好友ID
+	std::string m_strFileName;//文件名
+	int m_nFileId;//文件Id
 public:
 	FileSendDataBeginReq();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 发送文件数据开始回复消息
+ * 
+ * 主要是为了发送图片做准备
+ */
 class FileSendDataBeginRsp :public BaseMsg
 {
 public:
-	ERROR_CODE_TYPE m_errCode;
-	std::string m_errMsg;
+	ERROR_CODE_TYPE m_errCode;//错误码
+	std::string m_errMsg;//错误消息
 	std::string m_strMsgId;//消息ID
 	std::string m_strUserId;//用户ID
-	std::string m_strFriendId;
-	std::string m_strFileName;	
-	int m_nFileId;
+	std::string m_strFriendId;//好友ID
+	std::string m_strFileName;//文件名
+	int m_nFileId;//文件ID
 public:
 	FileSendDataBeginRsp();
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+/**
+ * @brief 文件传输进度通知消息
+ * 
+ */
 class FileTransProgressNotifyReqMsg :public BaseMsg
 {
 public:
-	std::string m_strMsgId;
-	std::string m_strUserId;
-	std::string m_strOtherId;
-	std::string m_strFileName;
-	double m_fTransPercent;//
-	int	   m_nTransSpeed;//
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strOtherId;//好友ID或者群组ID
+	std::string m_strFileName;//文件名
+	double m_fTransPercent;//传输百分比
+	int	   m_nTransSpeed;//传输速度
 public:
 	FileTransProgressNotifyReqMsg();
 	virtual std::string ToString() const override;

@@ -1,4 +1,22 @@
-﻿#include "CommonDef.h"
+﻿/**
+ * @file CommonDef.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief 
+ * @version 0.1
+ * @date 2019-11-25
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#include "CommonDef.h"
+
+/**
+ * @brief 添加好友选择的枚举类型转字符串
+ * 
+ * @param option 添加好友选择枚举类型
+ * @return std::string 枚举类型的字符串表示
+ */
 std::string FriendOption(const E_FRIEND_OPTION& option) 
 {
 	switch (option)
@@ -22,6 +40,12 @@ std::string FriendOption(const E_FRIEND_OPTION& option)
 	}
 }
 
+/**
+ * @brief 字符串转枚举类型
+ * 
+ * @param strOption 添加好友选择的字符串 
+ * @return E_FRIEND_OPTION 添加好友选择的枚举类型
+ */
 E_FRIEND_OPTION FriendOption(const std::string strOption)
 {
 	if ("UN_KNOWN" == strOption)
@@ -43,6 +67,12 @@ E_FRIEND_OPTION FriendOption(const std::string strOption)
 }
 
 
+/**
+ * @brief 好友聊天消息状态枚举类型转字符串
+ * 
+ * @param relation 
+ * @return std::string 
+ */
 std::string FriendStatus(const E_ADD_FRIEND_STATUS relation)
 {
 	switch (relation)
@@ -70,6 +100,12 @@ std::string FriendStatus(const E_ADD_FRIEND_STATUS relation)
 	}
 }
 
+/**
+ * @brief 好友消息的状态
+ * 
+ * @param strStatus 
+ * @return E_ADD_FRIEND_STATUS 
+ */
 E_ADD_FRIEND_STATUS FriendStatus(const std::string strStatus)
 {
 
@@ -96,7 +132,12 @@ E_ADD_FRIEND_STATUS FriendStatus(const std::string strStatus)
 	return E_ADD_FRIEND_STATUS::E_UN_KNOWN;
 }
 
-
+/**
+ * @brief 字符串转为群组角色
+ * 
+ * @param strRole 
+ * @return E_GROUP_MEMBER_ROLE 
+ */
 E_GROUP_MEMBER_ROLE MemberRole(const std::string strRole)
 {
 	if ("CREATER" == strRole)
@@ -117,6 +158,13 @@ E_GROUP_MEMBER_ROLE MemberRole(const std::string strRole)
 	return E_GROUP_MEMBER_ROLE::E_ROLE_UNKNOWN;
 
 }
+
+/**
+ * @brief 群组角色转为字符串
+ * 
+ * @param role 群组角色
+ * @return std::string 角色的字符串
+ */
 std::string MemberRole(const E_GROUP_MEMBER_ROLE role)
 {
 	switch (role)
@@ -142,6 +190,12 @@ std::string MemberRole(const E_GROUP_MEMBER_ROLE role)
 
 #define ENUM_TO_STRING(ENUM_TYPE) case ENUM_TYPE:{return #ENUM_TYPE ;}break;
 
+/**
+ * @brief 消息类型转为字符串
+ * 
+ * @param msgType 消息类型
+ * @return std::string 字符串表示
+ */
 std::string MsgType(const MessageType& msgType)
 {
 	switch (msgType)
@@ -256,6 +310,12 @@ std::string MsgType(const MessageType& msgType)
 }
 
 
+/**
+ * @brief 错误代码转字符串
+ * 
+ * @param errCode 错误代码
+ * @return std::string 错误代码字符串
+ */
 std::string ErrMsg(const ERROR_CODE_TYPE& errCode) {
 	switch (errCode)
 	{
@@ -277,6 +337,13 @@ std::string ErrMsg(const ERROR_CODE_TYPE& errCode) {
 		}break;
 	}
 }
+
+/**
+ * @brief 消息类型转字符串
+ * 
+ * @param chatType 
+ * @return std::string 
+ */
 std::string   ChatType(const CHAT_MSG_TYPE& chatType)
 {
 	switch (chatType)
@@ -304,6 +371,13 @@ std::string   ChatType(const CHAT_MSG_TYPE& chatType)
 
 	}
 }
+
+/**
+ * @brief 字符串转消息类型
+ * TODO: 以后可能用不到了
+ * @param strType 
+ * @return CHAT_MSG_TYPE 
+ */
 CHAT_MSG_TYPE ChatType(const std::string strType)
 {
 	if ("E_CHAT_TEXT_TYPE" == strType)
@@ -324,7 +398,12 @@ CHAT_MSG_TYPE ChatType(const std::string strType)
 	}
 }
 
-
+/**
+ * @brief 原生字符串转16进制
+ * 
+ * @param input 原始字符串
+ * @return std::string 转换后的16进制字符串
+ */
 std::string StringToHex(const std::string& input)
 {
 	static const char* const lut = "0123456789ABCDEF";
@@ -344,6 +423,12 @@ std::string StringToHex(const std::string& input)
 #include <algorithm>
 #include <stdexcept>
 
+/**
+ * @brief 16进制转为原始字符串
+ * 
+ * @param input 16进制的字符串
+ * @return std::string 原始字符串
+ */
 std::string HexToString(const std::string& input)
 {
 	static const char* const lut = "0123456789ABCDEF";
@@ -367,7 +452,12 @@ std::string HexToString(const std::string& input)
 	return output;
 }
 
-
+/**
+ * @brief 字符串转为在线离线状态
+ * 
+ * @param strType 字符串
+ * @return CLIENT_ONLINE_TYPE 在线离线状态 
+ */
 CLIENT_ONLINE_TYPE OnLineType(const std::string strType)
 {
 	if (strType == "ON_LINE")
@@ -380,6 +470,12 @@ CLIENT_ONLINE_TYPE OnLineType(const std::string strType)
 	}
 }
 
+/**
+ * @brief 在线离线状态转为字符串
+ * 
+ * @param onLineType 在线离线状态
+ * @return std::string 在线状态的字符串表示
+ */
 std::string OnLineType(const CLIENT_ONLINE_TYPE onLineType)
 {
 	switch (onLineType)
@@ -395,6 +491,12 @@ std::string OnLineType(const CLIENT_ONLINE_TYPE onLineType)
 	}
 }
 
+/**
+ * @brief 好友关系转为字符串
+ * 
+ * @param relation 好友关系
+ * @return std::string 字符串
+ */
 std::string FriendRelation(const E_FRIEND_RELATION& relation)
 {
 	switch (relation)
@@ -417,6 +519,13 @@ std::string FriendRelation(const E_FRIEND_RELATION& relation)
 	}break;
 	}
 }
+
+/**
+ * @brief 字符串转为好友关系
+ * 
+ * @param strRelation 字符串
+ * @return E_FRIEND_RELATION 好友关系
+ */
 E_FRIEND_RELATION FriendRelation(const std::string& strRelation)
 {
 	if (strRelation == "FRIEND")
@@ -434,34 +543,13 @@ E_FRIEND_RELATION FriendRelation(const std::string& strRelation)
 	return E_FRIEND_RELATION::E_STRANGER_TYPE;
 }
 
-/*
-std::string ErrMsg(const ERROR_CODE_TYPE errType)
-{
-	switch (errType)
-	{
-	case ERROR_CODE_TYPE::E_CODE_SUCCEED:
-	{
-		return "Succeed";
-	}break;
 
-	case ERROR_CODE_TYPE::E_CODE_CONNECT_FAILED:
-	{
-		return "Connect To Server Failed";
-	}break;
-
-	case ERROR_CODE_TYPE::E_CODE_USER_HAS_EXIST:
-	{
-		return "User Has Exist";
-	}break;
-
-	case ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED:
-	{
-		return "User Login Failed";
-	}break;
-
-	}
-}*/
-
+/**
+ * @brief 错误码转错误消息
+ * 
+ * @param errType 错误码
+ * @return std::string 错误消息
+ */
 std::string ErrMsg(const ERROR_CODE_TYPE errType)
 {
 	switch (errType)

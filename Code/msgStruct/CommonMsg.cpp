@@ -8498,3 +8498,76 @@ bool FileSendDataBeginRsp::FromString(const std::string& strJson)
 
 	return true;
 }
+
+FileTransProgressNotifyReqMsg::FileTransProgressNotifyReqMsg()
+{
+	m_type = MessageType::FileTransProgressNotifyReq_Type;
+}
+
+std::string FileTransProgressNotifyReqMsg::ToString() const
+{
+	using namespace json11;
+	Json objJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"OtherId",m_strOtherId},
+		{"FileName",m_strFileName},
+		{"TransPercent",m_fTransPercent},
+		{"TransSpeed",m_nTransSpeed},
+	});
+	
+	return objJson.dump();
+}
+
+bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["OtherId"].is_string()) {
+		m_strOtherId = json["OtherId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["TransPercent"].is_number()) {
+		m_fTransPercent = json["TransPercent"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["TransSpeed"].is_number()) {
+		m_nTransSpeed = json["TransSpeed"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}

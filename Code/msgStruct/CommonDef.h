@@ -339,6 +339,7 @@ FileSendDataBeginReq_Type,
 //开始发送文件数据回复
 FileSendDataBeginRsp_Type,
 
+//文件传输进度的通知消息
 FileTransProgressNotifyReq_Type,
 };
 
