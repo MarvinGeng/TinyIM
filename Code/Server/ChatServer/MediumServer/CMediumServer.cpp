@@ -157,7 +157,296 @@ void CChatServer::SetTimer(int nSeconds)
 	}
 }
 
+void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, const TransBaseMsg_t* pMsg)
+{
+	LOG_INFO(ms_loger, "[ {} ]  Recv: [ {} {} ]  {}    [ {} {} ]", pSess->UserId(), MsgType(pMsg->GetType()), pMsg->GetSize(), pMsg->to_string(), __FILENAME__, __LINE__);
+	switch (pMsg->GetType())
+	{
+	case MessageType::KeepAliveReq_Type:
+	{
+		KeepAliveReqMsg msg;
+		if (msg.FromString(pMsg->to_string()))
+		{
+			HandleUserKeepAliveReq(pSess, msg);
+		}
+	}
+	break;
+	case MessageType::KeepAliveRsp_Type:
+	{
+		KeepAliveRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string()))
+		{
+			HandleUserKeepAliveRsp(pSess, rspMsg);
+		}
+	}
+	break;
+	case MessageType::UserLoginReq_Type:
+	{
+		UserLoginReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleUserLoginReq(pSess, msg);
+		}
+		else {
 
+		}
+	}break;
+	case MessageType::UserLogoutReq_Type: {
+		UserLogoutReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleUserLogoutReq(pSess, msg);
+		}
+	}break;
+	case MessageType::UserRegisterReq_Type:
+	{
+		UserRegisterReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleUserRegisterReq(pSess, msg);
+		}
+	}break;
+	case MessageType::UserUnRegisterReq_Type:
+	{
+		UserUnRegisterReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleUserUnRegisterReq(pSess, msg);
+		}
+	}break;
+	case MessageType::FriendChatSendTxtMsgReq_Type:
+	{
+		FriendChatSendTxtReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleFriendChatSendTxtReq(pSess, msg);
+		}
+	}break;
+
+	case MessageType::FriendChatReceiveTxtMsgRsp_Type:
+	{
+		FriendChatRecvTxtRspMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleFriendChatRecvMsgRsp(pSess, msg);
+		}
+	}break;
+	case MessageType::GetFriendListReq_Type:
+	{
+		GetFriendListReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleGetFriendListReq(pSess, msg);
+		}
+	}break;
+	case MessageType::FindFriendReq_Type:
+	{
+		FindFriendReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleFindFriendReq(pSess, msg);
+		}
+	}break;
+	case MessageType::AddFriendSendReq_Type:
+	{
+		AddFriendSendReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleAddFriendReq(pSess, msg);
+		}
+	}break;
+	case MessageType::AddFriendRecvRsp_Type:
+	{
+		AddFriendRecvRspMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleAddFriendRecvRsp(pSess, msg);
+		}
+	}break;
+	case MessageType::AddFriendNotifyRsp_Type:
+	{
+		AddFriendNotifyRspMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleAddFriendNotifyRsp(pSess, msg);
+		}
+	}break;
+	case MessageType::RemoveFriendReq_Type:
+	{
+		RemoveFriendReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleRemoveFriendReq(pSess, msg);
+		}
+	}break;
+	case MessageType::AddTeamReq_Type:
+	{
+		AddTeamReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleAddTeamReq(pSess, msg);
+		}
+	}break;
+	case MessageType::RemoveTeamReq_Type:
+	{
+		RemoveTeamReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleRemoveTeamReq(pSess, msg);
+		}
+	}break;
+	case MessageType::MoveFriendToTeamReq_Type: {
+		MoveFriendToTeamReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleMoveFriendToTeamReq(pSess, msg);
+		}
+	}break;
+	case MessageType::CreateGroupReq_Type:
+	{
+		CreateGroupReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleCreateGroupReq(pSess, msg);
+		}
+	}break;
+	case MessageType::DestroyGroupReq_Type:
+	{
+		DestroyGroupReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleDestroyGroupReq(pSess, msg);
+		}
+	}break;
+	case MessageType::FindGroupReq_Type:
+	{
+		FindGroupReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleFindGroupReq(pSess, msg);
+		}
+	}break;
+	case MessageType::GetGroupListReq_Type:
+	{
+		GetGroupListReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleGetGroupListReq(pSess, msg);
+		}
+	}break;
+	case MessageType::SendGroupTextMsgReq_Type:
+	{
+		SendGroupTextMsgReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleSendGroupTextReq(pSess, msg);
+		}
+	}break;
+	case MessageType::AddToGroupReq_Type: {
+		AddToGroupReqMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleAddToGroupReq(pSess, msg);
+		}
+	}break;
+	case MessageType::QuitGroupReq_Type:
+	{
+		QuitFromGroupReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleQuitGroupReqMsg(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::RecvGroupTextMsgRsp_Type:
+	{
+		RecvGroupTextMsgRspMsg msg;
+		if (msg.FromString(pMsg->to_string())) {
+			HandleRecvGroupTextMsgRspMsg(pSess, msg);
+		}
+	}break;
+	case MessageType::FriendSendFileMsgReq_Type:
+	{
+		FriendSendFileMsgReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFriendSendFileReq(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::FriendRecvFileMsgRsp_Type:
+	{
+		FriendRecvFileMsgRspMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFriendRecvFileRsp(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::FriendNotifyFileMsgRsp_Type:
+	{
+		FriendNotifyFileMsgRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleFriendNotifyFileRsp(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::FileSendDataReq_Type:
+	{
+		FileDataSendReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFileDataSendReqMsg(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::FileRecvDataRsp_Type:
+	{
+		FileDataRecvRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleFileDataRecvRspMsg(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::FileVerifyReq_Type:
+	{
+		FileVerifyReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFileVerifyReq(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::FileVerifyRsp_Type:
+	{
+		FileVerifyRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleFileVerifyRsp(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::UserKickOffRsp_Type:
+	{
+		UserKickOffRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleUserKickOffRsp(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::FriendUnReadMsgNotifyRsp_Type:
+	{
+		FriendUnReadNotifyRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleFriendUnReadNotifyRspMsg(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::UpdateFriendListNotifyRsp_Type:
+	{
+		UpdateFriendListNotifyRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleUpdateFriendListRsp(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::UpdateGroupListNotifyRsp_Type:
+	{
+		UpdateGroupListNotifyRspMsg rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleUpdateGroupListRsp(pSess, rspMsg);
+		}
+	}break;
+	case MessageType::QueryUserUdpAddrReq_Type:
+	{
+		QueryUserUdpAddrReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+
+		}
+
+	}break;
+	case MessageType::FileSendDataBeginReq_Type:
+	{
+		FileSendDataBeginReq reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFileSendDataBeginReq(pSess, reqMsg);
+		}
+	}break;
+	case MessageType::FileSendDataBeginRsp_Type:
+	{
+		FileSendDataBeginRsp rspMsg;
+		if (rspMsg.FromString(pMsg->to_string())) {
+			HandleFileSendDataBeginRsp(pSess, rspMsg);
+		}
+	}break;
+	default:
+	{
+		LOG_ERR(ms_loger, "User:{} Unhandle MsgType:{} [ {} {} ]", pSess->UserId(), MsgType(pMsg->GetType()), __FILENAME__, __LINE__);
+	}break;
+	}
+}
 /**
  * @brief 处理接收的UDP消息
  * 在此函数完成UDP消息的分发

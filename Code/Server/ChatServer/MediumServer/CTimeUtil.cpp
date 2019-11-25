@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file CTimeUtil.cpp
  * @author DennisMi (https://www.dennisthink.com/)
  * @brief 处理和时间有关的问题
