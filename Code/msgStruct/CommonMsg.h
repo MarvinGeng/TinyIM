@@ -2157,6 +2157,7 @@ public:
 	std::string m_strFriendId;//好友ID
 	std::string m_strFileName;//文件名
 	int m_nFileId;//文件Id
+	std::string m_strFileHash;//文件的Hash值
 public:
 	FileSendDataBeginReq();
 	virtual std::string ToString() const override;

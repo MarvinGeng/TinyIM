@@ -6869,6 +6869,15 @@ bool FileVerifyReqMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["FileName"].is_string())
+	{
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
     return true;
 }
 
@@ -8351,6 +8360,7 @@ std::string FileSendDataBeginReq::ToString() const
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
 		{"FileId",m_nFileId},
+		{"FileHash",m_strFileHash},
 		});
 	return msgJson.dump();
 }
@@ -8406,6 +8416,14 @@ bool FileSendDataBeginReq::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["FileHash"].is_string())
+	{
+		m_strFileHash = json["FileHash"].string_value();
+	}
+	else
+	{
+		return false;
+	}
 	return true;
 }
 
