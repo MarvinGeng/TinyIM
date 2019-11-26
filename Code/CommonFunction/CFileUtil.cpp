@@ -5,6 +5,7 @@
 #include  <stdio.h>
 #include  <stdlib.h>
 #include  <direct.h>
+#include  <Windows.h>
 #include "md5.h"
 /**
  * @brief 获取文件的大小
@@ -43,7 +44,8 @@ bool CFileUtil::OpenReadFile(const int nFileId, const std::string strFileName)
 	{
 		return false;
 	}
-
+	m_strFileNameMap.erase(nFileId);
+	m_strFileNameMap.insert({ nFileId, strFileName });
 	FILE * pFile;
 	fopen_s(&pFile,strFileName.c_str(), "rb");
 	if (nullptr != pFile) {
@@ -70,7 +72,8 @@ bool CFileUtil::OpenWriteFile(const int nFileId, const std::string strFileName)
 	{
 		return false;
 	}
-
+	m_strFileNameMap.erase(nFileId);
+	m_strFileNameMap.insert({ nFileId, strFileName });
 	FILE * pFile;
 	fopen_s(&pFile,strFileName.c_str(), "wb");
 	if (nullptr != pFile) {
@@ -282,7 +285,8 @@ std::string CFileUtil::CalcHash(const std::string strFileName)
 		{
 			hashUtil.update(buff, nReadLen);
 		}
-		return hashUtil.hexdigest();
+		auto result = hashUtil.finalize();
+		return result.hexdigest();
 	}
 	return "";
 }
@@ -293,4 +297,23 @@ std::string CFileUtil::GetCurDir()
 	_getcwd(buf1, sizeof(buf1));
 
 	return buf1;
+}
+
+std::string CFileUtil::GetFileName(const int nFileId)
+{
+	auto item = m_strFileNameMap.find(nFileId);
+	if (item != m_strFileNameMap.end())
+	{
+		return item->second;
+	}
+	else
+	{
+		return "";
+	}
+}
+
+bool CFileUtil::UtilCopy(const std::string strSrcName, const std::string strDstName)
+{
+	CopyFileA(strSrcName.c_str(), strDstName.c_str(), TRUE);
+	return true;
 }

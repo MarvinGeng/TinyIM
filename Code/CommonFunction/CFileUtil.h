@@ -32,10 +32,13 @@ public:
 	bool OnWriteData(const int nFileId,const char * pData,const int nDataLen);
 	bool OnReadData(const int nFileId,char * pData,int& nReadLen,const int nMaxDataLen);
 	bool OnCloseFile(const int nFileId);
+	bool UtilCopy(const std::string strSrcName, const std::string strDstName);
 	std::string CalcHash(const std::string strFileName);
 	std::string GetFileNameFromPath(const std::string strFullPath);
 	std::string GetCurDir();
+	std::string GetFileName(const int nFileId);
 private:
+	std::map<int, std::string> m_strFileNameMap;
 	std::map<int, std::FILE*> m_ReadFileMap;
 	std::map<int, std::FILE*> m_WriteFileMap;
 };
