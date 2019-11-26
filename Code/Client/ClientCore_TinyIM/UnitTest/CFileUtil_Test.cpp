@@ -36,3 +36,12 @@ TEST_CASE("ReadFile") {
 	CHECK(util.OnCloseFile(nWriteFileId));
 	//CHECK(util.RemoveFile(strWriteName));
 }
+
+
+TEST_CASE("FileHast") {
+	CFileUtil util;
+	std::string strReadName = "E:\\GitHub\\TinyIM\\Code\\Client\\ClientCore_TinyIM\\bin\\Debug\\ImRobot.exe";
+	std::string firstHash = util.CalcHash(strReadName);
+	std::string secondHash = util.CalcHash(strReadName);
+	CHECK_EQ(firstHash, secondHash);
+}

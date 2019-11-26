@@ -77,6 +77,29 @@ bool CMsgPersistentUtil::InitDataBase()
 		m_pGroupChatCreate->reset();
 	}
 
+
+	if (m_pDb->tableExists("F_FILE_HASH"))
+	{
+		LOG_INFO(ms_logger, "TABLE F_FILE_HASH is Exist [ {} {} ]", __FILE__, __LINE__);
+	}
+	else
+	{
+		try {
+			std::string strSQL = R"(CREATE TABLE T_FILE_HASH(
+			F_FILE_PATH	TEXT,
+			F_FILE_HASH	TEXT))";
+			m_pFileHashCreate = new SQLite::Statement(*m_pDb, strSQL);
+			m_pFileHashCreate->executeStep();
+			// Reset the query to be able to use it again later
+			m_pFileHashCreate->reset();
+		}
+		catch (SQLite::Exception& ec)
+		{
+			LOG_ERR(ms_logger, "{} {} {} {}", ec.getErrorCode(), ec.getErrorStr(), ec.getExtendedErrorCode(), ec.what());
+		}
+
+	}
+
 	if(nullptr == m_pGroupChatSelect)
 	{
 		std::string strSQL = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_READ_FLAG='UN_READ')";
@@ -160,6 +183,23 @@ bool CMsgPersistentUtil::InitDataBase()
 			m_pFriendChatSelectRangeNext = new SQLite::Statement(*m_pDb, strSqlTemplate);
 		}
 	}
+
+	{
+		if (nullptr == m_pFileHashInsert)
+		{
+			std::string strSQL = R"(INSERT INTO T_FILE_HASH(F_FILE_PATH,F_FILE_HASH) VALUES(?,?))";
+
+			m_pFileHashInsert = new SQLite::Statement(*m_pDb, strSQL);
+		}
+
+		if (nullptr == m_pFileHashSelect)
+		{
+			std::string strSQL = R"(SELECT F_FILE_PATH FROM T_FILE_HASH WHERE F_FILE_HASH=?)";
+
+			m_pFileHashSelect = new SQLite::Statement(*m_pDb, strSQL);
+		}
+	}
+	
 	return false;
 }
 
@@ -808,6 +848,7 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryLast(const
 	return result;
 }
 
+
 /**
  * @brief 获取群组聊天记录的最后一页
  * 
@@ -980,4 +1021,26 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCor
 	}
 
 	return result;
+}
+
+bool CMsgPersistentUtil::Save_FileHash(const std::string strFileName, const std::string strFileHash)
+{
+	SQLite::bind(*m_pFileHashInsert, 
+		strFileName, 
+		strFileHash);
+	m_pFileHashInsert->exec();
+	m_pFileHashInsert->reset();
+	return true;
+}
+std::string CMsgPersistentUtil::Get_FileByHash(const std::string strFileHash)
+{
+	SQLite::bind(*m_pFileHashSelect, strFileHash);
+	std::string strFile;
+	while (m_pFileHashSelect->executeStep())
+	{
+		strFile = m_pFileHashSelect->getColumn(0).getString();
+		break;
+	}
+	m_pFileHashSelect->reset();
+	return strFile;
 }

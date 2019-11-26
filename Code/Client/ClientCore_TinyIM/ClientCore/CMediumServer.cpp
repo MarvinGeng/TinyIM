@@ -83,7 +83,7 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
  */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg)
 {
-	if (reqMsg.m_nDataIndex < reqMsg.m_nDataTotalCount)
+	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
 	{
 		m_fileUtil.OnWriteData(reqMsg.m_nFileId + 1, reqMsg.m_szData, reqMsg.m_nDataLength);
 		FileDataSendRspMsg rspMsg;
@@ -139,10 +139,11 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const File
 		verifyReqMsg.m_nFileId = rspMsg.m_nFileId;
 		verifyReqMsg.m_strFromId = rspMsg.m_strToId;
 		verifyReqMsg.m_strToId = rspMsg.m_strFromId;
-		verifyReqMsg.m_strFileName = "";
-		verifyReqMsg.m_nFileSize = 0;
-		verifyReqMsg.m_strFileHash = "FILE_HASH";
-		auto pSess = GetClientSess(verifyReqMsg.m_strToId);
+		std::string strFileName = m_fileUtil.GetFileName(rspMsg.m_nFileId);
+		verifyReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(strFileName);
+		m_fileUtil.GetFileSize(verifyReqMsg.m_nFileSize, strFileName);
+		verifyReqMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
+		auto pSess = GetClientSess(verifyReqMsg.m_strFromId);
 		if (pSess != nullptr)
 		{
 			auto pSend = std::make_shared<TransBaseMsg_t>(verifyReqMsg.GetMsgType(), verifyReqMsg.ToString());
@@ -582,9 +583,9 @@ void CMediumServer::HandleFileDataSendRsp(const FileDataSendRspMsg& rspMsg)
 		verifyReqMsg.m_nFileId = rspMsg.m_nFileId;
 		verifyReqMsg.m_strFromId = rspMsg.m_strToId;
 		verifyReqMsg.m_strToId = rspMsg.m_strFromId;
-		verifyReqMsg.m_strFileName = "";
-		verifyReqMsg.m_nFileSize = 0;
-		verifyReqMsg.m_strFileHash = "FILE_HASH";
+		verifyReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(m_fileUtil.GetFileName(rspMsg.m_nFileId));
+		m_fileUtil.GetFileSize(verifyReqMsg.m_nFileSize, m_fileUtil.GetFileName(rspMsg.m_nFileId));
+		verifyReqMsg.m_strFileHash = m_fileUtil.CalcHash(m_fileUtil.GetFileName(rspMsg.m_nFileId));
 		auto pSess = GetClientSess(verifyReqMsg.m_strToId);
 		if (pSess != nullptr)
 		{
@@ -1051,6 +1052,40 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 			}
 			return true;
 		}
+		if (msg.GetType() == MessageType::FileSendDataBeginReq_Type)
+		{
+			FileSendDataBeginReq reqMsg;
+			if (reqMsg.FromString(msg.to_string())) {
+				reqMsg.m_strFileHash = m_fileUtil.CalcHash(reqMsg.m_strFileName);
+				std::string strFileName = m_msgPersisUtil->Get_FileByHash(reqMsg.m_strFileHash);
+				if(!strFileName.empty())
+				{
+					reqMsg.m_strFileName = strFileName;
+				}
+				else
+				{
+					std::string strOldFileName = reqMsg.m_strFileName;
+					reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
+					std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strUserId + "\\" + reqMsg.m_strFileName;
+					if (m_fileUtil.UtilCopy(strOldFileName, strNewFileName))
+					{
+
+					}
+					else
+					{
+						LOG_ERR(ms_loger, "CopyFile Failed {} {}", strOldFileName, strNewFileName);
+					}
+				}
+				//对于原始消息，原封不动的转发
+				auto item = m_ForwardSessMap.find(pServerSess);
+				if (item != m_ForwardSessMap.end())
+				{
+					auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+					item->second->SendMsg(pMsg);
+				}
+			}
+			return true;
+		}
 	}
 	return false;
 }
@@ -1121,35 +1156,32 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileSendDataBeginRsp rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			int nFileId = static_cast<int>(time(nullptr));
-			int nFileSize = 0;
-			std::string strPath = "E:\\GitHub\\TinyIM\\Code\\Client\\ClientUI\\Bin\\Debug\\";
-			auto item = m_userId_UserNameMap.find(rspMsg.m_strFriendId);
-			std::string strImageName;
-			if (item != m_userId_UserNameMap.end())
+			if(rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 			{
-				strImageName = strPath + item->second + "\\" + rspMsg.m_strFileName;
-			}
-			m_fileUtil.GetFileSize(nFileSize, strImageName);
-			if (m_fileUtil.OpenReadFile(rspMsg.m_nFileId, strImageName)) {
-				FileDataSendReqMsg sendReqMsg;
-				sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-				sendReqMsg.m_strFromId = rspMsg.m_strFriendId;
-				sendReqMsg.m_strToId = rspMsg.m_strUserId;
-				sendReqMsg.m_nFileId = rspMsg.m_nFileId;
+				int nFileId = static_cast<int>(time(nullptr));
+				int nFileSize = 0;
+				std::string strImageName = m_fileUtil.GetCurDir() + "\\" + rspMsg.m_strFriendId + "\\" + rspMsg.m_strFileName;
+				m_fileUtil.GetFileSize(nFileSize, strImageName);
+				if (m_fileUtil.OpenReadFile(rspMsg.m_nFileId, strImageName)) {
+					FileDataSendReqMsg sendReqMsg;
+					sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+					sendReqMsg.m_strFromId = rspMsg.m_strFriendId;
+					sendReqMsg.m_strToId = rspMsg.m_strUserId;
+					sendReqMsg.m_nFileId = rspMsg.m_nFileId;
 
-				sendReqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
-				sendReqMsg.m_nDataIndex = 1;
-				sendReqMsg.m_nDataLength = 0;
-				m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
-				auto pUdpSess = GetUdpSess(sendReqMsg.m_strFromId);
-				if (pUdpSess)
-				{
-					pUdpSess->sendToServer(&sendReqMsg);
-				}
-				else
-				{
-					LOG_ERR(ms_loger, "UDP Sess Failed:{}", sendReqMsg.m_strFromId);
+					sendReqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
+					sendReqMsg.m_nDataIndex = 1;
+					sendReqMsg.m_nDataLength = 0;
+					m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
+					auto pUdpSess = GetUdpSess(sendReqMsg.m_strFromId);
+					if (pUdpSess)
+					{
+						pUdpSess->sendToServer(&sendReqMsg);
+					}
+					else
+					{
+						LOG_ERR(ms_loger, "UDP Sess Failed:{}", sendReqMsg.m_strFromId);
+					}
 				}
 			}
 		}
@@ -1201,6 +1233,10 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (!m_fileUtil.IsFolder(rspMsg.m_strUserName))
 		{
 			m_fileUtil.CreateFolder(rspMsg.m_strUserName);
+		}
+		if (!m_fileUtil.IsFolder(rspMsg.m_strUserId))
+		{
+			m_fileUtil.CreateFolder(rspMsg.m_strUserId);
 		}
 	}
 	if (msg.GetType() == MessageType::UserLogoutRsp_Type)

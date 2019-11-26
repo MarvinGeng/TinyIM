@@ -73,6 +73,8 @@ public:
 
 	bool Save_RecvGroupTextMsgReqMsg(const SendGroupTextMsgRspMsg& msg);
 
+	bool Save_FileHash(const std::string strFileName, const std::string strFileHash);
+	std::string Get_FileByHash(const std::string strFileHash);
 	static std::shared_ptr<spdlog::logger> ms_logger;
 
 private:
@@ -131,6 +133,13 @@ private:
 	SQLite::Statement*   m_pFriendChatSelectByWord; //好友聊天关键字查询
 
 	SQLite::Statement*   m_pGroupChatSelectByWord;  //群组聊天关键字查询
+
+	//文件Hash表
+	SQLite::Statement*   m_pFileHashCreate;//文件HASH表
+
+	SQLite::Statement*   m_pFileHashInsert;//
+
+	SQLite::Statement*	 m_pFileHashSelect;
 
 };
 using CMsgPersistentUtil_SHARED_PTR = std::shared_ptr<CMsgPersistentUtil>;

@@ -38,6 +38,7 @@ set(SERVER_FILES main.cpp
 
     ../../../msgStruct/json11/json11.cpp
     ../../../CommonFunction/CFileUtil.cpp
+../../../CommonFunction/md5.cpp
 ../../../msgStruct/CommonMsg.cpp
 ../../../msgStruct/CommonDef.cpp
 ../ClientCore/CMsgPersistentUtil.cpp

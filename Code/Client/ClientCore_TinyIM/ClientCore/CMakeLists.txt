@@ -51,6 +51,8 @@ set(SERVER_FILES
         CMsgPersistentUtil.cpp
 		../../../CommonFunction/CFileUtil.h  
 		../../../CommonFunction/CFileUtil.cpp
+		../../../CommonFunction/md5.h  
+		../../../CommonFunction/md5.cpp
 		./CUdpClient.h ./CUdpClient.cpp
 		../../../msgStruct/CommonDef.cpp
 		../../../msgStruct/CommonMsg.cpp
