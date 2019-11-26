@@ -158,6 +158,9 @@ private:
 	void HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
 	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& pMsg);
 private:
+	std::string GetFilePathByUserIdAndFileName(const std::string strUserId, const std::string strFileName);
+	std::string GetFolderByUserId(const std::string strUserId);
+
 	void HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess);
 	void HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSess, const KeepAliveReqMsg& reqMsg);
 	void HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess, const KeepAliveRspMsg& rspMsg);

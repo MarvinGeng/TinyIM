@@ -767,6 +767,20 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 		if (!m_fileUtil.IsFolder(strFolder)) {
 			m_fileUtil.CreateFolder(strFolder);
 		}
+
+		T_FILE_HASH_BEAN bean;
+		if(m_util.SelectFileByHash(bean,req.m_strFileHash))
+		{
+			FileSendDataBeginRsp rspMsg;
+			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
+			rspMsg.m_nFileId = req.m_nFileId;
+			rspMsg.m_strFileName = req.m_strFileName;
+			rspMsg.m_strFriendId = req.m_strUserId;
+			rspMsg.m_strUserId = req.m_strFriendId;
+			rspMsg.m_strMsgId = req.m_strMsgId;
+			pSess->SendMsg(&rspMsg);
+			return;
+		}
 		std::string strFileName = strFolder + req.m_strFileName;
 		if (!m_fileUtil.IsFileExist(strFileName)) {
 			m_fileUtil.OpenWriteFile(req.m_nFileId, strFileName);
@@ -2040,6 +2054,7 @@ void CChatServer::HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& p
  */
 void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req)
 {
+
 	{
 		auto item = m_UserSessVec.find(req.m_strToId);
 		if (item != m_UserSessVec.end())
@@ -2058,6 +2073,19 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 			pSess->SendMsg(&rspMsg);
 		}
 		m_fileUtil.OnCloseFile(req.m_nFileId);
+	}
+
+	{
+		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strFromId, req.m_strFileName);
+		std::string strFileHash = m_fileUtil.CalcHash(strFileName);
+		if (strFileHash == req.m_strFileHash)
+		{
+			T_FILE_HASH_BEAN bean;
+			bean.m_strF_FILE_HASH = strFileHash;
+			bean.m_strF_FILE_NAME = req.m_strFileName;
+			bean.m_strF_USER_ID = req.m_strFromId;
+			m_util.InsertFileHash(bean);
+		}
 	}
 }
 
@@ -2406,6 +2434,17 @@ bool CChatServer::VerifyPassword(const std::string orgPassword, const std::strin
 	{
 		return false;
 	}
+}
+
+std::string CChatServer::GetFilePathByUserIdAndFileName(const std::string strUserId, const std::string strFileName)
+{
+	return GetFolderByUserId(strUserId) + strFileName;
+}
+
+std::string CChatServer::GetFolderByUserId(const std::string strUserId)
+{
+	std::string strFolder = m_fileUtil.GetCurDir() + "\\" + strUserId+"\\";
+	return strFolder;
 }
 
 }

@@ -99,6 +99,10 @@ public:
 	bool DeleteGroupChatText(const std::string m_strMsgId);
 	//Group Chat Text End
 	
+
+	//FILE_HASH
+	bool InsertFileHash(const T_FILE_HASH_BEAN& hashBean);
+	bool SelectFileByHash(T_FILE_HASH_BEAN& hashBean, const std::string strFileHash);
 	static std::shared_ptr<spdlog::logger> m_loger;
 private:
     MYSQL m_mysql;

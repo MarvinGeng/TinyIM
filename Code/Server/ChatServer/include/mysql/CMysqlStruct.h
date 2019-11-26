@@ -111,5 +111,10 @@ struct T_FRIEND_RELATION_BEAN {
 	std::string m_strF_FRIEND_ID;
 	E_FRIEND_RELATION m_eF_STATUS;
 };
-
+struct T_FILE_HASH_BEAN
+{
+	std::string m_strF_USER_ID;
+	std::string m_strF_FILE_NAME;
+	std::string m_strF_FILE_HASH;
+};
 #endif

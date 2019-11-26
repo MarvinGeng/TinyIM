@@ -1637,3 +1637,68 @@ F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}','{4}','{5}',now());";
 	}
 	return true;
 }
+
+bool CMySqlConnect::InsertFileHash(const T_FILE_HASH_BEAN& hashBean)
+{
+	int res = 0;
+	constexpr char * strTemplate2 = "INSERT INTO T_FILE_HASH(F_USER_ID,\
+F_FILE_NAME,\
+F_FILE_HASH,\
+F_CREATE_TIME)\
+VALUES('{0}','{1}','{2}',now());";
+	std::string strSql = fmt::format(strTemplate2,
+		hashBean.m_strF_USER_ID,
+		hashBean.m_strF_FILE_NAME,
+		hashBean.m_strF_FILE_HASH);
+
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	if (!res)
+	{
+
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+bool CMySqlConnect::SelectFileByHash(T_FILE_HASH_BEAN& hashBean, const std::string strFileHash)
+{
+	MYSQL_RES *result;
+	MYSQL_ROW sql_row;
+	int res = 0;
+	constexpr char * strTemplate2 = "SELECT F_USER_ID,\
+F_FILE_NAME,\
+F_FILE_HASH \
+FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
+	std::string strSql = fmt::format(strTemplate2,strFileHash);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());
+	bool bResult = false;
+	if (!res)
+	{
+		result = mysql_store_result(&m_mysql);
+		if (result)
+		{
+			while (sql_row = mysql_fetch_row(result))
+			{
+				hashBean.m_strF_USER_ID = sql_row[0];
+				hashBean.m_strF_FILE_NAME = sql_row[1];
+				hashBean.m_strF_FILE_HASH = sql_row[2];
+				bResult = true;
+				break;
+			}
+		}
+	}
+	else
+	{
+		return false;
+	}
+	if (result != NULL)
+	{
+		mysql_free_result(result);
+	}
+	return bResult;
+}
