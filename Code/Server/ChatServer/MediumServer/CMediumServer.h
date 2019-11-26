@@ -135,7 +135,11 @@ public:
 	void OnUserStateCheck(const std::string strUserId);
 	void NotifyUserFriends(const std::string strUserId);
 private:
-	
+	const int HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
+	std::string GenerateSalt();
+	std::string GetSaltFromPasswd(const std::string strPasswd);
+	std::string GeneratePassword(const std::string orgPassWord);
+	bool VerifyPassword(const std::string orgPassword, const std::string dataBasePassword);
    
     SnowFlake m_MsgID_Util; //消息的唯一生成器
 	

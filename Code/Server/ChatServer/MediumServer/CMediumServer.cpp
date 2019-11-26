@@ -14,7 +14,7 @@
 #include "DaemonSvcApp.h"
 #include "EncodingUtil.h"
 #include "CTimeUtil.h"
-
+#include "md5.h"
 const std::string DEFAULT_TEAM_ID = "10000000";
 const std::string DEFAULT_TEAM_NAME = EncodeUtil::AnsiToUtf8("我的好友");
 namespace ChatServer
@@ -1459,7 +1459,7 @@ UserLoginRspMsg CChatServer::DoUserLoginReq(const UserLoginReqMsg& reqMsg) {
 	UserLoginRspMsg rsp;
 	T_USER_BEAN userBean;
 	m_util.SelectUserByName(reqMsg.m_strUserName, userBean);
-	if (userBean.m_strF_PASS_WORD == reqMsg.m_strPassword)
+	if (VerifyPassword(reqMsg.m_strPassword,userBean.m_strF_PASS_WORD))
 	{
 		rsp.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 		rsp.m_strErrMsg = "Succeed";
@@ -1521,7 +1521,7 @@ UserRegisterRspMsg CChatServer::DoUserRegisterReq(const UserRegisterReqMsg& reqM
 		T_USER_BEAN newUser;
 		newUser.m_strF_USER_ID = GenerateUserId();
 		newUser.m_strF_USER_NAME = reqMsg.m_strUserName;
-		newUser.m_strF_PASS_WORD = reqMsg.m_strPassword;
+		newUser.m_strF_PASS_WORD = GeneratePassword(reqMsg.m_strPassword);
 		newUser.m_strF_NICK_NAME = reqMsg.m_strNickName;
 		if (m_util.InsertUser(newUser))
 		{
@@ -2365,5 +2365,47 @@ void CChatServer::HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess
 	}
 }
 
+std::string CChatServer::GenerateSalt()
+{
+	const char buff[] = "0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz";
+	constexpr int bufLen = sizeof(buff) / sizeof(buff[0]);
+	std::string strResult;
+	for (int i = 0; i < HASH_SALT_LENGTH; i++)
+	{
+		strResult += buff[rand() % bufLen];
+	}
+
+	return strResult;
+}
+
+std::string CChatServer::GetSaltFromPasswd(const std::string strPasswd)
+{
+	if (strPasswd.length() > HASH_SALT_LENGTH)
+	{
+		return strPasswd.substr(0, HASH_SALT_LENGTH);
+	}
+	return "";
+}
+
+std::string CChatServer::GeneratePassword(const std::string orgPassWord)
+{
+	std::string strSalt = GenerateSalt();
+	std::string strOrg = strSalt + orgPassWord;
+	std::string strOrgHash = md5(strOrg);
+	return strSalt + strOrgHash;
+}
+bool CChatServer::VerifyPassword(const std::string orgPassword, const std::string dataBasePassword)
+{
+	std::string strSalt = GetSaltFromPasswd(dataBasePassword);
+	std::string strPasswd = strSalt+md5(strSalt + orgPassword);
+	if (strPasswd == dataBasePassword)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 }

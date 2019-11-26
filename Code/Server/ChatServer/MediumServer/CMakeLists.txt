@@ -51,6 +51,8 @@ set(SERVER_FILES
 		./CUdpServer.cpp
 		../../../CommonFunction/CFileUtil.h
 		../../../CommonFunction/CFileUtil.cpp
+		../../../CommonFunction/md5.h
+		../../../CommonFunction/md5.cpp
 		CTimeUtil.h 
 		CTimeUtil.cpp
         CMySqlConnect.cpp
