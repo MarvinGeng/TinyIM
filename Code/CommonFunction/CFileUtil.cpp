@@ -4,8 +4,8 @@
 #include  <io.h>
 #include  <stdio.h>
 #include  <stdlib.h>
-#include<direct.h>
-
+#include  <direct.h>
+#include "md5.h"
 /**
  * @brief 获取文件的大小
  * 
@@ -272,6 +272,18 @@ bool CFileUtil::CreateFileByName(const int nFileId, const std::string FileName)
  */
 std::string CFileUtil::CalcHash(const std::string strFileName)
 {
+	MD5 hashUtil;
+	int fileId = rand();
+	if (OpenReadFile(fileId, strFileName))
+	{
+		char buff[1024] = { 0 };
+		int nReadLen = 0;
+		while (OnReadData(fileId, buff, nReadLen, 1024))
+		{
+			hashUtil.update(buff, nReadLen);
+		}
+		return hashUtil.hexdigest();
+	}
 	return "";
 }
 
