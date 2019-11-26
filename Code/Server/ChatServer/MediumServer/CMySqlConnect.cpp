@@ -1638,6 +1638,14 @@ F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}','{4}','{5}',now());";
 	return true;
 }
 
+
+/**
+ * @brief 插入文件Hash和文件名的关系
+ * 
+ * @param hashBean Hash和文件名的关系
+ * @return true 插入成功
+ * @return false 插入失败
+ */
 bool CMySqlConnect::InsertFileHash(const T_FILE_HASH_BEAN& hashBean)
 {
 	int res = 0;
@@ -1664,6 +1672,14 @@ VALUES('{0}','{1}','{2}',now());";
 	return true;
 }
 
+/**
+ * @brief 根据HASH值获取文件名
+ * 
+ * @param hashBean 该hash值对对应的文件信息
+ * @param strFileHash 文件hash值
+ * @return true 存在对应的文件
+ * @return false 不存在对应的文件
+ */
 bool CMySqlConnect::SelectFileByHash(T_FILE_HASH_BEAN& hashBean, const std::string strFileHash)
 {
 	MYSQL_RES *result;

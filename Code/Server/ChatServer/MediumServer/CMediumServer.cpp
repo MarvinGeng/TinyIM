@@ -2393,6 +2393,11 @@ void CChatServer::HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess
 	}
 }
 
+/**
+ * @brief 生成密码需要的Salt
+ * 
+ * @return std::string Salt字符串
+ */
 std::string CChatServer::GenerateSalt()
 {
 	const char buff[] = "0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz";
@@ -2406,6 +2411,12 @@ std::string CChatServer::GenerateSalt()
 	return strResult;
 }
 
+/**
+ * @brief 从数据库的密码中提取Salt
+ * 
+ * @param strPasswd 数据库的密码
+ * @return std::string 对应的Salt
+ */
 std::string CChatServer::GetSaltFromPasswd(const std::string strPasswd)
 {
 	if (strPasswd.length() > HASH_SALT_LENGTH)
@@ -2415,6 +2426,12 @@ std::string CChatServer::GetSaltFromPasswd(const std::string strPasswd)
 	return "";
 }
 
+/**
+ * @brief 根据原始密码生成密码
+ * 
+ * @param orgPassWord 原始密码
+ * @return std::string 新的密码
+ */
 std::string CChatServer::GeneratePassword(const std::string orgPassWord)
 {
 	std::string strSalt = GenerateSalt();
@@ -2422,6 +2439,15 @@ std::string CChatServer::GeneratePassword(const std::string orgPassWord)
 	std::string strOrgHash = md5(strOrg);
 	return strSalt + strOrgHash;
 }
+
+/**
+ * @brief 校验密码
+ * 
+ * @param orgPassword 原始密码
+ * @param dataBasePassword 数据库的密码
+ * @return true 校验通过
+ * @return false 校验失败
+ */
 bool CChatServer::VerifyPassword(const std::string orgPassword, const std::string dataBasePassword)
 {
 	std::string strSalt = GetSaltFromPasswd(dataBasePassword);
@@ -2436,11 +2462,24 @@ bool CChatServer::VerifyPassword(const std::string orgPassword, const std::strin
 	}
 }
 
+/**
+ * @brief 根据用户ID和文件名，拼接出文件全路径
+ * 
+ * @param strUserId 用户ID
+ * @param strFileName 文件名
+ * @return std::string 文件全路径
+ */
 std::string CChatServer::GetFilePathByUserIdAndFileName(const std::string strUserId, const std::string strFileName)
 {
 	return GetFolderByUserId(strUserId) + strFileName;
 }
 
+/**
+ * @brief 根据用户ID获取对应的文件夹
+ * 
+ * @param strUserId 用户ID
+ * @return std::string 用户ID对应的文件夹
+ */
 std::string CChatServer::GetFolderByUserId(const std::string strUserId)
 {
 	std::string strFolder = m_fileUtil.GetCurDir() + "\\" + strUserId+"\\";
