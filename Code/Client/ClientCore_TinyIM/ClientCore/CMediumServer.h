@@ -128,6 +128,12 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 private:
 	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
 	bool HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatSendTxtRspMsg reqMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginRsp reqMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLoginRspMsg reqMsg);
+
 
 	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);
 	void HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg);
