@@ -931,6 +931,113 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
 }
 
 
+void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& reqMsg)
+{
+	GetFriendChatHistoryRsp rspMsg;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_strUserId = reqMsg.m_strUserId;
+	rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+	rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_msgHistory = m_msgPersisUtil->Get_FriendChatHistory(reqMsg);
+	pServerSess->SendMsg(&rspMsg);
+}
+
+
+void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& reqMsg)
+{
+	GetGroupChatHistoryRsp rspMsg;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_strUserId = reqMsg.m_strUserId;
+	rspMsg.m_strGroupId = reqMsg.m_strGroupId;
+	rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_msgHistory = m_msgPersisUtil->Get_GroupChatHistory(reqMsg);
+	pServerSess->SendMsg(&rspMsg);
+}
+
+void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& reqMsg)
+{
+	reqMsg.m_strFileHash = m_fileUtil.CalcHash(reqMsg.m_strFileName);
+	std::string strFileName = m_msgPersisUtil->Get_FileByHash(reqMsg.m_strFileHash);
+	if (!strFileName.empty())
+	{
+		reqMsg.m_strFileName = strFileName;
+	}
+	else
+	{
+		std::string strOldFileName = reqMsg.m_strFileName;
+		reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
+		std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strUserId + "\\" + reqMsg.m_strFileName;
+		if (m_fileUtil.UtilCopy(strOldFileName, strNewFileName))
+		{
+
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "CopyFile Failed {} {}", strOldFileName, strNewFileName);
+		}
+	}
+	//对于原始消息，原封不动的转发
+	auto item = m_ForwardSessMap.find(pServerSess);
+	if (item != m_ForwardSessMap.end())
+	{
+		auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+		item->second->SendMsg(pMsg);
+	}
+}
+
+void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& reqMsg)
+{
+	ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
+	ChatMsgElemVec newVec;
+	for (const auto item : msgVec)
+	{
+		if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+		{
+			FileSendDataBeginReq beginReqMsg;
+			{
+				beginReqMsg.m_nFileId = rand();
+				beginReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+				beginReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(item.m_strImageName);
+				beginReqMsg.m_strUserId = reqMsg.m_strSenderId;
+				beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
+				beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
+
+				std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
+				if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
+				{
+
+				}
+				else
+				{
+					LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
+				}
+				auto item = m_ForwardSessMap.find(pServerSess);
+				if (item != m_ForwardSessMap.end())
+				{
+					auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
+					item->second->SendMsg(pMsg);
+				}
+			}
+			ChatMsgElem elem;
+			elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+			elem.m_strImageName = beginReqMsg.m_strFileName;
+			newVec.push_back(elem);
+		}
+		else
+		{
+			newVec.push_back(item);
+		}
+	}
+
+	reqMsg.m_strContext = MsgElemVec(newVec);
+	auto item = m_ForwardSessMap.find(pServerSess);
+	if (item != m_ForwardSessMap.end())
+	{
+		auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+		item->second->SendMsg(pMsg);
+	}
+}
+
 /**
  * @brief 来自GUI客户端的部分消息,不需要发送到远端的服务器,在此函数进行处理
  * 
@@ -946,13 +1053,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		{
 			GetFriendChatHistoryReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
-				GetFriendChatHistoryRsp rspMsg;
-				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-				rspMsg.m_strUserId = reqMsg.m_strUserId;
-				rspMsg.m_strFriendId = reqMsg.m_strFriendId;
-				rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
-				rspMsg.m_msgHistory = m_msgPersisUtil->Get_FriendChatHistory(reqMsg);
-				pServerSess->SendMsg(&rspMsg);
+				HandleSendForward(pServerSess, reqMsg);
 			}
 			return true;
 		}
@@ -960,13 +1061,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		{
 			GetGroupChatHistoryReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
-				GetGroupChatHistoryRsp rspMsg;
-				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-				rspMsg.m_strUserId = reqMsg.m_strUserId;
-				rspMsg.m_strGroupId = reqMsg.m_strGroupId;
-				rspMsg.m_strChatMsgId = reqMsg.m_strMsgId;
-				rspMsg.m_msgHistory = m_msgPersisUtil->Get_GroupChatHistory(reqMsg);
-				pServerSess->SendMsg(&rspMsg);
+				HandleSendForward(pServerSess, reqMsg);
 			}
 			return true;
 		}
@@ -974,33 +1069,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		{
 			FileSendDataBeginReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
-				reqMsg.m_strFileHash = m_fileUtil.CalcHash(reqMsg.m_strFileName);
-				std::string strFileName = m_msgPersisUtil->Get_FileByHash(reqMsg.m_strFileHash);
-				if(!strFileName.empty())
-				{
-					reqMsg.m_strFileName = strFileName;
-				}
-				else
-				{
-					std::string strOldFileName = reqMsg.m_strFileName;
-					reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
-					std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strUserId + "\\" + reqMsg.m_strFileName;
-					if (m_fileUtil.UtilCopy(strOldFileName, strNewFileName))
-					{
-
-					}
-					else
-					{
-						LOG_ERR(ms_loger, "CopyFile Failed {} {}", strOldFileName, strNewFileName);
-					}
-				}
-				//对于原始消息，原封不动的转发
-				auto item = m_ForwardSessMap.find(pServerSess);
-				if (item != m_ForwardSessMap.end())
-				{
-					auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-					item->second->SendMsg(pMsg);
-				}
+				HandleSendForward(pServerSess, reqMsg);
 			}
 			return true;
 		}
@@ -1008,55 +1077,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		{
 			FriendChatSendTxtReqMsg reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
-				ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
-				ChatMsgElemVec newVec;
-				for (const auto item : msgVec)
-				{
-					if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
-					{
-						FileSendDataBeginReq beginReqMsg;
-						{
-							beginReqMsg.m_nFileId = rand();
-							beginReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-							beginReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(item.m_strImageName);
-							beginReqMsg.m_strUserId = reqMsg.m_strSenderId;
-							beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
-							beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
-
-							std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
-							if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
-							{
-
-							}
-							else
-							{
-								LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
-							}
-							auto item = m_ForwardSessMap.find(pServerSess);
-							if (item != m_ForwardSessMap.end())
-							{
-								auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
-								item->second->SendMsg(pMsg);
-							}
-						}
-						ChatMsgElem elem;
-						elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
-						elem.m_strImageName = beginReqMsg.m_strFileName;
-						newVec.push_back(elem);
-					}
-					else
-					{
-						newVec.push_back(item);
-					}
-				}
-
-				reqMsg.m_strContext = MsgElemVec(newVec);
-				auto item = m_ForwardSessMap.find(pServerSess);
-				if (item != m_ForwardSessMap.end())
-				{
-					auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-					item->second->SendMsg(pMsg);
-				}
+				HandleSendForward(pServerSess, reqMsg);
 			}
 			return true;
 		}
@@ -1204,6 +1225,58 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 
 }
+void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg) {
+	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED) {
+		m_userClientSessMap.erase(rspMsg.m_strUserName);
+		m_userStateMap.erase(pClientSess->UserId());
+		m_userStateMap.insert({ pClientSess->UserId(),CLIENT_SESS_STATE::SESS_UN_LOGIN });
+	}
+}
+
+void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess)
+{
+	auto item = m_userStateMap.find(pClientSess->UserId());
+	if (item != m_userStateMap.end())
+	{
+		if (item->second == CLIENT_SESS_STATE::SESS_LOGIN_FINISHED)
+		{
+			m_userStateMap.erase(pClientSess->UserId());
+			m_userStateMap.insert({ pClientSess->UserId(),CLIENT_SESS_STATE::SESS_LOGIN_SEND });
+		}
+	}
+	m_userClientSessMap.erase(pClientSess->UserId());
+
+	auto pSess = GetClientSess(pClientSess->UserId());
+	pSess->SetUserId(pClientSess->UserId());
+	pSess->SetUserName(pClientSess->UserName());
+}
+
+void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)
+{
+	if (ERROR_CODE_TYPE::E_CODE_SUCCEED == rspMsg.m_errCode)
+	{
+		m_userIdUdpAddrMap.erase(rspMsg.m_strUdpUserId);
+		m_userIdUdpAddrMap.insert({ rspMsg.m_strUdpUserId,rspMsg.m_udpEndPt });
+	}
+	else
+	{
+		//TODO再次获取时间
+		auto pMsg = std::make_shared<QueryUserUdpAddrReqMsg>();
+		pMsg->m_strUserId = rspMsg.m_strUserId;
+		pMsg->m_strUdpUserId = rspMsg.m_strUdpUserId;
+		auto item = m_WaitMsgMap.find(pMsg->m_strUserId);
+		if (item != m_WaitMsgMap.end())
+		{
+			m_WaitMsgMap[rspMsg.m_strUserId].push_back(pMsg);
+		}
+		else
+		{
+			std::vector<std::shared_ptr<BaseMsg>> mapVec;
+			mapVec.push_back(pMsg);
+			m_WaitMsgMap.insert({ rspMsg.m_strUserId,mapVec });
+		}
+	}
+}
 
 /**
  * @brief 部分消息不需要返回给GUI客户端，在此函数进行处理
@@ -1275,29 +1348,12 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		UserLogoutRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED) {
-				m_userClientSessMap.erase(rspMsg.m_strUserName);
-				m_userStateMap.erase(pClientSess->UserId());
-				m_userStateMap.insert({ pClientSess->UserId(),CLIENT_SESS_STATE::SESS_UN_LOGIN });
-			}
+			HandleSendBack(pClientSess, rspMsg);
 		}
 	}break;
 	case MessageType::NetFailedReport_Type:
 	{
-		auto item = m_userStateMap.find(pClientSess->UserId());
-		if (item != m_userStateMap.end())
-		{
-			if (item->second == CLIENT_SESS_STATE::SESS_LOGIN_FINISHED)
-			{
-				m_userStateMap.erase(pClientSess->UserId());
-				m_userStateMap.insert({ pClientSess->UserId(),CLIENT_SESS_STATE::SESS_LOGIN_SEND });
-			}
-		}
-		m_userClientSessMap.erase(pClientSess->UserId());
-
-		auto pSess = GetClientSess(pClientSess->UserId());
-		pSess->SetUserId(pClientSess->UserId());
-		pSess->SetUserName(pClientSess->UserName());
+		HandleSendBack_NetFailed(pClientSess);
 	}break;
 	case MessageType::NetRecoverReport_Type: {
 		auto loginReq = m_httpServer->GetUserLoginReq(pClientSess->UserName());
@@ -1347,29 +1403,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		QueryUserUdpAddrRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			if (ERROR_CODE_TYPE::E_CODE_SUCCEED == rspMsg.m_errCode)
-			{
-				m_userIdUdpAddrMap.erase(rspMsg.m_strUdpUserId);
-				m_userIdUdpAddrMap.insert({ rspMsg.m_strUdpUserId,rspMsg.m_udpEndPt });
-			}
-			else
-			{
-				//TODO再次获取时间
-				auto pMsg = std::make_shared<QueryUserUdpAddrReqMsg>();
-				pMsg->m_strUserId = rspMsg.m_strUserId;
-				pMsg->m_strUdpUserId = rspMsg.m_strUdpUserId;
-				auto item = m_WaitMsgMap.find(pMsg->m_strUserId);
-				if (item != m_WaitMsgMap.end())
-				{
-					m_WaitMsgMap[rspMsg.m_strUserId].push_back(pMsg);
-				}
-				else
-				{
-					std::vector<std::shared_ptr<BaseMsg>> mapVec;
-					mapVec.push_back(pMsg);
-					m_WaitMsgMap.insert({ rspMsg.m_strUserId,mapVec });
-				}
-			}
+			HandleSendBack(pClientSess, rspMsg);
 		}
 	}break;
 	default:

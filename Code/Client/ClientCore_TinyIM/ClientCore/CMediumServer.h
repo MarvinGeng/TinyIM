@@ -133,6 +133,14 @@ private:
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginRsp reqMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLoginRspMsg reqMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg);
+	void HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg);
+
+	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
+	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
+	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& msg);
+	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& msg);
 
 
 	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);
