@@ -8589,3 +8589,253 @@ bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
 
 	return true;
 }
+
+FileDownLoadReqMsg::FileDownLoadReqMsg()
+{
+	m_type = MessageType::FileDownLoadReq_Type;
+}
+
+std::string FileDownLoadReqMsg::ToString() const
+{
+	using namespace json11;
+	Json msgJson = Json::object({
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"FriendId",m_strFriendId},
+		{"FileName",m_strFileName},
+		});
+	return msgJson.dump();
+}
+
+bool FileDownLoadReqMsg::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string()) {
+		m_strFriendId = json["FriendId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileName"].is_string()) {
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+FileDownLoadRspMsg::FileDownLoadRspMsg()
+{
+	m_type = MessageType::FileDownLoadRsp_Type;
+}
+
+std::string FileDownLoadRspMsg::ToString() const
+{
+	using namespace json11;
+	Json msgJson = Json::object({
+		{"Code",static_cast<int>(m_errCode)},
+		{"Message",m_errMsg},
+		{"MsgId",m_strMsgId},
+		{"UserId",m_strUserId},
+		{"FriendId",m_strFriendId},
+		{"FileName",m_strFileName},
+		});
+	return msgJson.dump();
+}
+
+bool FileDownLoadRspMsg::FromString(const std::string& strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+	if (json["Code"].is_number()) {
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string()) {
+		m_errMsg = json["Message"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["MsgId"].is_string()) {
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string()) {
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendId"].is_string()) {
+		m_strFriendId = json["FriendId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileName"].is_string()) {
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+
+std::string MsgElemVec(const ChatMsgElemVec& vec)
+{
+	using namespace json11;
+	json11::Json::array jsonArray;
+	std::size_t index = 0;
+	std::size_t Count = vec.size();
+	for (std::size_t index = 0; index < Count; index++)
+	{
+		auto& item = vec[index];
+		switch (item.m_eType)
+		{
+		case CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE:
+		{
+			Json clientObj = Json::object(
+				{
+					{"Index",static_cast<int>(index)},
+					{"Type",static_cast<int>(item.m_eType)},
+					{"Data",item.m_strContext},
+				});
+			jsonArray.push_back(clientObj);
+		}break;
+		case CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE:
+		{
+			Json clientObj = Json::object(
+				{
+					{"Index",static_cast<int>(index)},
+					{"Type",static_cast<int>(item.m_eType)},
+					{"Data",std::to_string(item.m_nFaceId)},
+				});
+			jsonArray.push_back(clientObj);
+		}break;
+		case CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE:
+		{
+			Json clientObj = Json::object(
+				{
+					{"Index",static_cast<int>(index)},
+					{"Type",static_cast<int>(item.m_eType)},
+					{"Data",item.m_strImageName},
+				});
+			jsonArray.push_back(clientObj);
+		}break;
+		}
+	}
+	Json resultJson = Json::object({
+		{"MsgList",jsonArray},
+		});
+
+	return resultJson.dump();
+}
+ChatMsgElemVec MsgElemVec(const std::string strVec)
+{
+	ChatMsgElemVec result;
+	std::string err;
+	using namespace json11;
+	auto jsonObj = Json::parse(strVec, err);
+	if (!err.empty())
+	{
+		return result;
+	}
+
+	if (jsonObj["MsgList"].is_array())
+	{
+		auto jsonArray = jsonObj["MsgList"].array_items();
+		for (auto jsonItem : jsonArray)
+		{
+			if (jsonItem["Index"].is_number())
+			{
+				CHAT_MSG_TYPE eType = static_cast<CHAT_MSG_TYPE>(jsonItem["Type"].int_value());
+				switch (eType)
+				{
+				case CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE:
+				{
+					ChatMsgElem msg;
+					msg.m_eType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
+					if (jsonItem["Data"].is_string())
+					{
+						msg.m_strContext = jsonItem["Data"].string_value();
+						result.push_back(msg);
+					}
+				}break;
+				case CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE:
+				{
+					ChatMsgElem msg;
+					msg.m_eType = CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE;
+					if (jsonItem["Data"].is_string())
+					{
+						msg.m_nFaceId = std::atoi(jsonItem["Data"].string_value().c_str());
+						result.push_back(msg);
+					}
+				}break;
+				case CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE:
+				{
+					ChatMsgElem msg;
+					msg.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+					if (jsonItem["Data"].is_string())
+					{
+						msg.m_strImageName = jsonItem["Data"].string_value();
+						result.push_back(msg);
+					}
+				}break;
+				}
+			}
+		}
+	}
+	return result;
+}

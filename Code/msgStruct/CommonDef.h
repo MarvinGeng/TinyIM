@@ -341,6 +341,12 @@ FileSendDataBeginRsp_Type,
 
 //文件传输进度的通知消息
 FileTransProgressNotifyReq_Type,
+
+//文件下载开始请求
+FileDownLoadReq_Type,
+
+//文件下载开始回复
+FileDownLoadRsp_Type,
 };
 
 //客户端会话状态

@@ -90,6 +90,20 @@ struct GroupChatMsg_s {
 	std::string m_strMsgTime;  //消息接收时间
 };
 
+//聊天信息的基本单元
+struct ChatMsgElem
+{
+	CHAT_MSG_TYPE m_eType;
+	std::string m_strContext;
+	int m_nFaceId;
+	std::string m_strImageName;
+};
+
+using ChatMsgElemVec = std::vector<ChatMsgElem>;
+
+std::string MsgElemVec(const ChatMsgElemVec& vec);
+ChatMsgElemVec MsgElemVec(const std::string strVec);
+
 /**
  * @brief 消息体的头部
  * 
@@ -2203,6 +2217,35 @@ public:
 	virtual std::string ToString() const override;
 	virtual bool FromString(const std::string& strJson) override;
 };
+
+class FileDownLoadReqMsg :public BaseMsg
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
+	std::string m_strFileName;//文件名
+public:
+	FileDownLoadReqMsg();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class FileDownLoadRspMsg :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_errCode;//错误码
+	std::string m_errMsg;//错误消息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendId;//好友ID
+	std::string m_strFileName;//文件名
+public:
+	FileDownLoadRspMsg();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
 /**
  * @brief 服务器配置
  * 
