@@ -44,7 +44,14 @@ void CSessManager::StartTimer(int nSeconds) {
 
 DWORD WINAPI SocketThread(LPVOID lpParam)
 {
-	g_ioService.run();
+	try {
+		g_ioService.run();
+	}
+	catch (std::exception& ec)
+	{
+		INFO(CSessManager::ms_loger, "On Timer at APNsServer {} ",ec.what());
+	}
+	
 	return 0;
 }
 

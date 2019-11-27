@@ -1126,12 +1126,104 @@ bool CMsgProto::SendChatTxtMsg(const std::string strFriendName, const std::strin
 		return pSess->SendMsg(&trans);
 	}
 }
+ChatMsgElemVec UiToCore(const RichEditMsgList& richMsg)
+{
+	ChatMsgElemVec result;
+	for (auto item : richMsg)
+	{
+		switch (item.m_eType)
+		{
+		case E_RichEditType::TEXT:
+		{
+			ChatMsgElem elem;
+			elem.m_eType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
+			elem.m_strContext = EncodeUtil::UnicodeToAnsi(item.m_strContext);
+			result.push_back(elem);
+		}break;
+		case E_RichEditType::FACE:
+		{
+			ChatMsgElem elem;
+			elem.m_eType = CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE;
+			elem.m_nFaceId = item.m_nFaceId;
+			result.push_back(elem);
+		}break;
+		case E_RichEditType::IMAGE:
+		{
+			ChatMsgElem elem;
+			elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+			elem.m_strImageName = EncodeUtil::UnicodeToAnsi(item.m_strImageName);
+			result.push_back(elem);
+		}break;
+		default:
+		{
+			break;
+		}
+
+		}
+	}
+	return result;
+}
+
+RichEditMsgList CoreToUi(const ChatMsgElemVec& coreMsgVec)
+{
+	RichEditMsgList result;
+	for (const auto item : coreMsgVec)
+	{
+		switch (item.m_eType)
+		{
+		case CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE:
+		{
+			RichEditMsg_st elem;
+			elem.m_eType = E_RichEditType::TEXT;
+			elem.m_strContext = EncodeUtil::AnsiToUnicode(item.m_strContext);
+			result.push_back(elem);
+		}break;
+		case CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE:
+		{
+			RichEditMsg_st elem;
+			elem.m_eType = E_RichEditType::FACE;
+			elem.m_nFaceId = item.m_nFaceId;
+			result.push_back(elem);
+		}break;
+		case CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE:
+		{
+			RichEditMsg_st elem;
+			elem.m_eType = E_RichEditType::IMAGE;
+			elem.m_strImageName = EncodeUtil::AnsiToUnicode(item.m_strImageName);
+			result.push_back(elem);
+		}break;
+		default:
+			break;
+		}
+	}
+	return result;
+}
+
+bool CMsgProto::SendChatTxtMsg(const std::string strFriendName, RichEditMsgList msgList, const C_UI_FontInfo font)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	{
+		FriendChatSendTxtReqMsg reqMsg;
+		reqMsg.m_strSenderId = m_strUserId;
+		reqMsg.m_strReceiverId = strFriendName;
+		reqMsg.m_strContext = MsgElemVec(UiToCore(msgList));
+		reqMsg.m_fontInfo = UiToCore(font);
+		TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+		pSess->SendMsg(&trans);
+	}
+	//for (const auto item : msgList)
+	//{
+	//	if (item.m_eType == E_RichEditType::IMAGE)
+	//	{
+	//		SendFileDataBeginReq(strFriendName, EncodeUtil::UnicodeToAnsi(item.m_strImageName));
+	//	}
+	//}
+	return true;
+}
 void CMsgProto::HandleGetGroupChatHistory(const std::shared_ptr<TransBaseMsg_t> pOrgMsg)
 {
 	GetGroupChatHistoryRsp rspMsg;
 	if (rspMsg.FromString(pOrgMsg->to_string())) {
-
-
 		if (!rspMsg.m_msgHistory.empty())
 		{
 			m_friendChatLogMap.erase(rspMsg.m_strGroupId);

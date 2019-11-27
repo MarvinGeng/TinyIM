@@ -28,7 +28,8 @@ struct LogMsgPair {
 	std::string m_strFirstMsgId;
 	std::string m_strLastMsgId;
 };
-
+ChatMsgElemVec UiToCore(const RichEditMsgList& richMsg);
+RichEditMsgList CoreToUi(const ChatMsgElemVec& coreMsgVec);
 class CMsgProto:public std::enable_shared_from_this<CMsgProto>
 {
 protected:
@@ -74,6 +75,8 @@ public:
 	bool SendAddFriendRecvAsnyc(const std::string friendName,const std::string msgId,const E_UI_OPERATE_FRIEND option);
 	bool SendAddFriendNotifyRsp(const std::string strMsgId);
 	bool SendChatTxtMsg(const std::string strFriendName, const std::string strContext,const C_UI_FontInfo font=C_UI_FontInfo());
+	bool SendChatTxtMsg(const std::string strFriendName, RichEditMsgList msgList, const C_UI_FontInfo font);
+
 	bool SendRecvChatTxtRsp(const std::string strUserName,const std::string strFriendName,const std::string strMsgId);
 	bool GetFriendList();
 	

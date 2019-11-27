@@ -266,7 +266,8 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 		//处理内容部分
 		{
 			std::string strJson = EncodeUtil::UnicodeToAnsi(msg.m_strContent);
-			RichEditMsgList msgList = RichEditMsg(strJson);
+			RichEditMsgList msgList = CoreToUi(MsgElemVec(strJson));
+				//RichEditMsg(strJson);
 			RichEdit_SetSel(recvHandle, -1, -1);
 			for (auto item : msgList)
 			{
@@ -1581,20 +1582,7 @@ void CBuddyChatDlg::OnBtn_Send(UINT uNotifyCode, int nID, CWindow wndCtl)
 
 	{
 		RichEditMsgList msgList = RichEdit_GetMsg(m_richSend.m_hWnd);
-		for (auto item : msgList)
-		{
-			if (item.m_eType == E_RichEditType::IMAGE)
-			{
-				std::string strOldFileName = EncodeUtil::UnicodeToAnsi(item.m_strImageName);
-				if (m_pSess) {
-					m_pSess->SendFileDataBeginReq(m_strFriendId, strOldFileName);
-				}
-			}
-		}
-		std::string strSendText = RichEditMsg(msgList);
-		if (m_pSess) {
-			m_pSess->SendChatTxtMsg(m_strFriendId, strSendText, m_FontSelDlg.GetFontInfo());
-		}
+		m_pSess->SendChatTxtMsg(m_strFriendId, msgList, m_FontSelDlg.GetFontInfo());
 	}
 	m_richSend.SetWindowText(_T(""));
 	m_richSend.SetFocus();
