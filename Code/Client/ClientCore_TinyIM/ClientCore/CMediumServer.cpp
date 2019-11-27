@@ -1086,6 +1086,62 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 			}
 			return true;
 		}
+		if (msg.GetType() == MessageType::FriendChatSendTxtMsgReq_Type)
+		{
+			FriendChatSendTxtReqMsg reqMsg;
+			if (reqMsg.FromString(msg.to_string())) {
+				ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
+				ChatMsgElemVec newVec;
+				for (const auto item : msgVec)
+				{
+					if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+					{
+						FileSendDataBeginReq beginReqMsg;
+						{
+							beginReqMsg.m_nFileId = rand();
+							beginReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+							beginReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(item.m_strImageName);
+							beginReqMsg.m_strUserId = reqMsg.m_strSenderId;
+							beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
+							beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
+
+							std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
+							if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
+							{
+
+							}
+							else
+							{
+								LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
+							}
+							auto item = m_ForwardSessMap.find(pServerSess);
+							if (item != m_ForwardSessMap.end())
+							{
+								auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
+								item->second->SendMsg(pMsg);
+							}
+						}
+						ChatMsgElem elem;
+						elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+						elem.m_strImageName = beginReqMsg.m_strFileName;
+						newVec.push_back(elem);
+					}
+					else
+					{
+						newVec.push_back(item);
+					}
+				}
+
+				reqMsg.m_strContext = MsgElemVec(newVec);
+				auto item = m_ForwardSessMap.find(pServerSess);
+				if (item != m_ForwardSessMap.end())
+				{
+					auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+					item->second->SendMsg(pMsg);
+				}
+			}
+			return true;
+		}
 	}
 	return false;
 }
@@ -1108,14 +1164,62 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		FriendChatRecvTxtReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
 			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(reqMsg.m_chatMsg);
+			
+			{
+				ChatMsgElemVec elemVec = MsgElemVec(reqMsg.m_chatMsg.m_strContext);
+				for (const auto item : elemVec)
+				{
+					if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+					{
+						FileDownLoadReqMsg downMsg;
+						downMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
+						downMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+						downMsg.m_strMsgId = "1234";
+						downMsg.m_strFileName = item.m_strImageName;
+						pClientSess->SendMsg(&downMsg);
+					}
+				}
+			}
+			
 		}
+
 	}break;
 	case MessageType::FriendChatSendTxtMsgRsp_Type:
 	{
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg.m_chatMsg);
+			
+
+			{
+				ChatMsgElemVec oldVec = MsgElemVec(rspMsg.m_chatMsg.m_strContext);
+				ChatMsgElemVec newVec;
+				for (const auto item : oldVec)
+				{
+					if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+					{
+						std::string strImageName = m_fileUtil.GetCurDir() + "\\" + rspMsg.m_chatMsg.m_strSenderId + "\\" + item.m_strImageName;
+						ChatMsgElem elem;
+						elem.m_eType = item.m_eType;
+						elem.m_strImageName = strImageName;
+						newVec.push_back(elem);
+					}
+					else
+					{
+						newVec.push_back(item);
+					}
+				}
+				rspMsg.m_chatMsg.m_strContext = MsgElemVec(newVec);
+				auto pMsg = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
+				auto item = m_BackSessMap.find(pClientSess);
+				if (item != m_BackSessMap.end())
+				{
+					item->second->SendMsg(pMsg);
+				}
+				m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(rspMsg.m_chatMsg);
+				return true;
+			}
 		}
+		
 	}break;
 	case MessageType::SendGroupTextMsgRsp_Type:
 	{
