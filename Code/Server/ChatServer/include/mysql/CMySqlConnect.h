@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file CMySqlConnect.h
  * @author DennisMi (https://www.dennisthink.com/)
  * @brief 数据库操作的工具类

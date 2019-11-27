@@ -201,6 +201,8 @@ private:
 	void HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req);
 	void HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginRsp& req);
 
+	void HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSess, const FileDownLoadReqMsg& req);
+
 	void HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req);
 	void HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req);
 	//Group
