@@ -363,20 +363,6 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, co
 			HandleFriendNotifyFileRsp(pSess, rspMsg);
 		}
 	}break;
-	case MessageType::FileSendDataReq_Type:
-	{
-		FileDataSendReqMsg reqMsg;
-		if (reqMsg.FromString(pMsg->to_string())) {
-			HandleFileDataSendReqMsg(pSess, reqMsg);
-		}
-	}break;
-	case MessageType::FileRecvDataRsp_Type:
-	{
-		FileDataRecvRspMsg rspMsg;
-		if (rspMsg.FromString(pMsg->to_string())) {
-			HandleFileDataRecvRspMsg(pSess, rspMsg);
-		}
-	}break;
 	case MessageType::FileVerifyReq_Type:
 	{
 		FileVerifyReqMsg reqMsg;
@@ -2067,38 +2053,6 @@ void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sen
 		m_udpServer->sendMsg(sendPt,&sendRsp);
 	}
 }
-/**
- * @brief 处理文件数据发送请求消息,转为文件数据接收消息发送到对端
- * 
- * @param pSess 用户会话
- * @param reqMsg 文件数据发送消息
- */
-void CChatServer::HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg)
-{
-	//For Reciver
-	//{
-	//	FileDataRecvReqMsg sendReqMsg;
-	//	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-	//	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-	//	sendReqMsg.m_strToId = reqMsg.m_strToId;
-	//	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
-	//	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-	//	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
-	//	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
-	//	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-	//	
-	//	auto item = m_UserSessVec.find(reqMsg.m_strToId);
-	//	if (item != m_UserSessVec.end())
-	//	{
-	//		item->second->SendMsg(&sendReqMsg);
-	//	}
-	//	else
-	//	{
-	//		LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]",reqMsg.m_strToId,__FILENAME__,__LINE__);
-	//	}
-	//}
-}
-
 
 /**
  * @brief 处理文件验证请求消息，直接转发到文件接收端
@@ -2210,31 +2164,6 @@ void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const 
 	}
 }
 
-/**
- * @brief 处理文件数据收到的回复
- * 
- * @param pSess 用户会话
- * @param rspMsg 文件数据收到回复
- */
-void CChatServer::HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg)
-{
-	////For Reciver
-	//{
-	//	auto item = m_UserSessVec.find(rspMsg.m_strToId);
-	//	if(item != m_UserSessVec.end())
-	//	{
-	//		FileDataSendRspMsg sendRsp;
-	//		sendRsp.m_strMsgId = rspMsg.m_strMsgId;
-	//		sendRsp.m_strFromId = rspMsg.m_strToId;
-	//		sendRsp.m_strToId = rspMsg.m_strFromId;
-	//		sendRsp.m_nFileId = rspMsg.m_nFileId;
-	//		sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
-	//		sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
-
-	//		item->second->SendMsg(&sendRsp);
-	//	}
-	//}
-}
 
 
 /**

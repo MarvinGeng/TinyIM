@@ -222,8 +222,6 @@ private:
 
 	void HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSess, const QuitFromGroupReqMsg& reqMsg);
 
-	void HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
-
 	void HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& reqMsg);
 
 	void HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg);
