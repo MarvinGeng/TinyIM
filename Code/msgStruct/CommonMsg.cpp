@@ -6386,8 +6386,8 @@ std::string FileDataSendReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileId", m_nFileId},
         {"DataTotalCount", m_nDataTotalCount},
         {"DataIndex", m_nDataIndex},
@@ -6414,18 +6414,18 @@ bool FileDataSendReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -6502,8 +6502,8 @@ std::string FileDataSendRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileId", m_nFileId},
         {"DataTotalCount", m_nDataTotalCount},
         {"DataIndex", m_nDataIndex},
@@ -6530,18 +6530,18 @@ bool FileDataSendRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -6591,8 +6591,8 @@ std::string FileDataRecvReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileId", m_nFileId},
         {"DataTotalCount", m_nDataTotalCount},
         {"DataIndex", m_nDataIndex},
@@ -6619,18 +6619,18 @@ bool FileDataRecvReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -6705,8 +6705,8 @@ std::string FileDataRecvRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileId", m_nFileId},
         {"DataTotalCount", m_nDataTotalCount},
         {"DataIndex", m_nDataIndex},
@@ -6733,18 +6733,18 @@ bool FileDataRecvRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {

@@ -1676,8 +1676,8 @@ class FileDataSendReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	int		    m_nFileId;//文件ID
 	int			m_nDataTotalCount;//文件总数据包数
 	int			m_nDataIndex;//文件数据包索引
@@ -1701,8 +1701,8 @@ class FileDataSendRspMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	int		    m_nFileId;//文件ID
 	int			m_nDataTotalCount;//文件总数据包数
 	int			m_nDataIndex;//文件数据包索引
@@ -1723,8 +1723,8 @@ class FileDataRecvReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	int		    m_nFileId;//文件ID
 	int			m_nDataTotalCount;//文件总数据包数
 	int			m_nDataIndex;//文件数据包索引
@@ -1747,8 +1747,8 @@ class FileDataRecvRspMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	int		    m_nFileId;//文件ID
 	int			m_nDataTotalCount;//文件总数据包数
 	int			m_nDataIndex;//文件数据包索引
