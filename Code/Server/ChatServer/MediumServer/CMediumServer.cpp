@@ -622,7 +622,10 @@ bool CChatServer::OnAddFriendRecvReqMsg(const std::string strUser)
 void CChatServer::OnUserStateCheck(const std::string strUserId)
 {
 	auto stateItem = m_clientStateMap.find(strUserId);
-	if (stateItem != m_clientStateMap.end())
+	auto item = m_userIdUdpAddrMap.find(strUserId);
+
+	if (stateItem != m_clientStateMap.end() && 
+		item != m_userIdUdpAddrMap.end())
 	{
 		T_USER_CHAT_MSG chatMsg;
 		if (stateItem->second == CLIENT_SESS_STATE::SESS_IDLE_STATE) {
@@ -782,8 +785,8 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
 			rspMsg.m_nFileId = req.m_nFileId;
 			rspMsg.m_strFileName = req.m_strFileName;
-			rspMsg.m_strFriendId = req.m_strUserId;
-			rspMsg.m_strUserId = req.m_strFriendId;
+			rspMsg.m_strFriendId = req.m_strFriendId;
+			rspMsg.m_strUserId = req.m_strUserId;
 			rspMsg.m_strMsgId = req.m_strMsgId;
 			pSess->SendMsg(&rspMsg);
 			return;
@@ -802,8 +805,8 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 		rspMsg.m_nFileId = req.m_nFileId;
 		rspMsg.m_strFileName = req.m_strFileName;
-		rspMsg.m_strFriendId = req.m_strUserId;
-		rspMsg.m_strUserId = req.m_strFriendId;
+		rspMsg.m_strFriendId = req.m_strFriendId;
+		rspMsg.m_strUserId = req.m_strUserId;
 		rspMsg.m_strMsgId = req.m_strMsgId;
 		pSess->SendMsg(&rspMsg);
 	}
@@ -843,15 +846,15 @@ void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>&
 		if (m_fileUtil.OpenReadFile(req.m_nFileId, strFileName)) {
 			FileDataRecvReqMsg sendReqMsg;
 			sendReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
-			sendReqMsg.m_strFromId = req.m_strFriendId;
-			sendReqMsg.m_strToId = req.m_strUserId;
+			sendReqMsg.m_strFriendId = req.m_strFriendId;
+			sendReqMsg.m_strUserId = req.m_strUserId;
 			sendReqMsg.m_nFileId = req.m_nFileId;
 
 			sendReqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
 			sendReqMsg.m_nDataIndex = 1;
 			sendReqMsg.m_nDataLength = 0;
 			m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
-			auto item = m_userIdUdpAddrMap.find(req.m_strUserId);
+			auto item = m_userIdUdpAddrMap.find(sendReqMsg.m_strUserId);
 			if (item != m_userIdUdpAddrMap.end())
 			{
 				m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
@@ -860,17 +863,7 @@ void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>&
 			{
 
 			}
-			//auto pUdpSess = (sendReqMsg.m_strFromId);
-			//if (pUdpSess)
-			//{
-			//	pUdpSess->sendToServer(&sendReqMsg);
-			//}
-			//else
-			//{
-			//	LOG_ERR(ms_loger, "UDP Sess Failed:{}", sendReqMsg.m_strFromId);
-			//}
 		}
-
 	}
 }
 
@@ -2048,31 +2041,30 @@ void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sen
 	{
 		m_fileUtil.OnCloseFile(reqMsg.m_nFileId);
 	}
-	auto item = m_userIdUdpAddrMap.find(reqMsg.m_strToId);
-	if (item != m_userIdUdpAddrMap.end())
-	{
-		FileDataRecvReqMsg sendReqMsg;
-		sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-		sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-		sendReqMsg.m_strToId = reqMsg.m_strToId;
-		sendReqMsg.m_nFileId = reqMsg.m_nFileId;
-		sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-		sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
-		sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
-		memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-		m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
-	}
-	else
+	//auto item = m_userIdUdpAddrMap.find(reqMsg.m_strToId);
+	//if (item != m_userIdUdpAddrMap.end())
+	//{
+	//	FileDataRecvReqMsg sendReqMsg;
+	//	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+	//	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
+	//	sendReqMsg.m_strToId = reqMsg.m_strToId;
+	//	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
+	//	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+	//	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+	//	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
+	//	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
+	//	m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
+	//}
+	//else
 	{
 		FileDataSendRspMsg sendRsp;
 		sendRsp.m_strMsgId = reqMsg.m_strMsgId;
-		sendRsp.m_strFromId = reqMsg.m_strToId;
-		sendRsp.m_strToId = reqMsg.m_strFromId;
+		sendRsp.m_strUserId = reqMsg.m_strUserId;
+		sendRsp.m_strFriendId = reqMsg.m_strFriendId;
 		sendRsp.m_nFileId = reqMsg.m_nFileId;
 		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
 		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
 		m_udpServer->sendMsg(sendPt,&sendRsp);
-		LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]", reqMsg.m_strToId, __FILENAME__, __LINE__);
 	}
 }
 /**
@@ -2084,27 +2076,27 @@ void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sen
 void CChatServer::HandleFileDataSendReqMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg)
 {
 	//For Reciver
-	{
-		FileDataRecvReqMsg sendReqMsg;
-		sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-		sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-		sendReqMsg.m_strToId = reqMsg.m_strToId;
-		sendReqMsg.m_nFileId = reqMsg.m_nFileId;
-		sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-		sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
-		sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
-		memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-		
-		auto item = m_UserSessVec.find(reqMsg.m_strToId);
-		if (item != m_UserSessVec.end())
-		{
-			item->second->SendMsg(&sendReqMsg);
-		}
-		else
-		{
-			LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]",reqMsg.m_strToId,__FILENAME__,__LINE__);
-		}
-	}
+	//{
+	//	FileDataRecvReqMsg sendReqMsg;
+	//	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+	//	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
+	//	sendReqMsg.m_strToId = reqMsg.m_strToId;
+	//	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
+	//	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+	//	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+	//	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
+	//	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
+	//	
+	//	auto item = m_UserSessVec.find(reqMsg.m_strToId);
+	//	if (item != m_UserSessVec.end())
+	//	{
+	//		item->second->SendMsg(&sendReqMsg);
+	//	}
+	//	else
+	//	{
+	//		LOG_ERR(ms_loger, "can not find sess for user:{} [{} {}]",reqMsg.m_strToId,__FILENAME__,__LINE__);
+	//	}
+	//}
 }
 
 
@@ -2179,38 +2171,40 @@ void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess,
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& rspMsg)
 {
 	{
-		auto item = m_userIdUdpAddrMap.find(rspMsg.m_strToId);
-		if (item != m_userIdUdpAddrMap.end())
-		{
-			FileDataSendRspMsg sendRsp;
-			sendRsp.m_strMsgId = rspMsg.m_strMsgId;
-			sendRsp.m_strFromId = rspMsg.m_strToId;
-			sendRsp.m_strToId = rspMsg.m_strFromId;
-			sendRsp.m_nFileId = rspMsg.m_nFileId;
-			sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
-			sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
-			m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendRsp);
-		}
+		//auto item = m_userIdUdpAddrMap.find(rspMsg.m_strToId);
+		//if (item != m_userIdUdpAddrMap.end())
+		//{
+		//	FileDataSendRspMsg sendRsp;
+		//	sendRsp.m_strMsgId = rspMsg.m_strMsgId;
+		//	sendRsp.m_strFromId = rspMsg.m_strToId;
+		//	sendRsp.m_strToId = rspMsg.m_strFromId;
+		//	sendRsp.m_nFileId = rspMsg.m_nFileId;
+		//	sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+		//	sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
+		//	m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendRsp);
+		//}
 
 		{
 			FileDataRecvReqMsg sendReqMsg;
 			sendReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
-			sendReqMsg.m_strFromId = rspMsg.m_strFromId;
-			sendReqMsg.m_strToId = rspMsg.m_strToId;
+			sendReqMsg.m_strUserId = rspMsg.m_strUserId;
+			sendReqMsg.m_strFriendId = rspMsg.m_strFriendId;
 			sendReqMsg.m_nFileId = rspMsg.m_nFileId;
 
 			sendReqMsg.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
 			sendReqMsg.m_nDataIndex = rspMsg.m_nDataIndex+1;
 			sendReqMsg.m_nDataLength = 0;
-			m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
-			auto item = m_userIdUdpAddrMap.find(rspMsg.m_strFromId);
-			if (item != m_userIdUdpAddrMap.end())
+			if (m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024))
 			{
-				m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
-			}
-			else
-			{
-
+				auto item = m_userIdUdpAddrMap.find(rspMsg.m_strUserId);
+				if (item != m_userIdUdpAddrMap.end())
+				{
+					m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
+				}
+				else
+				{
+					LOG_ERR(ms_loger, "Can not find {} ", rspMsg.m_strUserId);
+				}
 			}
 		}
 	}
@@ -2224,22 +2218,22 @@ void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const 
  */
 void CChatServer::HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg)
 {
-	//For Reciver
-	{
-		auto item = m_UserSessVec.find(rspMsg.m_strToId);
-		if(item != m_UserSessVec.end())
-		{
-			FileDataSendRspMsg sendRsp;
-			sendRsp.m_strMsgId = rspMsg.m_strMsgId;
-			sendRsp.m_strFromId = rspMsg.m_strToId;
-			sendRsp.m_strToId = rspMsg.m_strFromId;
-			sendRsp.m_nFileId = rspMsg.m_nFileId;
-			sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
-			sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
+	////For Reciver
+	//{
+	//	auto item = m_UserSessVec.find(rspMsg.m_strToId);
+	//	if(item != m_UserSessVec.end())
+	//	{
+	//		FileDataSendRspMsg sendRsp;
+	//		sendRsp.m_strMsgId = rspMsg.m_strMsgId;
+	//		sendRsp.m_strFromId = rspMsg.m_strToId;
+	//		sendRsp.m_strToId = rspMsg.m_strFromId;
+	//		sendRsp.m_nFileId = rspMsg.m_nFileId;
+	//		sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+	//		sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
 
-			item->second->SendMsg(&sendRsp);
-		}
-	}
+	//		item->second->SendMsg(&sendRsp);
+	//	}
+	//}
 }
 
 
