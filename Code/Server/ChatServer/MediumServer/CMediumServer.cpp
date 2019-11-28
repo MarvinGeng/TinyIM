@@ -1095,7 +1095,7 @@ FindFriendRspMsg  CChatServer::DoFindFriendReq(const FindFriendReqMsg& reqMsg) {
  */
 void CChatServer::HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>& pSess, const FriendChatRecvTxtRspMsg& regMsg) {
 	m_util.UpdateFriendChatMsgState(regMsg.m_strMsgId, "READ");
-	OnUserReceiveMsg(regMsg.m_strFromId);
+	OnUserReceiveMsg(pSess->UserId());
 }
 
 /**
