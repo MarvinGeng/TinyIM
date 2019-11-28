@@ -136,6 +136,7 @@ public:
 	void NotifyUserFriends(const std::string strUserId);
 private:
 	const int HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
+	std::string CreateMsgId();
 	std::string GenerateSalt();
 	std::string GetSaltFromPasswd(const std::string strPasswd);
 	std::string GeneratePassword(const std::string orgPassWord);

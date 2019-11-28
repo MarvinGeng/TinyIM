@@ -807,18 +807,31 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 		rspMsg.m_strUserId = req.m_strUserId;
 		rspMsg.m_strFriendId = req.m_strFriendId;
 		rspMsg.m_strFileName = req.m_strFileName;
-		pSess->SendMsg(&rspMsg);
-
+		rspMsg.m_strRelateMsgId = req.m_strRelateMsgId;
 		{
-			FileSendDataBeginReq reqMsg;
-			reqMsg.m_strUserId = req.m_strUserId;
-			reqMsg.m_strFriendId = req.m_strFriendId;
-			reqMsg.m_strFileName = req.m_strFileName;
-			reqMsg.m_nFileId = rand();
+
 			std::string strFileName = m_fileUtil.GetCurDir() + "\\" + req.m_strFriendId + "\\" + req.m_strFileName;
-			reqMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
-			reqMsg.m_strMsgId = "12345567";
-			pSess->SendMsg(&reqMsg);
+			
+			rspMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
+			if (rspMsg.m_strFileHash.empty())
+			{
+				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_FILE;
+				pSess->SendMsg(&rspMsg);
+			}
+			else
+			{
+				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+				pSess->SendMsg(&rspMsg);
+
+				FileSendDataBeginReq reqMsg;
+				reqMsg.m_strUserId = req.m_strUserId;
+				reqMsg.m_strFriendId = req.m_strFriendId;
+				reqMsg.m_strFileName = req.m_strFileName;
+				reqMsg.m_nFileId = rand();
+				reqMsg.m_strFileHash = rspMsg.m_strFileHash;
+				reqMsg.m_strMsgId = CreateMsgId();
+				pSess->SendMsg(&reqMsg);
+			}
 		}
 	}
 }
@@ -2064,7 +2077,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 {
 
 	{
-		auto item = m_UserSessVec.find(req.m_strToId);
+		auto item = m_UserSessVec.find(req.m_strUserId);
 		if (item != m_UserSessVec.end())
 		{
 			item->second->SendMsg(&req);
@@ -2074,8 +2087,8 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 			FileVerifyRspMsg rspMsg;
 			rspMsg.m_strMsgId = req.m_strMsgId;
 			rspMsg.m_strFileName = req.m_strFileName;
-			rspMsg.m_strFromId = req.m_strToId;
-			rspMsg.m_strToId = req.m_strFromId;
+			rspMsg.m_strUserId = req.m_strUserId;
+			rspMsg.m_strFriendId = req.m_strFriendId;
 			rspMsg.m_nFileId = req.m_nFileId;
 			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 			pSess->SendMsg(&rspMsg);
@@ -2084,14 +2097,14 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 	}
 
 	{
-		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strFromId, req.m_strFileName);
+		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strUserId, req.m_strFileName);
 		std::string strFileHash = m_fileUtil.CalcHash(strFileName);
 		if (strFileHash == req.m_strFileHash)
 		{
 			T_FILE_HASH_BEAN bean;
 			bean.m_strF_FILE_HASH = strFileHash;
 			bean.m_strF_FILE_NAME = req.m_strFileName;
-			bean.m_strF_USER_ID = req.m_strFromId;
+			bean.m_strF_USER_ID = req.m_strUserId;
 			m_util.InsertFileHash(bean);
 		}
 	}
@@ -2106,7 +2119,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req)
 {
 	{
-		auto item = m_UserSessVec.find(req.m_strToId);
+		auto item = m_UserSessVec.find(req.m_strFriendId);
 		if (item != m_UserSessVec.end())
 		{
 			item->second->SendMsg(&req);
@@ -2124,20 +2137,8 @@ void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess,
  */
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& rspMsg)
 {
+	if(rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
 	{
-		//auto item = m_userIdUdpAddrMap.find(rspMsg.m_strToId);
-		//if (item != m_userIdUdpAddrMap.end())
-		//{
-		//	FileDataSendRspMsg sendRsp;
-		//	sendRsp.m_strMsgId = rspMsg.m_strMsgId;
-		//	sendRsp.m_strFromId = rspMsg.m_strToId;
-		//	sendRsp.m_strToId = rspMsg.m_strFromId;
-		//	sendRsp.m_nFileId = rspMsg.m_nFileId;
-		//	sendRsp.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
-		//	sendRsp.m_nDataIndex = rspMsg.m_nDataIndex;
-		//	m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendRsp);
-		//}
-
 		{
 			FileDataRecvReqMsg sendReqMsg;
 			sendReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
@@ -2160,6 +2161,24 @@ void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const 
 					LOG_ERR(ms_loger, "Can not find {} ", rspMsg.m_strUserId);
 				}
 			}
+		}
+	}
+	else
+	{
+		std::string strFileName = m_fileUtil.GetFileName(rspMsg.m_nFileId);
+		FileVerifyReqMsg reqMsg;
+		reqMsg.m_nFileId = rspMsg.m_nFileId;
+		reqMsg.m_strMsgId = CreateMsgId();
+		reqMsg.m_strUserId = rspMsg.m_strUserId;
+		reqMsg.m_strFriendId = rspMsg.m_strFriendId;
+		reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(strFileName);
+		reqMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
+		m_fileUtil.GetFileSize(reqMsg.m_nFileSize,strFileName);
+		
+		auto item = m_UserSessVec.find(reqMsg.m_strUserId);
+		if (item != m_UserSessVec.end() && item->second->IsConnected())
+		{
+			item->second->SendMsg(&reqMsg);
 		}
 	}
 }
@@ -2400,6 +2419,10 @@ void CChatServer::HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess
 	}
 }
 
+std::string CChatServer::CreateMsgId()
+{
+	return std::to_string(m_MsgID_Util.nextId());
+}
 /**
  * @brief 生成密码需要的Salt
  * 
