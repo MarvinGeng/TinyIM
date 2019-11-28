@@ -512,8 +512,8 @@ void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess, co
 		else
 		{
 
-			OnHttpRsp(pMsg);
 		}
+		OnHttpRsp(pMsg);
 	}
 }
 
@@ -551,6 +551,26 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 						}
 					}
 					msgItem->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
+					auto pSess = GetSendBackSess(msgItem->second.m_chatMsg.m_strReceiverId);
+					if (pSess)
+					{
+						pSess->SendMsg(&(msgItem->second));
+					}
+					m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(msgItem->second.m_chatMsg);
+					{
+						FriendChatRecvTxtRspMsg rspMsg;
+						rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
+						rspMsg.m_strFromId = msgItem->second.m_chatMsg.m_strSenderId;
+						rspMsg.m_strToId = msgItem->second.m_chatMsg.m_strReceiverId;
+						auto pClientSess = GetClientSess(rspMsg.m_strToId);
+						if (pClientSess)
+						{
+							pClientSess->SendMsg(&rspMsg);
+						}
+					}
+					m_waitImageMsgMap.erase(item->second);
+					m_fileHashMsgIdMap.erase(strRecvHash);
+
 				}
 			}
 		}
@@ -1109,7 +1129,26 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 	return false;
 }
-
+CServerSess_SHARED_PTR CMediumServer::GetSendBackSess(const std::string strUserId)
+{
+	auto pSess = GetClientSess(strUserId);
+	if (pSess)
+	{
+		auto item = m_BackSessMap.find(pSess);
+		if (item != m_BackSessMap.end())
+		{
+			return item->second;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+	else
+	{
+		return nullptr;
+	}
+}
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg)
 {
 	{
@@ -1133,6 +1172,19 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (bWaitImage)
 		{
 			m_waitImageMsgMap.insert({ reqMsg.m_strMsgId,reqMsg });
+		}
+		else
+		{
+			auto pSess = GetSendBackSess(reqMsg.m_chatMsg.m_strReceiverId);
+			if (pSess)
+			{
+				pSess->SendMsg(&reqMsg);
+			}
+			FriendChatRecvTxtRspMsg rspMsg;
+			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+			rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strSenderId;
+			rspMsg.m_strToId = reqMsg.m_chatMsg.m_strReceiverId;
+			pClientSess->SendMsg(&rspMsg);
 		}
 	}
 
@@ -1210,8 +1262,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg)
 {
-	auto item = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
-	if(item != m_waitImageMsgMap.end())
+	auto msgItem = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
+	if(msgItem != m_waitImageMsgMap.end())
 	{
 		std::string strFileName = m_msgPersisUtil->Get_FileByHash(rspMsg.m_strFileHash);
 		if (strFileName.empty())
@@ -1220,7 +1272,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		}
 		else
 		{
-			ChatMsgElemVec oldMsgVec = MsgElemVec(item->second.m_chatMsg.m_strContext);
+			ChatMsgElemVec oldMsgVec = MsgElemVec(msgItem->second.m_chatMsg.m_strContext);
 			ChatMsgElemVec newVec;
 			for (const auto item : oldMsgVec)
 			{
@@ -1234,12 +1286,19 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 					newVec.push_back(item);
 				}
 			}
-			item->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
-			auto pMsg = std::make_shared<TransBaseMsg_t>(item->second.GetMsgType(), item->second.ToString());
+			msgItem->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
+			auto pMsg = std::make_shared<TransBaseMsg_t>(msgItem->second.GetMsgType(), msgItem->second.ToString());
 			auto item = m_BackSessMap.find(pClientSess);
 			if (item != m_BackSessMap.end())
 			{
 				item->second->SendMsg(pMsg);
+			}
+			{
+				FriendChatRecvTxtRspMsg rspMsg;
+				rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
+				rspMsg.m_strFromId = msgItem->second.m_chatMsg.m_strSenderId;
+				rspMsg.m_strToId = msgItem->second.m_chatMsg.m_strReceiverId;
+				pClientSess->SendMsg(&rspMsg);
 			}
 			m_waitImageMsgMap.erase(rspMsg.m_strRelateMsgId);
 		}
@@ -1382,6 +1441,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (reqMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, reqMsg);
 		}
+		return true;
 	}break;
 	case MessageType::FriendChatSendTxtMsgRsp_Type:
 	{
