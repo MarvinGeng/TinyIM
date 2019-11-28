@@ -6,11 +6,11 @@
 #include "ChatDlgCommon.h"
 #include "GDIFactory.h"
 #include "IULog.h"
-#include "File2.h"
 #include "EncodingUtil.h"
 #include "UIText.h"
 #include "IUProtocolData.h"
 #include "UserMgr.h"
+#include "File2.h"
 
 #define CHAT_BG_IMAGE_NAME			_T("BuddyChatDlgBg.png")
 #define CHAT_EXPAND_BG_IMAGE_NAME   _T("BuddyChatDlgExpandBg.png")

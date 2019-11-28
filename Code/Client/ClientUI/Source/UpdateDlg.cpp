@@ -1,11 +1,10 @@
 ﻿#include "stdafx.h"
 #include "UpdateDlg.h"
 #include "UI_USER_INFO.h"
-//#include "FlamingoClient.h"
+#include "File2.h"
 #include "UserMgr.h"
 #include "CustomMsgDef.h"
 #include "EncodingUtil.h"
-#include "File2.h"
 #include "UIText.h"
 #include <TlHelp32.h>
 #include "Utils.h"

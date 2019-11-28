@@ -13,7 +13,6 @@
 #include "UpdateDlg.h"
 #include "Updater.h"
 #include "LoginSettingsDlg.h"
-#include "File2.h"
 #include "IULog.h"
 #include "UI_USER_INFO.h"
 #include "Utils.h"

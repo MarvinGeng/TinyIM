@@ -6,12 +6,12 @@
 #include "ChatDlgCommon.h"
 #include "GDIFactory.h"
 #include "IULog.h"
-#include "File2.h"
 #include "EncodingUtil.h"
 #include "LoginSettingsDlg.h"
 #include "UIText.h"
 #include "net/IUProtocolData.h"
 #include "UIDefaultValue.h"
+#include "File2.h"
 
 
 CGroupChatDlg::CGroupChatDlg(void):m_userConfig(CUserConfig::GetInstance())

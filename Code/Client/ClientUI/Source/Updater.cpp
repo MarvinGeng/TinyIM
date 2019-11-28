@@ -1,9 +1,9 @@
 ﻿#include "stdafx.h"
 #include "Updater.h"
 #include "UI_USER_INFO.h"
-#include "File2.h"
 #include "EncodingUtil.h"
 #include "Utils.h"
+#include "File2.h"
 //#include "FileTaskThread.h"
 
 Updater::Updater(CFileTaskThread* pFileTask)
