@@ -200,11 +200,10 @@ private:
 				auto self = shared_from_this();
 				std::size_t msgSize = msg->GetSize();
 				memcpy(m_sendbuf, msg->GetData(), msgSize);
-				LOG_DBG(ms_loger, "Write: {}  {}", StringToHex(m_sendbuf,msgSize), msgSize);
 				asio::async_write(m_socket, asio::buffer(m_sendbuf, msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
 					if (!ec)
 					{
-						LOG_INFO(ms_loger, "[ {} ] SendMsg Succeed:{} {} {} [{} {}]", UserId(), MsgType(msg->GetType()), msg->GetSize(), msg->to_string(), __FILENAME__, __LINE__);
+						LOG_DBG(ms_loger, "[ {} ] SendMsg Succeed:{} {} [{} {}]", UserId(), MsgType(msg->GetType()), msg->to_string(), __FILENAME__, __LINE__);
 						DoSendMsg();
 					}
 					else

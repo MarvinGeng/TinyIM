@@ -89,7 +89,7 @@ void CClientSess::handle_message(const TransBaseMsg_t *hdr)
 	{
 		switch (hdr->GetType())
 		{
-		case MessageType::KeepAliveReq_Type:
+		case E_MsgType::KeepAliveReq_Type:
 		{
 			KeepAliveReqMsg reqMsg;
 			if (reqMsg.FromString(hdr->to_string()))
@@ -98,7 +98,7 @@ void CClientSess::handle_message(const TransBaseMsg_t *hdr)
 			}
 		}
 		break;
-		case MessageType::KeepAliveRsp_Type:
+		case E_MsgType::KeepAliveRsp_Type:
 		{
 			KeepAliveRspMsg rspMsg;
 			if (rspMsg.FromString(hdr->to_string()))

@@ -53,10 +53,7 @@ namespace ChatServer
 					if (bytes_recvd >= trans.GetSize())
 					{
 						HandleRecvMsg(m_senderPt, &trans);
-					}
-					LOG_INFO(ms_loger, "{}", bytes_recvd);
-
-					
+					}				
 				}
 				if (!ec)
 				{
@@ -100,14 +97,14 @@ namespace ChatServer
 			TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
 			memcpy(m_sendbuf, trans.GetData(), trans.GetSize());
 			m_socket->async_send_to(asio::buffer(m_sendbuf, trans.GetSize()),senderPt,
-				[this, pSelf](std::error_code ec, std::size_t bytes_recvd) {
+				[this, pSelf, senderPt, trans](std::error_code ec, std::size_t bytes_recvd) {
 				if (bytes_recvd > 0)
 				{
-
+					LOG_DBG(ms_loger, "UDP Send To:{} Msg:{} [{} {}]", EndPoint(senderPt), trans.to_string(), __FILENAME__, __LINE__);
 				}
 				if (!ec)
 				{
-					//do_read();
+					LOG_ERR(ms_loger, "UDP Send To:{} Msg:{} ERR:{} [{} {}]", EndPoint(senderPt), trans.to_string(),ec.value(), __FILENAME__, __LINE__);
 				}
 			});
 		}
@@ -133,25 +130,13 @@ namespace ChatServer
 	 */
 	void CUdpServer::HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg)
 	{
-		if (ms_loger && msg )
+		if (msg)
 		{
-			LOG_INFO(ms_loger, "UDP {} ===> {} Send Msg:{}",EndPoint(senderPt),EndPoint(m_serverPt), msg->to_string());
+			LOG_INFO(ms_loger, "Udp Recv From: {}  Msg:{} [{} {}]",EndPoint(senderPt), msg->to_string(),__FILENAME__,__LINE__);
 		}
 		if (msg)
 		{
 			m_udpCallBack(senderPt, msg);
-			switch (msg->GetType())
-			{
-			case MessageType::KeepAliveReq_Type:
-			{
-				KeepAliveRspMsg rspMsg;
-				sendMsg(senderPt, &rspMsg);
-			}break;
-			default:
-			{
-
-			}break;
-			}
 		}
 	}
 }

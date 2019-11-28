@@ -208,6 +208,7 @@ std::shared_ptr<spdlog::logger> CreateLogger(json11::Json& cfg)
     
 
 	auto consoleSink = std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
+	consoleSink->set_level(spdlog::level::warn);
 
     sinks.push_back(debugFile);
     sinks.push_back(businFile);
