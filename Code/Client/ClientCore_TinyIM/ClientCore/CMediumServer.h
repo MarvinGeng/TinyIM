@@ -60,6 +60,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	std::map<std::string, std::shared_ptr<CClientSess>> m_userClientSessMap;
 	std::map<std::string, std::string> m_userId_UserNameMap;
+	std::map<std::string, FriendChatRecvTxtReqMsg> m_waitImageMsgMap;
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
 
 	std::shared_ptr<CHttpServer> m_httpServer;
@@ -136,6 +137,7 @@ private:
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg);
 	void HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg);
 
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
@@ -150,6 +152,7 @@ private:
 	std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
 	std::map<std::string, CUdpClient_PTR> m_userUdpSessMap;
 	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
+	std::map<std::string, std::string> m_fileHashMsgIdMap;
 
 	long long m_timeCount;
 	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;
