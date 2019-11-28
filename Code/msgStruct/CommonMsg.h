@@ -597,8 +597,8 @@ public:
 class FriendChatRecvTxtRspMsg final :public BaseMsg {
 public:
 	std::string m_strMsgId;    //消息ID
-	std::string m_strFromId;   //发送方
-	std::string m_strToId;     //接收方
+	std::string m_strUserId;   //发送方
+	std::string m_strFriendId;     //接收方
 public:
 	FriendChatRecvTxtRspMsg();
 

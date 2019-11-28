@@ -1594,8 +1594,8 @@ std::string FriendChatRecvTxtRspMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
     });
     return clientObj.dump();
 }
@@ -1619,18 +1619,18 @@ bool FriendChatRecvTxtRspMsg::FromString(const std::string &strJson)
     }
 
 
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strFriendId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -1646,12 +1646,12 @@ bool FriendChatRecvTxtRspMsg::Valid() const
         return false;
     }
 
-    if (m_strFromId.empty())
+    if (m_strUserId.empty())
     {
         return false;
     }
 
-    if (m_strToId.empty())
+    if (m_strFriendId.empty())
     {
         return false;
     }

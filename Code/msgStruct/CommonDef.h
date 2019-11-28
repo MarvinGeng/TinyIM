@@ -438,6 +438,7 @@ enum class ERROR_CODE_TYPE {
 	E_CODE_BAD_REQUEST_FORMAT,//请求格式错误
 	E_CODE_USER_NOT_LOGIN,//用户未登录
 	E_CODE_NO_SUCH_FILE,//没有此文件
+	E_CODE_FILE_TRANSING,//文件正在传输
 
 };
 
