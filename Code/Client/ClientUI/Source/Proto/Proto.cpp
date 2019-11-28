@@ -1553,7 +1553,7 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 		{
 
 		}
-		{
+		/*{
 			auto pSess = SourceServer::CSessManager::GetManager();
 			FriendChatRecvTxtRspMsg rspMsg;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
@@ -1561,23 +1561,23 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 			rspMsg.m_strToId = reqMsg.m_chatMsg.m_strSenderId;
 			TransBaseMsg_t trans(rspMsg.GetMsgType(), rspMsg.ToString());
 			pSess->SendMsg(&trans);
-		}
+		}*/
 
 		//Save To Msg Queuq
-		{
-			auto item = m_friendMsgMap.find(reqMsg.m_chatMsg.m_strSenderId);
-			CBuddyChatUiMsg newMsg=CoreMsgToUiMsg(reqMsg.m_chatMsg);
-			if (item != m_friendMsgMap.end())
-			{
-				item->second.push_back(newMsg);
-			}
-			else
-			{
-				CBuddyChatUiMsgVector msgVec;
-				msgVec.push_back(newMsg);
-				m_friendMsgMap.insert({ reqMsg.m_chatMsg.m_strSenderId,msgVec });
-			}
-		}
+		//{
+		//	auto item = m_friendMsgMap.find(reqMsg.m_chatMsg.m_strSenderId);
+		//	CBuddyChatUiMsg newMsg=CoreMsgToUiMsg(reqMsg.m_chatMsg);
+		//	if (item != m_friendMsgMap.end())
+		//	{
+		//		item->second.push_back(newMsg);
+		//	}
+		//	else
+		//	{
+		//		CBuddyChatUiMsgVector msgVec;
+		//		msgVec.push_back(newMsg);
+		//		m_friendMsgMap.insert({ reqMsg.m_chatMsg.m_strSenderId,msgVec });
+		//	}
+		//}
 	}
 }
 

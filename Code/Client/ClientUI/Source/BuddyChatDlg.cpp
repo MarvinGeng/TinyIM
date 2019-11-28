@@ -322,6 +322,7 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 
 void CBuddyChatDlg::OnRecvMsg(const CBuddyChatUiMsg& msg)
 {
+	m_richRecv.Invalidate(TRUE);
 	OnRecvMsgToHandle(m_richRecv.m_hWnd, msg);
 }
 
