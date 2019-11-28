@@ -34,6 +34,15 @@ void CServerSess::do_read()
 	});
 }
 
+void CServerSess::StopConnect()
+{
+	if (m_server)
+	{
+		m_server->ServerSessClose(shared_from_this());
+	}
+	m_socket.close();
+	m_bConnect = false;
+}
 /**
  * @brief 当do_read函数接收到一个完整消息的时候，调用此函数，在此函数中完成消息类型的判断和消息分发
  * 

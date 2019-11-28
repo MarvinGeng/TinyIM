@@ -1381,6 +1381,36 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 }
 
+
+void CMediumServer::ServerSessClose(const CServerSess_SHARED_PTR pServerSess)
+{
+	auto itemForwad = m_ForwardSessMap.find(pServerSess);
+	if (itemForwad != m_ForwardSessMap.end()) {
+		m_BackSessMap.erase(itemForwad->second);
+		//Clear UserID
+		{
+			std::string strUserId = itemForwad->second->UserId();
+			m_userId_UserNameMap.erase(strUserId);
+			m_userIdUdpAddrMap.erase(strUserId);
+			m_userUdpSessMap.erase(strUserId);
+			m_userClientSessMap.erase(strUserId);
+		}
+		//Clear UserName
+		{
+			std::string strUserName = itemForwad->second->UserName();
+			m_userName_UserIdMap.erase(strUserName);
+		}
+
+		{
+			m_ForwardSessMap.erase(pServerSess);
+		}
+
+	}
+	else
+	{
+		LOG_ERR(ms_loger, "Could Not Close Server Sess [{} {}]",__FILENAME__,__LINE__);
+	}
+}
 void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess)
 {
 	auto item = m_userStateMap.find(pClientSess->UserId());

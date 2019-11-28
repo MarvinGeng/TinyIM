@@ -65,9 +65,7 @@ public:
 				else
 				{
 					LOG_INFO(ms_loger, "Socket:{} SendFailed EC:{} ECValue:{} ", m_connectInfo, ec.message(),ec.value());
-					HandleErrorCode(ec);
-					//m_socket.close();
-					//m_bConnect = false;
+					StopConnect();
 				}
 			});
 		}
@@ -96,9 +94,7 @@ public:
 				else
 				{
 					LOG_INFO(ms_loger, "Socket:{} SendFailed EC:{} ECValue:{} ", m_connectInfo, ec.message(), ec.value());
-					HandleErrorCode(ec);
-					//m_socket.close();
-					//m_bConnect = false;
+					StopConnect();
 				}
 			});
 		}
@@ -109,21 +105,10 @@ public:
 	}
 
 	void HandleErrorCode(const std::error_code& ec) {
-		if (ec.value() == 10054) {
-			m_socket.close();
-			m_bConnect = false;
-		}
 
-		if (ec.value() == 11053) {
-			m_socket.close();
-			m_bConnect = false;
-		}
 	}
 
-	void StopConnect() {
-		m_socket.close();
-		m_bConnect = false;
-	}
+	void StopConnect();
     CServerSess(tcp::socket socket, CMediumServer* server) : m_socket(std::move(socket)),m_server(server),m_bConnect(true) { 
 		{
 			m_connectInfo.clear();
@@ -131,6 +116,14 @@ public:
 			m_connectInfo += "--->";
 			m_connectInfo = m_connectInfo + m_socket.local_endpoint().address().to_v4().to_string() + ":" + std::to_string(m_socket.local_endpoint().port());
 		}
+	}
+
+	void SetUserId(const std::string strUserId) {
+		m_strUserId = strUserId;
+	}
+
+	std::string UserId() const {
+		return m_strUserId;
 	}
     
     virtual ~CServerSess(){
@@ -185,6 +178,7 @@ private:
 
 private:
 	std::string m_connectInfo;
+	std::string m_strUserId;
 };
 using CServerSess_SHARED_PTR = std::shared_ptr<CServerSess>;
 }

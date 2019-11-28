@@ -117,6 +117,8 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 		m_timeCount = 0;
     }
 
+	void ServerSessClose(const CServerSess_SHARED_PTR pSess);
+
 	void start(const std::function<void(const std::error_code &)> &callback);
 
     void loadConfig(const json11::Json &cfg, std::error_code &ec);
