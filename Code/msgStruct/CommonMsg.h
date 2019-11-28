@@ -128,9 +128,9 @@ public:
 	/**
 	 * @brief 获取消息类型
 	 * 
-	 * @return MessageType 
+	 * @return E_MsgType 
 	 */
-	MessageType GetType() const;
+	E_MsgType GetType() const;
 
 	/**
 	 * @brief 获取消息体的长度
@@ -159,7 +159,7 @@ public:
 	 * @param type 消息类型
 	 * @param strMsg  消息字符串
 	 */
-	explicit TransBaseMsg_t(const MessageType& type, const std::string& strMsg);
+	explicit TransBaseMsg_t(const E_MsgType& type, const std::string& strMsg);
 	/**
 	 * @brief 从内存直接构造消息，接收消息的时候使用
 	 * 
@@ -207,21 +207,21 @@ struct IpPortCfg
 struct BaseMsg
 {
 protected:
-	MessageType m_type;
+	E_MsgType m_type;
 public:
 	/**
 	 * @brief 获取消息类型
 	 * 
-	 * @return MessageType 
+	 * @return E_MsgType 
 	 */
-	MessageType GetMsgType() const 
+	E_MsgType GetMsgType() const 
 	{
 		return m_type;
 	}
 
 	explicit BaseMsg()
 	{
-		m_type=MessageType::Base_Type;
+		m_type=E_MsgType::Base_Type;
 	}
 	
 	/**

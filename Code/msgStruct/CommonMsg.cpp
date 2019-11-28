@@ -134,10 +134,10 @@ bool GroupChatMsg(const json11::Json & msgItem, GroupChatMsg_s& chatMsg) {
 }
 
 
-MessageType TransBaseMsg_t::GetType() const 
+E_MsgType TransBaseMsg_t::GetType() const 
 {
     Header* head = reinterpret_cast<Header*>(m_data);
-    return static_cast<MessageType>(head->m_type);
+    return static_cast<E_MsgType>(head->m_type);
 }
 
 std::size_t TransBaseMsg_t::GetSize() const
@@ -151,7 +151,7 @@ const char * TransBaseMsg_t::GetData() const
     return m_data;
 }
 
-TransBaseMsg_t::TransBaseMsg_t(const MessageType& type, const std::string& strMsg)
+TransBaseMsg_t::TransBaseMsg_t(const E_MsgType& type, const std::string& strMsg)
 {
     std::size_t strLen = strMsg.length();
     Header head;
@@ -224,12 +224,12 @@ std::string TransBaseMsg_t::to_string() const
 
 NetFailedReportMsg::NetFailedReportMsg()
 {
-    m_type = MessageType::NetFailedReport_Type;
+    m_type = E_MsgType::NetFailedReport_Type;
     m_strClientId = "";
 }
 NetFailedReportMsg::NetFailedReportMsg(const std::string& clientId)
 {
-    m_type = MessageType::KeepAliveReq_Type;
+    m_type = E_MsgType::KeepAliveReq_Type;
     m_strClientId = clientId;
 }
 
@@ -270,12 +270,12 @@ bool NetFailedReportMsg::FromString(const std::string &strJson)
 
 NetRecoverReportMsg::NetRecoverReportMsg()
 {
-    m_type = MessageType::NetRecoverReport_Type;
+    m_type = E_MsgType::NetRecoverReport_Type;
     m_strClientId = "";
 }
 NetRecoverReportMsg::NetRecoverReportMsg(const std::string& clientId)
 {
-    m_type = MessageType::KeepAliveReq_Type;
+    m_type = E_MsgType::KeepAliveReq_Type;
     m_strClientId = clientId;
 }
 
@@ -317,13 +317,13 @@ bool NetRecoverReportMsg::FromString(const std::string &strJson)
 
 KeepAliveReqMsg::KeepAliveReqMsg()
 {
-    m_type = MessageType::KeepAliveReq_Type;
+    m_type = E_MsgType::KeepAliveReq_Type;
     m_strClientId= "";
 }
 
 KeepAliveReqMsg::KeepAliveReqMsg(const std::string& clientId)
 {
-    m_type = MessageType::KeepAliveReq_Type;
+    m_type = E_MsgType::KeepAliveReq_Type;
     m_strClientId=clientId;
 }
 
@@ -365,13 +365,13 @@ bool KeepAliveReqMsg::FromString(const std::string &strJson)
 
 KeepAliveRspMsg::KeepAliveRspMsg()
 {
-    m_type = MessageType::KeepAliveRsp_Type;
+    m_type = E_MsgType::KeepAliveRsp_Type;
     m_strClientId="";
 }
 
 KeepAliveRspMsg::KeepAliveRspMsg(const std::string& clientId)
 {
-    m_type = MessageType::KeepAliveRsp_Type;
+    m_type = E_MsgType::KeepAliveRsp_Type;
     m_strClientId=clientId;
 }
 
@@ -416,7 +416,7 @@ bool KeepAliveRspMsg::FromString(const std::string &strJson)
 
 UserLoginReqMsg::UserLoginReqMsg()
 {
-    m_type = MessageType::UserLoginReq_Type;
+    m_type = E_MsgType::UserLoginReq_Type;
     m_strUserName.clear();
     m_strPassword.clear();
     m_eOsType = CLIENT_OS_TYPE::OS_TYPE_UNKNOWN;
@@ -531,7 +531,7 @@ bool UserLoginReqMsg::Valid() const
 UserLoginRspMsg::UserLoginRspMsg()
 {
     m_eErrCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
-    m_type = MessageType::UserLoginRsp_Type;
+    m_type = E_MsgType::UserLoginRsp_Type;
 }
 
 std::string UserLoginRspMsg::ToString() const
@@ -714,7 +714,7 @@ bool UserLoginRspMsg::Valid() const
 
 UserLogoutReqMsg::UserLogoutReqMsg()
 {
-    m_type = MessageType::UserLogoutReq_Type;
+    m_type = E_MsgType::UserLogoutReq_Type;
     m_strUserName.clear();
     m_strPassword.clear();
     m_eOsType = CLIENT_OS_TYPE::OS_TYPE_UNKNOWN;
@@ -810,7 +810,7 @@ bool UserLogoutReqMsg::Valid() const
 
 UserLogoutRspMsg::UserLogoutRspMsg()
 {
-    m_type = MessageType::UserLogoutRsp_Type;
+    m_type = E_MsgType::UserLogoutRsp_Type;
 }
 std::string  UserLogoutRspMsg::ToString() const
 {
@@ -895,7 +895,7 @@ bool  UserLogoutRspMsg::Valid() const
 
 UserRegisterReqMsg::UserRegisterReqMsg()
 {
-    m_type = MessageType::UserRegisterReq_Type;
+    m_type = E_MsgType::UserRegisterReq_Type;
 }
 
 std::string UserRegisterReqMsg::ToString() const
@@ -984,7 +984,7 @@ bool UserRegisterReqMsg::Valid() const
 
 UserRegisterRspMsg::UserRegisterRspMsg()
 {
-    m_type = MessageType::UserRegisterRsp_Type;
+    m_type = E_MsgType::UserRegisterRsp_Type;
     m_eErrCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
 }
 
@@ -1070,7 +1070,7 @@ bool UserRegisterRspMsg::Valid() const
 
 UserUnRegisterReqMsg::UserUnRegisterReqMsg()
 {
-    m_type = MessageType::UserUnRegisterReq_Type;
+    m_type = E_MsgType::UserUnRegisterReq_Type;
 }
 
 std::string UserUnRegisterReqMsg::ToString() const
@@ -1163,7 +1163,7 @@ bool UserUnRegisterReqMsg::Valid() const
 
 UserUnRegisterRspMsg::UserUnRegisterRspMsg()
 {
-    m_type = MessageType::UserUnRegisterRsp_Type;
+    m_type = E_MsgType::UserUnRegisterRsp_Type;
 }
 
 std::string UserUnRegisterRspMsg::ToString() const
@@ -1347,7 +1347,7 @@ std::string FontInfo_s::ToString() const
 
 FriendChatSendTxtReqMsg::FriendChatSendTxtReqMsg()
 {
-    m_type = MessageType::FriendChatSendTxtMsgReq_Type;
+    m_type = E_MsgType::FriendChatSendTxtMsgReq_Type;
 }
 
 std::string  FriendChatSendTxtReqMsg::ToString() const
@@ -1454,7 +1454,7 @@ bool  FriendChatSendTxtReqMsg::Valid() const
 
 FriendChatSendTxtRspMsg::FriendChatSendTxtRspMsg()
 {
-    m_type = MessageType::FriendChatSendTxtMsgRsp_Type;
+    m_type = E_MsgType::FriendChatSendTxtMsgRsp_Type;
 }
 
 std::string FriendChatSendTxtRspMsg::ToString() const
@@ -1532,7 +1532,7 @@ bool FriendChatSendTxtRspMsg::Valid() const
 
 FriendChatRecvTxtReqMsg::FriendChatRecvTxtReqMsg()
 {
-    m_type = MessageType::FriendChatReceiveTxtMsgReq_Type;
+    m_type = E_MsgType::FriendChatReceiveTxtMsgReq_Type;
 }
 
 std::string FriendChatRecvTxtReqMsg::ToString() const
@@ -1585,7 +1585,7 @@ bool FriendChatRecvTxtReqMsg::Valid() const
 
 FriendChatRecvTxtRspMsg::FriendChatRecvTxtRspMsg()
 {
-    m_type = MessageType::FriendChatReceiveTxtMsgRsp_Type;
+    m_type = E_MsgType::FriendChatReceiveTxtMsgRsp_Type;
 }
 
 std::string FriendChatRecvTxtRspMsg::ToString() const
@@ -1666,7 +1666,7 @@ bool FriendChatRecvTxtRspMsg::Valid() const
 
 GetFriendListReqMsg::GetFriendListReqMsg()
 {
-    m_type = MessageType::GetFriendListReq_Type;
+    m_type = E_MsgType::GetFriendListReq_Type;
 }
 
 std::string GetFriendListReqMsg::ToString() const
@@ -1726,7 +1726,7 @@ bool GetFriendListReqMsg::Valid() const
 
 GetFriendListRspMsg::GetFriendListRspMsg()
 {
-    m_type = MessageType::GetFriendListRsp_Type;
+    m_type = E_MsgType::GetFriendListRsp_Type;
 }
 
 std::string GetFriendListRspMsg::ToString() const
@@ -1969,7 +1969,7 @@ bool GetFriendListRspMsg::Valid() const
 
 AddFriendSendReqMsg::AddFriendSendReqMsg()
 {
-    m_type = MessageType::AddFriendSendReq_Type;
+    m_type = E_MsgType::AddFriendSendReq_Type;
 }
 
 std::string AddFriendSendReqMsg::ToString() const
@@ -2044,7 +2044,7 @@ bool AddFriendSendReqMsg::Valid() const
 
 AddFriendSendRspMsg::AddFriendSendRspMsg()
 {
-    m_type = MessageType::AddFriendSendRsp_Type;
+    m_type = E_MsgType::AddFriendSendRsp_Type;
 }
 
 std::string AddFriendSendRspMsg::ToString() const
@@ -2140,7 +2140,7 @@ bool AddFriendSendRspMsg::Valid() const
 
 AddFriendRecvReqMsg::AddFriendRecvReqMsg()
 {
-    m_type = MessageType::AddFriendRecvReq_Type;
+    m_type = E_MsgType::AddFriendRecvReq_Type;
 }
 
 std::string AddFriendRecvReqMsg::ToString() const
@@ -2218,7 +2218,7 @@ bool AddFriendRecvReqMsg::Valid() const
 
 AddFriendRecvRspMsg::AddFriendRecvRspMsg()
 {
-    m_type = MessageType::AddFriendRecvRsp_Type;
+    m_type = E_MsgType::AddFriendRecvRsp_Type;
     m_option = E_FRIEND_OPTION::E_UN_KNOWN;
 }
 
@@ -2325,7 +2325,7 @@ bool AddFriendRecvRspMsg::Valid() const
 
 AddFriendNotifyReqMsg::AddFriendNotifyReqMsg()
 {
-    m_type = MessageType::AddFriendNotifyReq_Type;
+    m_type = E_MsgType::AddFriendNotifyReq_Type;
 }
 
 std::string AddFriendNotifyReqMsg::ToString() const
@@ -2412,7 +2412,7 @@ bool AddFriendNotifyReqMsg::Valid() const
 
 AddFriendNotifyRspMsg::AddFriendNotifyRspMsg()
 {
-    m_type = MessageType::AddFriendNotifyRsp_Type;
+    m_type = E_MsgType::AddFriendNotifyRsp_Type;
 }
 
 std::string AddFriendNotifyRspMsg::ToString() const
@@ -2460,7 +2460,7 @@ bool AddFriendNotifyRspMsg::Valid() const
 
 RemoveFriendReqMsg::RemoveFriendReqMsg()
 {
-    m_type = MessageType::RemoveFriendReq_Type;
+    m_type = E_MsgType::RemoveFriendReq_Type;
 }
 
 std::string RemoveFriendReqMsg::ToString() const
@@ -2538,7 +2538,7 @@ bool RemoveFriendReqMsg::Valid() const
 
 RemoveFriendRspMsg::RemoveFriendRspMsg()
 {
-    m_type = MessageType::RemoveFriendRsp_Type;
+    m_type = E_MsgType::RemoveFriendRsp_Type;
 }
 
 std::string RemoveFriendRspMsg::ToString() const
@@ -2637,7 +2637,7 @@ bool RemoveFriendRspMsg::Valid() const
 
 FindFriendReqMsg::FindFriendReqMsg()
 {
-    m_type = MessageType::FindFriendReq_Type;
+    m_type = E_MsgType::FindFriendReq_Type;
 }
 
 std::string FindFriendReqMsg::ToString() const
@@ -2716,7 +2716,7 @@ bool FindFriendReqMsg::Valid() const
 
 FindFriendRspMsg::FindFriendRspMsg()
 {
-    m_type = MessageType::FindFriendRsp_Type;
+    m_type = E_MsgType::FindFriendRsp_Type;
 }
 
 std::string FindFriendRspMsg::ToString() const
@@ -2896,7 +2896,7 @@ bool FindFriendRspMsg::FromString(const std::string &strJson)
 
 AddTeamReqMsg::AddTeamReqMsg()
 {
-    m_type = MessageType::AddTeamReq_Type;
+    m_type = E_MsgType::AddTeamReq_Type;
 }
 
 std::string AddTeamReqMsg::ToString() const
@@ -2954,7 +2954,7 @@ bool AddTeamReqMsg::FromString(const std::string &strJson)
 
 AddTeamRspMsg::AddTeamRspMsg()
 {
-    m_type = MessageType::AddTeamRsp_Type;
+    m_type = E_MsgType::AddTeamRsp_Type;
 }
 
 std::string AddTeamRspMsg::ToString() const
@@ -3045,7 +3045,7 @@ bool AddTeamRspMsg::FromString(const std::string &strJson)
 
 RemoveTeamReqMsg::RemoveTeamReqMsg()
 {
-    m_type = MessageType::RemoveTeamReq_Type;
+    m_type = E_MsgType::RemoveTeamReq_Type;
 }
 
 std::string RemoveTeamReqMsg::ToString() const
@@ -3105,7 +3105,7 @@ bool RemoveTeamReqMsg::FromString(const std::string &strJson)
 
 RemoveTeamRspMsg::RemoveTeamRspMsg()
 {
-    m_type = MessageType::RemoveTeamRsp_Type;
+    m_type = E_MsgType::RemoveTeamRsp_Type;
 }
 
 std::string RemoveTeamRspMsg::ToString() const
@@ -3195,7 +3195,7 @@ bool RemoveTeamRspMsg::FromString(const std::string &strJson)
 
 MoveFriendToTeamReqMsg::MoveFriendToTeamReqMsg()
 {
-    m_type = MessageType::MoveFriendToTeamReq_Type;
+    m_type = E_MsgType::MoveFriendToTeamReq_Type;
 }
 
 std::string MoveFriendToTeamReqMsg::ToString() const
@@ -3276,7 +3276,7 @@ bool MoveFriendToTeamReqMsg::FromString(const std::string &strJson)
 
 MoveFriendToTeamRspMsg::MoveFriendToTeamRspMsg()
 {
-    m_type = MessageType::MoveFriendToTeamReq_Type;
+    m_type = E_MsgType::MoveFriendToTeamReq_Type;
 }
 
 std::string MoveFriendToTeamRspMsg::ToString() const
@@ -3379,7 +3379,7 @@ bool MoveFriendToTeamRspMsg::FromString(const std::string &strJson)
 
 CreateGroupReqMsg::CreateGroupReqMsg()
 {
-    m_type = MessageType::CreateGroupReq_Type;
+    m_type = E_MsgType::CreateGroupReq_Type;
 }
 
 std::string CreateGroupReqMsg::ToString() const
@@ -3461,7 +3461,7 @@ bool CreateGroupReqMsg::Valid() const
 
 CreateGroupRspMsg::CreateGroupRspMsg()
 {
-    m_type = MessageType::CreateGroupRsp_Type;
+    m_type = E_MsgType::CreateGroupRsp_Type;
 }
 
 std::string CreateGroupRspMsg::ToString() const
@@ -3571,7 +3571,7 @@ bool CreateGroupRspMsg::Valid() const
 
 DestroyGroupReqMsg::DestroyGroupReqMsg()
 {
-    m_type = MessageType::DestroyGroupReq_Type;
+    m_type = E_MsgType::DestroyGroupReq_Type;
 }
 
 std::string DestroyGroupReqMsg::ToString() const
@@ -3667,7 +3667,7 @@ bool DestroyGroupReqMsg::Valid() const
 
 DestroyGroupRspMsg::DestroyGroupRspMsg()
 {
-    m_type = MessageType::DestroyGroupRsp_Type;
+    m_type = E_MsgType::DestroyGroupRsp_Type;
 }
 
 std::string DestroyGroupRspMsg::ToString() const
@@ -3778,7 +3778,7 @@ bool DestroyGroupRspMsg::Valid() const
 
 FindGroupReqMsg::FindGroupReqMsg()
 {
-    m_type = MessageType::FindGroupReq_Type;
+    m_type = E_MsgType::FindGroupReq_Type;
 }
 
 std::string FindGroupReqMsg::ToString() const
@@ -3857,7 +3857,7 @@ bool FindGroupReqMsg::Valid() const
 
 FindGroupRspMsg::FindGroupRspMsg()
 {
-    m_type = MessageType::FindGroupRsp_Type;
+    m_type = E_MsgType::FindGroupRsp_Type;
 }
 
 std::string FindGroupRspMsg::ToString() const
@@ -3982,7 +3982,7 @@ bool FindGroupRspMsg::Valid() const
 
 AddToGroupReqMsg::AddToGroupReqMsg()
 {
-    m_type = MessageType::AddToGroupReq_Type;
+    m_type = E_MsgType::AddToGroupReq_Type;
 }
 
 std::string AddToGroupReqMsg::ToString() const
@@ -4061,7 +4061,7 @@ bool AddToGroupReqMsg::Valid() const
 
 AddToGroupRspMsg::AddToGroupRspMsg()
 {
-    m_type = MessageType::AddToGroupRsp_Type;
+    m_type = E_MsgType::AddToGroupRsp_Type;
 }
 
 std::string AddToGroupRspMsg::ToString() const
@@ -4155,7 +4155,7 @@ bool AddToGroupRspMsg::Valid() const
 
 AddToGroupRecvReqMsg::AddToGroupRecvReqMsg()
 {
-    m_type = MessageType::AddToGroupRecvReq_Type;
+    m_type = E_MsgType::AddToGroupRecvReq_Type;
 }
 
 std::string AddToGroupRecvReqMsg::ToString() const
@@ -4251,7 +4251,7 @@ bool AddToGroupRecvReqMsg::Valid() const
 
 AddToGroupRecvRspMsg::AddToGroupRecvRspMsg()
 {
-    m_type = MessageType::AddToGroupRecvRsp_Type;
+    m_type = E_MsgType::AddToGroupRecvRsp_Type;
 }
 
 std::string  AddToGroupRecvRspMsg::ToString() const
@@ -4361,7 +4361,7 @@ bool  AddToGroupRecvRspMsg::Valid() const
 
 AddToGroupNotifyReqMsg::AddToGroupNotifyReqMsg()
 {
-    m_type = MessageType::AddToGroupNotifyReq_Type;
+    m_type = E_MsgType::AddToGroupNotifyReq_Type;
 }
 
 std::string AddToGroupNotifyReqMsg::ToString() const
@@ -4461,7 +4461,7 @@ bool AddToGroupNotifyReqMsg::Valid() const
 
 AddToGroupNotifyRspMsg::AddToGroupNotifyRspMsg()
 {
-    m_type = MessageType::AddToGroupNotifyRsp_Type;
+    m_type = E_MsgType::AddToGroupNotifyRsp_Type;
 }
 
 std::string AddToGroupNotifyRspMsg::ToString() const
@@ -4584,7 +4584,7 @@ bool AddToGroupNotifyRspMsg::Valid() const
 
 InviteFriendToGroupReqMsg::InviteFriendToGroupReqMsg()
 {
-    m_type = MessageType::InviteFriendToGroupReq_Type;
+    m_type = E_MsgType::InviteFriendToGroupReq_Type;
 }
 
 std::string InviteFriendToGroupReqMsg::ToString() const
@@ -4644,7 +4644,7 @@ bool InviteFriendToGroupReqMsg::FromString(const std::string &strJson)
 
 InviteFriendToGroupRspMsg::InviteFriendToGroupRspMsg()
 {
-    m_type = MessageType::InviteFriendToGroupRsp_Type;
+    m_type = E_MsgType::InviteFriendToGroupRsp_Type;
 }
 
 std::string InviteFriendToGroupRspMsg::ToString() const
@@ -4732,7 +4732,7 @@ bool InviteFriendToGroupRspMsg::FromString(const std::string &strJson)
 
 InviteFriendToGroupRecvReqMsg::InviteFriendToGroupRecvReqMsg()
 {
-    m_type = MessageType::InviteToGroupRecvReq_Type;
+    m_type = E_MsgType::InviteToGroupRecvReq_Type;
 }
 
 std::string InviteFriendToGroupRecvReqMsg::ToString() const
@@ -4803,7 +4803,7 @@ bool InviteFriendToGroupRecvReqMsg::FromString(const std::string &strJson)
 
 InviteFriendToGroupRecvRspMsg::InviteFriendToGroupRecvRspMsg()
 {
-    m_type = MessageType::InviteToGroupRecvRsp_Type;
+    m_type = E_MsgType::InviteToGroupRecvRsp_Type;
 }
 
 std::string InviteFriendToGroupRecvRspMsg::ToString() const
@@ -4906,7 +4906,7 @@ bool InviteFriendToGroupRecvRspMsg::FromString(const std::string &strJson)
 
 InviteFriendToGroupNotifyReqMsg::InviteFriendToGroupNotifyReqMsg()
 {
-    m_type = MessageType::InviteResultNotifyReq_Type;
+    m_type = E_MsgType::InviteResultNotifyReq_Type;
 }
 
 std::string InviteFriendToGroupNotifyReqMsg::ToString() const
@@ -4988,7 +4988,7 @@ bool InviteFriendToGroupNotifyReqMsg::FromString(const std::string &strJson)
 
 QuitFromGroupReqMsg::QuitFromGroupReqMsg()
 {
-	m_type = MessageType::QuitGroupReq_Type;
+	m_type = E_MsgType::QuitGroupReq_Type;
 }
 
 std::string QuitFromGroupReqMsg::ToString() const
@@ -5049,7 +5049,7 @@ bool QuitFromGroupReqMsg::FromString(const std::string &strJson)
 
 QuitFromGroupRspMsg::QuitFromGroupRspMsg()
 {
-	m_type = MessageType::QuitGroupRsp_Type;
+	m_type = E_MsgType::QuitGroupRsp_Type;
 }
 
 std::string QuitFromGroupRspMsg::ToString() const
@@ -5129,7 +5129,7 @@ bool QuitFromGroupRspMsg::FromString(const std::string &strJson)
 
 InviteFriendToGroupNotifyRspMsg::InviteFriendToGroupNotifyRspMsg()
 {
-    m_type = MessageType::InviteResultNotifyRsp_Type;
+    m_type = E_MsgType::InviteResultNotifyRsp_Type;
 }
 
 std::string InviteFriendToGroupNotifyRspMsg::ToString() const
@@ -5200,7 +5200,7 @@ bool InviteFriendToGroupNotifyRspMsg::FromString(const std::string &strJson)
 
 SendGroupTextMsgReqMsg::SendGroupTextMsgReqMsg()
 {
-    m_type = MessageType::SendGroupTextMsgReq_Type;
+    m_type = E_MsgType::SendGroupTextMsgReq_Type;
 }
 
 std::string SendGroupTextMsgReqMsg::ToString() const
@@ -5286,7 +5286,7 @@ bool SendGroupTextMsgReqMsg::FromString(const std::string &strJson)
 
 SendGroupTextMsgRspMsg::SendGroupTextMsgRspMsg()
 {
-    m_type = MessageType::SendGroupTextMsgRsp_Type;
+    m_type = E_MsgType::SendGroupTextMsgRsp_Type;
 }
 
 std::string SendGroupTextMsgRspMsg::ToString() const
@@ -5402,7 +5402,7 @@ bool SendGroupTextMsgRspMsg::FromString(const std::string &strJson)
 
 RecvGroupTextMsgReqMsg::RecvGroupTextMsgReqMsg()
 {
-    m_type = MessageType::RecvGroupTextMsgReq_Type;
+    m_type = E_MsgType::RecvGroupTextMsgReq_Type;
 }
 
 std::string RecvGroupTextMsgReqMsg::ToString() const
@@ -5510,7 +5510,7 @@ bool RecvGroupTextMsgReqMsg::FromString(const std::string &strJson)
 
 RecvGroupTextMsgRspMsg::RecvGroupTextMsgRspMsg()
 {
-    m_type = MessageType::RecvGroupTextMsgRsp_Type;
+    m_type = E_MsgType::RecvGroupTextMsgRsp_Type;
 }
 
 std::string RecvGroupTextMsgRspMsg::ToString() const
@@ -5583,7 +5583,7 @@ bool RecvGroupTextMsgRspMsg::FromString(const std::string &strJson)
 
 FriendSendFileMsgReqMsg::FriendSendFileMsgReqMsg()
 {
-    m_type = MessageType::FriendSendFileMsgReq_Type;
+    m_type = E_MsgType::FriendSendFileMsgReq_Type;
 }
 
 std::string FriendSendFileMsgReqMsg::ToString() const
@@ -5661,7 +5661,7 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
 
 FriendSendFileMsgRspMsg::FriendSendFileMsgRspMsg()
 {
-    m_type = MessageType::FriendSendFileMsgRsp_Type;
+    m_type = E_MsgType::FriendSendFileMsgRsp_Type;
 }
 
 std::string FriendSendFileMsgRspMsg::ToString() const
@@ -5766,7 +5766,7 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
 
 FriendRecvFileMsgReqMsg::FriendRecvFileMsgReqMsg()
 {
-    m_type = MessageType::FriendRecvFileMsgReq_Type;
+    m_type = E_MsgType::FriendRecvFileMsgReq_Type;
 }
 
 std::string FriendRecvFileMsgReqMsg::ToString() const
@@ -5845,7 +5845,7 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
 
 FriendRecvFileMsgRspMsg::FriendRecvFileMsgRspMsg()
 {
-    m_type = MessageType::FriendRecvFileMsgRsp_Type;
+    m_type = E_MsgType::FriendRecvFileMsgRsp_Type;
 }
 
 std::string FriendRecvFileMsgRspMsg::ToString() const
@@ -5946,7 +5946,7 @@ bool FriendRecvFileMsgRspMsg::FromString(const std::string &strJson)
 
 FriendNotifyFileMsgReqMsg::FriendNotifyFileMsgReqMsg()
 {
-    m_type = MessageType::FriendNotifyFileMsgReq_Type;
+    m_type = E_MsgType::FriendNotifyFileMsgReq_Type;
 }
 
 std::string FriendNotifyFileMsgReqMsg::ToString() const
@@ -6046,7 +6046,7 @@ bool FriendNotifyFileMsgReqMsg::FromString(const std::string &strJson)
 
 FriendNotifyFileMsgRspMsg::FriendNotifyFileMsgRspMsg()
 {
-    m_type = MessageType::FriendNotifyFileMsgRsp_Type;
+    m_type = E_MsgType::FriendNotifyFileMsgRsp_Type;
 }
 
 std::string FriendNotifyFileMsgRspMsg::ToString() const
@@ -6085,7 +6085,7 @@ bool FriendNotifyFileMsgRspMsg::FromString(const std::string &strJson)
 
 GetGroupListReqMsg::GetGroupListReqMsg()
 {
-    m_type = MessageType::GetGroupListReq_Type;
+    m_type = E_MsgType::GetGroupListReq_Type;
 }
 
 std::string GetGroupListReqMsg::ToString() const
@@ -6133,7 +6133,7 @@ bool GetGroupListReqMsg::FromString(const std::string &strJson)
 
 GetGroupListRspMsg::GetGroupListRspMsg()
 {
-    m_type = MessageType::GetGroupListRsp_Type;
+    m_type = E_MsgType::GetGroupListRsp_Type;
 }
 
 std::string GetGroupListRspMsg::ToString() const
@@ -6376,7 +6376,7 @@ bool GetGroupListRspMsg::FromString(const std::string &strJson)
 
 FileDataSendReqMsg::FileDataSendReqMsg()
 {
-    m_type = MessageType::FileSendDataReq_Type;
+    m_type = E_MsgType::FileSendDataReq_Type;
 }
 
 std::string FileDataSendReqMsg::ToString() const
@@ -6492,7 +6492,7 @@ bool FileDataSendReqMsg::FromString(const std::string &strJson)
 
 FileDataSendRspMsg::FileDataSendRspMsg()
 {
-    m_type = MessageType::FileSendDataRsp_Type;
+    m_type = E_MsgType::FileSendDataRsp_Type;
 }
 
 std::string FileDataSendRspMsg::ToString() const
@@ -6581,7 +6581,7 @@ bool FileDataSendRspMsg::FromString(const std::string &strJson)
 
 FileDataRecvReqMsg::FileDataRecvReqMsg()
 {
-    m_type = MessageType::FileRecvDataReq_Type;
+    m_type = E_MsgType::FileRecvDataReq_Type;
 }
 
 std::string FileDataRecvReqMsg::ToString() const
@@ -6695,7 +6695,7 @@ bool FileDataRecvReqMsg::FromString(const std::string &strJson)
 
 FileDataRecvRspMsg::FileDataRecvRspMsg()
 {
-    m_type = MessageType::FileRecvDataRsp_Type;
+    m_type = E_MsgType::FileRecvDataRsp_Type;
 }
 
 std::string FileDataRecvRspMsg::ToString() const
@@ -6785,7 +6785,7 @@ bool FileDataRecvRspMsg::FromString(const std::string &strJson)
 
 FileVerifyReqMsg::FileVerifyReqMsg()
 {
-    m_type = MessageType::FileVerifyReq_Type;
+    m_type = E_MsgType::FileVerifyReq_Type;
 }
 
 std::string FileVerifyReqMsg::ToString() const
@@ -6884,7 +6884,7 @@ bool FileVerifyReqMsg::FromString(const std::string &strJson)
 
 FileVerifyRspMsg::FileVerifyRspMsg()
 {
-    m_type = MessageType::FileVerifyRsp_Type;
+    m_type = E_MsgType::FileVerifyRsp_Type;
 }
 
 std::string FileVerifyRspMsg::ToString() const
@@ -6953,7 +6953,7 @@ bool FileVerifyRspMsg::FromString(const std::string &strJson)
 
 UserKickOffReqMsg::UserKickOffReqMsg()
 {
-	m_type = MessageType::UserKickOffReq_Type;
+	m_type = E_MsgType::UserKickOffReq_Type;
 }
 
 std::string UserKickOffReqMsg::ToString() const
@@ -7012,7 +7012,7 @@ bool UserKickOffReqMsg::FromString(const std::string& strJson)
 
 UserKickOffRspMsg::UserKickOffRspMsg()
 {
-	m_type = MessageType::UserKickOffRsp_Type;
+	m_type = E_MsgType::UserKickOffRsp_Type;
 }
 
 std::string UserKickOffRspMsg::ToString() const
@@ -7060,7 +7060,7 @@ bool UserKickOffRspMsg::FromString(const std::string& strJson)
 
 FriendUnReadNotifyReqMsg::FriendUnReadNotifyReqMsg()
 {
-	m_type = MessageType::FriendUnReadMsgNotifyReq_Type;
+	m_type = E_MsgType::FriendUnReadMsgNotifyReq_Type;
 }
 
 std::string FriendUnReadNotifyReqMsg::ToString() const {
@@ -7106,7 +7106,7 @@ bool FriendUnReadNotifyReqMsg::FromString(const std::string& strJson) {
 
 FriendUnReadNotifyRspMsg::FriendUnReadNotifyRspMsg()
 {
-	m_type = MessageType::FriendUnReadMsgNotifyRsp_Type;
+	m_type = E_MsgType::FriendUnReadMsgNotifyRsp_Type;
 }
 
 std::string FriendUnReadNotifyRspMsg::ToString() const {
@@ -7152,7 +7152,7 @@ bool FriendUnReadNotifyRspMsg::FromString(const std::string& strJson) {
 
 UpdateFriendListNotifyReqMsg::UpdateFriendListNotifyReqMsg()
 {
-	m_type = MessageType::UpdateFriendListNotifyReq_Type;
+	m_type = E_MsgType::UpdateFriendListNotifyReq_Type;
 }
 
 std::string UpdateFriendListNotifyReqMsg::ToString() const {
@@ -7198,7 +7198,7 @@ bool UpdateFriendListNotifyReqMsg::FromString(const std::string& strJson) {
 
 UpdateFriendListNotifyRspMsg::UpdateFriendListNotifyRspMsg()
 {
-	m_type = MessageType::UpdateFriendListNotifyRsp_Type;
+	m_type = E_MsgType::UpdateFriendListNotifyRsp_Type;
 }
 
 std::string UpdateFriendListNotifyRspMsg::ToString() const {
@@ -7245,7 +7245,7 @@ bool UpdateFriendListNotifyRspMsg::FromString(const std::string& strJson) {
 
 UpdateGroupListNotifyReqMsg::UpdateGroupListNotifyReqMsg()
 {
-	m_type = MessageType::UpdateGroupListNotifyReq_Type;
+	m_type = E_MsgType::UpdateGroupListNotifyReq_Type;
 }
 
 std::string UpdateGroupListNotifyReqMsg::ToString() const {
@@ -7291,7 +7291,7 @@ bool UpdateGroupListNotifyReqMsg::FromString(const std::string& strJson) {
 
 UpdateGroupListNotifyRspMsg::UpdateGroupListNotifyRspMsg()
 {
-	m_type = MessageType::UpdateGroupListNotifyRsp_Type;
+	m_type = E_MsgType::UpdateGroupListNotifyRsp_Type;
 }
 
 std::string UpdateGroupListNotifyRspMsg::ToString() const {
@@ -7339,7 +7339,7 @@ bool UpdateGroupListNotifyRspMsg::FromString(const std::string& strJson) {
 
 QueryUserUdpAddrReqMsg::QueryUserUdpAddrReqMsg()
 {
-	m_type = MessageType::QueryUserUdpAddrReq_Type;
+	m_type = E_MsgType::QueryUserUdpAddrReq_Type;
 }
 
 std::string QueryUserUdpAddrReqMsg::ToString() const {
@@ -7398,7 +7398,7 @@ bool QueryUserUdpAddrReqMsg::FromString(const std::string& strJson) {
 
 QueryUserUdpAddrRspMsg::QueryUserUdpAddrRspMsg()
 {
-	m_type = MessageType::QueryUserUdpAddrRsp_Type;
+	m_type = E_MsgType::QueryUserUdpAddrRsp_Type;
 }
 
 std::string QueryUserUdpAddrRspMsg::ToString() const {
@@ -7537,7 +7537,7 @@ bool NormalRspMsg::FromString(const std::string& strJson)
 
 GetFriendChatHistoryReq::GetFriendChatHistoryReq()
 {
-	m_type = MessageType::GetFriendChatHistroyReq_Type;
+	m_type = E_MsgType::GetFriendChatHistroyReq_Type;
 }
 
 std::string GetFriendChatHistoryReq::ToString() const
@@ -7609,7 +7609,7 @@ bool GetFriendChatHistoryReq::FromString(const std::string& strJson)
 
 GetFriendChatHistoryRsp::GetFriendChatHistoryRsp()
 {
-	m_type = MessageType::GetFriendChatHistoryRsp_Type;
+	m_type = E_MsgType::GetFriendChatHistoryRsp_Type;
 }
 
 std::string GetFriendChatHistoryRsp::ToString() const
@@ -7687,7 +7687,7 @@ bool GetFriendChatHistoryRsp::FromString(const std::string& strJson)
 
 GetGroupChatHistoryReq::GetGroupChatHistoryReq()
 {
-	m_type = MessageType::GetGroupChatHistoryReq_Type;
+	m_type = E_MsgType::GetGroupChatHistoryReq_Type;
 }
 
 std::string GetGroupChatHistoryReq::ToString() const
@@ -7758,7 +7758,7 @@ bool GetGroupChatHistoryReq::FromString(const std::string& strJson)
 
 GetGroupChatHistoryRsp::GetGroupChatHistoryRsp()
 {
-	m_type = MessageType::GetGroupChatHistoryRsp_Type;
+	m_type = E_MsgType::GetGroupChatHistoryRsp_Type;
 }
 
 std::string GetGroupChatHistoryRsp::ToString() const
@@ -7878,7 +7878,7 @@ bool GetGroupChatHistoryRsp::FromString(const std::string& strJson)
 
 SearchChatHistoryReq::SearchChatHistoryReq()
 {
-	m_type = MessageType::SearchChatMsgReq_Type;
+	m_type = E_MsgType::SearchChatMsgReq_Type;
 }
 
 std::string SearchChatHistoryReq::ToString() const
@@ -7930,7 +7930,7 @@ bool SearchChatHistoryReq::FromString(const std::string& strJson)
 
 SearchChatHistoryRsp::SearchChatHistoryRsp()
 {
-	m_type = MessageType::SearchChatMsgRsp_Type;
+	m_type = E_MsgType::SearchChatMsgRsp_Type;
 }
 
 std::string SearchChatHistoryRsp::ToString() const
@@ -8088,7 +8088,7 @@ bool SearchChatHistoryRsp::FromString(const std::string& strJson)
 
 AsyncFriendChatMsgReq::AsyncFriendChatMsgReq()
 {
-	m_type = MessageType::AsyncFriendChatMsgReq_Type;
+	m_type = E_MsgType::AsyncFriendChatMsgReq_Type;
 }
 
 std::string AsyncFriendChatMsgReq::ToString() const
@@ -8141,7 +8141,7 @@ bool AsyncFriendChatMsgReq::FromString(const std::string& strJson)
 
 AsyncFriendChatMsgRsp::AsyncFriendChatMsgRsp()
 {
-	m_type = MessageType::AsyncFriendChatMsgRsp_Type;
+	m_type = E_MsgType::AsyncFriendChatMsgRsp_Type;
 }
 
 std::string AsyncFriendChatMsgRsp::ToString() const
@@ -8218,7 +8218,7 @@ bool AsyncFriendChatMsgRsp::FromString(const std::string& strJson)
 
 AsyncGroupChatMsgReq::AsyncGroupChatMsgReq()
 {
-	m_type = MessageType::AsyncGroupChatMsgReq_Type;
+	m_type = E_MsgType::AsyncGroupChatMsgReq_Type;
 }
 
 std::string AsyncGroupChatMsgReq::ToString() const
@@ -8271,7 +8271,7 @@ bool AsyncGroupChatMsgReq::FromString(const std::string& strJson)
 
 AsyncGroupChatMsgRsp::AsyncGroupChatMsgRsp()
 {
-	m_type = MessageType::AsyncGroupChatMsgRsp_Type;
+	m_type = E_MsgType::AsyncGroupChatMsgRsp_Type;
 }
 
 std::string AsyncGroupChatMsgRsp::ToString() const
@@ -8347,7 +8347,7 @@ bool AsyncGroupChatMsgRsp::FromString(const std::string& strJson)
 
 FileSendDataBeginReq::FileSendDataBeginReq()
 {
-	m_type = MessageType::FileSendDataBeginReq_Type;
+	m_type = E_MsgType::FileSendDataBeginReq_Type;
 }
 
 std::string FileSendDataBeginReq::ToString() const 
@@ -8430,7 +8430,7 @@ bool FileSendDataBeginReq::FromString(const std::string& strJson)
 
 FileSendDataBeginRsp::FileSendDataBeginRsp()
 {
-	m_type = MessageType::FileSendDataBeginRsp_Type;
+	m_type = E_MsgType::FileSendDataBeginRsp_Type;
 }
 
 std::string FileSendDataBeginRsp::ToString() const
@@ -8519,7 +8519,7 @@ bool FileSendDataBeginRsp::FromString(const std::string& strJson)
 
 FileTransProgressNotifyReqMsg::FileTransProgressNotifyReqMsg()
 {
-	m_type = MessageType::FileTransProgressNotifyReq_Type;
+	m_type = E_MsgType::FileTransProgressNotifyReq_Type;
 }
 
 std::string FileTransProgressNotifyReqMsg::ToString() const
@@ -8592,7 +8592,7 @@ bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
 
 FileDownLoadReqMsg::FileDownLoadReqMsg()
 {
-	m_type = MessageType::FileDownLoadReq_Type;
+	m_type = E_MsgType::FileDownLoadReq_Type;
 }
 
 std::string FileDownLoadReqMsg::ToString() const
@@ -8664,7 +8664,7 @@ bool FileDownLoadReqMsg::FromString(const std::string& strJson)
 
 FileDownLoadRspMsg::FileDownLoadRspMsg()
 {
-	m_type = MessageType::FileDownLoadRsp_Type;
+	m_type = E_MsgType::FileDownLoadRsp_Type;
 }
 
 std::string FileDownLoadRspMsg::ToString() const

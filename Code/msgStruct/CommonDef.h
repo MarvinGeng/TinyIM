@@ -7,7 +7,7 @@
  *        如果您需要定义新的消息，可以直接在后面添加
  *
  */
-enum class MessageType :uint32_t
+enum class E_MsgType :uint32_t
 {
 	Base_Type,
 	//心跳请求消息
@@ -506,7 +506,7 @@ E_ADD_FRIEND_STATUS FriendStatus(const std::string strStatus);
 E_GROUP_MEMBER_ROLE MemberRole(const std::string strRole);
 std::string MemberRole(const E_GROUP_MEMBER_ROLE role);
 
-std::string MsgType(const MessageType& msgType);
+std::string MsgType(const E_MsgType& msgType);
 
 
 std::string   ChatType(const CHAT_MSG_TYPE& chatType);
