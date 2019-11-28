@@ -1770,8 +1770,8 @@ class FileVerifyReqMsg:public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	std::string m_strFileName;//文件名称
 	int		    m_nFileId;//文件ID
 	int			m_nFileSize;//文件大小
@@ -1794,8 +1794,8 @@ class FileVerifyRspMsg :public BaseMsg
 public:
 	ERROR_CODE_TYPE m_eErrCode;//错误码
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	std::string m_strFileName;//文件名称
 	int		    m_nFileId;//文件ID
 public:
@@ -2225,6 +2225,7 @@ public:
 	std::string m_strUserId;//用户ID
 	std::string m_strFriendId;//好友ID
 	std::string m_strFileName;//文件名
+	std::string m_strRelateMsgId;//相关的MsgId(由哪个MsgId发起的)
 public:
 	FileDownLoadReqMsg();
 	virtual std::string ToString() const override;
@@ -2240,6 +2241,8 @@ public:
 	std::string m_strUserId;//用户ID
 	std::string m_strFriendId;//好友ID
 	std::string m_strFileName;//文件名
+	std::string m_strFileHash;
+	std::string m_strRelateMsgId;
 public:
 	FileDownLoadRspMsg();
 	virtual std::string ToString() const override;

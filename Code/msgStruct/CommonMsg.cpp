@@ -6795,8 +6795,8 @@ std::string FileVerifyReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileId", m_nFileId},
         {"FileName", m_strFileName},
         {"FileSize", m_nFileSize},
@@ -6824,18 +6824,18 @@ bool FileVerifyReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -6895,8 +6895,8 @@ std::string FileVerifyRspMsg::ToString() const
     {
         {"Code", static_cast<int>(m_eErrCode)},
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId",m_strMsgId},
+        {"FriendId",m_strFriendId},
         {"FileId", m_nFileId},
         {"FileName", m_strFileName},
     });
@@ -6922,18 +6922,18 @@ bool FileVerifyRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -8603,6 +8603,7 @@ std::string FileDownLoadReqMsg::ToString() const
 		{"UserId",m_strUserId},
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
+		{"RelateMsgId",m_strRelateMsgId},
 		});
 	return msgJson.dump();
 }
@@ -8650,6 +8651,13 @@ bool FileDownLoadReqMsg::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["RelateMsgId"].is_string()) {
+		m_strRelateMsgId = json["RelateMsgId"].string_value();
+	}
+	else {
+		return false;
+	}
+
 	return true;
 }
 
@@ -8669,6 +8677,8 @@ std::string FileDownLoadRspMsg::ToString() const
 		{"UserId",m_strUserId},
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
+		{"FileHash",m_strFileHash},
+		{"RelateMsgId",m_strRelateMsgId}
 		});
 	return msgJson.dump();
 }
@@ -8724,6 +8734,22 @@ bool FileDownLoadRspMsg::FromString(const std::string& strJson)
 
 	if (json["FileName"].is_string()) {
 		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FileHash"].is_string()) {
+		m_strFileHash = json["FileHash"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["RelateMsgId"].is_string()) {
+		m_strRelateMsgId = json["RelateMsgId"].string_value();
 	}
 	else
 	{
