@@ -265,8 +265,8 @@ void CIMRobot::GetRecvMsg()
 			if (reqMsg.FromString(strRsp))
 			{
 				FriendChatRecvTxtRspMsg rspMsg;
-				rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strSenderId;
-				rspMsg.m_strToId = reqMsg.m_chatMsg.m_strReceiverId;
+				rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+				rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
 				auto rsp = g_httpClient->request("POST", "/on_friend_chat_recv_text_msg", rspMsg.ToString());
 				std::string strRsp = rsp->content.string();
 				std::cout << strRsp << std::endl;

@@ -165,18 +165,18 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBase
 	{
 		switch (pMsg->GetType())
 		{
-		case MessageType::KeepAliveReq_Type:
+		case E_MsgType::KeepAliveReq_Type:
 		{
 
 		}break;
-		case MessageType::FileSendDataReq_Type:
+		case E_MsgType::FileSendDataReq_Type:
 		{
 			FileDataSendReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
 				Handle_UdpMsg(endPt, reqMsg);
 			}
 		}break;
-		case MessageType::FileSendDataRsp_Type:
+		case E_MsgType::FileSendDataRsp_Type:
 		{
 			FileDataSendRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string()))
@@ -184,7 +184,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBase
 				Handle_UdpMsg(endPt, rspMsg);
 			}
 		}break;
-		case MessageType::FileRecvDataReq_Type:
+		case E_MsgType::FileRecvDataReq_Type:
 		{
 			FileDataRecvReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -690,7 +690,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 	{
 		switch (pMsg->GetType())
 		{
-		case MessageType::UserRegisterRsp_Type:
+		case E_MsgType::UserRegisterRsp_Type:
 		{
 			UserRegisterRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string()))
@@ -701,7 +701,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::UserUnRegisterRsp_Type:
+		case E_MsgType::UserUnRegisterRsp_Type:
 		{
 			UserUnRegisterRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -710,7 +710,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::UserLoginRsp_Type:
+		case E_MsgType::UserLoginRsp_Type:
 		{
 			UserLoginRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -719,7 +719,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::UserLogoutRsp_Type:
+		case E_MsgType::UserLogoutRsp_Type:
 		{
 			UserLogoutRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -728,7 +728,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FindFriendRsp_Type:
+		case E_MsgType::FindFriendRsp_Type:
 		{
 			FindFriendRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -737,7 +737,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::AddTeamRsp_Type:
+		case E_MsgType::AddTeamRsp_Type:
 		{
 			AddTeamRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -746,7 +746,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::RemoveTeamRsp_Type:
+		case E_MsgType::RemoveTeamRsp_Type:
 		{
 			RemoveTeamRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -755,7 +755,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::MoveFriendToTeamRsp_Type:
+		case E_MsgType::MoveFriendToTeamRsp_Type:
 		{
 			MoveFriendToTeamRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -764,7 +764,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::AddToGroupRsp_Type:
+		case E_MsgType::AddToGroupRsp_Type:
 		{
 			AddToGroupRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -773,7 +773,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::CreateGroupRsp_Type:
+		case E_MsgType::CreateGroupRsp_Type:
 		{
 			CreateGroupRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -782,7 +782,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::GetGroupListRsp_Type:
+		case E_MsgType::GetGroupListRsp_Type:
 		{
 			GetGroupListRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -791,7 +791,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::DestroyGroupRsp_Type:
+		case E_MsgType::DestroyGroupRsp_Type:
 		{
 			DestroyGroupRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -800,7 +800,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FindGroupRsp_Type:
+		case E_MsgType::FindGroupRsp_Type:
 		{
 			FindGroupRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())){
@@ -809,7 +809,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::SendGroupTextMsgRsp_Type:
+		case E_MsgType::SendGroupTextMsgRsp_Type:
 		{
 			SendGroupTextMsgRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -818,7 +818,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::RecvGroupTextMsgReq_Type:
+		case E_MsgType::RecvGroupTextMsgReq_Type:
 		{
 			RecvGroupTextMsgReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -827,7 +827,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FriendSendFileMsgRsp_Type:
+		case E_MsgType::FriendSendFileMsgRsp_Type:
 		{
 			FriendSendFileMsgRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -836,7 +836,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FriendRecvFileMsgReq_Type:
+		case E_MsgType::FriendRecvFileMsgReq_Type:
 		{
 			FriendRecvFileMsgReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -845,7 +845,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FriendNotifyFileMsgReq_Type:
+		case E_MsgType::FriendNotifyFileMsgReq_Type:
 		{
 			FriendNotifyFileMsgReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -855,7 +855,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				HandleFriendNotifyFileMsgReq(reqMsg);
 			}
 		}break;
-		case MessageType::AddFriendSendRsp_Type:
+		case E_MsgType::AddFriendSendRsp_Type:
 		{
 			AddFriendSendRspMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -864,7 +864,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::RemoveFriendRsp_Type:
+		case E_MsgType::RemoveFriendRsp_Type:
 		{
 			RemoveFriendRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -873,7 +873,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::AddFriendRecvReq_Type:
+		case E_MsgType::AddFriendRecvReq_Type:
 		{
 			AddFriendRecvReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -882,7 +882,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FriendChatSendTxtMsgRsp_Type:
+		case E_MsgType::FriendChatSendTxtMsgRsp_Type:
 		{
 			FriendChatSendTxtRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -891,7 +891,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::AddFriendNotifyReq_Type:
+		case E_MsgType::AddFriendNotifyReq_Type:
 		{
 			AddFriendNotifyReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -900,7 +900,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
-		case MessageType::FriendChatReceiveTxtMsgReq_Type:
+		case E_MsgType::FriendChatReceiveTxtMsgReq_Type:
 		{
 			FriendChatRecvTxtReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -922,7 +922,7 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 			}
 
 		}break;
-		case MessageType::FriendUnReadMsgNotifyReq_Type:
+		case E_MsgType::FriendUnReadMsgNotifyReq_Type:
 		{
 			FriendUnReadNotifyReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
@@ -938,14 +938,14 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 			}
 
 		}break;
-		case MessageType::FileVerifyReq_Type:
+		case E_MsgType::FileVerifyReq_Type:
 		{
 			FileVerifyReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
 				HandleFileVerifyReq(reqMsg);
 			}
 		}break;
-		case MessageType::GetFriendListRsp_Type:
+		case E_MsgType::GetFriendListRsp_Type:
 		{
 			GetFriendListRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
@@ -1094,7 +1094,7 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg)
 {
 	{
-		if (msg.GetType() == MessageType::GetFriendChatHistroyReq_Type)
+		if (msg.GetType() == E_MsgType::GetFriendChatHistroyReq_Type)
 		{
 			GetFriendChatHistoryReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
@@ -1102,7 +1102,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 			}
 			return true;
 		}
-		if (msg.GetType() == MessageType::GetGroupChatHistoryReq_Type)
+		if (msg.GetType() == E_MsgType::GetGroupChatHistoryReq_Type)
 		{
 			GetGroupChatHistoryReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
@@ -1110,7 +1110,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 			}
 			return true;
 		}
-		if (msg.GetType() == MessageType::FileSendDataBeginReq_Type)
+		if (msg.GetType() == E_MsgType::FileSendDataBeginReq_Type)
 		{
 			FileSendDataBeginReq reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
@@ -1118,7 +1118,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 			}
 			return true;
 		}
-		if (msg.GetType() == MessageType::FriendChatSendTxtMsgReq_Type)
+		if (msg.GetType() == E_MsgType::FriendChatSendTxtMsgReq_Type)
 		{
 			FriendChatSendTxtReqMsg reqMsg;
 			if (reqMsg.FromString(msg.to_string())) {
@@ -1468,7 +1468,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 {
 	switch (msg.GetType())
 	{
-	case MessageType::FriendChatReceiveTxtMsgReq_Type:
+	case E_MsgType::FriendChatReceiveTxtMsgReq_Type:
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
@@ -1476,7 +1476,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		}
 		return true;
 	}break;
-	case MessageType::FriendChatSendTxtMsgRsp_Type:
+	case E_MsgType::FriendChatSendTxtMsgRsp_Type:
 	{
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
@@ -1484,17 +1484,17 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			return true;
 		}
 	}break;
-	case MessageType::SendGroupTextMsgRsp_Type:
+	case E_MsgType::SendGroupTextMsgRsp_Type:
 	{
 		SendGroupTextMsgRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			m_msgPersisUtil->Save_RecvGroupTextMsgReqMsg(rspMsg);
 		}
 	}break;
-	case MessageType::RecvGroupTextMsgReq_Type:
+	case E_MsgType::RecvGroupTextMsgReq_Type:
 	{
 	}break;
-	case MessageType::FileSendDataBeginReq_Type:
+	case E_MsgType::FileSendDataBeginReq_Type:
 	{
 		FileSendDataBeginReq reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
@@ -1502,46 +1502,46 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		}
 		return true;
 	}break;
-	case MessageType::FileSendDataBeginRsp_Type:
+	case E_MsgType::FileSendDataBeginRsp_Type:
 	{
 		FileSendDataBeginRsp rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
 	}
-	case MessageType::FileVerifyReq_Type:
+	case E_MsgType::FileVerifyReq_Type:
 	{
 		FileVerifyReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
 			HandleFileVerifyReq(reqMsg);
 		}
 	}break;
-	case MessageType::UserLoginRsp_Type:
+	case E_MsgType::UserLoginRsp_Type:
 	{
 		UserLoginRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
 	}break;
-	case MessageType::UserLogoutRsp_Type:
+	case E_MsgType::UserLogoutRsp_Type:
 	{
 		UserLogoutRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
 	}break;
-	case MessageType::NetFailedReport_Type:
+	case E_MsgType::NetFailedReport_Type:
 	{
 		HandleSendBack_NetFailed(pClientSess);
 	}break;
-	case MessageType::FileDownLoadRsp_Type:
+	case E_MsgType::FileDownLoadRsp_Type:
 	{
 		FileDownLoadRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess,rspMsg);
 		}
 	}break;
-	case MessageType::NetRecoverReport_Type: {
+	case E_MsgType::NetRecoverReport_Type: {
 		auto loginReq = m_httpServer->GetUserLoginReq(pClientSess->UserName());
 		auto item = m_userStateMap.find(pClientSess->UserId());
 		if (item != m_userStateMap.end())
@@ -1553,7 +1553,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 		}
 	}break;
-	case MessageType::KeepAliveRsp_Type:
+	case E_MsgType::KeepAliveRsp_Type:
 	{
 		KeepAliveRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string()))
@@ -1569,7 +1569,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 		}
 	}break;
-	case MessageType::KeepAliveReq_Type:
+	case E_MsgType::KeepAliveReq_Type:
 	{
 		KeepAliveReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string()))
@@ -1585,7 +1585,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 		}
 	}break;
-	case MessageType::QueryUserUdpAddrRsp_Type:
+	case E_MsgType::QueryUserUdpAddrRsp_Type:
 	{
 		QueryUserUdpAddrRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
