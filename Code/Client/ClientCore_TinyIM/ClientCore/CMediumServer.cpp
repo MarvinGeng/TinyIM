@@ -560,9 +560,9 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 					{
 						FriendChatRecvTxtRspMsg rspMsg;
 						rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
-						rspMsg.m_strFromId = msgItem->second.m_chatMsg.m_strSenderId;
-						rspMsg.m_strToId = msgItem->second.m_chatMsg.m_strReceiverId;
-						auto pClientSess = GetClientSess(rspMsg.m_strToId);
+						rspMsg.m_strFriendId = msgItem->second.m_chatMsg.m_strSenderId;
+						rspMsg.m_strUserId = msgItem->second.m_chatMsg.m_strReceiverId;
+						auto pClientSess = GetClientSess(rspMsg.m_strUserId);
 						if (pClientSess)
 						{
 							pClientSess->SendMsg(&rspMsg);
@@ -909,10 +909,10 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 				{
 					FriendChatRecvTxtRspMsg rspMsg;
-					rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strSenderId;
-					rspMsg.m_strToId = reqMsg.m_chatMsg.m_strReceiverId;
+					rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+					rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
 					rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-					auto pSess = GetClientSess(rspMsg.m_strToId);
+					auto pSess = GetClientSess(rspMsg.m_strUserId);
 					if (pSess != nullptr)
 					{
 						auto pSend = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
@@ -1182,8 +1182,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 			FriendChatRecvTxtRspMsg rspMsg;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strSenderId;
-			rspMsg.m_strToId = reqMsg.m_chatMsg.m_strReceiverId;
+			rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+			rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
 			pClientSess->SendMsg(&rspMsg);
 		}
 	}
@@ -1227,8 +1227,11 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 {
 	FileSendDataBeginRsp rspMsg;
 	std::string strFileName = m_msgPersisUtil->Get_FileByHash(reqMsg.m_strFileHash);
-	if(strFileName.empty())
+	auto item = m_fileHashMsgIdMap.find(reqMsg.m_strFileHash);
+	auto hashItem = std::find(m_fileHashTransVec.begin(), m_fileHashTransVec.end(), reqMsg.m_strFileHash);
+	if(strFileName.empty() && hashItem == m_fileHashTransVec.end())
 	{
+		m_fileHashTransVec.push_back(reqMsg.m_strFileHash);
 		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 		rspMsg.m_strFileName = reqMsg.m_strFileName;
@@ -1250,7 +1253,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	else
 	{
 		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_EMPTY_USER_NAME;
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_FILE_TRANSING;
 		rspMsg.m_strFileName = reqMsg.m_strFileName;
 		rspMsg.m_strUserId = reqMsg.m_strUserId;
 		rspMsg.m_strFriendId = reqMsg.m_strFriendId;
@@ -1296,8 +1299,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			{
 				FriendChatRecvTxtRspMsg rspMsg;
 				rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
-				rspMsg.m_strFromId = msgItem->second.m_chatMsg.m_strSenderId;
-				rspMsg.m_strToId = msgItem->second.m_chatMsg.m_strReceiverId;
+				rspMsg.m_strFriendId = msgItem->second.m_chatMsg.m_strSenderId;
+				rspMsg.m_strUserId = msgItem->second.m_chatMsg.m_strReceiverId;
 				pClientSess->SendMsg(&rspMsg);
 			}
 			m_waitImageMsgMap.erase(rspMsg.m_strRelateMsgId);

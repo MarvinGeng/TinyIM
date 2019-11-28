@@ -154,6 +154,7 @@ private:
 	std::map<std::string, CUdpClient_PTR> m_userUdpSessMap;
 	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
 	std::map<std::string, std::string> m_fileHashMsgIdMap;
+	std::vector<std::string> m_fileHashTransVec;
 
 	long long m_timeCount;
 	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;

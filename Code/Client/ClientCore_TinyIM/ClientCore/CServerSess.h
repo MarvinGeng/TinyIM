@@ -144,7 +144,7 @@ public:
 	
 	bool IsConnected()
 	{
-		return m_bConnect;
+		return true;
 	}
 
 	std::string GetConnectInfo() {

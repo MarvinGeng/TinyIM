@@ -186,7 +186,7 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strFromId);
+			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserId);
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
