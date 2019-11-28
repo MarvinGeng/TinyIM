@@ -6732,23 +6732,23 @@ void CMainDlg::InitMsgTypeMap()
 {
 	//Init Message Map
 	if (m_netProto) {
-		m_netProto->AddMap(MessageType::AddFriendRecvReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::AddFriendNotifyReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::GetFriendListRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::FriendChatSendTxtMsgRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::FriendChatReceiveTxtMsgReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::UserLoginRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::NetFailedReport_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::NetRecoverReport_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::GetGroupListRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::RecvGroupTextMsgReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::FriendSendFileMsgRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::FriendRecvFileMsgReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::FriendNotifyFileMsgReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::UserKickOffReq_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::RecvGroupTextMsgRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::GetFriendChatHistoryRsp_Type, m_hWnd);
-		m_netProto->AddMap(MessageType::GetGroupChatHistoryRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::AddFriendRecvReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::AddFriendNotifyReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::GetFriendListRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FriendChatSendTxtMsgRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FriendChatReceiveTxtMsgReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::UserLoginRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::NetFailedReport_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::NetRecoverReport_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::GetGroupListRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::RecvGroupTextMsgReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FriendSendFileMsgRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FriendRecvFileMsgReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FriendNotifyFileMsgReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::UserKickOffReq_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::RecvGroupTextMsgRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::GetFriendChatHistoryRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::GetGroupChatHistoryRsp_Type, m_hWnd);
 	}
 }
 

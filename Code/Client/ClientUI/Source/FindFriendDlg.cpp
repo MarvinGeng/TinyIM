@@ -187,7 +187,7 @@ void CFindFriendDlg::OnAddFriend(UINT uNotifyCode, int nID, CWindow wndCtl)
 		auto pUtil = CMsgProto::GetInstance();
 		char szData[64] = { 0 };
 		EncodeUtil::UnicodeToUtf8(strAccountToAdd, szData, ARRAYSIZE(szData));
-		pUtil->AddMap(MessageType::FindGroupRsp_Type, m_hWnd);
+		pUtil->AddMap(E_MsgType::FindGroupRsp_Type, m_hWnd);
 		pUtil->SendFindGroupReq(szData);
 		m_staticAddInfo.SetWindowText(_T("正在查找群组，请稍等..."));
 	}

@@ -93,7 +93,7 @@ void CCreateNewGroupDlg::OnOK(UINT uNotifyCode, int nID, CWindow wndCtl)
 	{
 
 		auto pProto = CMsgProto::GetInstance();
-		pProto->AddMap(MessageType::CreateGroupRsp_Type, m_hWnd);
+		pProto->AddMap(E_MsgType::CreateGroupRsp_Type, m_hWnd);
 		std::string strTxtGroupName = EncodeUtil::UnicodeToAnsi(strGroupName);
 		pProto->SendCreateGroupReq("", strTxtGroupName);
 	}

@@ -22,7 +22,7 @@
 #include "UICommonDef.h"
 #include "IULog.h"
 #include "UI_USER_INFO.h"
-using ID_HANDLE_MAP = std::map<MessageType, HWND>;
+using ID_HANDLE_MAP = std::map<E_MsgType, HWND>;
 //历史消息记录使用
 struct LogMsgPair {
 	std::string m_strFirstMsgId;
@@ -56,9 +56,9 @@ public:
 	 * @param type 消息类型
 	 * @param winHandle 窗口的句柄
 	 */
-	void AddMap(const MessageType type, const HWND winHandle) {
+	void AddMap(const E_MsgType type, const HWND winHandle) {
 		EraseMap(type);
-		m_msgMap.insert(std::pair<MessageType, HWND>(type, winHandle));
+		m_msgMap.insert(std::pair<E_MsgType, HWND>(type, winHandle));
 	}
 
 	//UI Begin
@@ -138,7 +138,7 @@ private:
 private:
 
 
-	void EraseMap(const MessageType type) {
+	void EraseMap(const E_MsgType type) {
 		m_msgMap.erase(type);
 	}
 	void HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);

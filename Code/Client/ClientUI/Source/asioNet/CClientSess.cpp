@@ -133,7 +133,7 @@ void CClientSess::handleMessage(const TransBaseMsg_t *msg)
 	}
 	switch (msg->GetType())
 	{
-	case MessageType::KeepAliveReq_Type:
+	case E_MsgType::KeepAliveReq_Type:
 	{
 		KeepAliveReqMsg reqMsg;
 		if (reqMsg.FromString(msg->to_string()))
@@ -146,7 +146,7 @@ void CClientSess::handleMessage(const TransBaseMsg_t *msg)
 		}
 	}
 	break;
-	case MessageType::KeepAliveRsp_Type:
+	case E_MsgType::KeepAliveRsp_Type:
 	{
 		KeepAliveRspMsg rspMsg;
 		if (rspMsg.FromString(msg->to_string()))
@@ -197,7 +197,7 @@ int CClientSess::do_read()
 					int nMoveLen = pHeader->m_length;
 					m_recvpos = m_recvpos - pHeader->m_length;
 					TransBaseMsg_t msg(m_recvbuf);
-					INFO(ms_loger, "MsgType:{} MsgLen:{} Msg:{} ", MsgType(static_cast<MessageType>(pHeader->m_type)), pHeader->m_length, msg.to_string());
+					INFO(ms_loger, "MsgType:{} MsgLen:{} Msg:{} ", MsgType(static_cast<E_MsgType>(pHeader->m_type)), pHeader->m_length, msg.to_string());
 					handleMessage(&msg);
 					memmove(m_recvbuf, m_recvbuf + nMoveLen, m_recvpos);
 				}

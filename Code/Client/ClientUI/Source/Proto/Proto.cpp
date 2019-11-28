@@ -176,7 +176,7 @@ void CMsgProto::Init() {
 	 * @return false 失败
 	 */
 	bool CMsgProto::OnMsgBack(const TransBaseMsg_t* pMsg) {
-		MessageType type = pMsg->GetType();
+		E_MsgType type = pMsg->GetType();
 		auto item = m_msgMap.find(type);
 		if (item != m_msgMap.end()) {
 			auto pNewMsg = std::make_shared<TransBaseMsg_t>(pMsg->GetType(), pMsg->to_string());
@@ -280,7 +280,7 @@ bool CMsgProto::SendFindFriendAsnyc(const std::string strUserName, const std::st
 	reqMsg.m_strUserId = m_strUserName;
 	reqMsg.m_strWantedName = friendName;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
-	AddMap(MessageType::FindFriendRsp_Type, winHandle);
+	AddMap(E_MsgType::FindFriendRsp_Type, winHandle);
 	return pSess->SendMsg(&trans);
 }
 
@@ -313,98 +313,98 @@ bool CMsgProto::SendAddFriendAsnyc(const std::string strFriendId, const std::str
  */
 void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	switch (pOrgMsg->GetType()) {
-	case MessageType::UserRegisterRsp_Type:
+	case E_MsgType::UserRegisterRsp_Type:
 	{
 		HandleUserRegisterRsp(pOrgMsg);
 	}break;
-	case MessageType::UserLoginRsp_Type: {
+	case E_MsgType::UserLoginRsp_Type: {
 		HandleUserLoginRsp(pOrgMsg);
 	}break;
-	case MessageType::FindFriendRsp_Type: {
+	case E_MsgType::FindFriendRsp_Type: {
 		HandleFindFriendRsp(pOrgMsg);
 	}break;
-	case MessageType::AddFriendRecvReq_Type: {
+	case E_MsgType::AddFriendRecvReq_Type: {
 		HandleAddFriendRecvReq(pOrgMsg);
 	}break;
-	case MessageType::AddFriendNotifyReq_Type: {
+	case E_MsgType::AddFriendNotifyReq_Type: {
 		HandleAddFriendNotifyReq(pOrgMsg);
 	}break;
-	case MessageType::GetFriendListRsp_Type: {
+	case E_MsgType::GetFriendListRsp_Type: {
 		HandleGetFriendListRsp(pOrgMsg);
 	}break;
-	case MessageType::FriendChatReceiveTxtMsgReq_Type: {
+	case E_MsgType::FriendChatReceiveTxtMsgReq_Type: {
 		HandleRecvChatTxtReq(pOrgMsg);
 	}break;
-	case MessageType::NetRecoverReport_Type:
+	case E_MsgType::NetRecoverReport_Type:
 	{
 		HandleNetRecoverReportMsg(pOrgMsg);
 	}break;
-	case MessageType::NetFailedReport_Type:
+	case E_MsgType::NetFailedReport_Type:
 	{
 		HandleNetFailedMsg(pOrgMsg);
 		m_eOnLineStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
 	}break;
-	case MessageType::CreateGroupRsp_Type:
+	case E_MsgType::CreateGroupRsp_Type:
 	{
 		HandleCreateGroupRspMsg(pOrgMsg);
 	}break;
-	case MessageType::DestroyGroupRsp_Type:
+	case E_MsgType::DestroyGroupRsp_Type:
 	{
 		HandleDestroyGroupRspMsg(pOrgMsg);
 	}break;
-	case MessageType::GetGroupListRsp_Type:
+	case E_MsgType::GetGroupListRsp_Type:
 	{
 		HandleGetGroupListRspMsg(pOrgMsg);
 	}break;
-	case MessageType::UserLogoutRsp_Type:
+	case E_MsgType::UserLogoutRsp_Type:
 	{
 		HandleLogoutRspMsg(pOrgMsg);
 	}break;
-	case MessageType::FindGroupRsp_Type:
+	case E_MsgType::FindGroupRsp_Type:
 	{
 		HandleFindGroupRsp(pOrgMsg);
 	}break;
-	case MessageType::RecvGroupTextMsgReq_Type:
+	case E_MsgType::RecvGroupTextMsgReq_Type:
 	{
 		HandleRecvGroupTextMsgReq(pOrgMsg);
 	}break;
-	case MessageType::FriendSendFileMsgRsp_Type:
+	case E_MsgType::FriendSendFileMsgRsp_Type:
 	{
 		HandleFriendSendFileRsp(pOrgMsg);
 	}break;
-	case MessageType::FriendNotifyFileMsgReq_Type:
+	case E_MsgType::FriendNotifyFileMsgReq_Type:
 	{
 		HandleFriendNotifyFileReq(pOrgMsg);
 	}break;
-	case MessageType::FriendRecvFileMsgReq_Type:
+	case E_MsgType::FriendRecvFileMsgReq_Type:
 	{
 		HandleFriendRecvFileReq(pOrgMsg);
 	}break;
-	case MessageType::UserKickOffReq_Type:
+	case E_MsgType::UserKickOffReq_Type:
 	{
 		HandleUserKickOffReq(pOrgMsg);
 	}break;
-	case MessageType::FriendUnReadMsgNotifyReq_Type:
+	case E_MsgType::FriendUnReadMsgNotifyReq_Type:
 	{
 		HandleFriendUnReadNotifyReq(pOrgMsg);
 	}break;
-	case MessageType::SendGroupTextMsgRsp_Type:
+	case E_MsgType::SendGroupTextMsgRsp_Type:
 	{
 		HandleSendGroupTextRspMsg(pOrgMsg);
 	}break;
-	case MessageType::FriendChatSendTxtMsgRsp_Type:
+	case E_MsgType::FriendChatSendTxtMsgRsp_Type:
 	{
 		HandleSendChatTxtRsp(pOrgMsg);
 	}break;
-	case MessageType::UpdateFriendListNotifyReq_Type:
+	case E_MsgType::UpdateFriendListNotifyReq_Type:
 	{
 		HandleUpdateFriendListNotifyReq(pOrgMsg);
 	}break;
-	case MessageType::GetFriendChatHistoryRsp_Type:
+	case E_MsgType::GetFriendChatHistoryRsp_Type:
 	{
 		HandleGetFriendChatHistory(pOrgMsg);
 	}break;
-	case MessageType::GetGroupChatHistoryRsp_Type:
+	case E_MsgType::GetGroupChatHistoryRsp_Type:
 	{
 		HandleGetGroupChatHistory(pOrgMsg);
 	}break;
@@ -1553,31 +1553,6 @@ void CMsgProto::HandleRecvChatTxtReq(const std::shared_ptr<TransBaseMsg_t> pOrgM
 		{
 
 		}
-		/*{
-			auto pSess = SourceServer::CSessManager::GetManager();
-			FriendChatRecvTxtRspMsg rspMsg;
-			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_chatMsg.m_strReceiverId;
-			rspMsg.m_strToId = reqMsg.m_chatMsg.m_strSenderId;
-			TransBaseMsg_t trans(rspMsg.GetMsgType(), rspMsg.ToString());
-			pSess->SendMsg(&trans);
-		}*/
-
-		//Save To Msg Queuq
-		//{
-		//	auto item = m_friendMsgMap.find(reqMsg.m_chatMsg.m_strSenderId);
-		//	CBuddyChatUiMsg newMsg=CoreMsgToUiMsg(reqMsg.m_chatMsg);
-		//	if (item != m_friendMsgMap.end())
-		//	{
-		//		item->second.push_back(newMsg);
-		//	}
-		//	else
-		//	{
-		//		CBuddyChatUiMsgVector msgVec;
-		//		msgVec.push_back(newMsg);
-		//		m_friendMsgMap.insert({ reqMsg.m_chatMsg.m_strSenderId,msgVec });
-		//	}
-		//}
 	}
 }
 
