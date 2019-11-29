@@ -285,6 +285,7 @@ std::string CFileUtil::CalcHash(const std::string strFileName)
 		{
 			hashUtil.update(buff, nReadLen);
 		}
+		OnCloseFile(fileId);
 		auto result = hashUtil.finalize();
 		return result.hexdigest();
 	}
