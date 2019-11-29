@@ -75,6 +75,7 @@ public:
 
 	bool Save_FileHash(const std::string strFileName, const std::string strFileHash);
 	std::string Get_FileByHash(const std::string strFileHash);
+	bool Delete_FileByHash(const std::string strFileHash);
 	static std::shared_ptr<spdlog::logger> ms_logger;
 
 private:
@@ -140,6 +141,8 @@ private:
 	SQLite::Statement*   m_pFileHashInsert;//
 
 	SQLite::Statement*	 m_pFileHashSelect;
+
+	SQLite::Statement*   m_pFileHashDelete;
 
 };
 using CMsgPersistentUtil_SHARED_PTR = std::shared_ptr<CMsgPersistentUtil>;

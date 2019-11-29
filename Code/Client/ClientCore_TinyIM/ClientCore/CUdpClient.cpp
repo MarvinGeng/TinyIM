@@ -40,9 +40,6 @@ namespace ClientCore {
 					{
 						handle_msg(m_recvFromPt, &trans);
 					}
-				}
-				if (!ec)
-				{
 					do_read();
 				}
 			});

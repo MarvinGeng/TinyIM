@@ -1180,12 +1180,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			{
 				pSess->SendMsg(&reqMsg);
 			}
-			FriendChatRecvTxtRspMsg rspMsg;
-			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
-			rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
-			pClientSess->SendMsg(&rspMsg);
 		}
+		FriendChatRecvTxtRspMsg rspMsg;
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+		rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
+		pClientSess->SendMsg(&rspMsg);
 	}
 
 	//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(reqMsg.m_chatMsg);
@@ -1269,7 +1269,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	if(msgItem != m_waitImageMsgMap.end())
 	{
 		std::string strFileName = m_msgPersisUtil->Get_FileByHash(rspMsg.m_strFileHash);
-		if (strFileName.empty())
+		bool bFileExit = m_fileUtil.IsFileExist(strFileName);
+		if (!bFileExit)
+		{
+			m_msgPersisUtil->Delete_FileByHash(rspMsg.m_strFileHash);
+		}
+		if (strFileName.empty() || !bFileExit)
 		{
 			m_fileHashMsgIdMap.insert({ rspMsg.m_strFileHash,rspMsg.m_strRelateMsgId });
 		}
@@ -1425,8 +1430,11 @@ void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>&
 	m_userClientSessMap.erase(pClientSess->UserId());
 
 	auto pSess = GetClientSess(pClientSess->UserId());
-	pSess->SetUserId(pClientSess->UserId());
-	pSess->SetUserName(pClientSess->UserName());
+	if (nullptr != pSess)
+	{
+		pSess->SetUserId(pClientSess->UserId());
+		pSess->SetUserName(pClientSess->UserName());
+	}
 }
 
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)

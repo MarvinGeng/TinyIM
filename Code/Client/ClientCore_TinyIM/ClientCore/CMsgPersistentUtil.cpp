@@ -198,6 +198,13 @@ bool CMsgPersistentUtil::InitDataBase()
 
 			m_pFileHashSelect = new SQLite::Statement(*m_pDb, strSQL);
 		}
+
+		if (nullptr == m_pFileHashDelete)
+		{
+			std::string strSQL = R"(DELETE FROM T_FILE_HASH WHERE F_FILE_HASH=?)";
+
+			m_pFileHashDelete = new SQLite::Statement(*m_pDb, strSQL);
+		}
 	}
 	
 	return false;
@@ -1043,4 +1050,16 @@ std::string CMsgPersistentUtil::Get_FileByHash(const std::string strFileHash)
 	}
 	m_pFileHashSelect->reset();
 	return strFile;
+}
+
+bool CMsgPersistentUtil::Delete_FileByHash(const std::string strFileHash)
+{
+	SQLite::bind(*m_pFileHashDelete, strFileHash);
+	std::string strFile;
+	if (m_pFileHashDelete->exec())
+	{
+
+	}
+	m_pFileHashDelete->reset();
+	return true;
 }
