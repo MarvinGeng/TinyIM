@@ -471,16 +471,6 @@ void CMediumServer::HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg
 }
 
 /**
- * @brief 
- * TODO :待删除
- * 
- * @param reqMsg 
- */
-void CMediumServer::HandleFriendChatRecvTextMsgRsp(const FriendChatRecvTxtReqMsg& reqMsg)
-{
-
-}
-/**
  * @brief 获取Listen的服务器的IP和端口
  * 
  * @return std::string 
@@ -975,7 +965,12 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
 	}
 }
 
-
+/**
+ * @brief 处理GUI客户端发过来的请求好友聊天记录的消息
+ * 
+ * @param pServerSess GUI的socket会话
+ * @param reqMsg 获取好友聊天记录的请求消息
+ */
 void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& reqMsg)
 {
 	GetFriendChatHistoryRsp rspMsg;
@@ -988,6 +983,12 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 }
 
 
+/**
+ * @brief 处理GUI客户端发送的获取群组聊天记录的请求消息
+ * 
+ * @param pServerSess GUI的socket会话
+ * @param reqMsg 获取群组聊天记录的请求消息
+ */
 void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& reqMsg)
 {
 	GetGroupChatHistoryRsp rspMsg;
@@ -999,6 +1000,13 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	pServerSess->SendMsg(&rspMsg);
 }
 
+
+/**
+ * @brief 处理发送文件数据开始消息
+ * 
+ * @param pServerSess GUI客户端会话
+ * @param reqMsg 发送文件数据开始消息
+ */
 void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& reqMsg)
 {
 	reqMsg.m_strFileHash = m_fileUtil.CalcHash(reqMsg.m_strFileName);
@@ -1030,6 +1038,14 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 }
 
+
+/**
+ * @brief 处理发送好友聊天消息 在ClientCore中对消息进行解析,发送其中的图片消息
+ * 
+ * 
+ * @param pServerSess GUI客户端的Sess
+ * @param reqMsg 好友聊天请求消息
+ */
 void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& reqMsg)
 {
 	ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
@@ -1129,6 +1145,13 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 	return false;
 }
+
+/**
+ * @brief 根据用户ID获取到GUI客户端的连接
+ * 
+ * @param strUserId 用户ID
+ * @return CServerSess_SHARED_PTR 
+ */
 CServerSess_SHARED_PTR CMediumServer::GetSendBackSess(const std::string strUserId)
 {
 	auto pSess = GetClientSess(strUserId);
@@ -1149,6 +1172,14 @@ CServerSess_SHARED_PTR CMediumServer::GetSendBackSess(const std::string strUserI
 		return nullptr;
 	}
 }
+
+
+/**
+ * @brief 处理收到的好友聊天消息
+ * 
+ * @param pClientSess 和服务器的连接
+ * @param reqMsg 收到的好友聊天消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg)
 {
 	{
@@ -1191,6 +1222,13 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(reqMsg.m_chatMsg);
 }
 
+
+/**
+ * @brief 处理发送的好友聊天消息的回复
+ * 
+ * @param pClientSess 和服务器的连接
+ * @param rspMsg 好友聊天消息的回复
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatSendTxtRspMsg rspMsg)
 {
 	{
@@ -1223,6 +1261,13 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 
 	}
 }
+
+/**
+ * @brief 处理服务器发送过来的文件数据开始请求
+ * 
+ * @param pClientSess 和服务器的连接
+ * @param reqMsg 发送文件数据开始消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg)
 {
 	FileSendDataBeginRsp rspMsg;
@@ -1262,7 +1307,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 }
 
-
+/**
+ * @brief 处理服务器发送过来的文件下载回复消息
+ * 
+ * @param pClientSess 客户端连接
+ * @param rspMsg 文件下载回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg)
 {
 	auto msgItem = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
@@ -1313,6 +1363,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 }
 
+/**
+ * @brief 处理发送数据开始的回复消息,在文件上传的时候使用
+ * 
+ * @param pClientSess 和服务器的连接会话
+ * @param rspMsg 发送文件数据开始回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginRsp rspMsg)
 {
 	if (rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
@@ -1345,6 +1401,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 }
 
+/**
+ * @brief 处理用户登录回复消息
+ * 
+ * @param pClientSess 和服务器的连接会话
+ * @param rspMsg 登录回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLoginRspMsg rspMsg) {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
@@ -1378,6 +1440,13 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}
 
 }
+
+/**
+ * @brief 处理用户退出登录回复消息
+ * 
+ * @param pClientSess 和服务器的连接
+ * @param rspMsg 用户退出登录回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg) {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED) {
 		m_userClientSessMap.erase(rspMsg.m_strUserName);
@@ -1387,6 +1456,11 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 }
 
 
+/**
+ * @brief 响应GUI客户端断开连接
+ * 
+ * @param pServerSess 客户端连接会话
+ */
 void CMediumServer::ServerSessClose(const CServerSess_SHARED_PTR pServerSess)
 {
 	auto itemForwad = m_ForwardSessMap.find(pServerSess);
@@ -1416,6 +1490,12 @@ void CMediumServer::ServerSessClose(const CServerSess_SHARED_PTR pServerSess)
 		LOG_ERR(ms_loger, "Could Not Close Server Sess [{} {}]",__FILENAME__,__LINE__);
 	}
 }
+
+/**
+ * @brief 响应发送消息到服务器失败
+ * 
+ * @param pClientSess 和服务器的连接
+ */
 void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess)
 {
 	auto item = m_userStateMap.find(pClientSess->UserId());
@@ -1437,6 +1517,12 @@ void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>&
 	}
 }
 
+/**
+ * @brief 处理查询UDP地址的回复消息
+ * 
+ * @param pClientSess 和服务器的连接
+ * @param rspMsg UDP地址回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)
 {
 	if (ERROR_CODE_TYPE::E_CODE_SUCCEED == rspMsg.m_errCode)

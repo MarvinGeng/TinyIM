@@ -34,6 +34,11 @@ void CServerSess::do_read()
 	});
 }
 
+
+/**
+ * @brief 停止连接,响应GUI断开与Core的连接
+ * 
+ */
 void CServerSess::StopConnect()
 {
 	if (m_server)

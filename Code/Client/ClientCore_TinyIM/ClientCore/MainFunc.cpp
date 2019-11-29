@@ -12,6 +12,12 @@
 using asio::ip::tcp;
 using namespace std;
 static asio::io_service IoService;
+
+/**
+ * @brief 根据参数解析结果运行程序
+ * 
+ * @param result 参数解析的结果
+ */
 void RunProgram(ParseParamResult result)
 {
 	std::string strcfg, errinfo;
@@ -62,6 +68,10 @@ void RunProgram(ParseParamResult result)
 	}
 }
 
+/**
+ * @brief 停止程序的运行
+ * 
+ */
 void StopProgram()
 {
 	try

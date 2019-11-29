@@ -47,19 +47,6 @@ namespace ClientCore {
 	}
 	
 	/**
-	 * @brief 
-	 * TODO:待删除
-	 * 
-	 */
-	void CUdpClient::SendKeepAlive()
-	{
-		//KeepAliveReqMsg reqMsg;
-		//reqMsg.m_strClientId = "UdpTest";
-		//TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
-		//send_msg(m_udpServerPt, &trans);
-	}
-
-	/**
 	 * @brief 处理收到的UDP消息
 	 * 
 	 * @param endPt UDP消息的发送者的地址
@@ -72,7 +59,6 @@ namespace ClientCore {
 			LOG_INFO(ms_loger, "{}:{} Send :{}", endPt.address().to_string(),endPt.port(), pMsg->to_string());
 		}
 		m_callBack(endPt, pMsg);
-		//send_msg(endPt, pMsg);
 	}
 	
 	

@@ -1030,6 +1030,14 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCor
 	return result;
 }
 
+/**
+ * @brief 保存文件名称和hash值的对应关系
+ * 
+ * @param strFileName 文件名称
+ * @param strFileHash 文件hash值
+ * @return true 保存成功
+ * @return false 保存失败
+ */
 bool CMsgPersistentUtil::Save_FileHash(const std::string strFileName, const std::string strFileHash)
 {
 	SQLite::bind(*m_pFileHashInsert, 
@@ -1039,6 +1047,13 @@ bool CMsgPersistentUtil::Save_FileHash(const std::string strFileName, const std:
 	m_pFileHashInsert->reset();
 	return true;
 }
+
+/**
+ * @brief 获取某个hash值对应的文件名称
+ * 
+ * @param strFileHash 文件hash值 
+ * @return std::string 文件名称
+ */
 std::string CMsgPersistentUtil::Get_FileByHash(const std::string strFileHash)
 {
 	SQLite::bind(*m_pFileHashSelect, strFileHash);
@@ -1052,6 +1067,14 @@ std::string CMsgPersistentUtil::Get_FileByHash(const std::string strFileHash)
 	return strFile;
 }
 
+
+/**
+ * @brief 删除对应Hash值的文件记录
+ * 
+ * @param strFileHash 文件的Hash值
+ * @return true 删除成功
+ * @return false 删除失败
+ */
 bool CMsgPersistentUtil::Delete_FileByHash(const std::string strFileHash)
 {
 	SQLite::bind(*m_pFileHashDelete, strFileHash);
