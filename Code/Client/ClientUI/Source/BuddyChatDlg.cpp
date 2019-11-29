@@ -299,6 +299,10 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 				case E_RichEditType::IMAGE:
 				{
 					WString strNewPath = item.m_strImageName;
+					if (!Hootina::CPath::IsFileExist(strNewPath.data()))
+					{
+						MessageBox(strNewPath.data(), _T(""));
+					}
 					_RichEdit_InsertFace(recvHandle,
 						strNewPath.data(),
 						-1,
