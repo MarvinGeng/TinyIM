@@ -749,8 +749,8 @@ BEGIN
     END
     POPUP "传送文件"
     BEGIN
-        MENUITEM "发送文件",                         IDM_SEND_FILE, GRAYED
-        MENUITEM "发送离线文件",                     IDM_SEND_OFF_LINE_FILE
+        MENUITEM "发送文件",                        IDM_SEND_FILE, GRAYED
+        MENUITEM "发送离线文件",                      IDM_SEND_OFF_LINE_FILE
         MENUITEM "发送文件夹",                       IDM_SEND_DIRECTORY, GRAYED
         MENUITEM "传文件设置",                       IDM_SEND_FILE_SETTINGS, GRAYED
     END
@@ -1234,8 +1234,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -1250,14 +1250,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "Hootina Flamingo"
-            VALUE "FileVersion", "1.0.0.1"
-            VALUE "InternalName", "Flamingo"
-            VALUE "LegalCopyright", "Copyright 2017"
-            VALUE "LegalTrademarks", "hootina.org"
-            VALUE "OriginalFilename", "Flamingo.exe"
-            VALUE "ProductName", "Hootina Flamingo"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "FileDescription", "TinyIM"
+            VALUE "FileVersion", "0.1.0.0"
+            VALUE "InternalName", "TinyIM"
+            VALUE "LegalCopyright", "Copyright 2019"
+            VALUE "LegalTrademarks", "dennisthink.com"
+            VALUE "OriginalFilename", "TinyIM.exe"
+            VALUE "ProductName", "TinyIM"
+            VALUE "ProductVersion", "0.1.0.0"
         END
     END
     BLOCK "VarFileInfo"

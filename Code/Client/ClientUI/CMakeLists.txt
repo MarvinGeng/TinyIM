@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(DennisThinkIM)
+project(TinyIM)
 include_directories(./Source/wtl9.0/)
 include_directories(./Source/)
 include_directories(./Source/Proto/)
@@ -165,7 +165,7 @@ else()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/Bin/Release/) 
 endif()
 
-add_executable(DennisThinkIM ./Source/Startup.h  ./Source/Startup.cpp    ${FLAMING_GO_CLIENT_SOURCE} ${NET_SOURCE_FILE} ${UI_NET_SOURCE_FILE} ${ENCODE_UTIL_SOURCE_FILE})
+add_executable(TinyIM ./Source/Startup.h  ./Source/Startup.cpp    ${FLAMING_GO_CLIENT_SOURCE} ${NET_SOURCE_FILE} ${UI_NET_SOURCE_FILE} ${ENCODE_UTIL_SOURCE_FILE})
 
 add_subdirectory(./CatchScreen)
 #add_subdirectory(./iAutoUpdate)

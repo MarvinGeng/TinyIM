@@ -87,11 +87,6 @@ void CSessManager::Start(std::error_code &ec)
 	{
 		g_threadHandle = CreateThread(NULL, 0, SocketThread,NULL, 0, &g_threadId);
 	}
-	//g_thread = new std::thread([this] {
-	////	g_ioService.run();
-	//});
-	//SetThreadPriority(g_thread->native_handle(), THREAD_PRIORITY_HIGHEST);
-	//g_thread->detach();
 
 	ec.clear();
 }
