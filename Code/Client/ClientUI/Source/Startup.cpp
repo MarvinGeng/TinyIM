@@ -147,7 +147,11 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 	_tcscpy_s(g_szHomePath, MAX_PATH, Hootina::CPath::GetAppPath().c_str());
 	strcpy_s(g_szHomePathAscii, MAX_PATH, Hootina::CPath::GetAppPathAscii().c_str());
 	
-	
+	if (!Hootina::CPath::IsFileExist(_T("ClientCore.exe"))){
+		MessageBox(NULL, _T("文件丢失"), _T("TinyIM"), 0);
+		return 0;
+	}
+	ShellExecute(NULL, _T("open"), _T("ClientCore.exe"), _T("TinyIM"), _T(""), SW_HIDE);
 	CMsgProto::Initialize();
 	SYSTEMTIME st = {0};
 	::GetLocalTime(&st);
