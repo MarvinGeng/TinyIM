@@ -97,14 +97,14 @@ namespace ChatServer
 			TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
 			memcpy(m_sendbuf, trans.GetData(), trans.GetSize());
 			m_socket->async_send_to(asio::buffer(m_sendbuf, trans.GetSize()),senderPt,
-				[this, pSelf, senderPt, trans](std::error_code ec, std::size_t bytes_recvd) {
+				[this, pSelf, senderPt](std::error_code ec, std::size_t bytes_recvd) {
 				if (bytes_recvd > 0)
 				{
-					LOG_DBG(ms_loger, "UDP Send To:{} Msg:{} [{} {}]", EndPoint(senderPt), trans.to_string(), __FILENAME__, __LINE__);
+					LOG_DBG(ms_loger, "UDP Send To:{} [{} {}]", EndPoint(senderPt), __FILENAME__, __LINE__);
 				}
-				if (!ec)
+				if (ec)
 				{
-					LOG_ERR(ms_loger, "UDP Send To:{} Msg:{} ERR:{} [{} {}]", EndPoint(senderPt), trans.to_string(),ec.value(), __FILENAME__, __LINE__);
+					LOG_ERR(ms_loger, "UDP Send To:{} ERR:{} [{} {}]", EndPoint(senderPt),ec.value(), __FILENAME__, __LINE__);
 				}
 			});
 		}

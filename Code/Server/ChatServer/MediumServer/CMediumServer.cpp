@@ -457,15 +457,41 @@ void CChatServer::HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const T
 			KeepAliveReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string()))
 			{
+				KeepAliveRspMsg rspMsg;
+				rspMsg.m_strClientId = reqMsg.m_strClientId;
+				m_udpServer->sendMsg(sendPt, &rspMsg);
 				auto item = m_UserSessVec.find(reqMsg.m_strClientId);
 				if (item != m_UserSessVec.end())
 				{
-					m_userIdUdpAddrMap.erase(reqMsg.m_strClientId);
-					IpPortCfg udpIp;
-					udpIp.m_strServerIp = sendPt.address().to_string();
-					udpIp.m_nPort = sendPt.port();
-					m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
+					auto udpItem = m_userIdUdpAddrMap.find(reqMsg.m_strClientId);
+					if(udpItem != m_userIdUdpAddrMap.end())
+					{
+						IpPortCfg udpIp;
+						udpIp.m_strServerIp = sendPt.address().to_string();
+						udpIp.m_nPort = sendPt.port();
+						if (udpItem->second.m_strServerIp == udpIp.m_strServerIp && 
+							udpItem->second.m_nPort == udpIp.m_nPort )
+						{
+
+						}
+						else
+						{
+							m_userIdUdpAddrMap.erase(reqMsg.m_strClientId);
+							m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
+						}
+					}
+					else
+					{
+						IpPortCfg udpIp;
+						udpIp.m_strServerIp = sendPt.address().to_string();
+						udpIp.m_nPort = sendPt.port();
+						m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
+					}
 				}
+			}
+			else
+			{
+
 			}
 		}break;
 		case E_MsgType::FileSendDataReq_Type:

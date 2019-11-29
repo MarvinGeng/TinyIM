@@ -48,6 +48,7 @@ public:
 		}
 		m_clientStateMap.erase(pSess->UserId());
 		m_util.UpdateUserOnlineState(pSess->UserId(), CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE);
+		m_userIdUdpAddrMap.erase(pSess->UserId());
 	}
 	
     //void HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pSess, const  & reqMsg);
