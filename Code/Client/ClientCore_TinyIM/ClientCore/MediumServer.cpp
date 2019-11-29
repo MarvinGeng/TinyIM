@@ -1,98 +1,28 @@
-﻿#include <iostream>
-#include <memory>
-#include "CMediumServer.h"
-#include "DaemonSvcApp.h"
-#include "CServerSess.h"
-#include "CommonFunction.h"
-#include "asio_common.h"
-#include "Log.h"
-#include "planform.h"
-#include "CommonConfig.h"
-using asio::ip::tcp;
-using namespace std;
-
-void GenerateCfgFile(std::string fileName)
-{
-    std::string strConfig=R"({
-   "LogDir":".",
-   "NodeId":"MediumServer",
-   "server":{
-        "ip":"127.0.0.1",
-        "port":7000
-      },
-    
-    "clients":[
-        {
-            "ip":"127.0.0.1",
-            "port":9000
-        }
-    ],
-   "httpserver":{
-		"ip":"127.0.0.1",
-		"port":8000
-   },
-	"UdpServer":{
-		"ip":"127.0.0.1",
-		"port":20000
-	}
-})";
-    write_txtfile(fileName.c_str(),strConfig);
-}
-
+﻿#include "MainFunc.h"
+#include "CFileUtil.h"
 #ifdef _WIN32
 int main(int argc, char *argv[])
 {
-	if (argc < 2)
+	//if (argc < 2)
+	//{
+	//	PrintParamOption();
+	//	return 0;
+	//}
+
+	HANDLE singleEvent_;
+	std::string singleName = "Global\\ClientCore"+std::string(argv[1]);	// 全局唯一
+	singleEvent_ = ::CreateEvent(NULL, FALSE, FALSE, singleName.data());
+
+	if (!singleEvent_ || ::GetLastError() == ERROR_ALREADY_EXISTS)
 	{
-		PrintParamOption();
 		return 0;
 	}
-	ParseParamResult result = ParseParam(argc, argv, GenerateCfgFile);
-	if (result.m_bReturn)
-	{
-		return 0;
-	}
 
-	std::string strcfg, errinfo;
-	load_txtfile(result.m_cfgFile.c_str(), strcfg);
-	std::cout << strcfg << std::endl;
-	//std::cout << strcfg << std::endl;
-	if (!strcfg.length()) {
-		printf("no Configure\n");
-		return 1;
-	}
-	auto cfg = json11::Json::parse(strcfg, errinfo, json11::JsonParse::COMMENTS);
-
-	auto logger = CreateLogger(cfg);
-	if (!logger)
-	{
-		std::cout << "Can not Create Logger" << std::endl;
-		return 0;
-	}
-	ClientCore::CClientSess::ms_loger = logger;
-	ClientCore::CServerSess::ms_loger = logger;
-	ClientCore::CMediumServer::ms_loger = logger;
-	ClientCore::CUdpClient::ms_loger = logger;
-	//MediumServer::CClientSessManager::ms_loger = logger;
-
-	asio::io_service IoService;
-	auto server = std::make_shared<ClientCore::CMediumServer>(IoService);
-	LOG_INFO(logger, "starting Server [{} {}] ",__FILENAME__,__LINE__);
-
-	std::error_code ec;
-	server->loadConfig(cfg, ec);
-	server->start([logger](const std::error_code& ec) {
-		LOG_INFO(logger, "starting Server2 [{} {}] ", __FILENAME__, __LINE__);
-		if (!ec)
-		{
-			LOG_INFO(logger, "The Service is up and running [{} {}] ", __FILENAME__, __LINE__);
-		}
-		else
-		{
-			LOG_ERR(logger, "ERRORFail to start error:{} [{} {}] ", ec.message(), __FILENAME__, __LINE__);
-		}
-	});
-	IoService.run();
+	ParseParamResult result;
+	CFileUtil util;
+	result.m_cfgFile = util.GetCurDir() + "\\ClientCore.cfg";
+	RunProgram(result);
+	::CloseHandle(singleEvent_);
 	return 0;
 }
 #else

@@ -37,7 +37,6 @@ else()
 link_libraries(pthread)
 endif()
 set(SERVER_FILES 
-		MediumServer.cpp
 		CServerSess.h CServerSess.cpp
         CMediumServer.h CMediumServer.cpp 
         ../../../msgStruct/json11/json11.cpp
@@ -56,6 +55,9 @@ set(SERVER_FILES
 		./CUdpClient.h ./CUdpClient.cpp
 		../../../msgStruct/CommonDef.cpp
 		../../../msgStruct/CommonMsg.cpp
+		../include/common/CommonFunction.cpp
+		./MainFunc.h
+		./MainFunc.cpp
         )
 
 SET(SQLITE_CPP_SOURCE ../include/thirdparty/SQLiteCpp/sqlite3/sqlite3.c
@@ -66,5 +68,5 @@ SET(SQLITE_CPP_SOURCE ../include/thirdparty/SQLiteCpp/sqlite3/sqlite3.c
 ../include/thirdparty/SQLiteCpp/src/Statement.cpp
 ../include/thirdparty/SQLiteCpp/src/Transaction.cpp)
 
-add_executable(ClientCore ${SERVER_FILES}  ${SQLITE_CPP_SOURCE})
+add_executable(ClientCore MediumServer.cpp ${SERVER_FILES}  ${SQLITE_CPP_SOURCE})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)  
