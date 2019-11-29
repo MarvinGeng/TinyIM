@@ -294,10 +294,11 @@ std::string CFileUtil::CalcHash(const std::string strFileName)
 
 std::string CFileUtil::GetCurDir()
 {
-	char buf1[256] ={0};
-	_getcwd(buf1, sizeof(buf1));
-
-	return buf1;
+	char chpath[MAX_PATH];
+	GetModuleFileName(NULL, (LPSTR)chpath, sizeof(chpath));
+	std::string strPath = std::string(chpath);
+	strPath = strPath.substr(0, strPath.rfind("\\") + 1);
+	return strPath;
 }
 
 std::string CFileUtil::GetFileName(const int nFileId)
