@@ -189,8 +189,8 @@ TEST_CASE("FriendChatRecvTxtRspMsg") {
 	FriendChatRecvTxtRspMsg reqMsg;
 
 	reqMsg.m_strMsgId = "1234567890";
-	reqMsg.m_strFromId = "12345678";
-	reqMsg.m_strToId = "12345678";
+	reqMsg.m_strUserId = "12345678";
+	reqMsg.m_strFriendId = "12345678";
 
 	FriendChatRecvTxtRspMsg parseMsg;
 	CHECK_EQ(true, parseMsg.FromString(reqMsg.ToString()));

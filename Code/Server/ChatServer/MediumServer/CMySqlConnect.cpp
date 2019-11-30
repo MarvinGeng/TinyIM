@@ -1718,3 +1718,22 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
 	}
 	return bResult;
 }
+
+bool CMySqlConnect::DeleteFileByHash(const std::string strFileHash)
+{
+	int res = 0;
+	constexpr char * strTemplate2 = "DELETE \
+FROM T_FILE_HASH WHERE F_FILE_HASH='{0}';";
+	std::string strSql = fmt::format(strTemplate2, strFileHash);
+	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	res = mysql_query(&m_mysql, strSql.c_str());
+	bool bResult = false;
+	if (!res)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

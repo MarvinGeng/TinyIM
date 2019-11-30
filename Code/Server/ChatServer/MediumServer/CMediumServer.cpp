@@ -783,15 +783,23 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 		T_FILE_HASH_BEAN bean;
 		if(m_util.SelectFileByHash(bean,req.m_strFileHash))
 		{
-			FileSendDataBeginRsp rspMsg;
-			rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_LOGIN_FAILED;
-			rspMsg.m_nFileId = req.m_nFileId;
-			rspMsg.m_strFileName = req.m_strFileName;
-			rspMsg.m_strFriendId = req.m_strFriendId;
-			rspMsg.m_strUserId = req.m_strUserId;
-			rspMsg.m_strMsgId = req.m_strMsgId;
-			pSess->SendMsg(&rspMsg);
-			return;
+			std::string strFileName = GetFilePathByUserIdAndFileName(bean.m_strF_USER_ID, bean.m_strF_FILE_NAME);
+			if (m_fileUtil.IsFileExist(strFileName))
+			{
+				FileSendDataBeginRsp rspMsg;
+				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_FILE_HAS_EXIST;
+				rspMsg.m_nFileId = req.m_nFileId;
+				rspMsg.m_strFileName = req.m_strFileName;
+				rspMsg.m_strFriendId = req.m_strFriendId;
+				rspMsg.m_strUserId = req.m_strUserId;
+				rspMsg.m_strMsgId = req.m_strMsgId;
+				pSess->SendMsg(&rspMsg);
+				return;
+			}
+			else
+			{
+				m_util.DeleteFileByHash(req.m_strFileHash);
+			}
 		}
 		std::string strFileName = strFolder + req.m_strFileName;
 		if (!m_fileUtil.IsFileExist(strFileName)) {
