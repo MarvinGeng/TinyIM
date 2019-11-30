@@ -115,6 +115,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 		m_msgPersisUtil = std::make_shared<CMsgPersistentUtil>();
 		m_msgPersisUtil->InitDataBase();
 		m_timeCount = 0;
+		m_nNoSessTimeCount = 0;
     }
 
 	void ServerSessClose(const CServerSess_SHARED_PTR pSess);
@@ -159,6 +160,7 @@ private:
 	std::vector<std::string> m_fileHashTransVec;
 
 	long long m_timeCount;
+	int m_nNoSessTimeCount;
 	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;
 };
 } // namespace MediumServer

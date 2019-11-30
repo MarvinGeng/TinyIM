@@ -9,20 +9,28 @@ int main(int argc, char *argv[])
 	//	return 0;
 	//}
 
-	HANDLE singleEvent_;
-	std::string singleName = "Global\\ClientCore"+std::string(argv[1]);	// 全局唯一
-	singleEvent_ = ::CreateEvent(NULL, FALSE, FALSE, singleName.data());
 
-	if (!singleEvent_ || ::GetLastError() == ERROR_ALREADY_EXISTS)
+	HANDLE singleEvent_;
+	if (argc > 1)
 	{
-		return 0;
+		std::string singleName = "Global\\ClientCore" + std::string(argv[1]);	// 全局唯一
+		singleEvent_ = ::CreateEvent(NULL, FALSE, FALSE, singleName.data());
+		if (!singleEvent_ || ::GetLastError() == ERROR_ALREADY_EXISTS)
+		{
+			return 0;
+		}
 	}
+
+
 
 	ParseParamResult result;
 	CFileUtil util;
 	result.m_cfgFile = util.GetCurDir() + "\\ClientCore.cfg";
 	RunProgram(result);
-	::CloseHandle(singleEvent_);
+	if (argc > 1)
+	{
+		::CloseHandle(singleEvent_);
+	}
 	return 0;
 }
 #else

@@ -1,4 +1,4 @@
-#include "MainFunc.h"
+﻿#include "MainFunc.h"
 #include <iostream>
 #include <memory>
 #include "CMediumServer.h"

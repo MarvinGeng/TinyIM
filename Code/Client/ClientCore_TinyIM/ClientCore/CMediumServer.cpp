@@ -425,12 +425,21 @@ void CMediumServer::CheckWaitMsgVec()
  */
 void CMediumServer::OnTimer()
 {
-	CheckAllConnect();
-	CheckWaitMsgVec();
 	m_timeCount++;
-	if (m_httpServer)
+	if (!m_BackSessMap.empty())
 	{
-		m_httpServer->OnTimer();
+		CheckAllConnect();
+		CheckWaitMsgVec();
+
+		if (m_httpServer)
+		{
+			m_httpServer->OnTimer();
+		}
+	}
+	else
+	{
+		m_nNoSessTimeCount++;
+		LOG_ERR(ms_loger, "No Sess Count {} [ {} {} ]", m_timeCount,__FILENAME__, __LINE__);
 	}
 }
 
@@ -441,7 +450,7 @@ void CMediumServer::OnTimer()
  */
 void CMediumServer::SetTimer(int nSeconds)
 {
-	if(m_timer)
+	if(m_timer && m_nNoSessTimeCount < 30)
 	{
 		m_timer->expires_from_now(std::chrono::seconds(nSeconds));
 		auto self = shared_from_this();
@@ -457,6 +466,17 @@ void CMediumServer::SetTimer(int nSeconds)
 				LOG_WARN(this->ms_loger,"On Timer at MediumServer {} [{} {}]",ec.message(),__FILENAME__, __LINE__);
 			}
 		});
+	}
+	else
+	{
+		try
+		{
+			m_ioService.stop();
+		}
+		catch (std::exception ec)
+		{
+			LOG_ERR(ms_loger, "{} [{} {}]",ec.what(), __FILENAME__, __LINE__);
+		}
 	}
 }
 
@@ -1063,7 +1083,7 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 				beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
 				beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
 
-				std::string strNewFileName = m_fileUtil.GetCurDir() + "\\" + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
+				std::string strNewFileName = m_fileUtil.GetCurDir() + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
 				if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
 				{
 
@@ -1238,7 +1258,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		{
 			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
 			{
-				std::string strImageName = m_fileUtil.GetCurDir() + "\\" + rspMsg.m_chatMsg.m_strSenderId + "\\" + item.m_strImageName;
+				std::string strImageName = m_fileUtil.GetCurDir() + rspMsg.m_chatMsg.m_strSenderId + "\\" + item.m_strImageName;
 				ChatMsgElem elem;
 				elem.m_eType = item.m_eType;
 				elem.m_strImageName = strImageName;
