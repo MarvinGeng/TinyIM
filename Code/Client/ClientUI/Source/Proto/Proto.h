@@ -41,6 +41,7 @@ public:
 	static void Initialize();
 	static void UnInstialize();
 	static std::shared_ptr<CMsgProto> GetInstance();
+	static std::shared_ptr<spdlog::logger> ms_loger;
 	void SetIpPort(const std::string strIp, const int port);
 	void StartConnect();
 	UserRegisterRspMsg SendRegisterSync(const std::string strUserName, const std::string strPassword, const std::string strNickName, const int nSeconds = 3);

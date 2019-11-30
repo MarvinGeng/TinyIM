@@ -15,7 +15,7 @@
 #include "./net/IUProtocolData.h"
 #include "EncodingUtil.h"
 #include "UIWndMsgDef.h"
-
+std::shared_ptr<spdlog::logger> CMsgProto::ms_loger;
 /**
  * @brief 将TCP消息中的字体结构体转为界面的字体结构体
  * 
@@ -100,6 +100,7 @@ CMsgProto::CMsgProto() {
 		
 		m_bRecLoginRsp = false;
 		m_eOnLineStatus = E_UI_ONLINE_STATUS::STATUS_OFFLINE;
+		ms_loger = CreateLogger();
 }
 
 /**
@@ -312,6 +313,7 @@ bool CMsgProto::SendAddFriendAsnyc(const std::string strFriendId, const std::str
  * @param pOrgMsg 
  */
 void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
+	INFO(ms_loger, "MsgType:{} Msg:{} [{} {}]", MsgType(pOrgMsg->GetType()), pOrgMsg->to_string(), __FILENAME__, __LINE__);
 	switch (pOrgMsg->GetType()) {
 	case E_MsgType::UserRegisterRsp_Type:
 	{
