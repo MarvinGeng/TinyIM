@@ -194,7 +194,7 @@ std::shared_ptr<spdlog::logger> CreateLogger(json11::Json& cfg)
 	std::string strBusin=logDir+"Busin";
     auto debugFile =std::make_shared<spdlog::sinks::daily_file_sink_st>(strDebug+"txt",00,00,true);
 
-    debugFile->set_level(spdlog::level::trace);
+    debugFile->set_level(spdlog::level::debug);
     //业务日志
     auto businFile =std::make_shared<spdlog::sinks::daily_file_sink_st>(strBusin+"txt",00,00,true);
     if(1 == debugOn)

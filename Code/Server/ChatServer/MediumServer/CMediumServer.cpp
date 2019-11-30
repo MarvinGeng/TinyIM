@@ -657,9 +657,12 @@ void CChatServer::OnUserStateCheck(const std::string strUserId)
 			}
 			else
 			{
-				m_clientStateMap[strUserId] = CLIENT_SESS_STATE::SESS_IDLE_STATE;
 				LOG_INFO(ms_loger, "User {} Is Recv Msg [{} {}]", strUserId,__FILENAME__, __LINE__);
 			}
+		}
+		else
+		{
+
 		}
 	}
 	else
@@ -775,7 +778,7 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req)
 {
 	{
-		std::string strFolder = m_fileUtil.GetCurDir() + "\\" + req.m_strUserId + "\\";
+		std::string strFolder = m_fileUtil.GetCurDir() + req.m_strUserId + "\\";
 		if (!m_fileUtil.IsFolder(strFolder)) {
 			m_fileUtil.CreateFolder(strFolder);
 		}
@@ -806,20 +809,16 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 			m_fileUtil.OpenWriteFile(req.m_nFileId, strFileName);
 		}
 	}
-	auto item = m_UserSessVec.find(req.m_strFriendId);
-	if (item != m_UserSessVec.end()) {
-		item->second->SendMsg(&req);
-	}
-	else {
-		FileSendDataBeginRsp rspMsg;
-		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
-		rspMsg.m_nFileId = req.m_nFileId;
-		rspMsg.m_strFileName = req.m_strFileName;
-		rspMsg.m_strFriendId = req.m_strFriendId;
-		rspMsg.m_strUserId = req.m_strUserId;
-		rspMsg.m_strMsgId = req.m_strMsgId;
-		pSess->SendMsg(&rspMsg);
-	}
+
+	FileSendDataBeginRsp rspMsg;
+	rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+	rspMsg.m_nFileId = req.m_nFileId;
+	rspMsg.m_strFileName = req.m_strFileName;
+	rspMsg.m_strFriendId = req.m_strFriendId;
+	rspMsg.m_strUserId = req.m_strUserId;
+	rspMsg.m_strMsgId = req.m_strMsgId;
+	pSess->SendMsg(&rspMsg);
+
 }
 
 void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSess, const FileDownLoadReqMsg& req)

@@ -203,7 +203,7 @@ private:
 				asio::async_write(m_socket, asio::buffer(m_sendbuf, msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
 					if (!ec)
 					{
-						LOG_DBG(ms_loger, "[ {} ] SendMsg Succeed:{} {} [{} {}]", UserId(), MsgType(msg->GetType()), msg->to_string(), __FILENAME__, __LINE__);
+						LOG_INFO(ms_loger, "[ {} ] SendMsg Succeed:{} {} [{} {}]", UserId(), MsgType(msg->GetType()), msg->to_string(), __FILENAME__, __LINE__);
 						DoSendMsg();
 					}
 					else

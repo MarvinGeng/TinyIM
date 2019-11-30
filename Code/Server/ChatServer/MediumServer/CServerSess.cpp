@@ -50,21 +50,6 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 	}
 }
 
-/**
- * @brief 处理心跳请求消息
- * 
- * @param reqMsg 心跳请求消息
- */
-void CServerSess::handleKeepAliveReq(const KeepAliveReqMsg &reqMsg)
-{
-	//LOG_INFO(ms_loger, "KeepAliveReq:{} [ {} {} ] ", reqMsg.ToString(), __FILENAME__, __LINE__);
-	//KeepAliveRspMsg rspMsg("MediumServer");
-	//SendMsg(&rspMsg);
-	//if (m_server)
-	//{
-	//	m_server->HandleUserKeepAliveReq(shared_from_this());
-	//}
-}
 
 /**
  * @brief 处理心跳回复消息
