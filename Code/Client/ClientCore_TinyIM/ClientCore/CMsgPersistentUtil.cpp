@@ -11,6 +11,7 @@
 
 #include "CMsgPersistentUtil.h"
 #include "fmt/format.h"
+#include "CFileUtil.h"
 #include <time.h>
 /**
  * @brief 初始化数据库
@@ -33,7 +34,9 @@ bool CMsgPersistentUtil::InitDataBase()
 	{
 		ms_logger = spdlog::default_logger();
 	}
-	m_pDb = new SQLite::Database("TinyDemo.db",SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+	CFileUtil fileUtil;
+	std::string strDbName = fileUtil.GetCurDir()+m_strUserId + ".db";
+	m_pDb = new SQLite::Database(strDbName.data(),SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
 	if (m_pDb->tableExists("T_FRIEND_CHAT_MSG"))
 	{
 		LOG_INFO(ms_logger, "TABLE T_FRIEND_CHAT_MSG is Exist [ {} {} ]", __FILE__, __LINE__);

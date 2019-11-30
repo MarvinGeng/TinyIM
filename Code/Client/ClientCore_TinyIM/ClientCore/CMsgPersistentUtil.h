@@ -77,8 +77,11 @@ public:
 	std::string Get_FileByHash(const std::string strFileHash);
 	bool Delete_FileByHash(const std::string strFileHash);
 	static std::shared_ptr<spdlog::logger> ms_logger;
-
+	CMsgPersistentUtil(const std::string strUserId) {
+		m_strUserId = strUserId;
+	}
 private:
+	std::string m_strUserId;
 	std::map<std::string, AddFriendRecvReqMsg> m_AddFriendRecvReqMsgMap;
 	std::map<std::string, AddFriendNotifyReqMsg> m_AddFriendNotifyReqMsgMap;
 	std::map<std::string, FriendChatRecvTxtReqMsg> m_FriendChatRecvTxtReqMsgMap;

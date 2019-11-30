@@ -159,7 +159,7 @@ namespace ClientCore
 	void CHttpServer::Get_FriendChatRecvTxtReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_FriendChatRecvTxtReqMsg(reqMsg.m_chatMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -546,7 +546,7 @@ namespace ClientCore
 	{
 		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		RecvGroupTextMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_RecvGroupTextMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -635,7 +635,7 @@ namespace ClientCore
 	void CHttpServer::Get_RecvAddFriendReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		AddFriendRecvReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_AddFriendRecvReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -691,7 +691,7 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			{
-				auto msgUtil = m_pServer->GetMsgPersisUtil();
+				auto msgUtil = m_pServer->GetMsgPersisUtil("");
 				AddFriendRecvReqMsg reqMsg2;
 				reqMsg2.m_strMsgId = reqMsg.m_strMsgId;
 				if (msgUtil && msgUtil->Remove_AddFriendRecvReqMsg(reqMsg2))
@@ -724,7 +724,7 @@ namespace ClientCore
 	void CHttpServer::Get_AddFriendNotify(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		AddFriendNotifyReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_AddFriendNotifyReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -804,7 +804,7 @@ namespace ClientCore
 	void CHttpServer::Get_RecvFileOnlineReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendRecvFileMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_FriendRecvFileMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -1332,7 +1332,7 @@ namespace ClientCore
 	void CHttpServer::Get_SendFileOnlineNotifyReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendNotifyFileMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil();
+		auto msgUtil = m_pServer->GetMsgPersisUtil("");
 		if (msgUtil && msgUtil->Get_FriendNotifyFileMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();

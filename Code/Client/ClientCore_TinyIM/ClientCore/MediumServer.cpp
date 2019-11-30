@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
 	ParseParamResult result;
 	CFileUtil util;
-	result.m_cfgFile = util.GetCurDir() + "\\ClientCore.cfg";
+	result.m_cfgFile = util.GetCurDir() + "ClientCore.cfg";
 	RunProgram(result);
 	if (argc > 1)
 	{

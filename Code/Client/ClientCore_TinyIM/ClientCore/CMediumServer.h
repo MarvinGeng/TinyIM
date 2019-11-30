@@ -65,7 +65,6 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	std::shared_ptr<CHttpServer> m_httpServer;
 	CClientSess_SHARED_PTR m_freeClientSess;
-	CMsgPersistentUtil_SHARED_PTR m_msgPersisUtil;
     void SetTimer(int nSeconds);
     void OnTimer();
 	void CheckWaitMsgVec();
@@ -99,8 +98,17 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	CClientSess_SHARED_PTR CreateClientSess();
 	CUdpClient_PTR CreateUdpSess();
 	CUdpClient_PTR GetUdpSess(const std::string strUserId);
-	CMsgPersistentUtil_SHARED_PTR GetMsgPersisUtil() {
-		return m_msgPersisUtil;
+
+	CMsgPersistentUtil_SHARED_PTR GetMsgPersisUtil(const std::string strUserId) {
+		auto item = m_UserId_MsgPersistentUtilMap.find(strUserId);
+		if (item != m_UserId_MsgPersistentUtilMap.end())
+		{
+			return item->second;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
 	std::string GetUserId(const std::string strUserName);
@@ -112,8 +120,6 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
             m_timer = std::make_shared<asio::high_resolution_timer>(m_ioService);
         }
 		m_httpServer = std::make_shared<CHttpServer>(m_ioService,this);
-		m_msgPersisUtil = std::make_shared<CMsgPersistentUtil>();
-		m_msgPersisUtil->InitDataBase();
 		m_timeCount = 0;
 		m_nNoSessTimeCount = 0;
     }
@@ -161,6 +167,7 @@ private:
 
 	long long m_timeCount;
 	int m_nNoSessTimeCount;
+	std::map<std::string, CMsgPersistentUtil_SHARED_PTR> m_UserId_MsgPersistentUtilMap;
 	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;
 };
 } // namespace MediumServer
