@@ -439,6 +439,7 @@ enum class ERROR_CODE_TYPE {
 	E_CODE_USER_NOT_LOGIN,//用户未登录
 	E_CODE_NO_SUCH_FILE,//没有此文件
 	E_CODE_FILE_TRANSING,//文件正在传输
+	E_CODE_FILE_HAS_EXIST,//文件已存在
 
 };
 
