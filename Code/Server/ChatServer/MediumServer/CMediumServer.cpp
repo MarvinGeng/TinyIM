@@ -566,7 +566,7 @@ bool CChatServer::OnUserReceiveMsg(const std::string strUserId) {
 		if(CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE == msgBean.m_eChatMsgType)
 		{
 			FriendChatRecvTxtReqMsg reqMsg;
-			reqMsg.m_strMsgId = msgBean.m_strF_MSG_ID;
+			reqMsg.m_strMsgId = CreateMsgId();
 			reqMsg.m_chatMsg = DbBeanToMsgBean(msgBean);
 			{
 				auto item = m_UserSessVec.find(strUserId);
@@ -903,6 +903,8 @@ void CChatServer::HandleFriendChatSendTxtReq(const std::shared_ptr<CServerSess>&
 	{
 		pSess->SendMsg(&rspMsg);
 	}
+	//OnUserReceiveMsg(reqMsg.m_strSenderId);
+	//OnUserReceiveMsg(reqMsg.m_strReceiverId);
 	OnUserStateCheck(reqMsg.m_strSenderId);
 	OnUserStateCheck(reqMsg.m_strReceiverId);
 }
@@ -1117,7 +1119,7 @@ FindFriendRspMsg  CChatServer::DoFindFriendReq(const FindFriendReqMsg& reqMsg) {
  * @param regMsg 收到消息的回复
  */
 void CChatServer::HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>& pSess, const FriendChatRecvTxtRspMsg& regMsg) {
-	m_util.UpdateFriendChatMsgState(regMsg.m_strMsgId, "READ");
+	m_util.UpdateFriendChatMsgState(regMsg.m_strChatMsgId, "READ");
 	OnUserReceiveMsg(pSess->UserId());
 }
 

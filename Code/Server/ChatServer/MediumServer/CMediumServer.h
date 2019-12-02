@@ -47,6 +47,7 @@ public:
 			m_UserSessVec.erase(pSess->UserId());
 		}
 		m_clientStateMap.erase(pSess->UserId());
+		m_clientStateMap.insert({ pSess->UserId(),CLIENT_SESS_STATE::SESS_IDLE_STATE });
 		m_util.UpdateUserOnlineState(pSess->UserId(), CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE);
 		m_userIdUdpAddrMap.erase(pSess->UserId());
 	}
