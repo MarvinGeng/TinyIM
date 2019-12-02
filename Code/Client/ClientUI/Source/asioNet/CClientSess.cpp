@@ -188,7 +188,6 @@ int CClientSess::do_read()
 			asio::buffer(m_msgbuf, msg_max_len), [this, self](std::error_code ec, std::size_t length) {
 			if (!ec)
 			{
-				INFO(ms_loger, "ReadHex: {}  {}", StringToHex(m_msgbuf, length), length);
 				memcpy(m_recvbuf + m_recvpos, m_msgbuf, length);
 				m_recvpos += length;
 				Header * pHeader = (Header*)(m_recvbuf);
