@@ -114,7 +114,7 @@ int CClientSess::StopConnect()
  */
 void CClientSess::handle_message(const TransBaseMsg_t& hdr)
 {
-	LOG_INFO(ms_loger, "UserId:{} MsgType:{} Recv:{} ", UserId(),MsgType(hdr.GetType()), hdr.to_string());
+	LOG_INFO(ms_loger, "TCP Recv From Server: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(),MsgType(hdr.GetType()), hdr.to_string(),__FILENAME__,__LINE__);
 	if (m_queue)
 	{
 		m_queue->SendBack(shared_from_this(),hdr);
@@ -183,13 +183,12 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 			[this, self, pMsg](std::error_code ec, std::size_t length) mutable {
 				if (ec)
 				{
-					LOG_WARN(ms_loger, " {} TCP Send Failed {}", GetConnectInfo(),pMsg->to_string());
+					LOG_ERR(ms_loger, "TCP Send To Server Failed: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 					StopConnect();
 				}
 				else
 				{
-					LOG_WARN(ms_loger, " {} TCP Send Succeed {}", GetConnectInfo(),
-						pMsg->to_string());
+					LOG_INFO(ms_loger, "TCP Send To Server Succeed: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 				}
 			});
 	}

@@ -575,7 +575,8 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 						}
 						else
 						{
-							pMsgUtil->Save_FriendChatSendTxtRspMsg(msgItem->second.m_chatMsg);
+							//TODO: 数据记录保存到数据库会Crash
+							//pMsgUtil->Save_FriendChatSendTxtRspMsg(msgItem->second.m_chatMsg);
 						}
 
 					}

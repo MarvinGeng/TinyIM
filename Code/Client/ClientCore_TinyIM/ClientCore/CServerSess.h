@@ -55,16 +55,15 @@ public:
     void SendMsg(std::shared_ptr<TransBaseMsg_t> msg){
 		if (IsConnected())
 		{
-			LOG_INFO(ms_loger, " send message ");
 			auto self = shared_from_this();
 			asio::async_write(m_socket, asio::buffer(msg->GetData(), msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
 				if (!ec)
 				{
-					LOG_INFO(ms_loger, "Socket:{} Succeed DataLen:{}",m_connectInfo, length);
+					LOG_INFO(ms_loger, "TCP Send To GUI Succeed: MsgType{} Msg:{} [{} {}]",MsgType(msg->GetType()),msg->to_string(),__FILENAME__,__LINE__);
 				}
 				else
 				{
-					LOG_INFO(ms_loger, "Socket:{} SendFailed EC:{} ECValue:{} ", m_connectInfo, ec.message(),ec.value());
+					LOG_INFO(ms_loger, "TCP Send To GUI Failed: MsgType{} Msg:{} [{} {}]", MsgType(msg->GetType()), msg->to_string(), __FILENAME__, __LINE__);
 					StopConnect();
 				}
 			});
@@ -82,26 +81,7 @@ public:
 	*/
 	void SendMsg(const BaseMsg* pMsg) {
 		auto msg = std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
-		if (IsConnected())
-		{
-			LOG_INFO(ms_loger, " send message ");
-			auto self = shared_from_this();
-			asio::async_write(m_socket, asio::buffer(msg->GetData(), msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
-				if (!ec)
-				{
-					LOG_INFO(ms_loger, "Socket:{} Succeed DataLen:{}", m_connectInfo, length);
-				}
-				else
-				{
-					LOG_INFO(ms_loger, "Socket:{} SendFailed EC:{} ECValue:{} ", m_connectInfo, ec.message(), ec.value());
-					StopConnect();
-				}
-			});
-		}
-		else
-		{
-			LOG_ERR(ms_loger, "Socket:{} Connect Closed", m_connectInfo);
-		}
+		SendMsg(msg);
 	}
 
 	void HandleErrorCode(const std::error_code& ec) {
