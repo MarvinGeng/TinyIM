@@ -1596,6 +1596,7 @@ std::string FriendChatRecvTxtRspMsg::ToString() const
         {"MsgId", m_strMsgId},
         {"UserId", m_strUserId},
         {"FriendId", m_strFriendId},
+		{"ChatMsgId",m_strChatMsgId},
     });
     return clientObj.dump();
 }
@@ -1636,6 +1637,13 @@ bool FriendChatRecvTxtRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["ChatMsgId"].is_string()) {
+		m_strChatMsgId = json["ChatMsgId"].string_value();
+	}
+	else {
+		return false;
+	}
     return true;
 }
 
