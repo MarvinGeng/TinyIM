@@ -307,7 +307,7 @@ std::string MsgType(const E_MsgType& msgType)
 		ENUM_TO_STRING(E_MsgType::FileSendDataBeginRsp_Type)
 	default:
 		{
-			return "UNKNOWN";
+			return "UnKnownMsgType: "+std::to_string(static_cast<int>(msgType));
 		}break;
 	}
 }
