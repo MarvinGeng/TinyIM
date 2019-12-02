@@ -182,7 +182,6 @@ int CClientSess::do_read()
 {
 	if (IsConnect())
 	{
-		INFO(ms_loger, "Client  read data ");
 		auto self = shared_from_this();
 		m_socket.async_read_some(
 			asio::buffer(m_msgbuf, msg_max_len), [this, self](std::error_code ec, std::size_t length) {
@@ -207,7 +206,7 @@ int CClientSess::do_read()
 			}
 			else
 			{
-				INFO(ms_loger, "EC:{}", ec.message());
+				INFO(ms_loger, "EC:{} [{} {}]", ec.message(),__FILENAME__,__LINE__);
 			}
 		});
 	}
@@ -253,7 +252,7 @@ void CClientSess::send_msg(std::shared_ptr<TransBaseMsg_t> msg)
 		}
 		else
 		{
-			INFO(ms_loger, "Send Succeed:{}  {}", MsgType(msg->GetType()), msg->to_string());
+			//INFO(ms_loger, "Send Succeed:{}  {}", MsgType(msg->GetType()), msg->to_string());
 		}
 	});
 }

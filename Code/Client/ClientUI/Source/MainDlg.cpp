@@ -3996,8 +3996,8 @@ LRESULT CMainDlg::OnRecvAddFriendRequest(UINT uMsg, WPARAM wParam, LPARAM lParam
 		return 0;
 	}
 	//m_dwAddFriendTimerId = SetTimer(ADD_FRIEND_REQUEST_TIMER_ID, ::GetCaretBlinkTime(), NULL);
-	WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
-	::sndPlaySound(strFileName.c_str(), SND_ASYNC);
+	//WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+	//::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 	
 	{
 		
@@ -4024,10 +4024,10 @@ LRESULT CMainDlg::OnRecvFriendTextMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return (LRESULT)0;
 	}
 	//播放声音
-	{
-		WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
-		::sndPlaySound(strFileName.c_str(), SND_ASYNC);
-	}
+	//{
+	//	WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+	//	::sndPlaySound(strFileName.c_str(), SND_ASYNC);
+	//}
 	//处理接收消息
 	DoRecvFriendChatTextMsg(pResult);
 	//显示消息盒子
@@ -4092,8 +4092,8 @@ LRESULT CMainDlg::OnRecvGroupHistoryMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CMainDlg::OnAddFriendNotifyRequest(UINT uMsg, WPARAM wParam, LPARAM lParam)// 收到加好友结果的通知的请求
 {
 	{
-		WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
-		::sndPlaySound(strFileName.c_str(), SND_ASYNC);
+		//WString strFileName(Hootina::CPath::GetAppPath() + _T("Sound\\system.wav"));	// 播放加好友提示音
+		//::sndPlaySound(strFileName.c_str(), SND_ASYNC);
 		
 		C_WND_MSG_AddFriendNotifyRequest * pResult = (C_WND_MSG_AddFriendNotifyRequest*)lParam;
 		if (pResult == NULL)

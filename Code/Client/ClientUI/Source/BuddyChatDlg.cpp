@@ -301,12 +301,23 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 					WString strNewPath = item.m_strImageName;
 					if (!Hootina::CPath::IsFileExist(strNewPath.data()))
 					{
-						MessageBox(strNewPath.data(), _T(""));
+						RichEdit_ReplaceSel(recvHandle, _T("-----接收图片失败------"),
+							msg.m_stFontInfo.m_strName.c_str(),
+							msg.m_stFontInfo.m_nSize,
+							msg.m_stFontInfo.m_clrText,
+							msg.m_stFontInfo.m_bBold,
+							msg.m_stFontInfo.m_bItalic,
+							msg.m_stFontInfo.m_bUnderLine,
+							FALSE,
+							0);
 					}
-					_RichEdit_InsertFace(recvHandle,
-						strNewPath.data(),
-						-1,
-						-1);
+					else
+					{
+						_RichEdit_InsertFace(recvHandle,
+							strNewPath.data(),
+							-1,
+							-1);
+					}
 					
 				}break;
 				default:
