@@ -176,7 +176,6 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 {
 	if (IsConnect())
 	{
-		LOG_WARN(ms_loger, " {} Send {}", GetConnectInfo(),pMsg->to_string());
 		auto self = shared_from_this();
 		asio::async_write(
 			m_socket, asio::buffer(pMsg->GetData(), pMsg->GetSize()),

@@ -103,49 +103,49 @@ private:
 
 	std::vector<FriendChatMsg_s> Get_FriendChatHistoryCore(SQLite::Statement* pState);
 	std::vector<SendGroupTextMsgRspMsg>  Get_GroupChatHistoryCore(SQLite::Statement* pState);
-	SQLite::Database*    m_pDb;    ///< Database connection
+	SQLite::Database*    m_pDb = nullptr;    ///< Database connection
 	//FriendChat Msg
-	SQLite::Statement*   m_pFriendChatCreate; ///< Database prepared SQL query
+	SQLite::Statement*   m_pFriendChatCreate = nullptr; ///< Database prepared SQL query
 
 	//GroupChatMsg Msg
-	SQLite::Statement*   m_pGroupChatCreate; ///< Database prepared SQL query
+	SQLite::Statement*   m_pGroupChatCreate=nullptr; ///< Database prepared SQL query
 
-	SQLite::Statement*   m_pGroupChatInsert; ///< Database prepared SQL query
+	SQLite::Statement*   m_pGroupChatInsert = nullptr; ///< Database prepared SQL query
 
-	SQLite::Statement*   m_pGroupChatSelect; ///< Database prepared SQL query
+	SQLite::Statement*   m_pGroupChatSelect = nullptr; ///< Database prepared SQL query
 
-	SQLite::Statement*   m_pGroupChatUpdate; ///< Database prepared SQL query
+	SQLite::Statement*   m_pGroupChatUpdate = nullptr; ///< Database prepared SQL query
 
-	SQLite::Statement*   m_pGroupChatSelectRangeFirst;//首页消息
+	SQLite::Statement*   m_pGroupChatSelectRangeFirst = nullptr;//首页消息
 
-	SQLite::Statement*   m_pGroupChatSelectRangeLast;//最后一页的消息
+	SQLite::Statement*   m_pGroupChatSelectRangeLast = nullptr;//最后一页的消息
 
-	SQLite::Statement*   m_pGroupChatSelectRangePrev;//上一页
+	SQLite::Statement*   m_pGroupChatSelectRangePrev = nullptr;//上一页
 
-	SQLite::Statement*   m_pGroupChatSelectRangeNext;//群组消息下一页
+	SQLite::Statement*   m_pGroupChatSelectRangeNext = nullptr;//群组消息下一页
 
 	//好友历史消息
-	SQLite::Statement*   m_pFriendChatSelectRangeFirst;  //首页消息
+	SQLite::Statement*   m_pFriendChatSelectRangeFirst = nullptr;  //首页消息
 
-	SQLite::Statement*   m_pFriendChatSelectRangeLast;  //最后一页的消息
+	SQLite::Statement*   m_pFriendChatSelectRangeLast = nullptr;  //最后一页的消息
 
-	SQLite::Statement*   m_pFriendChatSelectRangePrev;  //上一页
+	SQLite::Statement*   m_pFriendChatSelectRangePrev = nullptr;  //上一页
 
-	SQLite::Statement*   m_pFriendChatSelectRangeNext;  //好友消息下一页
+	SQLite::Statement*   m_pFriendChatSelectRangeNext = nullptr;  //好友消息下一页
 
 	//消息查询
-	SQLite::Statement*   m_pFriendChatSelectByWord; //好友聊天关键字查询
+	SQLite::Statement*   m_pFriendChatSelectByWord = nullptr; //好友聊天关键字查询
 
-	SQLite::Statement*   m_pGroupChatSelectByWord;  //群组聊天关键字查询
+	SQLite::Statement*   m_pGroupChatSelectByWord = nullptr;  //群组聊天关键字查询
 
 	//文件Hash表
-	SQLite::Statement*   m_pFileHashCreate;//文件HASH表
+	SQLite::Statement*   m_pFileHashCreate = nullptr;//文件HASH表
 
-	SQLite::Statement*   m_pFileHashInsert;//
+	SQLite::Statement*   m_pFileHashInsert = nullptr;//
 
-	SQLite::Statement*	 m_pFileHashSelect;
+	SQLite::Statement*	 m_pFileHashSelect = nullptr;
 
-	SQLite::Statement*   m_pFileHashDelete;
+	SQLite::Statement*   m_pFileHashDelete = nullptr;
 
 };
 using CMsgPersistentUtil_SHARED_PTR = std::shared_ptr<CMsgPersistentUtil>;

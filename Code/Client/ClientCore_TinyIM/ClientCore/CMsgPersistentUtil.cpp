@@ -81,7 +81,7 @@ bool CMsgPersistentUtil::InitDataBase()
 	}
 
 
-	if (m_pDb->tableExists("F_FILE_HASH"))
+	if (m_pDb->tableExists("T_FILE_HASH"))
 	{
 		LOG_INFO(ms_logger, "TABLE F_FILE_HASH is Exist [ {} {} ]", __FILE__, __LINE__);
 	}
@@ -210,7 +210,7 @@ bool CMsgPersistentUtil::InitDataBase()
 		}
 	}
 	
-	return false;
+	return true;
 }
 
 
