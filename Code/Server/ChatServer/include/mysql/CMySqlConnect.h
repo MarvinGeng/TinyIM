@@ -12,6 +12,8 @@
 #define _DENNIS_C_MYSQL_CONNECT_H_
 #include "mysql.h"
 #include <string>
+#include <queue>
+#include <map>
 #include "CMysqlStruct.h"
 #include "Log.h"
 class CMySqlConnect
@@ -70,6 +72,7 @@ public:
 	// 好友聊天消息的操作 begin
 	bool InsertFriendChatMsg(const T_USER_CHAT_MSG& chatMsg);
 	bool SelectUnReadFriendChatMsg(const std::string& strToId, T_USER_CHAT_MSG& chatMsg);
+	bool HaveUnReadMsg(const std::string strUserId);
 	bool UpdateFriendChatMsgState(const std::string& strMsgId, const std::string msgState);
 	bool DeleteFriendChatMsg(const uint64_t msgId);
 	// 好友聊天消息的操作 end
@@ -122,7 +125,10 @@ public:
 
 	static std::shared_ptr<spdlog::logger> m_loger;
 private:
+	bool SaveMsgToQueue(const std::string strUserId);
+	bool UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG& chatMsg);
     MYSQL m_mysql;
+	std::map<std::string,std::queue<T_USER_CHAT_MSG>> m_unReadChatMsg;
 
 };
 #endif

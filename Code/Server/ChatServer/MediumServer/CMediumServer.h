@@ -147,7 +147,8 @@ public:
 
 	void OnUserStateCheck(const std::string strUserId);
 	void NotifyUserFriends(const std::string strUserId);
-
+	TransBaseMsg_S_PTR Handle_FileDataRecvRsp(const FileDataRecvRspMsg& rspMsg);
+	void Handle_RecvTcpMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg);
 	void CloseUserFile(const std::string strUserId);
 	TransBaseMsg_S_PTR HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg);
 	void HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);

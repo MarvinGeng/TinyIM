@@ -485,7 +485,8 @@ bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const 
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
-		LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+		auto nRows = mysql_affected_rows(&m_mysql);
+		LOG_INFO(m_loger, "SQL:{}  Rows:{} [{}  {} ]", strSql, nRows,__FILENAME__, __LINE__);
 		return true;
 	}
 	else
@@ -496,6 +497,34 @@ bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const 
 
 }
 
+bool CMySqlConnect::UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG& chatMsg)
+{
+	auto item = m_unReadChatMsg.find(strUserId);
+	if (item != m_unReadChatMsg.end())
+	{
+		if (!m_unReadChatMsg[strUserId].empty())
+		{
+			chatMsg = m_unReadChatMsg[strUserId].front();
+			m_unReadChatMsg[strUserId].pop();
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CMySqlConnect::HaveUnReadMsg(const std::string strUserId)
+{
+	auto item = m_unReadChatMsg.find(strUserId);
+	bool bResult = false;
+	if (item != m_unReadChatMsg.end())
+	{
+		if (!(m_unReadChatMsg[strUserId].empty()))
+		{
+			return true;
+		}
+	}
+	return SaveMsgToQueue(strUserId);
+}
 /**
  * @brief 选择未读的聊天消息
  * 
@@ -504,14 +533,27 @@ bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const 
  * @return true 成功
  * @return false 失败
  */
-bool CMySqlConnect::SelectUnReadFriendChatMsg(const std::string& strToID, T_USER_CHAT_MSG& chatMsg)
+bool CMySqlConnect::SelectUnReadFriendChatMsg(const std::string& strToID, T_USER_CHAT_MSG& chatMsgNew)
 {
+	if (UnReadFromQueue(strToID, chatMsgNew))
+	{
+		return true;
+	}
+	else
+	{
+		SaveMsgToQueue(strToID);
+	}
+	return UnReadFromQueue(strToID, chatMsgNew);
+}
+bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
+{
+	std::queue<T_USER_CHAT_MSG> chatMsgQueue;
 	bool bResult = false;
-	MYSQL_RES *result;
+	MYSQL_RES *result = nullptr;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_MSG_ID,F_MSG_TYPE,F_FROM_ID,F_TO_ID,F_MSG_CONTEXT,F_OTHER_INFO,F_CREATE_TIME FROM T_FRIEND_CHAT_MSG WHERE F_TO_ID='{0}' AND F_READ_FLAG='UNREAD' ORDER BY F_MSG_ID LIMIT 1;";
-	std::string strSql = fmt::format(strTemplate2,strToID);
+	constexpr char * strTemplate2 = "SELECT F_MSG_ID,F_MSG_TYPE,F_FROM_ID,F_TO_ID,F_MSG_CONTEXT,F_OTHER_INFO,F_CREATE_TIME FROM T_FRIEND_CHAT_MSG WHERE (F_TO_ID={0} AND F_READ_FLAG='UNREAD');";
+	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
 	if (!res)
@@ -519,6 +561,7 @@ bool CMySqlConnect::SelectUnReadFriendChatMsg(const std::string& strToID, T_USER
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
+			T_USER_CHAT_MSG chatMsg;
 			while (sql_row = mysql_fetch_row(result))
 			{
 				chatMsg.m_strF_MSG_ID = (sql_row[0]);
@@ -528,23 +571,17 @@ bool CMySqlConnect::SelectUnReadFriendChatMsg(const std::string& strToID, T_USER
 				chatMsg.m_strF_MSG_CONTEXT = sql_row[4];
 				chatMsg.m_strF_OTHER_INFO = sql_row[5];
 				chatMsg.m_strF_CREATE_TIME = sql_row[6];
+				chatMsgQueue.push(chatMsg);
 				bResult = true;
-				break;
 			}
 		}
-	}
-	else
-	{
-		return bResult;
-	}
-	if (result != NULL)
-	{
 		mysql_free_result(result);
-		return bResult;
 	}
+	m_unReadChatMsg.erase(strUserId);
+	m_unReadChatMsg.insert({ strUserId,chatMsgQueue });
+
 	return bResult;
 }
-
 /**
  * @brief 删除好友聊天消息
  * 
