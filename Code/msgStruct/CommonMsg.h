@@ -175,7 +175,7 @@ protected:
 	bool m_selfData = false;
 };
 
-
+using TransBaseMsg_S_PTR=std::shared_ptr<TransBaseMsg_t>;
 /**
  * @brief Ip端口配置类
  * 
