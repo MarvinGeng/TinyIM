@@ -134,7 +134,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	GetFriendChatHistoryRsp HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg);
 	GetGroupChatHistoryRsp HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg);
 	SearchChatHistoryRsp HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
-
+	TransBaseMsg_S_PTR HandleSendBack_SendRsp(const FileDataSendRspMsg& rspMsg);
 private:
 	CServerSess_SHARED_PTR GetSendBackSess(const std::string strUserId);
 	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
@@ -148,7 +148,7 @@ private:
 	void HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>& pClientSess);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg);
-
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDataSendRspMsg& rspMsg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& msg);
@@ -168,7 +168,8 @@ private:
 	long long m_timeCount;
 	int m_nNoSessTimeCount;
 	std::map<std::string, CMsgPersistentUtil_SHARED_PTR> m_UserId_MsgPersistentUtilMap;
-	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_WaitMsgMap;
+	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_RecvWaitMsgMap;
+	std::map < std::string, std::vector<std::shared_ptr<BaseMsg>>> m_SendWaitMsgMap;
 };
 } // namespace MediumServer
 

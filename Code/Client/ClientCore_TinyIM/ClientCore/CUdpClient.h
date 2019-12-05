@@ -16,6 +16,9 @@ namespace ClientCore {
 		void send_msg(const asio::ip::udp::endpoint endPt,const BaseMsg* pMsg);
 		void send_msg(const std::string strIp, const int port, const BaseMsg* pMsg);
 		void sendToServer(const BaseMsg* pMsg);
+		asio::ip::udp::endpoint GetServerEndPt() {
+			return m_udpServerPt;
+		}
 	public:
 		static std::shared_ptr<spdlog::logger> ms_loger;
 	private:
