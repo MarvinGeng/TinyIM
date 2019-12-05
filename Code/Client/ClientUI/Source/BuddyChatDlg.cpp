@@ -299,8 +299,11 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 				case E_RichEditType::IMAGE:
 				{
 					WString strNewPath = item.m_strImageName;
+					std::string strImagePath = EncodeUtil::UnicodeToAnsi(strNewPath);
 					if (!Hootina::CPath::IsFileExist(strNewPath.data()))
 					{
+
+						ERR(m_pSess->ms_loger, "Image File No Exist: {} [{} {}]", strImagePath,__FILENAME__, __LINE__);
 						RichEdit_ReplaceSel(recvHandle, _T("-----接收图片失败------"),
 							msg.m_stFontInfo.m_strName.c_str(),
 							msg.m_stFontInfo.m_nSize,
@@ -313,6 +316,7 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 					}
 					else
 					{
+						INFO(m_pSess->ms_loger, "Image File Good: {} [{} {}]", strImagePath, __FILENAME__, __LINE__);
 						_RichEdit_InsertFace(recvHandle,
 							strNewPath.data(),
 							-1,
