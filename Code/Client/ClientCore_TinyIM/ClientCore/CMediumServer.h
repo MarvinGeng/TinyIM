@@ -153,6 +153,7 @@ private:
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& msg);
+	void Handle_TcpMsg(const std::shared_ptr<CClientSess>& pClientSess, const FileDataRecvReqMsg& reqMsg);
 
 
 	void HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg);

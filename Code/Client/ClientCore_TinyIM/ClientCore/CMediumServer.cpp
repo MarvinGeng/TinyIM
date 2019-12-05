@@ -730,6 +730,27 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 	}*/
 }
 
+void CMediumServer::Handle_TcpMsg(const std::shared_ptr<CClientSess>& pClientSess, const FileDataRecvReqMsg& reqMsg)
+{
+	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnWriteData(reqMsg.m_nFileId + 1, reqMsg.m_szData, reqMsg.m_nDataLength);
+		LOG_INFO(ms_loger, "WriteData ", reqMsg.m_nFileId);
+		FileDataRecvRspMsg rspMsg;
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_nFileId = reqMsg.m_nFileId;
+		rspMsg.m_strUserId = reqMsg.m_strUserId;
+		rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+		rspMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		rspMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+		pClientSess->SendMsg(&rspMsg);
+	}
+
+	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnCloseFile(reqMsg.m_nFileId + 1);
+	}
+}
 /**
  * @brief 处理从UDP收到文件数据的接收请求消息
  * 
@@ -1517,6 +1538,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 					rspMsg.m_strMsgId = waitItem->second.m_strMsgId;
 					rspMsg.m_strFriendId = waitItem->second.m_chatMsg.m_strSenderId;
 					rspMsg.m_strUserId = waitItem->second.m_chatMsg.m_strReceiverId;
+					rspMsg.m_strChatMsgId = waitItem->second.m_chatMsg.m_strChatMsgId;
 					pClientSess->SendMsg(&rspMsg);
 				}
 				m_waitImageMsgMap.erase(hashItem->second);
@@ -1533,70 +1555,92 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg)
 {
-	auto msgItem = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
-	if(msgItem != m_waitImageMsgMap.end())
+	if(rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
-		std::string strFileName;// = m_msgPersisUtil->Get_FileByHash(rspMsg.m_strFileHash);
+		auto msgItem = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
+		if(msgItem != m_waitImageMsgMap.end())
+		{
+			std::string strFileName;// = m_msgPersisUtil->Get_FileByHash(rspMsg.m_strFileHash);
 
-		{
-			auto pMsgUtil = GetMsgPersisUtil(rspMsg.m_strUserId);
-			if (pMsgUtil)
 			{
-				strFileName = pMsgUtil->Get_FileByHash(rspMsg.m_strFileHash);
+				auto pMsgUtil = GetMsgPersisUtil(rspMsg.m_strUserId);
+				if (pMsgUtil)
+				{
+					strFileName = pMsgUtil->Get_FileByHash(rspMsg.m_strFileHash);
+				}
+				else
+				{
+					LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ",rspMsg.m_strUserId, __FILENAME__, __LINE__);
+				}
+			}
+			bool bFileExit = m_fileUtil.IsFileExist(strFileName);
+			if (!bFileExit)
+			{
+				//m_msgPersisUtil->Delete_FileByHash(rspMsg.m_strFileHash);
+				auto pMsgUtil = GetMsgPersisUtil(rspMsg.m_strUserId);
+				if (pMsgUtil)
+				{
+					pMsgUtil->Delete_FileByHash(rspMsg.m_strFileHash);
+				}
+				else
+				{
+					LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", rspMsg.m_strUserId, __FILENAME__, __LINE__);
+				}
+			}
+			if (strFileName.empty() || !bFileExit)
+			{
+				m_fileHashMsgIdMap.insert({ rspMsg.m_strFileHash,rspMsg.m_strRelateMsgId });
 			}
 			else
 			{
-				LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ",rspMsg.m_strUserId, __FILENAME__, __LINE__);
-			}
-		}
-		bool bFileExit = m_fileUtil.IsFileExist(strFileName);
-		if (!bFileExit)
-		{
-			//m_msgPersisUtil->Delete_FileByHash(rspMsg.m_strFileHash);
-			auto pMsgUtil = GetMsgPersisUtil(rspMsg.m_strUserId);
-			if (pMsgUtil)
-			{
-				pMsgUtil->Delete_FileByHash(rspMsg.m_strFileHash);
-			}
-			else
-			{
-				LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", rspMsg.m_strUserId, __FILENAME__, __LINE__);
-			}
-		}
-		if (strFileName.empty() || !bFileExit)
-		{
-			m_fileHashMsgIdMap.insert({ rspMsg.m_strFileHash,rspMsg.m_strRelateMsgId });
-		}
-		else
-		{
-			ChatMsgElemVec oldMsgVec = MsgElemVec(msgItem->second.m_chatMsg.m_strContext);
-			ChatMsgElemVec newVec;
-			for (const auto item : oldMsgVec)
-			{
-				if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE) {
-					ChatMsgElem elem;
-					elem.m_eType = item.m_eType;
-					elem.m_strImageName = strFileName;
-					newVec.push_back(elem);
+				ChatMsgElemVec oldMsgVec = MsgElemVec(msgItem->second.m_chatMsg.m_strContext);
+				ChatMsgElemVec newVec;
+				for (const auto item : oldMsgVec)
+				{
+					if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE) {
+						ChatMsgElem elem;
+						elem.m_eType = item.m_eType;
+						elem.m_strImageName = strFileName;
+						newVec.push_back(elem);
+					}
+					else {
+						newVec.push_back(item);
+					}
 				}
-				else {
-					newVec.push_back(item);
+				msgItem->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
+				//SendBack
+				{
+					auto pMsg = std::make_shared<TransBaseMsg_t>(msgItem->second.GetMsgType(), msgItem->second.ToString());
+					auto item = m_BackSessMap.find(pClientSess);
+					if (item != m_BackSessMap.end())
+					{
+						item->second->SendMsg(pMsg);
+					}
 				}
+				//SendForward
+				{
+					FriendChatRecvTxtRspMsg rspMsg;
+					rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
+					rspMsg.m_strFriendId = msgItem->second.m_chatMsg.m_strSenderId;
+					rspMsg.m_strUserId = msgItem->second.m_chatMsg.m_strReceiverId;
+					rspMsg.m_strChatMsgId = msgItem->second.m_chatMsg.m_strChatMsgId;
+					pClientSess->SendMsg(&rspMsg);
+				}
+				m_waitImageMsgMap.erase(rspMsg.m_strRelateMsgId);
 			}
-			msgItem->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
-			auto pMsg = std::make_shared<TransBaseMsg_t>(msgItem->second.GetMsgType(), msgItem->second.ToString());
-			auto item = m_BackSessMap.find(pClientSess);
-			if (item != m_BackSessMap.end())
-			{
-				item->second->SendMsg(pMsg);
-			}
-			{
-				FriendChatRecvTxtRspMsg rspMsg;
-				rspMsg.m_strMsgId = msgItem->second.m_strMsgId;
-				rspMsg.m_strFriendId = msgItem->second.m_chatMsg.m_strSenderId;
-				rspMsg.m_strUserId = msgItem->second.m_chatMsg.m_strReceiverId;
-				pClientSess->SendMsg(&rspMsg);
-			}
+		}
+	}
+	else
+	{
+		auto msgItem = m_waitImageMsgMap.find(rspMsg.m_strRelateMsgId);
+		if (msgItem != m_waitImageMsgMap.end())
+		{
+			FriendChatRecvTxtRspMsg sendRspMsg;
+			sendRspMsg.m_strMsgId = msgItem->second.m_strMsgId;
+			sendRspMsg.m_strFriendId = msgItem->second.m_chatMsg.m_strSenderId;
+			sendRspMsg.m_strUserId = msgItem->second.m_chatMsg.m_strReceiverId;
+			sendRspMsg.m_strChatMsgId = msgItem->second.m_chatMsg.m_strChatMsgId;
+			pClientSess->SendMsg(&sendRspMsg);
 			m_waitImageMsgMap.erase(rspMsg.m_strRelateMsgId);
 		}
 	}
@@ -1973,6 +2017,14 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess,rspMsg);
 		}
+	}break;
+	case E_MsgType::FileRecvDataReq_Type:
+	{
+		FileDataRecvReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			Handle_TcpMsg(pClientSess, reqMsg);
+		}
+		return true;
 	}break;
 	default:
 	{
