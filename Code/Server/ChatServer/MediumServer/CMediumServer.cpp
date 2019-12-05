@@ -811,8 +811,14 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 		if(m_util.SelectFileByHash(bean,req.m_strFileHash))
 		{
 			std::string strFileName = GetFilePathByUserIdAndFileName(bean.m_strF_USER_ID, bean.m_strF_FILE_NAME);
+			std::string strNewFileName = strFolder + bean.m_strF_FILE_NAME;
 			if (m_fileUtil.IsFileExist(strFileName))
 			{
+				if (!m_fileUtil.IsFileExist(strNewFileName))
+				{
+					m_fileUtil.UtilCopy(strFileName, strNewFileName);
+				}
+				LOG_ERR(ms_loger, "FileName:{} Hash:{} [{} {}]", strFileName, req.m_strFileHash,__FILENAME__,__LINE__);
 				FileSendDataBeginRsp rspMsg;
 				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_FILE_HAS_EXIST;
 				rspMsg.m_nFileId = req.m_nFileId;
@@ -870,9 +876,16 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 			std::string strFileName = m_fileUtil.GetCurDir() + req.m_strFriendId + "\\" + req.m_strFileName;
 			
 			rspMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
-			if (rspMsg.m_strFileHash.empty() || IsFileSending(rspMsg.m_strFileHash))
+			if (!m_fileUtil.IsFileExist(strFileName))
 			{
+				LOG_ERR(ms_loger, "File Not Exist: {} [{} {}]", strFileName,__FILENAME__,__LINE__);
 				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_FILE;
+				pSess->SendMsg(&rspMsg);
+			}
+			else if (IsFileSending(rspMsg.m_strFileHash))
+			{
+				LOG_ERR(ms_loger, "File Sending: {} [{} {}]", strFileName, __FILENAME__, __LINE__);
+				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_FILE_TRANSING;
 				pSess->SendMsg(&rspMsg);
 			}
 			else
