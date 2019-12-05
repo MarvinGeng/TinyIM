@@ -64,17 +64,17 @@ public:
      * 
      * @param msg 待发送的消息
      */
-  //  void SendMsg(std::shared_ptr<TransBaseMsg_t> msg){
-		//if (m_bSend) {
-		//	m_msgQueue.push(msg);
-		//}
-		//else
-		//{
-		//	m_msgQueue.push(msg);
-		//	m_bSend.store(true);
-		//	DoSendMsg();
-		//}
-  //  }
+    void SendMsg(std::shared_ptr<TransBaseMsg_t> msg){
+		if (m_bSend) {
+			m_msgQueue.push(msg);
+		}
+		else
+		{
+			m_msgQueue.push(msg);
+			m_bSend.store(true);
+			DoSendMsg();
+		}
+    }
 	/**
 	 * @brief 发送消息函数，所有的消息需要转为TransBaseMsg_t的类型来进行发送。
 	 *

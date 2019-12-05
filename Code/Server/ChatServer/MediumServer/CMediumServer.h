@@ -15,7 +15,7 @@
 #include <functional>
 
 #include <map>
-
+#include <string>
 #include "CommonMsg.h"
 #include "Log.h"
 #include "asio_common.h"
@@ -29,8 +29,18 @@
 #include "CMySqlConnect.h"
 #include "SnowFlake.h"
 #include "CFileUtil.h"
+
+struct SendFileInfo_st
+{
+	std::string m_strUserId;
+	int         m_nFileId;
+	time_t      m_lastPackageTime;
+};
+using FILE_ID_RSP_MSG_MAP = std::map<int, FileDataSendRspMsg>;
+using USER_FILE_DATA_RSP_MAP=std::map<std::string, FILE_ID_RSP_MSG_MAP>;
 namespace ChatServer
 {
+
 using tcp = asio::ip::tcp;
 
 class CChatServer : public std::enable_shared_from_this<CChatServer>
@@ -88,6 +98,7 @@ public:
 	void Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg);
 
 	//
+	
   protected:
     //asio的主循环类
     asio::io_service &m_ioService;
@@ -136,6 +147,10 @@ public:
 
 	void OnUserStateCheck(const std::string strUserId);
 	void NotifyUserFriends(const std::string strUserId);
+
+	void CloseUserFile(const std::string strUserId);
+	TransBaseMsg_S_PTR HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg);
+	void HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
 private:
 	const int HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
 	std::string CreateMsgId();
@@ -160,7 +175,24 @@ private:
 
 	void HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
 	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& pMsg);
+
+	void CheckFileDataRsp(const std::string strUserId);
+
+	void CheckFileVerifyReq(const FileVerifyReqMsg& reqMsg);
+
+	void SaveFileDataRsp(const FileDataSendRspMsg& rspMsg);
 private:
+	USER_FILE_DATA_RSP_MAP m_fileDataRspMap;
+	std::vector<std::string> m_strSendFileHashVec;
+	std::vector<std::string> m_strRecvFileHashVec;//从客户端上来的Hash的数组
+	bool IsFileRecving(const std::string strFileHash);//文件是否在接收状态
+	bool SaveRecvingState(const std::string strFileHash);
+	bool RemoveRecvingState(const std::string strFileHash);
+
+	bool IsFileSending(const std::string strFileHash);//文件是否在发送状态
+	bool SaveSendingState(const std::string strFileHash);
+	bool RemoveSendingState(const std::string strFileHash);
+
 	std::string GetFilePathByUserIdAndFileName(const std::string strUserId, const std::string strFileName);
 	std::string GetFolderByUserId(const std::string strUserId);
 

@@ -169,6 +169,7 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, co
 		{
 			HandleUserKeepAliveReq(pSess, msg);
 		}
+		CheckFileDataRsp(msg.m_strClientId);
 	}
 	break;
 	case E_MsgType::KeepAliveRsp_Type:
@@ -425,6 +426,13 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, co
 		FileSendDataBeginRsp rspMsg;
 		if (rspMsg.FromString(pMsg->to_string())) {
 			HandleFileSendDataBeginRsp(pSess, rspMsg);
+		}
+	}break;
+	case E_MsgType::FileSendDataReq_Type:
+	{
+		FileDataSendReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleFileDataSendReq(pSess, reqMsg);
 		}
 	}break;
 	case E_MsgType::FileDownLoadReq_Type:
@@ -777,8 +785,9 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 
 void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req)
 {
+	std::string strFolder = m_fileUtil.GetCurDir() + req.m_strUserId + "\\";
 	{
-		std::string strFolder = m_fileUtil.GetCurDir() + req.m_strUserId + "\\";
+		
 		if (!m_fileUtil.IsFolder(strFolder)) {
 			m_fileUtil.CreateFolder(strFolder);
 		}
@@ -804,19 +813,29 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 				m_util.DeleteFileByHash(req.m_strFileHash);
 			}
 		}
-		std::string strFileName = strFolder + req.m_strFileName;
-		if (!m_fileUtil.IsFileExist(strFileName)) {
-			m_fileUtil.OpenWriteFile(req.m_nFileId, strFileName);
-		}
+		
 	}
-
 	FileSendDataBeginRsp rspMsg;
-	rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 	rspMsg.m_nFileId = req.m_nFileId;
 	rspMsg.m_strFileName = req.m_strFileName;
 	rspMsg.m_strFriendId = req.m_strFriendId;
 	rspMsg.m_strUserId = req.m_strUserId;
 	rspMsg.m_strMsgId = req.m_strMsgId;
+	if (IsFileRecving(req.m_strFileHash))
+	{
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_FILE_TRANSING;
+		LOG_WARN(ms_loger, "User:{} File:{} Is Recving [{} {}]", req.m_strUserId, req.m_strFileName, __FILENAME__, __LINE__);
+	}
+	else
+	{
+		SaveRecvingState(req.m_strFileHash);
+		std::string strFileName = strFolder + req.m_strFileName;
+		if (!m_fileUtil.IsFileExist(strFileName)) {
+			m_fileUtil.OpenWriteFile(req.m_nFileId, strFileName);
+		}
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+
+	}
 	pSess->SendMsg(&rspMsg);
 
 }
@@ -2088,7 +2107,16 @@ void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sen
 		sendRsp.m_nFileId = reqMsg.m_nFileId;
 		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
 		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
-		m_udpServer->sendMsg(sendPt,&sendRsp);
+		{
+			auto pSess = m_UserSessVec.find(reqMsg.m_strUserId);
+			if (pSess != m_UserSessVec.end())
+			{
+				pSess->second->SendMsg(&sendRsp);
+			}
+		}
+		//m_udpServer->sendMsg(sendPt,&sendRsp);
+
+		//SaveFileDataRsp(sendRsp);
 	}
 }
 
@@ -2102,28 +2130,13 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 {
 
 	{
-		auto item = m_UserSessVec.find(req.m_strUserId);
-		if (item != m_UserSessVec.end())
-		{
-			item->second->SendMsg(&req);
-		}
-		else
-		{
-			FileVerifyRspMsg rspMsg;
-			rspMsg.m_strMsgId = req.m_strMsgId;
-			rspMsg.m_strFileName = req.m_strFileName;
-			rspMsg.m_strUserId = req.m_strUserId;
-			rspMsg.m_strFriendId = req.m_strFriendId;
-			rspMsg.m_nFileId = req.m_nFileId;
-			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
-			pSess->SendMsg(&rspMsg);
-		}
 		m_fileUtil.OnCloseFile(req.m_nFileId);
 	}
 
 	{
 		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strUserId, req.m_strFileName);
 		std::string strFileHash = m_fileUtil.CalcHash(strFileName);
+		FileVerifyRspMsg rspMsg;
 		if (strFileHash == req.m_strFileHash)
 		{
 			T_FILE_HASH_BEAN bean;
@@ -2131,7 +2144,21 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 			bean.m_strF_FILE_NAME = req.m_strFileName;
 			bean.m_strF_USER_ID = req.m_strUserId;
 			m_util.InsertFileHash(bean);
+			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 		}
+		else
+		{
+			rspMsg.m_strMsgId = req.m_strMsgId;
+			rspMsg.m_strFileName = req.m_strFileName;
+			rspMsg.m_strUserId = req.m_strUserId;
+			rspMsg.m_strFriendId = req.m_strFriendId;
+			rspMsg.m_nFileId = req.m_nFileId;
+			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_FILE_SEND_FAILED;
+		}
+		pSess->SendMsg(&rspMsg);
+
+		RemoveRecvingState(strFileHash);
+		CheckFileVerifyReq(req);
 	}
 }
 
@@ -2539,6 +2566,145 @@ std::string CChatServer::GetFolderByUserId(const std::string strUserId)
 {
 	std::string strFolder = m_fileUtil.GetCurDir() + "\\" + strUserId+"\\";
 	return strFolder;
+}
+
+bool CChatServer::IsFileRecving(const std::string strFileHash)
+{
+	auto item = std::find(m_strRecvFileHashVec.begin(), m_strRecvFileHashVec.end(), strFileHash);
+	if (item != m_strRecvFileHashVec.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool CChatServer::IsFileSending(const std::string strFileHash)
+{
+	auto item = std::find(m_strSendFileHashVec.begin(), m_strSendFileHashVec.end(), strFileHash);
+	if (item != m_strSendFileHashVec.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+bool CChatServer::SaveRecvingState(const std::string strFileHash)
+{
+	if (IsFileRecving(strFileHash))
+	{
+		return false;
+	}
+	else
+	{
+		m_strRecvFileHashVec.push_back(strFileHash);
+		return true;
+	}
+}
+
+bool CChatServer::RemoveRecvingState(const std::string strFileHash)
+{
+	if (IsFileRecving(strFileHash))
+	{
+		auto item = std::find(m_strRecvFileHashVec.begin(), m_strRecvFileHashVec.end(), strFileHash);
+		m_strRecvFileHashVec.erase(item);
+		return true;
+	}
+	return false;
+}
+
+bool CChatServer::SaveSendingState(const std::string strFileHash)
+{
+	return false;
+}
+
+bool CChatServer::RemoveSendingState(const std::string strFileHash)
+{
+	return false;
+}
+
+void CChatServer::CheckFileDataRsp(const std::string strUserId)
+{
+	auto item = m_fileDataRspMap.find(strUserId);
+	if (item != m_fileDataRspMap.end())
+	{
+		/*auto udpAddrItem = m_userIdUdpAddrMap.find(strUserId);
+		if (udpAddrItem != m_userIdUdpAddrMap.end())
+		{
+			for (const auto msgItem : item->second)
+			{
+				m_udpServer->sendMsg(udpAddrItem->second.m_strServerIp, udpAddrItem->second.m_nPort, &(msgItem.second));
+			}
+		}*/
+	}
+}
+
+void CChatServer::CheckFileVerifyReq(const FileVerifyReqMsg& reqMsg)
+{
+	auto item = m_fileDataRspMap.find(reqMsg.m_strUserId);
+	if (item != m_fileDataRspMap.end())
+	{
+		item->second.erase(reqMsg.m_nFileId);
+	}
+}
+void CChatServer::SaveFileDataRsp(const FileDataSendRspMsg& rspMsg)
+{
+	auto item = m_fileDataRspMap.find(rspMsg.m_strUserId);
+	if (item != m_fileDataRspMap.end())
+	{
+		m_fileDataRspMap[rspMsg.m_strUserId].erase(rspMsg.m_nFileId);
+		m_fileDataRspMap[rspMsg.m_strUserId].insert({ rspMsg.m_nFileId,rspMsg });
+	}
+	else
+	{
+		FILE_ID_RSP_MSG_MAP rspMap;
+		rspMap.insert({ rspMsg.m_nFileId,rspMsg });
+		m_fileDataRspMap.insert({ rspMsg.m_strUserId,rspMap });
+	}
+}
+
+void CChatServer::CloseUserFile(const std::string strUserId)
+{
+	auto item = m_fileDataRspMap.find(strUserId);
+	if (item != m_fileDataRspMap.end())
+	{
+		for (const auto msgItem : item->second)
+		{
+			std::string strFileName = m_fileUtil.GetFileName(msgItem.second.m_nFileId);
+			m_fileUtil.OnCloseFile(msgItem.second.m_nFileId);
+			m_fileUtil.RemoveFile(strFileName);
+		}
+	}
+}
+
+TransBaseMsg_S_PTR CChatServer::HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg)
+{
+	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
+	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
+	{
+		m_fileUtil.OnCloseFile(reqMsg.m_nFileId);
+	}
+	{
+		FileDataSendRspMsg sendRsp;
+		sendRsp.m_strMsgId = reqMsg.m_strMsgId;
+		sendRsp.m_strUserId = reqMsg.m_strUserId;
+		sendRsp.m_strFriendId = reqMsg.m_strFriendId;
+		sendRsp.m_nFileId = reqMsg.m_nFileId;
+		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
+		auto pResult = std::make_shared<TransBaseMsg_t>(sendRsp.GetMsgType(), sendRsp.ToString());
+		return pResult;
+	}
+}
+void CChatServer::HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg)
+{
+	auto pMsg = HandleFileDataSendReq(reqMsg);
+	pSess->SendMsg(pMsg);
 }
 
 }
