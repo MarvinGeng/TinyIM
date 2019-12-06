@@ -149,6 +149,7 @@ private:
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDataSendRspMsg& rspMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& msg);
@@ -170,7 +171,7 @@ private:
 	int m_nNoSessTimeCount;
 	std::map<std::string, CMsgPersistentUtil_SHARED_PTR> m_UserId_MsgPersistentUtilMap;
 	std::map<std::string, std::vector<std::shared_ptr<BaseMsg>> > m_RecvWaitMsgMap;
-	std::map < std::string, std::vector<std::shared_ptr<BaseMsg>>> m_SendWaitMsgMap;
+	std::map<std::string, FriendChatSendTxtReqMsg>  m_SendWaitMsgMap;
 };
 } // namespace MediumServer
 
