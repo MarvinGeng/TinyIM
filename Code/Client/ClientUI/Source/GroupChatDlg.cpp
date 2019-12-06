@@ -2159,13 +2159,13 @@ BOOL CGroupChatDlg::InitMidToolBar()
 		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
 	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_face.png"));
 
-	nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_IMAGE_BTN, STBI_STYLE_BUTTON);
-	m_tbMid.SetItemSize(nIndex, 30, 27);
-	m_tbMid.SetItemPadding(nIndex, 1);
-	m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
-	m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
-		_T("aio_toolbar_down.png"), CRect(3,3,3,3));
-	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
+	//nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_IMAGE_BTN, STBI_STYLE_BUTTON);
+	//m_tbMid.SetItemSize(nIndex, 30, 27);
+	//m_tbMid.SetItemPadding(nIndex, 1);
+	//m_tbMid.SetItemToolTipText(nIndex, _T("发送图片"));
+	//m_tbMid.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"), 
+	//	_T("aio_toolbar_down.png"), CRect(3,3,3,3));
+	//m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_sendpic.png"));
 	
 
 	/*nIndex = m_tbMid.AddItem(ID_GROUP_CHAT_DLG_SCREEN_SHOT_BTN, STBI_STYLE_BUTTON);
