@@ -892,17 +892,16 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 			{
 				rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 				pSess->SendMsg(&rspMsg);
-
-				FileSendDataBeginReq reqMsg;
-				reqMsg.m_strUserId = req.m_strUserId;
-				reqMsg.m_strFriendId = req.m_strFriendId;
-				reqMsg.m_strFileName = req.m_strFileName;
-				reqMsg.m_nFileId = rand();
-				reqMsg.m_strFileHash = rspMsg.m_strFileHash;
-				reqMsg.m_strMsgId = CreateMsgId();
-				pSess->SendMsg(&reqMsg);
-				SaveSendingState(reqMsg.m_strFileHash);
 			}
+			FileSendDataBeginReq reqMsg;
+			reqMsg.m_strUserId = req.m_strUserId;
+			reqMsg.m_strFriendId = req.m_strFriendId;
+			reqMsg.m_strFileName = req.m_strFileName;
+			reqMsg.m_nFileId = rand();
+			reqMsg.m_strFileHash = rspMsg.m_strFileHash;
+			reqMsg.m_strMsgId = CreateMsgId();
+			pSess->SendMsg(&reqMsg);
+			SaveSendingState(reqMsg.m_strFileHash);
 		}
 	}
 }
@@ -2157,6 +2156,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 
 	{
 		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strUserId, req.m_strFileName);
+		std::string strNewFileName = GetFilePathByUserIdAndFileName(req.m_strFriendId, req.m_strFileName);
 		std::string strFileHash = m_fileUtil.CalcHash(strFileName);
 		FileVerifyRspMsg rspMsg;
 		if (strFileHash == req.m_strFileHash)
@@ -2167,6 +2167,8 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 			bean.m_strF_USER_ID = req.m_strUserId;
 			m_util.InsertFileHash(bean);
 			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+			m_fileUtil.UtilCopy(strFileName, strNewFileName);
+			rspMsg.m_strFileHash = strFileHash;
 		}
 		else
 		{
