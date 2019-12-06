@@ -6907,6 +6907,7 @@ std::string FileVerifyRspMsg::ToString() const
         {"FriendId",m_strFriendId},
         {"FileId", m_nFileId},
         {"FileName", m_strFileName},
+		{"FileHash",m_strFileHash},
     });
     return clientObj.dump();
 }
@@ -6921,7 +6922,12 @@ bool FileVerifyRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-
+	if (json["Code"].is_number()) {
+		m_eErrCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else {
+		return false;
+	}
     if (json["MsgId"].is_string())
     {
         m_strMsgId = json["MsgId"].string_value();
@@ -6956,6 +6962,13 @@ bool FileVerifyRspMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["FileHash"].is_string()) {
+		m_strFileHash = json["FileHash"].string_value();
+	}
+	else {
+		return false;
+	}
     return true;
 }
 

@@ -1799,6 +1799,7 @@ public:
 	std::string m_strFriendId;//接受者ID
 	std::string m_strFileName;//文件名称
 	int		    m_nFileId;//文件ID
+	std::string m_strFileHash;//文件的Hash值
 public:
 	FileVerifyRspMsg();
 
