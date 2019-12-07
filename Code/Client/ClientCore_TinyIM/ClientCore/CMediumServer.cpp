@@ -423,14 +423,29 @@ CClientSess_SHARED_PTR CMediumServer::GetClientSess(const std::string strUserNam
  */
 	CClientSess_SHARED_PTR CMediumServer::CreateClientSess()
 	{
-		//auto pReturn = m_freeClientSess;
+		auto pReturn = m_freeClientSess;
 		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
 			m_clientCfgVec[0].m_strServerIp,
 			m_clientCfgVec[0].m_nPort, this);
 
 		m_freeClientSess->StartConnect();
-		//m_userClientSessMap.insert(std::pair<std::string, CClientSess_SHARED_PTR>(strUserName, pReturn));
-		return m_freeClientSess;
+		return pReturn;
+	}
+
+	CClientSess_SHARED_PTR CMediumServer::CreateClientSess(const std::string strUserName)
+	{
+		if (strUserName.empty())
+		{
+			return nullptr;
+		}
+		auto pReturn = m_freeClientSess;
+		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
+			m_clientCfgVec[0].m_strServerIp,
+			m_clientCfgVec[0].m_nPort, this);
+
+		m_freeClientSess->StartConnect();
+		m_userClientSessMap.insert(std::pair<std::string, CClientSess_SHARED_PTR>(strUserName, pReturn));
+		return pReturn;
 	}
 
 /**
@@ -467,6 +482,10 @@ void CMediumServer::CheckWaitMsgVec()
  */
 void CMediumServer::OnTimer()
 {
+	if (m_httpServer)
+	{
+		m_httpServer->OnTimer();
+	}
 	m_timeCount++;
 	if (m_timeCount % 60 == 0)
 	{
@@ -475,10 +494,7 @@ void CMediumServer::OnTimer()
 			CheckAllConnect();
 			CheckWaitMsgVec();
 
-			if (m_httpServer)
-			{
-				m_httpServer->OnTimer();
-			}
+			
 		}
 		else
 		{
@@ -1461,15 +1477,22 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			item->second->SendMsg(pMsg);
 		}
 		//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(newRspMsg.m_chatMsg);
-		auto pMsgUtil = GetMsgPersisUtil(newRspMsg.m_chatMsg.m_strReceiverId);
-		if (pMsgUtil)
-		{
-			pMsgUtil->Save_FriendChatSendTxtRspMsg(newRspMsg.m_chatMsg);
+		try {
+			auto pMsgUtil = GetMsgPersisUtil(newRspMsg.m_chatMsg.m_strReceiverId);
+			if (pMsgUtil)
+			{
+				pMsgUtil->Save_FriendChatSendTxtRspMsg(newRspMsg.m_chatMsg);
+			}
+			else
+			{
+				LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", newRspMsg.m_chatMsg.m_strReceiverId, __FILENAME__, __LINE__);
+			}
 		}
-		else
+		catch (std::exception ex)
 		{
-			LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", newRspMsg.m_chatMsg.m_strReceiverId, __FILENAME__, __LINE__);
+			LOG_ERR(ms_loger, "Ex:{} [{} {}]", ex.what(), __FILENAME__, __LINE__);
 		}
+		
 
 	}
 }
@@ -1770,6 +1793,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 				}
 			}
 		}
+		m_userClientSessMap.erase(rspMsg.m_strUserName);
 	}
 
 }

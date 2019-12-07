@@ -105,14 +105,14 @@ bool CMsgPersistentUtil::InitDataBase()
 
 	if(nullptr == m_pGroupChatSelect)
 	{
-		std::string strSQL = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_READ_FLAG='UN_READ')";
+		std::string strSQL = R"(SELECT * FROM T_GROUP_CHAT_MSG WHERE F_READ_FLAG="UN_READ")";
 
 		m_pGroupChatSelect = new SQLite::Statement(*m_pDb, strSQL);
 	}
 
 	if (nullptr == m_pGroupChatUpdate)
 	{
-		std::string strSqlTemplate = R"(UPDATE T_GROUP_CHAT_MSG SET F_READ_FLAG='READ' WHERE F_MSG_ID=?)";
+		std::string strSqlTemplate = R"(UPDATE T_GROUP_CHAT_MSG SET F_READ_FLAG="READ" WHERE F_MSG_ID=?)";
 		m_pGroupChatUpdate = new SQLite::Statement(*m_pDb, strSqlTemplate);
 	}
 
@@ -210,6 +210,10 @@ bool CMsgPersistentUtil::InitDataBase()
 		}
 	}
 	
+	{
+		std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES(?,'E_CHAT_TEXT_TYPE',?,?,?,?,'UNREAD',?))";
+		m_pFriendChatInsert = new SQLite::Statement(*m_pDb, strSQLTemplate);
+	}
 	return true;
 }
 
@@ -344,19 +348,22 @@ bool CMsgPersistentUtil::Remove_AddFriendNotifyReqMsg(const AddFriendNotifyReqMs
  */
 bool CMsgPersistentUtil::Save_FriendChatSendTxtRspMsg(const FriendChatMsg_s& msg)
 {
-	std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES('{0}','{1}','{2}','{3}','{4}','{5}','UNREAD','{6}'))";
-	std::string strSql = fmt::format(strSQLTemplate,
-		msg.m_strChatMsgId,
-		ChatType(CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE),
-		msg.m_strSenderId,
-		msg.m_strReceiverId,
-		msg.m_strContext,
-		msg.m_fontInfo.ToString(),
-		msg.m_strMsgTime);
-	SQLite::Statement*   m_pInsertQuery = new SQLite::Statement(*m_pDb, strSql);
-	bool bResult = m_pInsertQuery->executeStep();
-	// Reset the query to be able to use it again later
-	m_pInsertQuery->reset();
+	bool bResult = false;
+	try {
+		m_pFriendChatInsert->bind(1, msg.m_strChatMsgId);
+		m_pFriendChatInsert->bind(2, msg.m_strSenderId);
+		m_pFriendChatInsert->bind(3, msg.m_strReceiverId);
+		m_pFriendChatInsert->bind(4, msg.m_strContext);
+		m_pFriendChatInsert->bind(5, msg.m_fontInfo.ToString());
+		m_pFriendChatInsert->bind(6, msg.m_strMsgTime);
+		m_pFriendChatInsert->exec();
+		m_pFriendChatInsert->reset();
+		bResult = true;
+	}
+	catch (std::exception& ex)
+	{
+		LOG_ERR(ms_logger, "Msg:{} [ {} {}]", ex.what(), __FILENAME__, __LINE__);
+	}
 
 	return bResult;
 }
@@ -369,7 +376,7 @@ bool CMsgPersistentUtil::Save_FriendChatSendTxtRspMsg(const FriendChatMsg_s& msg
  */
 //bool CMsgPersistentUtil::Save_FriendChatRecvTxtReqMsg(const FriendChatRecvTxtReqMsg& msg)
 //{
-//	std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES('{0}','{1}','{2}','{3}','{4}','{5}','UNREAD','{6}'))";
+//	std::string strSQLTemplate = R"(INSERT INTO T_FRIEND_CHAT_MSG VALUES("{0}","{1}","{2}","{3}","{4}","{5}","UNREAD","{6}"))";
 //	std::string strSql = fmt::format(strSQLTemplate,
 //		msg.m_strMsgId,
 //		ChatType(CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE),
@@ -395,7 +402,7 @@ bool CMsgPersistentUtil::Save_FriendChatSendTxtRspMsg(const FriendChatMsg_s& msg
  */
 bool CMsgPersistentUtil::Get_FriendChatRecvTxtReqMsg(FriendChatMsg_s& msg)
 {
-	std::string strSQL = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE F_READ_FLAG='UNREAD';)";
+	std::string strSQL = R"(SELECT * FROM T_FRIEND_CHAT_MSG WHERE F_READ_FLAG="UNREAD";)";
 
 	SQLite::Statement*   m_pInsertQuery = new SQLite::Statement(*m_pDb, strSQL);
 	bool bResult = m_pInsertQuery->executeStep();
@@ -433,7 +440,7 @@ bool CMsgPersistentUtil::Get_FriendChatRecvTxtReqMsg(FriendChatMsg_s& msg)
  */
 bool CMsgPersistentUtil::Update_FriendChatRecvTxtReqMsg(const FriendChatMsg_s& msg)
 {
-	std::string strSqlTemplate = R"(UPDATE T_FRIEND_CHAT_MSG SET F_READ_FLAG='READ' WHERE F_MSG_ID='{0}';)";
+	std::string strSqlTemplate = R"(UPDATE T_FRIEND_CHAT_MSG SET F_READ_FLAG="READ" WHERE F_MSG_ID="{0}";)";
 
 	std::string strSql = fmt::format(strSqlTemplate,msg.m_strChatMsgId);
 	SQLite::Statement*   m_pInsertQuery = new SQLite::Statement(*m_pDb, strSql);

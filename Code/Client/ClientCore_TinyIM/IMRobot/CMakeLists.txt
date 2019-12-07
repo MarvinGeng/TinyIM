@@ -9,6 +9,7 @@ include_directories(../../../msgStruct/json11/)
 include_directories(../include/thirdparty/)
 include_directories(../include/thirdparty/asio/)
 include_directories(../include/thirdparty/spdlog/)
+include_directories(../include/thirdparty/SnowFlake/)
 include_directories(../include/thirdparty/fmt/include/)
 include_directories(../include/thirdparty/httpServer/)
 include_directories(../include/common/)
@@ -37,6 +38,7 @@ set(SERVER_FILES main.cpp
     ../../../msgStruct/json11/json11.cpp
 	../../../msgStruct/CommonMsg.cpp
 	../../../msgStruct/CommonDef.cpp
+	../include/common/CommonFunction.cpp
 ./CImRobot.h 
 ./CImRobot.cpp
 )

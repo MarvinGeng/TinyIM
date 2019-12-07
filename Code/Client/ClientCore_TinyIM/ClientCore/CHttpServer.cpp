@@ -96,19 +96,21 @@ namespace ClientCore
 			reqMsg.m_strMsgId = GenerateMsgId();
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 			auto pClientSess = m_pServer->GetClientSess(m_pServer->GetUserId(reqMsg.m_strUserName));
-			if (pClientSess)
+			if (!pClientSess)
 			{
 				pClientSess = m_pServer->CreateClientSess();
-				if (pClientSess)
-				{
-					pClientSess->SendMsg(pSendMsg);
-					m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
-				}
-				else
-				{
-					*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
-				}
 			}
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
+			}
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+				
+			
 			m_userLoginMsgMap.erase(reqMsg.m_strUserName);
 			m_userLoginMsgMap.insert({ reqMsg.m_strUserName,reqMsg });
 		}

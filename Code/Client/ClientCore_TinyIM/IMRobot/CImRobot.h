@@ -16,6 +16,8 @@ private:
 	//Friend Begin
 	void GetFriendList();
 	void SendMsg();
+	void SendFaceMsg();
+	void SendSingleImageMsg();
 	void GetRecvMsg();
 
 	void GetFriendHistroyFirst();

@@ -96,6 +96,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
 	CClientSess_SHARED_PTR CreateClientSess();
+	CClientSess_SHARED_PTR CreateClientSess(const std::string strUserName);
 	CUdpClient_PTR CreateUdpSess();
 	CUdpClient_PTR GetUdpSess(const std::string strUserId);
 

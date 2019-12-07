@@ -4,6 +4,7 @@
 #else
 #include <time.h>
 #include <windows.h>
+#include <winsock.h>
 static int gettimeofday(struct timeval *tp, void *tzp)
 {
 	time_t clock;

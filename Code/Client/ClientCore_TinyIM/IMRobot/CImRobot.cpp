@@ -3,9 +3,15 @@
 #include <thread>
 #include "CommonMsg.h"
 #include "json11.hpp"
+
 #include "../include/thirdparty/httpServer/client_http.hpp"
+#include "SnowFlake.h"
 using HttpClient = SimpleWeb::Client<SimpleWeb::HTTP>;
 static std::shared_ptr<HttpClient> g_httpClient;
+static SnowFlake m_msgIdUtil(4,4);
+static std::string CreateMsgId() {
+	return std::to_string(m_msgIdUtil.nextId());
+}
 CIMRobot::CIMRobot()
 {
 
@@ -69,7 +75,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 10;
+		int nChoice = rand() % 22;
 		switch (nChoice)
 		{
 		case 0:
@@ -148,6 +154,14 @@ void CIMRobot::Run()
 		{
 
 		}break;
+		case 19:
+		{
+			SendFaceMsg();
+		}break;
+		case 20:
+		{
+			SendSingleImageMsg();
+		}break;
 		default:
 		{
 
@@ -188,7 +202,7 @@ void CIMRobot::UserLogout()
 	UserLogoutRspMsg rspMsg;
 	try {
 		UserLogoutReqMsg reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserName = m_strUserName;
 		reqMsg.m_strPassword = m_strPassWord;
 		reqMsg.m_eOsType = CLIENT_OS_TYPE::OS_TYPE_WINDOWS;
@@ -232,14 +246,82 @@ void CIMRobot::SendMsg()
 	std::cout << __FUNCTION__ << std::endl;
 	FriendChatSendTxtReqMsg sendReq;
 	FriendChatRecvTxtRspMsg sendRsp;
+	ChatMsgElem elem;
+	ChatMsgElemVec elemVec;
+	elem.m_eType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
+	elem.m_strContext = "I'm a robot\"\",Create By DennisThink(https://www.dennisthink.com/)";
+	elemVec.push_back(elem);
 	for (auto friId : m_strFriendVec)
 	{
 		{
 			try {
-				sendReq.m_strMsgId = "123456";
+				sendReq.m_strMsgId = CreateMsgId();
 				sendReq.m_strSenderId = m_strUserId;
 				sendReq.m_strReceiverId = friId;
-				sendReq.m_strContext = m_strUserId + " Send Msg To " + friId;
+				sendReq.m_strContext = MsgElemVec(elemVec);
+				auto rsp = g_httpClient->request("POST", "/send_friend_chat_text_msg", sendReq.ToString());
+				std::string strRsp = rsp->content.string();
+				std::cout << strRsp << std::endl;
+				if (sendRsp.FromString(strRsp)) {
+
+				}
+			}
+			catch (const SimpleWeb::system_error& e) {
+				std::cerr << "Client Req Error " << e.what() << std::endl;
+			}
+		}
+	}
+}
+
+void CIMRobot::SendFaceMsg()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	FriendChatSendTxtReqMsg sendReq;
+	FriendChatRecvTxtRspMsg sendRsp;
+	ChatMsgElem elem;
+	ChatMsgElemVec elemVec;
+	elem.m_eType = CHAT_MSG_TYPE::E_CHAT_EMOJI_TYPE;
+	elem.m_nFaceId = 1;
+	elemVec.push_back(elem);
+	for (auto friId : m_strFriendVec)
+	{
+		{
+			try {
+				sendReq.m_strMsgId = CreateMsgId();
+				sendReq.m_strSenderId = m_strUserId;
+				sendReq.m_strReceiverId = friId;
+				sendReq.m_strContext = MsgElemVec(elemVec);
+				auto rsp = g_httpClient->request("POST", "/send_friend_chat_text_msg", sendReq.ToString());
+				std::string strRsp = rsp->content.string();
+				std::cout << strRsp << std::endl;
+				if (sendRsp.FromString(strRsp)) {
+
+				}
+			}
+			catch (const SimpleWeb::system_error& e) {
+				std::cerr << "Client Req Error " << e.what() << std::endl;
+			}
+		}
+	}
+}
+void CIMRobot::SendSingleImageMsg()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	FriendChatSendTxtReqMsg sendReq;
+	FriendChatRecvTxtRspMsg sendRsp;
+	ChatMsgElem elem;
+	ChatMsgElemVec elemVec;
+	elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+	elem.m_strImageName = R"(C:\Users\Public\Pictures\Sample Pictures\Desert.jpg)";
+	elemVec.push_back(elem);
+	for (auto friId : m_strFriendVec)
+	{
+		{
+			try {
+				sendReq.m_strMsgId = CreateMsgId();
+				sendReq.m_strSenderId = m_strUserId;
+				sendReq.m_strReceiverId = friId;
+				sendReq.m_strContext = MsgElemVec(elemVec);
 				auto rsp = g_httpClient->request("POST", "/send_friend_chat_text_msg", sendReq.ToString());
 				std::string strRsp = rsp->content.string();
 				std::cout << strRsp << std::endl;
@@ -288,7 +370,7 @@ void CIMRobot::AddFriendTeam()
 	AddTeamRspMsg rspMsg;
 	try {
 		AddTeamReqMsg reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strTeamName = m_strUserName+std::to_string(rand()%100);
 
@@ -307,7 +389,7 @@ void CIMRobot::RemoveFriendTeam()
 	RemoveTeamRspMsg rspMsg;
 	try {
 		RemoveTeamReqMsg reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strTeamId = "1234568";
 
@@ -322,23 +404,26 @@ void CIMRobot::RemoveFriendTeam()
 
 void CIMRobot::MoveFriendToTeam()
 {
-	std::cout << __FUNCTION__ << std::endl;
-	MoveFriendToTeamRspMsg rspMsg;
-	try {
-		MoveFriendToTeamReqMsg reqMsg;
-		reqMsg.m_strMsgId = "3333";
-		reqMsg.m_strUserId = m_strUserId;
-		reqMsg.m_strFriendId = *(m_strFriendVec.begin());
-		reqMsg.m_strDstTeamId = "11111111";
-		reqMsg.m_strSrcTeamId = "22222222";
+	if (!m_strFriendVec.empty())
+	{
+		std::cout << __FUNCTION__ << std::endl;
+		MoveFriendToTeamRspMsg rspMsg;
+		try {
+			MoveFriendToTeamReqMsg reqMsg;
+			reqMsg.m_strMsgId = CreateMsgId();
+			reqMsg.m_strUserId = m_strUserId;
+			reqMsg.m_strFriendId = *(m_strFriendVec.begin());
+			reqMsg.m_strDstTeamId = "11111111";
+			reqMsg.m_strSrcTeamId = "22222222";
 
 
-		auto rsp = g_httpClient->request("POST", "/move_friend_to_team", reqMsg.ToString());
-		std::string strRsp = rsp->content.string();
-		std::cout << strRsp << std::endl;
-	}
-	catch (const SimpleWeb::system_error& e) {
-		std::cerr << "Client Req Error " << e.what() << std::endl;
+			auto rsp = g_httpClient->request("POST", "/move_friend_to_team", reqMsg.ToString());
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
 	}
 
 }
@@ -425,7 +510,7 @@ void CIMRobot::GetFriendHistroyFirst()
 	GetFriendChatHistoryRsp rspMsg;
 	try {
 		GetFriendChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strFriendId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_FIRST_MSG;
@@ -445,7 +530,7 @@ void CIMRobot::GetFriendHistoryLast()
 	GetFriendChatHistoryRsp rspMsg;
 	try {
 		GetFriendChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strFriendId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_LAST_MSG;
@@ -465,7 +550,7 @@ void CIMRobot::GetFriendHistoryPrev()
 	GetFriendChatHistoryRsp rspMsg;
 	try {
 		GetFriendChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strFriendId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_PREV_MSG;
@@ -485,7 +570,7 @@ void CIMRobot::GetFriendHistoryNext()
 	GetFriendChatHistoryRsp rspMsg;
 	try {
 		GetFriendChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strFriendId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_NEXT_MSG;
@@ -507,7 +592,7 @@ void CIMRobot::GetGroupHistroyFirst()
 	GetGroupChatHistoryRsp rspMsg;
 	try {
 		GetGroupChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strGroupId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_FIRST_MSG;
@@ -527,7 +612,7 @@ void CIMRobot::GetGroupHistoryLast()
 	GetGroupChatHistoryRsp rspMsg;
 	try {
 		GetGroupChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strGroupId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_LAST_MSG;
@@ -547,7 +632,7 @@ void CIMRobot::GetGroupHistoryPrev()
 	GetGroupChatHistoryRsp rspMsg;
 	try {
 		GetGroupChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strGroupId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_PREV_MSG;
@@ -567,7 +652,7 @@ void CIMRobot::GetGroupHistoryNext()
 	GetGroupChatHistoryRsp rspMsg;
 	try {
 		GetGroupChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strGroupId = m_strUserId;
 		reqMsg.m_eDirection = HISTORY_DIRECTION::E_NEXT_MSG;
@@ -587,7 +672,7 @@ void CIMRobot::SearchChatMsg()
 	SearchChatHistoryRsp rspMsg;
 	try {
 		SearchChatHistoryReq reqMsg;
-		reqMsg.m_strMsgId = "3333";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
 		reqMsg.m_strSearchWord = "ÄãºÃ";
 
