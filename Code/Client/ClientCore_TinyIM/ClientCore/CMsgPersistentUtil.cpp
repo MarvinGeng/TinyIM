@@ -513,7 +513,7 @@ bool CMsgPersistentUtil::Save_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReqMs
 			msg.m_strSenderId,
 			msg.m_strGroupId,
 			msg.m_strContext,
-			"OTHER_INFO",
+			msg.m_stFontInfo.ToString(),
 			"UN_READ",
 			msg.m_strMsgTime);
 		int nNb = m_pGroupChatInsert->exec();
