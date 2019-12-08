@@ -108,6 +108,10 @@ private:
 	SQLite::Statement*   m_pFriendChatCreate = nullptr; ///< Database prepared SQL query
 
 	SQLite::Statement*   m_pFriendChatInsert = nullptr;
+
+	SQLite::Statement*   m_pFriendChatUpdate = nullptr;
+
+	SQLite::Statement*   m_pFriendChatUnReadSelect = nullptr;
 	//GroupChatMsg Msg
 	SQLite::Statement*   m_pGroupChatCreate=nullptr; ///< Database prepared SQL query
 
