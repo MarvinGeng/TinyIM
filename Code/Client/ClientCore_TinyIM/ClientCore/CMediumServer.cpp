@@ -1545,7 +1545,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		{
 			item->second->SendMsg(pMsg);
 		}
-		//m_msgPersisUtil->Save_FriendChatSendTxtRspMsg(newRspMsg.m_chatMsg);
+
 		try {
 			auto pMsgUtil = GetMsgPersisUtil(newRspMsg.m_chatMsg.m_strReceiverId);
 			if (pMsgUtil)

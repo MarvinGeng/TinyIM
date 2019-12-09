@@ -161,7 +161,8 @@ namespace ClientCore
 	void CHttpServer::Get_FriendChatRecvTxtReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		std::string strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_FriendChatRecvTxtReqMsg(reqMsg.m_chatMsg))
 		{
 			std::string strContent = reqMsg.ToString();
