@@ -75,7 +75,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 22;
+		int nChoice = rand() % 6;
 		switch (nChoice)
 		{
 		case 0:
@@ -95,6 +95,14 @@ void CIMRobot::Run()
 			UserLogin();
 		}break;
 		case 4:
+		{
+			SendFaceMsg();
+		}break;
+		case 5:
+		{
+			SendSingleImageMsg();
+		}break;
+		/*case 4:
 		{
 			GetGroupList();
 		}break;
@@ -153,20 +161,13 @@ void CIMRobot::Run()
 		case 18:
 		{
 
-		}break;
-		case 19:
-		{
-			SendFaceMsg();
-		}break;
-		case 20:
-		{
-			SendSingleImageMsg();
-		}break;
+		}break;*/
+		
 		default:
 		{
 
 		}break;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 	}
 	UserLogout();

@@ -1222,15 +1222,7 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 }
 
-
-/**
- * @brief 处理发送好友聊天消息 在ClientCore中对消息进行解析,发送其中的图片消息
- * 
- * 
- * @param pServerSess GUI客户端的Sess
- * @param reqMsg 好友聊天请求消息
- */
-void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& reqMsg)
+bool CMediumServer::HandleSendForward(FriendChatSendTxtReqMsg& reqMsg)
 {
 	ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
 	ChatMsgElemVec newVec;
@@ -1259,8 +1251,8 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 				{
 					LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
 				}
-				auto item = m_ForwardSessMap.find(pServerSess);
-				if (item != m_ForwardSessMap.end())
+				auto item = m_userClientSessMap.find(reqMsg.m_strSenderId);
+				if (item != m_userClientSessMap.end())
 				{
 					auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
 					item->second->SendMsg(pMsg);
@@ -1277,7 +1269,7 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		}
 	}
 
-	
+
 
 	if (bHaveImage)
 	{
@@ -1286,13 +1278,90 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 	else
 	{
-		auto item = m_ForwardSessMap.find(pServerSess);
-		if (item != m_ForwardSessMap.end())
+		auto item = m_userClientSessMap.find(reqMsg.m_strSenderId);
+		if (item != m_userClientSessMap.end())
 		{
 			auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
 			item->second->SendMsg(pMsg);
 		}
 	}
+
+	return true;
+}
+
+/**
+ * @brief 处理发送好友聊天消息 在ClientCore中对消息进行解析,发送其中的图片消息
+ * 
+ * 
+ * @param pServerSess GUI客户端的Sess
+ * @param reqMsg 好友聊天请求消息
+ */
+void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& reqMsg)
+{
+	HandleSendForward(reqMsg);
+	/*{
+		ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
+		ChatMsgElemVec newVec;
+		std::string strFileHash;
+		bool bHaveImage = false;
+		for (const auto item : msgVec)
+		{
+			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+			{
+				bHaveImage = true;
+				FileSendDataBeginReq beginReqMsg;
+				{
+					beginReqMsg.m_nFileId = rand();
+					beginReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+					beginReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(item.m_strImageName);
+					beginReqMsg.m_strUserId = reqMsg.m_strSenderId;
+					beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
+					beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
+					strFileHash = beginReqMsg.m_strFileHash;
+					std::string strNewFileName = m_fileUtil.GetCurDir() + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
+					if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
+					{
+
+					}
+					else
+					{
+						LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
+					}
+					auto item = m_ForwardSessMap.find(pServerSess);
+					if (item != m_ForwardSessMap.end())
+					{
+						auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
+						item->second->SendMsg(pMsg);
+					}
+				}
+				ChatMsgElem elem;
+				elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+				elem.m_strImageName = beginReqMsg.m_strFileName;
+				newVec.push_back(elem);
+			}
+			else
+			{
+				newVec.push_back(item);
+			}
+		}
+
+
+
+		if (bHaveImage)
+		{
+			reqMsg.m_strContext = MsgElemVec(newVec);
+			m_SendWaitMsgMap.insert({ strFileHash,reqMsg });
+		}
+		else
+		{
+			auto item = m_ForwardSessMap.find(pServerSess);
+			if (item != m_ForwardSessMap.end())
+			{
+				auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+				item->second->SendMsg(pMsg);
+			}
+		}
+	}*/
 
 }
 
@@ -1754,8 +1823,15 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		pClientSess->SetUserName(rspMsg.m_strUserName);
 		m_userStateMap.erase(rspMsg.m_strUserId);
 		m_userStateMap.insert({ rspMsg.m_strUserId,CLIENT_SESS_STATE::SESS_LOGIN_FINISHED });
-		m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
-
+		{
+			m_userClientSessMap.insert({ rspMsg.m_strUserId,pClientSess });
+			auto item = m_BackSessMap.find(pClientSess);
+			if (item != m_BackSessMap.end())
+			{
+				m_userId_ServerSessMap.erase(rspMsg.m_strUserId);
+				m_userId_ServerSessMap.insert({rspMsg.m_strUserId,item->second});
+			}
+		}
 		m_userName_UserIdMap.erase(rspMsg.m_strUserName);
 		m_userName_UserIdMap.insert({ rspMsg.m_strUserName, rspMsg.m_strUserId });
 

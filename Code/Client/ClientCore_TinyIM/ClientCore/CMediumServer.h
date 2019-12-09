@@ -59,6 +59,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	std::map<std::shared_ptr<CClientSess>, std::shared_ptr<CServerSess>> m_BackSessMap;
 
 	std::map<std::string, std::shared_ptr<CClientSess>> m_userClientSessMap;
+	std::map<std::string, std::shared_ptr<CServerSess>> m_userId_ServerSessMap;
 	std::map<std::string, std::string> m_userId_UserNameMap;
 	std::map<std::string, FriendChatRecvTxtReqMsg> m_waitImageMsgMap;
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
@@ -92,6 +93,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg);
+	bool HandleSendForward(FriendChatSendTxtReqMsg& reqMsg);
     void CheckAllConnect();
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);

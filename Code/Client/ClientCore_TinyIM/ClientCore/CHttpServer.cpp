@@ -489,11 +489,8 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			reqMsg.m_strMsgId = GenerateMsgId();
-			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strSenderId);
-			if (pClientSess)
+			if (m_pServer->HandleSendForward(reqMsg))
 			{
-				pClientSess->SendMsg(pSendMsg);
 				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
 			}
 			else

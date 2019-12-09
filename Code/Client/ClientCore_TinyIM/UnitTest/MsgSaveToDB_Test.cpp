@@ -123,6 +123,22 @@ TEST_CASE("FriendChatRecvTextMsgInsert") {
 	}
 }
 
+
+TEST_CASE("FriendRecvFileMsgReqMsg") {
+
+}
+
+TEST_CASE("FriendNotifyFileMsgReqMsg") {
+
+}
+
+TEST_CASE("GetFriendChatHistoryReq") {
+
+}
+
+TEST_CASE("GetGroupChatHistoryReq") {
+
+}
 TEST_CASE("GroupChatRecvTextMsgInsert") {
 	CHECK(util.InitDataBase());
 	RecvGroupTextMsgReqMsg reqMsg;
@@ -135,5 +151,8 @@ TEST_CASE("GroupChatRecvTextMsgInsert") {
 	CHECK(util.Get_RecvGroupTextMsgReqMsg(recvMsg));
 	std::cout << recvMsg.ToString() << std::endl;
 	CHECK(util.Update_RecvGroupTextMsgReqMsg(recvMsg));
-    
+}
+
+TEST_CASE("FileHash") {
+
 }
