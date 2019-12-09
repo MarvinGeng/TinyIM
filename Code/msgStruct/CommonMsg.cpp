@@ -1622,7 +1622,7 @@ bool FriendChatRecvTxtRspMsg::FromString(const std::string &strJson)
 
     if (json["UserId"].is_string())
     {
-        m_strFriendId = json["UserId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
