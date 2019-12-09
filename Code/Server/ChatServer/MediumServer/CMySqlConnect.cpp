@@ -33,6 +33,8 @@ CMySqlConnect::CMySqlConnect()
 		else {
 			LOG_INFO(m_loger, "mysql_library_init()failed [{} {}]", __FILENAME__, __LINE__);
 		}
+
+		m_pFriendChatInsertStmt = nullptr;
 }
 
 /**
@@ -444,27 +446,70 @@ F_FACE_ID) VALUES('{0}','{1}','{2},'{3}','{4}','{5}','{6}');";
  */
 bool CMySqlConnect::InsertFriendChatMsg(const T_USER_CHAT_MSG& chatMsg) {
 
-	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_FRIEND_CHAT_MSG(F_MSG_ID,\
+	if (nullptr == m_pFriendChatInsertStmt)
+	{
+		m_pFriendChatInsertStmt = mysql_stmt_init(&m_mysql); 
+		if (!m_pFriendChatInsertStmt)
+		{
+			return false;
+		}
+		int res = 0;
+		std::string strSql = "INSERT INTO T_FRIEND_CHAT_MSG(F_MSG_ID,\
 F_MSG_TYPE,\
 F_FROM_ID,\
 F_TO_ID,\
 F_MSG_CONTEXT,\
-F_OTHER_INFO) VALUES('{0}','{1}','{2}','{3}','{4}','{5}');";
+F_OTHER_INFO) VALUES(?,?,?,?,?,?);";
+		if (mysql_stmt_prepare(m_pFriendChatInsertStmt, strSql.c_str(), static_cast<unsigned long>(strSql.size())))
+		{
+			return false;
+		}
+	}
 
-	std::string strSql = fmt::format(strTemplate2,chatMsg.m_strF_MSG_ID,ChatType(chatMsg.m_eChatMsgType),chatMsg.m_strF_FROM_ID,chatMsg.m_strF_TO_ID,chatMsg.m_strF_MSG_CONTEXT,chatMsg.m_strF_OTHER_INFO);
-	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
-	if (!res)
+	MYSQL_BIND paramBind[6];
+	memset(paramBind, 0, sizeof(paramBind));
 	{
-		return true;
+		paramBind[0].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[0].buffer = (void*)(chatMsg.m_strF_MSG_ID.c_str());
+		paramBind[0].buffer_length = static_cast<unsigned long>(chatMsg.m_strF_MSG_ID.length());
+
+		paramBind[1].buffer_type = MYSQL_TYPE_STRING;
+		std::string strMsgType = ChatType(chatMsg.m_eChatMsgType);
+		paramBind[1].buffer = (void*)(strMsgType.c_str());
+		paramBind[1].buffer_length = static_cast<unsigned long>(strMsgType.length());
+
+		paramBind[2].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[2].buffer = (void*)(chatMsg.m_strF_FROM_ID.c_str());
+		paramBind[2].buffer_length = static_cast<unsigned long>(chatMsg.m_strF_FROM_ID.length());
+
+		paramBind[3].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[3].buffer = (void*)(chatMsg.m_strF_TO_ID.c_str());
+		paramBind[3].buffer_length = static_cast<unsigned long>(chatMsg.m_strF_TO_ID.length());
+
+		paramBind[4].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[4].buffer = (void*)(chatMsg.m_strF_MSG_CONTEXT.c_str());
+		paramBind[4].buffer_length = static_cast<unsigned long>(chatMsg.m_strF_MSG_CONTEXT.length());
+
+		paramBind[5].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[5].buffer = (void*)(chatMsg.m_strF_OTHER_INFO.c_str());
+		paramBind[5].buffer_length = static_cast<unsigned long>(chatMsg.m_strF_OTHER_INFO.length());
+
+		if (mysql_stmt_bind_param(m_pFriendChatInsertStmt, paramBind))
+		{
+			return false;
+		}
+		try {
+			if (mysql_stmt_execute(m_pFriendChatInsertStmt))
+			{
+				return false;
+			}
+		}
+		catch (std::exception ec)
+		{
+			LOG_ERR(m_loger, "EC:{} [{} {}]", ec.what(), __FILENAME__, __LINE__);
+		}
 	}
-	else
-	{
-		int nError = mysql_errno(&m_mysql);
-		LOG_INFO(m_loger, "SQL_ERROR:{} [{}  {} ]", nError, __FILENAME__, __LINE__);
-		return false;
-	}
+	return true;
 }
 
 

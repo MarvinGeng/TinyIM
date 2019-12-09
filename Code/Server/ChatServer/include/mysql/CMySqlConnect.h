@@ -129,6 +129,7 @@ private:
 	bool UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG& chatMsg);
     MYSQL m_mysql;
 	std::map<std::string,std::queue<T_USER_CHAT_MSG>> m_unReadChatMsg;
+	MYSQL_STMT* m_pFriendChatInsertStmt;
 
 };
 #endif
