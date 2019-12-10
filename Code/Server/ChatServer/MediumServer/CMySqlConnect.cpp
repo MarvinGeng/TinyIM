@@ -35,6 +35,7 @@ CMySqlConnect::CMySqlConnect()
 		}
 
 		m_pFriendChatInsertStmt = nullptr;
+		m_pSelectUserByNameStmt = nullptr;
 }
 
 /**
@@ -86,38 +87,116 @@ bool CMySqlConnect::ConnectToServer(const std::string userName,
  */
 bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& bean)
 {
-	MYSQL_RES *result;
-	MYSQL_ROW sql_row;
-	int res = 0;
-	bool bResult = false;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME='{0}';";
-	std::string strSql = fmt::format(strTemplate2, userName);
-	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
-	if (!res)
+
+	if (nullptr == m_pSelectUserByNameStmt)
 	{
-		result = mysql_store_result(&m_mysql);
-		if (result)
+
+		m_pSelectUserByNameStmt = mysql_stmt_init(&m_mysql);
+		if (!m_pSelectUserByNameStmt)
 		{
-			while (sql_row = mysql_fetch_row(result))
-			{
-				bean.m_strF_USER_ID = sql_row[0];
-				bean.m_strF_USER_NAME = sql_row[1];
-				bean.m_strF_PASS_WORD = sql_row[2];
-				bResult = true;
-				break;
-			}
+			return false;
+		}
+		int res = 0;
+		std::string strSql = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME=?;";
+		if (mysql_stmt_prepare(m_pSelectUserByNameStmt, strSql.c_str(), static_cast<unsigned long>(strSql.size())))
+		{
+			return false;
 		}
 	}
-	else
+
+	MYSQL_BIND paramBind[1];
+	memset(paramBind, 0, sizeof(paramBind));
 	{
-		return false;
+		char buff[32] = { 0 };
+		strcpy_s(buff, userName.c_str());
+		paramBind[0].buffer_type = MYSQL_TYPE_STRING;
+		paramBind[0].buffer = buff;
+		paramBind[0].buffer_length = static_cast<unsigned long>(userName.length());
+
+		if (mysql_stmt_bind_param(m_pSelectUserByNameStmt, paramBind))
+		{
+			return false;
+		}
+
+		
+		{
+			MYSQL_BIND resultBind[3];
+			char resultBuf[3][32] = { 0 };
+			resultBind[0].buffer_type = MYSQL_TYPE_STRING;
+			resultBind[0].buffer = resultBuf[0];
+			resultBind[0].buffer_length = 32;
+
+			resultBind[1].buffer_type = MYSQL_TYPE_STRING;
+			resultBind[1].buffer = resultBuf[0];
+			resultBind[1].buffer_length = 32;
+
+			resultBind[2].buffer_type = MYSQL_TYPE_STRING;
+			resultBind[2].buffer = resultBuf[0];
+			resultBind[2].buffer_length = 32;
+
+			try {
+				if (mysql_stmt_execute(m_pSelectUserByNameStmt))
+				{
+					return false;
+				}
+				if (mysql_stmt_bind_result(m_pSelectUserByNameStmt, resultBind))
+				{
+					return false;
+				}
+				if (mysql_stmt_store_result(m_pSelectUserByNameStmt))
+				{
+					return false;
+				}
+				if (!mysql_stmt_fetch(m_pSelectUserByNameStmt)) {
+					bean.m_strF_USER_ID = std::string(static_cast<char*>(resultBind[0].buffer),resultBind[0].buffer_length);
+					bean.m_strF_USER_NAME = std::string(static_cast<char*>(resultBind[1].buffer), resultBind[1].buffer_length);
+					bean.m_strF_PASS_WORD = std::string(static_cast<char*>(resultBind[2].buffer), resultBind[2].buffer_length);
+				}
+				else
+				{
+					return false;
+				}
+			}
+			catch (std::exception ec)
+			{
+				LOG_ERR(m_loger, "EC:{} [{} {}]", ec.what(), __FILENAME__, __LINE__);
+			}
+		}
+		
 	}
-	if (result != NULL)
-	{
-		mysql_free_result(result);
-	}
-    return bResult;
+	return true;
+	//MYSQL_RES *result;
+	//MYSQL_ROW sql_row;
+	//int res = 0;
+	//bool bResult = false;
+	//constexpr char * strTemplate2 = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME='{0}';";
+	//std::string strSql = fmt::format(strTemplate2, userName);
+	//LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
+	//res = mysql_query(&m_mysql, strSql.c_str());
+	//if (!res)
+	//{
+	//	result = mysql_store_result(&m_mysql);
+	//	if (result)
+	//	{
+	//		while (sql_row = mysql_fetch_row(result))
+	//		{
+	//			bean.m_strF_USER_ID = sql_row[0];
+	//			bean.m_strF_USER_NAME = sql_row[1];
+	//			bean.m_strF_PASS_WORD = sql_row[2];
+	//			bResult = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	return false;
+	//}
+	//if (result != NULL)
+	//{
+	//	mysql_free_result(result);
+	//}
+ //   return bResult;
 }
 
 
@@ -778,8 +857,8 @@ bool CMySqlConnect::InsertFriendRelation(const std::string strUser, const std::s
 	int res = 0;
 	constexpr char * strTemplate2 = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
 F_FRIEND_ID,\
-F_TEAM_NAME,\
-F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','MY Friend','{2}',now());";
+F_TEAM_ID,\
+F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','10000000','{2}',now());";
 	std::string strRelation = "FRIEND";
 	if (relationType == E_FRIEND_RELATION::E_BLACK_TYPE)
 	{
@@ -794,6 +873,7 @@ F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','MY Friend','{2}',now());";
 	}
 	else
 	{
+		LOG_ERR(m_loger, "{} [{} {}]", strSql, __FILENAME__, __LINE__);
 		return false;
 	}
 	return true;

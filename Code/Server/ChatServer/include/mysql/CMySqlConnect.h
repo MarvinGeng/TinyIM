@@ -130,6 +130,7 @@ private:
     MYSQL m_mysql;
 	std::map<std::string,std::queue<T_USER_CHAT_MSG>> m_unReadChatMsg;
 	MYSQL_STMT* m_pFriendChatInsertStmt;
+	MYSQL_STMT* m_pSelectUserByNameStmt;
 
 };
 #endif
