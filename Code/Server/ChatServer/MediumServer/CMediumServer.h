@@ -153,7 +153,7 @@ public:
 	TransBaseMsg_S_PTR HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg);
 	void HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
 private:
-	const int HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
+	const std::size_t HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
 	std::string CreateMsgId();
 	std::string GenerateSalt();
 	std::string GetSaltFromPasswd(const std::string strPasswd);

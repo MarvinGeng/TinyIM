@@ -15,7 +15,7 @@ include_directories(../include/thirdparty/)
 include_directories(../include/thirdparty/SnowFlake/)
 link_directories(../include/thirdparty/mysql/lib/)
 link_directories(../include/thirdparty/mysql/lib/)
-link_libraries(libmysql.lib)
+
 if(APPLE)
     include_directories(${PROJECT_SOURCE_DIR} "/usr/local/include" "/usr/local/ssl/include")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
@@ -31,9 +31,10 @@ else()
 endif()
 
 if(WIN32)
+link_libraries(libmysql.lib)
 else()
 link_directories(/usr/local/lib64)
-link_libraries(pthread dl)
+link_libraries(pthread dl mysqlclient)
 endif()	
 set(SERVER_FILES main.cpp
 

@@ -98,8 +98,8 @@ namespace ChatServer
 			memcpy(m_sendbuf, trans.GetData(), trans.GetSize());
 			std::string strMsg = trans.to_string();
 			m_socket->async_send_to(asio::buffer(m_sendbuf, trans.GetSize()),senderPt,
-				[this, pSelf, senderPt, strMsg](std::error_code ec, std::size_t bytes_recvd) {
-				if (ec || bytes_recvd < 0)
+				[this, pSelf, senderPt, strMsg](std::error_code ec, std::size_t /*bytes_recvd*/) {
+				if (ec)
 				{
 					LOG_ERR(ms_loger, "UDP Send To:{} ERR:{} [{} {}]", EndPoint(senderPt),ec.value(), __FILENAME__, __LINE__);
 				}

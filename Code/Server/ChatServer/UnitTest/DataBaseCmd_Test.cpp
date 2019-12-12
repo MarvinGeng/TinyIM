@@ -1,4 +1,4 @@
-#define DOCTEST_CONFIG_IMPLEMENT
+ï»¿#define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest/doctest.h>
 #include "CMySqlConnect.h"
 #include "CommonMsg.h"
@@ -24,7 +24,7 @@ TEST_CASE("T_USER") {
 	{
 		T_USER_BEAN bean;
 		bean.m_strF_USER_ID = UserID();
-		//ÔÚ²åÈëÊı¾İ¿âÖ®Ç°£¬Ã»ÓĞ´ËÓÃ»§
+		//åœ¨æ’å…¥æ•°æ®åº“ä¹‹å‰ï¼Œæ²¡æœ‰æ­¤ç”¨æˆ·
 		CHECK_FALSE(sqlUtil.IsUserExist(bean.m_strF_USER_ID));
 		
 		bean.m_strF_USER_NAME = UserID();
@@ -36,13 +36,13 @@ TEST_CASE("T_USER") {
 
 		CHECK(sqlUtil.InsertUser(bean));
 
-		//²åÈëÊı¾İ¿âÒÔºó£¬´ËÓÃ»§´æÔÚ
+		//æ’å…¥æ•°æ®åº“ä»¥åï¼Œæ­¤ç”¨æˆ·å­˜åœ¨
 		CHECK(sqlUtil.IsUserExist(bean.m_strF_USER_ID));
-		//ÒÔÓÃ»§Ãû²éÑ¯£¬´ËÓÃ»§²»´æÔÚ
+		//ä»¥ç”¨æˆ·åæŸ¥è¯¢ï¼Œæ­¤ç”¨æˆ·ä¸å­˜åœ¨
 		CHECK_FALSE(sqlUtil.IsUserExist(bean.m_strF_USER_NAME));
 
 		CHECK(sqlUtil.DeleteUser(bean.m_strF_USER_ID));
-		//TODO: Mysql ÔÚÓÃ»§²»´æÔÚµÄÇé¿öÏÂ£¬Ö´ĞĞDeleteÈÔÈ»·µ»ØTrue£¬ĞèÒªÔÙ¿´¿´MysqlµÄÎÄµµ
+		//TODO: Mysql åœ¨ç”¨æˆ·ä¸å­˜åœ¨çš„æƒ…å†µä¸‹ï¼Œæ‰§è¡ŒDeleteä»ç„¶è¿”å›Trueï¼Œéœ€è¦å†çœ‹çœ‹Mysqlçš„æ–‡æ¡£
 		//CHECK_FALSE(sqlUtil.DeleteUser(bean.m_strF_USER_ID));
 		CHECK_FALSE(sqlUtil.IsUserExist(bean.m_strF_USER_ID));
 	}
@@ -60,7 +60,7 @@ TEST_CASE("T_FRIEND_CHAT_MSG") {
 		msgBean.m_strF_TO_ID = UserID();
 		msgBean.m_eChatMsgType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
 		msgBean.m_strF_READ_FLAG = "UNREAD";
-		msgBean.m_strF_MSG_CONTEXT = EncodeUtil::AnsiToUtf8("Good");
+		//msgBean.m_strF_MSG_CONTEXT = EncodeUtil::AnsiToUtf8("Good");
 		CHECK(sqlUtil.InsertFriendChatMsg(msgBean));
 	}
 
@@ -71,7 +71,7 @@ TEST_CASE("T_FRIEND_CHAT_MSG") {
 		msgBean.m_strF_TO_ID = UserID();
 		msgBean.m_eChatMsgType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
 		msgBean.m_strF_READ_FLAG = "UNREAD";
-		msgBean.m_strF_MSG_CONTEXT = EncodeUtil::AnsiToUtf8("ÖĞ¹ú±±¾©");
+		//msgBean.m_strF_MSG_CONTEXT = EncodeUtil::AnsiToUtf8("ä¸­å›½åŒ—äº¬");
 		CHECK(sqlUtil.InsertFriendChatMsg(msgBean));
 	}
 
@@ -82,7 +82,7 @@ TEST_CASE("T_FRIEND_CHAT_MSG") {
 		msgBean.m_strF_TO_ID = UserID();
 		msgBean.m_eChatMsgType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
 		msgBean.m_strF_READ_FLAG = "UNREAD";
-		msgBean.m_strF_MSG_CONTEXT = u8"ÖĞ¹ú±±¾©";
+		msgBean.m_strF_MSG_CONTEXT = u8"ä¸­å›½åŒ—äº¬";
 		CHECK(sqlUtil.InsertFriendChatMsg(msgBean));
 	}
 

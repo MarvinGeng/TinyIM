@@ -1,7 +1,7 @@
 #ifndef _COMMON_FUNCTION_H_
 #define _COMMON_FUNCTION_H_
 
-#ifdef WIN32
+#ifdef _WIN32
 #else
 #include <dirent.h>
 #include <unistd.h>
@@ -207,7 +207,11 @@ std::shared_ptr<spdlog::logger> CreateLogger(json11::Json& cfg)
     }
     
 
+#ifdef _WIN32
 	auto consoleSink = std::make_shared<spdlog::sinks::wincolor_stdout_sink_st>();
+#else
+    auto consoleSink = std::make_shared<spdlog::sinks::ansicolor_stderr_sink_st>();
+#endif
 	consoleSink->set_level(spdlog::level::info);
 
     sinks.push_back(debugFile);

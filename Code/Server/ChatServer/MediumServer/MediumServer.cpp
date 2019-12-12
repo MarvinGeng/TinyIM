@@ -32,7 +32,7 @@ void GenerateCfgFile(std::string fileName)
     write_txtfile(fileName.c_str(),strConfig);
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
@@ -118,10 +118,17 @@ int main(int argc, char *argv[])
     }
 	theApp.m_loger=logger;
 	theApp.m_loger->set_level(spdlog::level::debug);
-    MediumServer::CClientSess::ms_loger = theApp.m_loger;
-	MediumServer::CServerSess::ms_loger = theApp.m_loger;
-	MediumServer::CMediumServer::ms_loger = theApp.m_loger;
-	MediumServer::CClientSessManager::ms_loger = theApp.m_loger;
+    ChatServer::CClientSess::ms_loger = logger;
+	ChatServer::CServerSess::ms_loger = logger;
+	ChatServer::CChatServer::ms_loger = logger;
+	ChatServer::CClientSessManager::ms_loger = logger;
+	ChatServer::CUdpServer::ms_loger = logger;
+	CMySqlConnect::m_loger = logger;
+	asio::io_service IoService;
+	auto server = std::make_shared<ChatServer::CChatServer>(IoService);
+	
+	std::error_code ec;
+	server->loadConfig(cfg, ec);
 
     theApp.list([result](pid_t pid, const std::string &cmdline) {
         printf("\033[30m[%d]\033[32m %s \033[36m", pid, cmdline.c_str());
@@ -139,7 +146,7 @@ int main(int argc, char *argv[])
 
 	LOG_WARN(theApp.m_loger,"Server: {}",g_SERVER_VERSION);
       auto worker=[cfg]()->int{     //后台任务
-        auto server = std::make_shared<MediumServer::CMediumServer>(theApp.m_ioService);
+        auto server = std::make_shared<ChatServer::CChatServer>(theApp.m_ioService);
         LOG_INFO(theApp.m_loger,"starting Server");
 
         std::error_code ec;

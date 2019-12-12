@@ -16,7 +16,7 @@
 #include "asio_common.h"
 #include "Log.h"
 #include <atomic>
-static std::string StringToHex(const char * data,const std::size_t length)
+/*static std::string StringToHex(const char * data,const std::size_t length)
 {
 	const std::string hex = "0123456789ABCDEF";
 	std::stringstream ss;
@@ -24,7 +24,7 @@ static std::string StringToHex(const char * data,const std::size_t length)
 	for (std::string::size_type i = 0; i < length; ++i)
 		ss << hex[(unsigned char)data[i] >> 4] << hex[(unsigned char)data[i] & 0xf];
 	return ss.str();
-}
+}*/
 
 using tcp=asio::ip::tcp;
 namespace ChatServer
@@ -200,7 +200,7 @@ private:
 				auto self = shared_from_this();
 				std::size_t msgSize = msg->GetSize();
 				memcpy(m_sendbuf, msg->GetData(), msgSize);
-				asio::async_write(m_socket, asio::buffer(m_sendbuf, msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
+				asio::async_write(m_socket, asio::buffer(m_sendbuf, msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t /*length*/) {
 					if (!ec)
 					{
 						LOG_INFO(ms_loger, "[ {} ] SendMsg Succeed:{} {} [{} {}]", UserId(), MsgType(msg->GetType()), msg->to_string(), __FILENAME__, __LINE__);

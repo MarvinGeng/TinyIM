@@ -16,7 +16,7 @@
 #include "CTimeUtil.h"
 #include "md5.h"
 const std::string DEFAULT_TEAM_ID = "10000000";
-const std::string DEFAULT_TEAM_NAME = EncodeUtil::AnsiToUtf8("我的好友");
+const std::string DEFAULT_TEAM_NAME = u8"我的好友";
 namespace ChatServer
 {
 std::shared_ptr<spdlog::logger> CChatServer::ms_loger;
@@ -83,7 +83,7 @@ void CChatServer::HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSes
 {
 	if (pSess)
 	{
-
+		LOG_INFO(ms_loger,"{}",rspMsg.ToString());
 	}
 }
 /**
@@ -726,8 +726,11 @@ void CChatServer::HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, 
  */
 void CChatServer::HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg)
 {
-	m_clientStateMap[rspMsg.m_strUserId] = CLIENT_SESS_STATE::SESS_RECV_MSG_FINISHED;
-	OnUserReceiveMsg(rspMsg.m_strUserId);
+	if(pSess)
+	{
+		m_clientStateMap[rspMsg.m_strUserId] = CLIENT_SESS_STATE::SESS_RECV_MSG_FINISHED;
+		OnUserReceiveMsg(rspMsg.m_strUserId);
+	}
 }
 
 /**
@@ -971,7 +974,7 @@ void CChatServer::HandleFindFriendReq(const std::shared_ptr<CServerSess>& pSess,
  * @param pSess 用户会话
  * @param reqMsg 更新好友列表回复
  */
-void CChatServer::HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateFriendListNotifyRspMsg& reqMsg)
+void CChatServer::HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const UpdateFriendListNotifyRspMsg& reqMsg)
 {
 	OnUserStateCheck(reqMsg.m_strUserId);
 }
@@ -982,7 +985,7 @@ void CChatServer::HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& 
  * @param pSess 用户会话
  * @param reqMsg 更新群列表回复
  */
-void CChatServer::HandleUpdateGroupListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateGroupListNotifyRspMsg& reqMsg)
+void CChatServer::HandleUpdateGroupListRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const UpdateGroupListNotifyRspMsg& reqMsg)
 {
 	OnUserRecvGroupMsg(reqMsg.m_strUserId);
 }
@@ -1217,7 +1220,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
  * @param pSess 用户会话
  * @param reqMsg 接收文件回复消息
  */
-void CChatServer::HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendRecvFileMsgRspMsg& reqMsg)
+void CChatServer::HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const FriendRecvFileMsgRspMsg& reqMsg)
 {
 	//
 	{
@@ -1246,7 +1249,10 @@ void CChatServer::HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& pS
  */
 void CChatServer::HandleFriendNotifyFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendNotifyFileMsgRspMsg& reqMsg)
 {
-
+	if(pSess)
+	{
+		LOG_INFO(ms_loger,"{}",reqMsg.ToString());
+	}
 }
 
 /**
@@ -1403,7 +1409,7 @@ void CChatServer::HandleAddFriendReq(const std::shared_ptr<CServerSess>& pSess, 
  * @param pSess 用户会话
  * @param rspMsg 添加好友的Recv消息[好友接收方---->服务器]
  */
-void CChatServer::HandleAddFriendRecvRsp(const std::shared_ptr<CServerSess>& pSess, const AddFriendRecvRspMsg& rspMsg)
+void CChatServer::HandleAddFriendRecvRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const AddFriendRecvRspMsg& rspMsg)
 {
 	T_ADD_FRIEND_MSG_BEAN bean;
 	m_util.UpdateToReadUnNotifyAddFriendMsg(rspMsg.m_strMsgId, rspMsg.m_option);
@@ -1416,7 +1422,7 @@ void CChatServer::HandleAddFriendRecvRsp(const std::shared_ptr<CServerSess>& pSe
  * @param pSess 用户会话
  * @param rspMsg 添加好友通知回复消息[发起方--->服务器]
  */
-void CChatServer::HandleAddFriendNotifyRsp(const std::shared_ptr<CServerSess>& pSess, const AddFriendNotifyRspMsg& rspMsg)
+void CChatServer::HandleAddFriendNotifyRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const AddFriendNotifyRspMsg& rspMsg)
 {
 	m_util.UpdateToNotifyAddFriendMsg(rspMsg.m_strMsgId);
 }
@@ -2098,7 +2104,7 @@ void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSe
  * TODO: 此处需要修改,以方便用于接收群组的文件消息
  * @param reqMsg 文件数据发送请求消息
  */
-void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg)
+void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint /*sendPt*/,const FileDataSendReqMsg& reqMsg)
 {
 	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
 	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
@@ -2193,7 +2199,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
  * @param pSess 用户会话
  * @param req 文件验证回复消息
  */
-void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req)
+void CChatServer::HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const FileVerifyRspMsg& req)
 {
 	{
 		auto item = m_UserSessVec.find(req.m_strFriendId);
@@ -2263,7 +2269,7 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess>& pSess, c
  * @param sendPt 消息发送者的地址
  * @param rspMsg 接收文件数据回复消息
  */
-void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& rspMsg)
+void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint /*sendPt*/, const FileDataRecvRspMsg& rspMsg)
 {
 	if(rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
 	{
@@ -2532,7 +2538,7 @@ void CChatServer::HandleReLogin(std::string strUserId, std::shared_ptr<CServerSe
  * @param pSess 用户会话
  * @param reqMsg KickOff消息回复
  */
-void CChatServer::HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess, const UserKickOffRspMsg& reqMsg)
+void CChatServer::HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& /*pSess*/, const UserKickOffRspMsg& reqMsg)
 {
 	auto item = m_KickOffSessMap.find(reqMsg.m_strUserId);
 	item->second->CloseSocket();
@@ -2561,7 +2567,7 @@ std::string CChatServer::GenerateSalt()
 	const char buff[] = "0123456789ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz";
 	constexpr int bufLen = sizeof(buff) / sizeof(buff[0]);
 	std::string strResult;
-	for (int i = 0; i < HASH_SALT_LENGTH; i++)
+	for (std::size_t i = 0; i < HASH_SALT_LENGTH; i++)
 	{
 		strResult += buff[rand() % bufLen];
 	}

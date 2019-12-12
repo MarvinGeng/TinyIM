@@ -29,12 +29,13 @@ elseif(WIN32)
 else()
     include_directories(${PROJECT_SOURCE_DIR} "/usr/local/include")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -static-libgcc -static-libstdc++")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -fno-permissive -fpermissive")
 endif()
-link_libraries(libmysql.lib)
+
 if(WIN32)
+link_libraries(libmysql.lib)
 else()
-link_libraries(pthread)
+link_libraries(pthread mysqlclient)
 endif()
 set(SERVER_FILES 
 		MediumServer.cpp

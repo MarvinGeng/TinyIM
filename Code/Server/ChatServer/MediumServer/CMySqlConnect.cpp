@@ -96,7 +96,6 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 		{
 			return false;
 		}
-		int res = 0;
 		std::string strSql = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME=?;";
 		if (mysql_stmt_prepare(m_pSelectUserByNameStmt, strSql.c_str(), static_cast<unsigned long>(strSql.size())))
 		{
@@ -108,7 +107,11 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 	memset(paramBind, 0, sizeof(paramBind));
 	{
 		char buff[32] = { 0 };
+		#ifdef _WIN32
 		strcpy_s(buff, userName.c_str());
+		#else
+		strcpy(buff, userName.c_str());
+		#endif
 		paramBind[0].buffer_type = MYSQL_TYPE_STRING;
 		paramBind[0].buffer = buff;
 		paramBind[0].buffer_length = static_cast<unsigned long>(userName.length());
@@ -212,7 +215,7 @@ bool CMySqlConnect::IsUserExist(const std::string strUserId)
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID FROM T_USER WHERE F_USER_ID='{0}';";
+	constexpr char strTemplate2[] = "SELECT F_USER_ID FROM T_USER WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql  ,__FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -222,7 +225,7 @@ bool CMySqlConnect::IsUserExist(const std::string strUserId)
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bExist = true;
 				break;
@@ -254,7 +257,7 @@ bool CMySqlConnect::IsFriend(const std::string userId,const std::string friendId
 	MYSQL_RES *result=nullptr;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
+	constexpr char strTemplate2[] = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, userId, friendId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -264,7 +267,7 @@ bool CMySqlConnect::IsFriend(const std::string userId,const std::string friendId
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bExist = true;
 				break;
@@ -292,7 +295,7 @@ bool CMySqlConnect::IsFriend(const std::string userId,const std::string friendId
 bool CMySqlConnect::UpdateUser(const T_USER_BEAN& bean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_USER SET F_PASS_WORD='{0}' WHERE F_USER_NAME='{1}';";
+	constexpr char strTemplate2[] = "UPDATE T_USER SET F_PASS_WORD='{0}' WHERE F_USER_NAME='{1}';";
 	std::string strSql = fmt::format(strTemplate2, bean.m_strF_PASS_WORD, bean.m_strF_USER_NAME);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -318,7 +321,7 @@ bool CMySqlConnect::UpdateUser(const T_USER_BEAN& bean)
 bool CMySqlConnect::UpdateUserOnlineState(const std::string strUserId, const CLIENT_ONLINE_TYPE type)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_USER SET F_ON_LINE_STATE='{0}' WHERE F_USER_ID='{1}';";
+	constexpr char strTemplate2[] = "UPDATE T_USER SET F_ON_LINE_STATE='{0}' WHERE F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, OnLineType(type), strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -342,7 +345,7 @@ bool CMySqlConnect::UpdateUserOnlineState(const std::string strUserId, const CLI
 bool CMySqlConnect::DeleteUser(const std::string strUserId)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_USER WHERE F_USER_ID='{0}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_USER WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -370,7 +373,7 @@ bool CMySqlConnect::InsertUser(const T_USER_BEAN& bean)
 	if (bean.IsValid())
 	{
 		int res = 0;
-		constexpr char * strTemplate2 = "INSERT INTO T_USER(F_USER_ID,F_USER_NAME,F_PASS_WORD,F_NICK_NAME) VALUES('{0}','{1}','{2}','{3}');";
+		constexpr char strTemplate2[] = "INSERT INTO T_USER(F_USER_ID,F_USER_NAME,F_PASS_WORD,F_NICK_NAME) VALUES('{0}','{1}','{2}','{3}');";
 		std::string strSql = fmt::format(strTemplate2, bean.m_strF_USER_ID, bean.m_strF_USER_NAME, bean.m_strF_PASS_WORD, bean.m_strF_NICK_NAME);
 
 		LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
@@ -405,7 +408,7 @@ bool CMySqlConnect::SelectUserInfoByName(const std::string userId, T_USER_INFO_B
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID,\
+	constexpr char strTemplate2[] = "SELECT F_USER_ID,\
 F_USER_NAME,\
 F_ADDRESS,\
 F_BIRTH_DATE,\
@@ -424,7 +427,7 @@ FROM T_USER WHERE F_USER_ID='{0}' OR F_USER_NAME='{0}';";
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_USER_ID = sql_row[0];
 				bean.m_strF_USER_NAME = sql_row[1];
@@ -461,7 +464,7 @@ FROM T_USER WHERE F_USER_ID='{0}' OR F_USER_NAME='{0}';";
 bool CMySqlConnect::UpdateUserInfo(const T_USER_INFO_BEAN& bean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_USER SET F_ADDRESS='{0}',F_BIRTH_DATE='{1}',F_EMAIL_ADDR='{2}',F_NICK_NAME='{3}',F_SIGNATURE='{4}',F_FACE_ID='{5}' WHERE F_USER_NAME='{6}';";
+	constexpr char strTemplate2[] = "UPDATE T_USER SET F_ADDRESS='{0}',F_BIRTH_DATE='{1}',F_EMAIL_ADDR='{2}',F_NICK_NAME='{3}',F_SIGNATURE='{4}',F_FACE_ID='{5}' WHERE F_USER_NAME='{6}';";
 	std::string strSql = fmt::format(strTemplate2,bean.m_strF_ADDRESS,
 		bean.m_strF_BIRTH_DATE,
 		bean.m_strF_EMAIL_ADDR,
@@ -492,7 +495,7 @@ bool CMySqlConnect::UpdateUserInfo(const T_USER_INFO_BEAN& bean)
 bool CMySqlConnect::InsertUserInfo(const T_USER_INFO_BEAN& bean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_USER(\
+	constexpr char strTemplate2[] = "INSERT INTO T_USER(\
 F_USER_NAME,\
 F_ADDRESS,\
 F_BIRTH_DATE,\
@@ -532,7 +535,6 @@ bool CMySqlConnect::InsertFriendChatMsg(const T_USER_CHAT_MSG& chatMsg) {
 		{
 			return false;
 		}
-		int res = 0;
 		std::string strSql = "INSERT INTO T_FRIEND_CHAT_MSG(F_MSG_ID,\
 F_MSG_TYPE,\
 F_FROM_ID,\
@@ -603,7 +605,7 @@ F_OTHER_INFO) VALUES(?,?,?,?,?,?);";
 bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const std::string msgState)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_FRIEND_CHAT_MSG SET F_READ_FLAG='{0}',F_READ_TIME=now() WHERE F_MSG_ID='{1}';";
+	constexpr char strTemplate2[] = "UPDATE T_FRIEND_CHAT_MSG SET F_READ_FLAG='{0}',F_READ_TIME=now() WHERE F_MSG_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, msgState, strMsgId);
 	
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -639,7 +641,6 @@ bool CMySqlConnect::UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG
 bool CMySqlConnect::HaveUnReadMsg(const std::string strUserId)
 {
 	auto item = m_unReadChatMsg.find(strUserId);
-	bool bResult = false;
 	if (item != m_unReadChatMsg.end())
 	{
 		if (!(m_unReadChatMsg[strUserId].empty()))
@@ -676,7 +677,7 @@ bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
 	MYSQL_RES *result = nullptr;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_MSG_ID,F_MSG_TYPE,F_FROM_ID,F_TO_ID,F_MSG_CONTEXT,F_OTHER_INFO,F_CREATE_TIME FROM T_FRIEND_CHAT_MSG WHERE (F_TO_ID={0} AND F_READ_FLAG='UNREAD');";
+	constexpr char strTemplate2[] = "SELECT F_MSG_ID,F_MSG_TYPE,F_FROM_ID,F_TO_ID,F_MSG_CONTEXT,F_OTHER_INFO,F_CREATE_TIME FROM T_FRIEND_CHAT_MSG WHERE (F_TO_ID={0} AND F_READ_FLAG='UNREAD');";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -686,7 +687,7 @@ bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
 		if (result)
 		{
 			T_USER_CHAT_MSG chatMsg;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				chatMsg.m_strF_MSG_ID = (sql_row[0]);
 				chatMsg.m_eChatMsgType = ChatType(sql_row[1]);
@@ -715,7 +716,7 @@ bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
  */
 bool CMySqlConnect::DeleteFriendChatMsg(const uint64_t msgId){
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_FRIEND_CHAT_MSG WHERE F_MSG_ID='{0}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_FRIEND_CHAT_MSG WHERE F_MSG_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, msgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -736,7 +737,7 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUser, std::vector<T_F
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_TEAM_ID,\
+	constexpr char strTemplate2[] = "SELECT F_TEAM_ID,\
 F_FRIEND_ID,\
 F_STATUS \
 FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
@@ -750,7 +751,7 @@ FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
 		{
 			T_FRIEND_RELATION_BEAN bean;
 			bean.m_strF_USER_ID = strUser;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_TEAM_ID = sql_row[0];
 				bean.m_strF_FRIEND_ID = sql_row[1];
@@ -785,7 +786,7 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_FRIEND_ID FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}';";
+	constexpr char strTemplate2[] = "SELECT F_FRIEND_ID FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -794,7 +795,7 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				std::string strResult = sql_row[0];
 				friendList.push_back(strResult);
@@ -824,7 +825,7 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 bool CMySqlConnect::InsertFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
+	constexpr char strTemplate2[] = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
 F_FRIEND_ID,\
 F_TEAM_ID,\
 F_STATUS,\
@@ -855,7 +856,7 @@ F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}',now());";
 bool CMySqlConnect::InsertFriendRelation(const std::string strUser, const std::string strFriend, const E_FRIEND_RELATION relationType)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
+	constexpr char strTemplate2[] = "INSERT INTO T_FRIEND_RELATION(F_USER_ID,\
 F_FRIEND_ID,\
 F_TEAM_ID,\
 F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','10000000','{2}',now());";
@@ -890,7 +891,7 @@ F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','10000000','{2}',now());";
 bool CMySqlConnect::DeleteFriendRelation(const std::string strUser, const std::string strFriend)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUser,strFriend);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -916,7 +917,7 @@ bool CMySqlConnect::DeleteFriendRelation(const std::string strUser, const std::s
 bool CMySqlConnect::UpdateFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_FRIEND_ID='{2}';";
+	constexpr char strTemplate2[] = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_FRIEND_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,bean.m_strF_TEAM_ID,bean.m_strF_USER_ID,bean.m_strF_FRIEND_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -946,22 +947,25 @@ bool CMySqlConnect::SelectFriendRelation(const std::string strUser, const std::s
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_NAME='{0}' AND F_FRIEND_NAME='{1}';";
+	constexpr char strTemplate2[] = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_NAME='{0}' AND F_FRIEND_NAME='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUser, strFriend);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
+	const std::string strFriendRelation = "FRIEND";
+	const std::string strBlackRelation = "BLACK";
+
 	if (!res)
 	{
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
-				if(sql_row[0]=="FRIEND")
+				if(sql_row[0]==strFriendRelation)
 				{
 					relationType = E_FRIEND_RELATION::E_FRIEND_TYPE;
 				}
-				else if(sql_row[0]=="BLACK")
+				else if(sql_row[0]==strBlackRelation)
 				{
 					relationType = E_FRIEND_RELATION::E_BLACK_TYPE;
 				}
@@ -998,7 +1002,7 @@ bool CMySqlConnect::SelectFriendRelation(const std::string strUser, const std::s
 bool CMySqlConnect::UpdateFriendTeamId(const std::string strUser, const std::string strOldTeamId, const std::string strNewTeamId)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_TEAM_ID='{2}';";
+	constexpr char strTemplate2[] = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_TEAM_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,strNewTeamId,strUser,strOldTeamId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1038,7 +1042,7 @@ bool CMySqlConnect::UpdateFriendRelation(const std::string strUser, const std::s
 bool CMySqlConnect::InsertAddFriendMsg(const T_ADD_FRIEND_MSG_BEAN msgBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_ADD_FRIEND_MSG(F_MSG_ID,\
+	constexpr char strTemplate2[] = "INSERT INTO T_ADD_FRIEND_MSG(F_MSG_ID,\
 F_USER_ID,\
 F_FRIEND_ID,\
 F_ADD_FRIEND_STATUS,\
@@ -1078,7 +1082,7 @@ bool CMySqlConnect::SelectUnReadAddFriendMsg(const std::string strUserName, T_AD
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_MSG_ID,F_USER_ID FROM T_ADD_FRIEND_MSG WHERE F_FRIEND_ID='{0}' AND F_ADD_FRIEND_STATUS='UN_READ';";
+	constexpr char strTemplate2[] = "SELECT F_MSG_ID,F_USER_ID FROM T_ADD_FRIEND_MSG WHERE F_FRIEND_ID='{0}' AND F_ADD_FRIEND_STATUS='UN_READ';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1087,7 +1091,7 @@ bool CMySqlConnect::SelectUnReadAddFriendMsg(const std::string strUserName, T_AD
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				msgBean.m_strF_MSG_ID = sql_row[0];
 				msgBean.m_strF_FRIEND_ID = sql_row[1];
@@ -1124,7 +1128,7 @@ bool CMySqlConnect::SelectUnNotifyAddFriendMsg(const std::string strUserName, T_
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_MSG_ID,\
+	constexpr char strTemplate2[] = "SELECT F_MSG_ID,\
 F_FRIEND_ID,F_FRIEND_OPTION  FROM T_ADD_FRIEND_MSG WHERE F_USER_ID='{0}' AND F_ADD_FRIEND_STATUS='READ_UN_NOTIFY';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
@@ -1134,7 +1138,7 @@ F_FRIEND_ID,F_FRIEND_OPTION  FROM T_ADD_FRIEND_MSG WHERE F_USER_ID='{0}' AND F_A
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				msgBean.m_strF_MSG_ID = sql_row[0];
 				msgBean.m_strF_USER_ID = strUserName;
@@ -1167,7 +1171,7 @@ F_FRIEND_ID,F_FRIEND_OPTION  FROM T_ADD_FRIEND_MSG WHERE F_USER_ID='{0}' AND F_A
 bool CMySqlConnect::UpdateToNotifyAddFriendMsg(const std::string strMsgId)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='NOTIFY',F_NOTIFY_TIME=now() WHERE F_MSG_ID='{0}';";
+	constexpr char strTemplate2[] = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='NOTIFY',F_NOTIFY_TIME=now() WHERE F_MSG_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strMsgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1193,7 +1197,7 @@ bool CMySqlConnect::UpdateToNotifyAddFriendMsg(const std::string strMsgId)
 bool CMySqlConnect::UpdateToReadUnNotifyAddFriendMsg(const std::string strMsgId,const E_FRIEND_OPTION option)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='READ_UN_NOTIFY',F_FRIEND_OPTION='{0}',F_OPTION_TIME=now() WHERE F_MSG_ID='{1}';";
+	constexpr char strTemplate2[] = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='READ_UN_NOTIFY',F_FRIEND_OPTION='{0}',F_OPTION_TIME=now() WHERE F_MSG_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, FriendOption(option), strMsgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1218,7 +1222,7 @@ bool CMySqlConnect::UpdateToReadUnNotifyAddFriendMsg(const std::string strMsgId,
 bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_USER_TEAM(F_USER_ID,F_TEAM_ID,F_TEAM_NAME,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
+	constexpr char strTemplate2[] = "INSERT INTO T_USER_TEAM(F_USER_ID,F_TEAM_ID,F_TEAM_NAME,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_USER_ID,teamBean.m_strF_TEAM_ID,teamBean.m_strF_TEAM_NAME);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
@@ -1247,7 +1251,7 @@ bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 bool CMySqlConnect::DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_USER_TEAM WHERE F_TEAM_ID='{0}' AND F_USER_ID='{1}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_USER_TEAM WHERE F_TEAM_ID='{0}' AND F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_ID,teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1277,7 +1281,7 @@ bool CMySqlConnect::SelectUserByTeamId(const std::string strUserName, const std:
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_FRIEND_ID,F_TEAM_ID, FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_TEAM_ID='{1}';";
+	constexpr char strTemplate2[] = "SELECT F_FRIEND_ID,F_TEAM_ID, FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_TEAM_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName,strTeamId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1287,7 +1291,7 @@ bool CMySqlConnect::SelectUserByTeamId(const std::string strUserName, const std:
 		if (result)
 		{
 			T_FRIEND_RELATION_BEAN bean;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_FRIEND_ID = sql_row[0];
 				bean.m_strF_TEAM_ID = sql_row[1];
@@ -1321,7 +1325,7 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID,F_TEAM_ID,F_TEAM_NAME FROM T_USER_TEAM WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
+	constexpr char strTemplate2[] = "SELECT F_USER_ID,F_TEAM_ID,F_TEAM_NAME FROM T_USER_TEAM WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1331,7 +1335,7 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 		if (result)
 		{
 			T_USER_TEAM_BEAN bean;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_USER_ID = sql_row[0];
 				bean.m_strF_TEAM_ID = sql_row[1];
@@ -1364,7 +1368,7 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 bool CMySqlConnect::UpdateUserTeamName(const T_USER_TEAM_BEAN& teamBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_USER_TEAM SET F_TEAM_NAME='{0}' WHERE F_TEAM_ID='{1}' AND F_USER_ID='{2}";
+	constexpr char strTemplate2[] = "UPDATE T_USER_TEAM SET F_TEAM_NAME='{0}' WHERE F_TEAM_ID='{1}' AND F_USER_ID='{2}";
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_NAME,teamBean.m_strF_TEAM_ID, teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1390,7 +1394,7 @@ bool CMySqlConnect::UpdateUserTeamName(const T_USER_TEAM_BEAN& teamBean)
 bool CMySqlConnect::InsertGroup(const T_GROUP_BEAN& groupBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_GROUP(F_GROUP_ID,F_GROUP_NAME,F_CREATE_TIME,F_GROUP_INFO) VALUES('{0}','{1}',now(),'{2}');";
+	constexpr char strTemplate2[] = "INSERT INTO T_GROUP(F_GROUP_ID,F_GROUP_NAME,F_CREATE_TIME,F_GROUP_INFO) VALUES('{0}','{1}',now(),'{2}');";
 	std::string strSql = fmt::format(strTemplate2, groupBean.m_strF_GROUP_ID, groupBean.m_strF_GROUP_NAME, "NO INFO");
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
@@ -1420,7 +1424,7 @@ bool CMySqlConnect::SelectGroupById(const std::string groupId, T_GROUP_BEAN& gro
 	MYSQL_ROW sql_row;
 	bool bResult = false;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_ID = '{0}';";
+	constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_ID = '{0}';";
 	std::string strSql = fmt::format(strTemplate2, groupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1430,7 +1434,7 @@ bool CMySqlConnect::SelectGroupById(const std::string groupId, T_GROUP_BEAN& gro
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				groupBean.m_strF_GROUP_ID = sql_row[0];
 				groupBean.m_strF_GROUP_NAME = sql_row[1];
@@ -1460,7 +1464,7 @@ bool CMySqlConnect::SelectGroupById(const std::string groupId, T_GROUP_BEAN& gro
 bool CMySqlConnect::DeleteGroup(const std::string strGroupId)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_GROUP WHERE F_GROUP_ID='{0}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_GROUP WHERE F_GROUP_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1489,7 +1493,7 @@ bool CMySqlConnect::SelectGroups(const std::string strGroupName, std::vector<T_G
 	MYSQL_ROW sql_row;
 	bool bResult = false;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_NAME LIKE '{0}' OR F_GROUP_ID LIKE '{0}';";
+constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_NAME LIKE '{0}' OR F_GROUP_ID LIKE '{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1499,7 +1503,7 @@ bool CMySqlConnect::SelectGroups(const std::string strGroupName, std::vector<T_G
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_GROUP_ID = sql_row[0];
 				bean.m_strF_GROUP_NAME = sql_row[1];
@@ -1530,7 +1534,7 @@ bool CMySqlConnect::SelectGroups(const std::string strGroupName, std::vector<T_G
 bool CMySqlConnect::InsertGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_GROUP_RELATION(F_GROUP_ID,F_USER_ID,F_ROLE_TYPE,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
+	constexpr char strTemplate2[] = "INSERT INTO T_GROUP_RELATION(F_GROUP_ID,F_USER_ID,F_ROLE_TYPE,F_CREATE_TIME) VALUES('{0}','{1}','{2}',now());";
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID,MemberRole(memBean.m_eRole));
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
@@ -1557,7 +1561,7 @@ bool CMySqlConnect::InsertGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 bool CMySqlConnect::UpdateGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_GROUP_RELATION SET F_ROLE_TYPE='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
+	constexpr char strTemplate2[] = "UPDATE T_GROUP_RELATION SET F_ROLE_TYPE='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,MemberRole(memBean.m_eRole),memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1582,7 +1586,7 @@ bool CMySqlConnect::UpdateGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 bool CMySqlConnect::UpdateGroupRelationLastReadId(const T_GROUP_RELATION_BEAN& memBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "UPDATE T_GROUP_RELATION SET F_LAST_READ_MSG_ID='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
+	constexpr char strTemplate2[] = "UPDATE T_GROUP_RELATION SET F_LAST_READ_MSG_ID='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_LAST_READ_MSG_ID, memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1607,7 +1611,7 @@ bool CMySqlConnect::UpdateGroupRelationLastReadId(const T_GROUP_RELATION_BEAN& m
 bool CMySqlConnect::DeleteGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}' AND F_USER_ID='{1}';";
+	constexpr char strTemplate2[] = "DELETE FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}' AND F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_GROUP_ID,memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());//查询
@@ -1636,7 +1640,7 @@ bool CMySqlConnect::SelectUserGroupRelation(const std::string strUserName, std::
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_GROUP_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_USER_ID='{0}';";
+	constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1647,7 +1651,7 @@ bool CMySqlConnect::SelectUserGroupRelation(const std::string strUserName, std::
 		{
 			T_GROUP_RELATION_BEAN bean;
 			bean.m_strF_USER_ID = strUserName;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_GROUP_ID = sql_row[0];
 				bean.m_eRole = MemberRole(sql_row[1]);
@@ -1680,7 +1684,7 @@ bool CMySqlConnect::SelectGroupRelation(const std::string strGroupId, std::vecto
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}';";
+	constexpr char strTemplate2[] = "SELECT F_USER_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
@@ -1690,7 +1694,7 @@ bool CMySqlConnect::SelectGroupRelation(const std::string strGroupId, std::vecto
 		if (result)
 		{
 			T_GROUP_RELATION_BEAN bean;
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				bean.m_strF_USER_ID = sql_row[0];
 				bean.m_eRole = MemberRole(sql_row[1]);
@@ -1724,7 +1728,7 @@ bool CMySqlConnect::SelectGroupChatText(T_GROUP_CHAT_MSG& chatMsg)
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_MSG_ID,\
+	constexpr char strTemplate2[] = "SELECT F_MSG_ID,\
 F_MSG_TYPE,\
 F_SENDER_ID,\
 F_MSG_CONTEXT,\
@@ -1739,7 +1743,7 @@ FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID='{0}' AND F_MSG_ID > '{1}' LIMIT 1;";
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				chatMsg.m_strF_MSG_ID = sql_row[0];
 				chatMsg.m_eChatMsgType = ChatType(sql_row[1]);
@@ -1773,7 +1777,7 @@ FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID='{0}' AND F_MSG_ID > '{1}' LIMIT 1;";
 bool CMySqlConnect::InsertGroupChatText(const T_GROUP_CHAT_MSG& chatMsg)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_GROUP_CHAT_MSG(F_MSG_ID,\
+	constexpr char strTemplate2[] = "INSERT INTO T_GROUP_CHAT_MSG(F_MSG_ID,\
 F_MSG_TYPE,\
 F_SENDER_ID,\
 F_GROUP_ID,\
@@ -1811,7 +1815,7 @@ F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}','{4}','{5}',now());";
 bool CMySqlConnect::InsertFileHash(const T_FILE_HASH_BEAN& hashBean)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "INSERT INTO T_FILE_HASH(F_USER_ID,\
+	constexpr char strTemplate2[] = "INSERT INTO T_FILE_HASH(F_USER_ID,\
 F_FILE_NAME,\
 F_FILE_HASH,\
 F_CREATE_TIME)\
@@ -1847,7 +1851,7 @@ bool CMySqlConnect::SelectFileByHash(T_FILE_HASH_BEAN& hashBean, const std::stri
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
 	int res = 0;
-	constexpr char * strTemplate2 = "SELECT F_USER_ID,\
+	constexpr char strTemplate2[] = "SELECT F_USER_ID,\
 F_FILE_NAME,\
 F_FILE_HASH \
 FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
@@ -1860,7 +1864,7 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
 		result = mysql_store_result(&m_mysql);
 		if (result)
 		{
-			while (sql_row = mysql_fetch_row(result))
+			while ((sql_row = mysql_fetch_row(result)))
 			{
 				hashBean.m_strF_USER_ID = sql_row[0];
 				hashBean.m_strF_FILE_NAME = sql_row[1];
@@ -1884,12 +1888,11 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
 bool CMySqlConnect::DeleteFileByHash(const std::string strFileHash)
 {
 	int res = 0;
-	constexpr char * strTemplate2 = "DELETE \
+	constexpr char strTemplate2[] = "DELETE \
 FROM T_FILE_HASH WHERE F_FILE_HASH='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strFileHash);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
 	res = mysql_query(&m_mysql, strSql.c_str());
-	bool bResult = false;
 	if (!res)
 	{
 		return true;

@@ -5,10 +5,15 @@
 //#include "stdafx.h"
 #include <locale.h>
 //#include <iconv.h>          //linux only
+#ifdef _WIN32
 #include <Windows.h>
+#else
+
+#endif
 #include "EncodingUtil.h"
 
 
+#ifdef _WIN32
 /**
  * @brief 
  * 
@@ -278,86 +283,88 @@ bool EncodeUtil::Utf8ToUnicode(const char* lpszUtf8, wchar_t* lpszUnicode, int n
     int nRet = ::MultiByteToWideChar(CP_UTF8, 0, lpszUtf8, -1, lpszUnicode, nLen);
     return (0 == nRet) ? FALSE : TRUE;
 }
+#else
+#endif
 
-std::wstring EncodeUtil::AnsiToUnicode(const std::string& strAnsi)
+std::wstring EncodeUtil::AnsiToUnicode(const std::string& /*strAnsi*/)
 {
     std::wstring strUnicode;
 
-    wchar_t* lpszUnicode = EncodeUtil::AnsiToUnicode(strAnsi.c_str());
+   /* wchar_t* lpszUnicode = EncodeUtil::AnsiToUnicode(strAnsi.c_str());
     if (lpszUnicode != NULL)
     {
         strUnicode = lpszUnicode;
         delete[]lpszUnicode;
-    }
+    }*/
 
     return strUnicode;
 }
-std::string EncodeUtil::UnicodeToAnsi(const std::wstring& strUnicode)
+std::string EncodeUtil::UnicodeToAnsi(const std::wstring& /*strUnicode*/)
 {
     std::string strAnsi;
 
-    char* lpszAnsi = UnicodeToAnsi(strUnicode.c_str());
+    /*char* lpszAnsi = UnicodeToAnsi(strUnicode.c_str());
     if (lpszAnsi != NULL)
     {
         strAnsi = lpszAnsi;
         delete[]lpszAnsi;
-    }
+    }*/
 
     return strAnsi;
 }
 
-std::string EncodeUtil::AnsiToUtf8(const std::string& strAnsi)
+std::string EncodeUtil::AnsiToUtf8(const std::string& /*strAnsi*/)
 {
     std::string strUtf8;
 
-    char* lpszUtf8 = AnsiToUtf8(strAnsi.c_str());
+    /*char* lpszUtf8 = AnsiToUtf8(strAnsi.c_str());
     if (lpszUtf8 != NULL)
     {
         strUtf8 = lpszUtf8;
         delete[]lpszUtf8;
-    }
+    }*/
 
     return strUtf8;
 }
 
-std::string EncodeUtil::Utf8ToAnsi(const std::string& strUtf8)
+std::string EncodeUtil::Utf8ToAnsi(const std::string& /*strUtf8*/)
 {
     std::string strAnsi;
 
-    char* lpszAnsi = Utf8ToAnsi(strUtf8.c_str());
+   /* char* lpszAnsi = Utf8ToAnsi(strUtf8.c_str());
     if (lpszAnsi != NULL)
     {
         strAnsi = lpszAnsi;
         delete[]lpszAnsi;
-    }
+    }*/
 
     return strAnsi;
 }
 
-std::string EncodeUtil::UnicodeToUtf8(const std::wstring& strUnicode)
+std::string EncodeUtil::UnicodeToUtf8(const std::wstring& /*strUnicode*/)
 {
     std::string strUtf8;
 
-    char* lpszUtf8 = EncodeUtil::UnicodeToUtf8(strUnicode.c_str());
+    /*char* lpszUtf8 = EncodeUtil::UnicodeToUtf8(strUnicode.c_str());
     if (lpszUtf8 != NULL)
     {
         strUtf8 = lpszUtf8;
         delete[]lpszUtf8;
-    }
+    }*/
 
     return strUtf8;
 }
 
-std::wstring EncodeUtil::Utf8ToUnicode(const std::string& strUtf8)
+std::wstring EncodeUtil::Utf8ToUnicode(const std::string& /*strUtf8*/)
 {
     std::wstring strUnicode;
 
-    wchar_t* lpszUnicode = EncodeUtil::Utf8ToUnicode(strUtf8.c_str());
+   /* wchar_t* lpszUnicode = EncodeUtil::Utf8ToUnicode(strUtf8.c_str());
     if (lpszUnicode != NULL)
     {
         strUnicode = lpszUnicode;
         delete[]lpszUnicode;
-    }
+    }*/
 
     return strUnicode;
 }
