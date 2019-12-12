@@ -8,7 +8,9 @@
 #ifdef _WIN32
 #include <Windows.h>
 #else
-
+#include <locale>
+#include <codecvt>
+#include <string>
 #endif
 #include "EncodingUtil.h"
 
@@ -283,8 +285,7 @@ bool EncodeUtil::Utf8ToUnicode(const char* lpszUtf8, wchar_t* lpszUnicode, int n
     int nRet = ::MultiByteToWideChar(CP_UTF8, 0, lpszUtf8, -1, lpszUnicode, nLen);
     return (0 == nRet) ? FALSE : TRUE;
 }
-#else
-#endif
+
 
 std::wstring EncodeUtil::AnsiToUnicode(const std::string& /*strAnsi*/)
 {
@@ -368,7 +369,47 @@ std::wstring EncodeUtil::Utf8ToUnicode(const std::string& /*strUtf8*/)
 
     return strUnicode;
 }
+#else
+using namespace std;
+class chs_codecvt : public std::codecvt_byname<wchar_t, char, std::mbstate_t> {
+public:
+    chs_codecvt() : codecvt_byname("chs") { }//zh_CN.GBK or .936
+};
+std::wstring EncodeUtil::AnsiToUnicode(const std::string& strAnsi)
+{
+    std::wstring_convert<chs_codecvt> covertX;
+    return covertX.from_bytes(strAnsi);
+}
+std::string EncodeUtil::UnicodeToAnsi(const std::wstring& strUnicode)
+{
+    std::wstring_convert<chs_codecvt> covertX;
+    return covertX.to_bytes(strUnicode);
+}
 
+std::string EncodeUtil::AnsiToUtf8(const std::string& strAnsi)
+{
+    return UnicodeToUtf8(AnsiToUnicode(strAnsi));
+}
+
+std::string EncodeUtil::Utf8ToAnsi(const std::string& strUtf8)
+{
+   return UnicodeToAnsi(Utf8ToUnicode(strUtf8));
+}
+
+std::string EncodeUtil::UnicodeToUtf8(const std::wstring& strUnicode)
+{
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX,wchar_t> convertX;    
+    return convertX.to_bytes(strUnicode);
+}
+
+std::wstring EncodeUtil::Utf8ToUnicode(const std::string& strUtf8)
+{
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX,wchar_t> convertX;
+    return convertX.from_bytes(strUtf8);
+}
+#endif
 //int EncodeUtil::code_convert(char* from_charset, char* to_charset, char* inbuf, size_t inlen, char* outbuf, size_t& outlen)
 //{
 //    iconv_t cd;
