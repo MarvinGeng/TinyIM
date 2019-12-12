@@ -12,10 +12,10 @@
 #define LOG_ERR(LOG,...)  if(LOG){LOG->error(__VA_ARGS__);}
 #define LOG_DBG(LOG,...) if(LOG){LOG->debug(__VA_ARGS__);}
 #else
-#define INFO(LOG,msg...) LOG->info(msg)
-#define WARN(LOG,msg...) LOG->warn(msg)
-#define ERR(LOG,msg...)  LOG->error(msg)
-#define DBG(LOG,msg...) LOG->debug(msg)
+#define LOG_INFO(LOG,msg...) LOG->info(msg)
+#define LOG_WARN(LOG,msg...) LOG->warn(msg)
+#define LOG_ERR(LOG,msg...)  LOG->error(msg)
+#define LOG_DBG(LOG,msg...) LOG->debug(msg)
 #endif
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? (strrchr(__FILE__, '\\') + 1) : __FILE__)
 #endif

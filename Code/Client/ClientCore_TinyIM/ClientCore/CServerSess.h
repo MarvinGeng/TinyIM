@@ -57,7 +57,7 @@ public:
 		{
 			auto self = shared_from_this();
 			asio::async_write(m_socket, asio::buffer(msg->GetData(), msg->GetSize()), [this, self, msg](std::error_code ec, std::size_t length) {
-				if (!ec)
+				if (!ec && length > 0)
 				{
 					LOG_INFO(ms_loger, "TCP Send To GUI Succeed: MsgType{} Msg:{} [{} {}]",MsgType(msg->GetType()),msg->to_string(),__FILENAME__,__LINE__);
 				}
@@ -84,9 +84,9 @@ public:
 		SendMsg(msg);
 	}
 
-	void HandleErrorCode(const std::error_code& ec) {
-
-	}
+	//void HandleErrorCode(const std::error_code& ec) {
+//
+//	}
 
 	void StopConnect();
     CServerSess(tcp::socket socket, CMediumServer* server) : m_socket(std::move(socket)),m_server(server),m_bConnect(true) { 

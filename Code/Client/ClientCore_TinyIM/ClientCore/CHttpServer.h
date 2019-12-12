@@ -185,18 +185,17 @@ namespace ClientCore {
 		void Init(const int port);
 
 		std::string GetHttpParamUserId(std::shared_ptr<HttpServer::Request> request);
-	
-
-		SnowFlake m_msgIdUtil;
+		
 		HttpServer m_httpServer;
 		CMediumServer* m_pServer;
+		SnowFlake m_msgIdUtil;
+		NormalRspMsg m_wrongRequestFormatRsp;//请求格式错误的回复
+		NormalRspMsg m_userNotLoginRsp;//用户未登录的请的回
+	
 		std::map<CClientSess_SHARED_PTR, std::shared_ptr<HttpServer::Response>> m_clientSessResponseMap;
 		HTTP_RSP_MAP m_httpRspMap;
 
 		std::map<std::string, UserLoginReqMsg> m_userLoginMsgMap;
-
-		NormalRspMsg m_wrongRequestFormatRsp;//请求格式错误的回复
-		NormalRspMsg m_userNotLoginRsp;//用户未登录的请的回复
 	};
 }
 #endif

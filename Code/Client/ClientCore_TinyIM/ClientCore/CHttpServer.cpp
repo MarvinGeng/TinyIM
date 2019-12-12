@@ -546,7 +546,8 @@ namespace ClientCore
 	{
 		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		RecvGroupTextMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		std::string strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_RecvGroupTextMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -635,7 +636,8 @@ namespace ClientCore
 	void CHttpServer::Get_RecvAddFriendReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		AddFriendRecvReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		std::string strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_AddFriendRecvReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -724,7 +726,8 @@ namespace ClientCore
 	void CHttpServer::Get_AddFriendNotify(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		AddFriendNotifyReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		std::string strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_AddFriendNotifyReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -804,7 +807,8 @@ namespace ClientCore
 	void CHttpServer::Get_RecvFileOnlineReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendRecvFileMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		auto strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_FriendRecvFileMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -1316,7 +1320,7 @@ namespace ClientCore
 	 * @param response 
 	 * @param request 
 	 */
-	void CHttpServer::Get_Version(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+	void CHttpServer::Get_Version(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> /*request*/) {
 		std::string content = "https://www.dennisthink.com/";
 		*response << "HTTP/1.1 200 OK\r\nContent-Length: " << content.length() << "\r\n\r\n"
 			<< content;
@@ -1332,7 +1336,8 @@ namespace ClientCore
 	void CHttpServer::Get_SendFileOnlineNotifyReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		FriendNotifyFileMsgReqMsg reqMsg;
-		auto msgUtil = m_pServer->GetMsgPersisUtil("");
+		auto strUserId = GetHttpParamUserId(request);
+		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
 		if (msgUtil && msgUtil->Get_FriendNotifyFileMsgReqMsg(reqMsg))
 		{
 			std::string strContent = reqMsg.ToString();
@@ -1364,7 +1369,10 @@ namespace ClientCore
 	 */
 	void CHttpServer::Post_SendFileOnlineNotifyRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
-
+		if(request && response)
+		{
+			LOG_INFO(ms_loger,"1234");
+		}
 	}
 
 	/**

@@ -315,7 +315,16 @@ namespace SimpleWeb {
         return str < rhs.str;
       }
     };
+  protected:
+    bool internal_io_service = false;
 
+    std::unique_ptr<asio::ip::tcp::acceptor> acceptor;
+    std::vector<std::thread> threads;
+
+    std::shared_ptr<std::unordered_set<Connection *>> connections;
+    std::shared_ptr<std::mutex> connections_mutex;
+
+    std::shared_ptr<ScopeRunner> handler_runner;
   public:
     /// Warning: do not add or remove resources after start() is called
     std::map<regex_orderable, std::map<std::string, std::function<void(std::shared_ptr<typename ServerBase<socket_type>::Response>, std::shared_ptr<typename ServerBase<socket_type>::Request>)>>> resource;
@@ -369,17 +378,8 @@ namespace SimpleWeb {
       stop();
     }
 
-  protected:
-    bool internal_io_service = false;
 
-    std::unique_ptr<asio::ip::tcp::acceptor> acceptor;
-    std::vector<std::thread> threads;
-
-    std::shared_ptr<std::unordered_set<Connection *>> connections;
-    std::shared_ptr<std::mutex> connections_mutex;
-
-    std::shared_ptr<ScopeRunner> handler_runner;
-
+protected:
     ServerBase(asio::io_service& ioService,unsigned short port) noexcept : config(port), connections(new std::unordered_set<Connection *>()), connections_mutex(new std::mutex()), handler_runner(new ScopeRunner()),m_IoService(ioService) {}
 
     virtual void accept() = 0;

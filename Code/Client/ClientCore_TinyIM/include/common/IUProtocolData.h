@@ -11,6 +11,11 @@
 
 #define DEFAULT_TEAMNAME _T("My Friends")
 #define MAX_PATH_LENGTH 250
+#ifdef _WIN32
+#else
+#include <string.h>
+#define strcpy_s strcpy
+#endif
 //客户端类型
 enum CLIENT_TYPE
 {

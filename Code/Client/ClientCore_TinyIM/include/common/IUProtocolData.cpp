@@ -1,6 +1,9 @@
 
 #include "IUProtocolData.h"
-
+#ifdef _WIN32
+#else
+#include <string.h>
+#endif
 //class NetData
 CNetData::CNetData()
 {
@@ -144,7 +147,7 @@ CUserExtendInfoRequest::~CUserExtendInfoRequest()
 	
 }
 
-/*
+
 //class CLoginUserExtendInfo
 CUserExtendInfoResult::CUserExtendInfoResult()
 {

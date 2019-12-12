@@ -34,7 +34,7 @@ endif()
 
 if(WIN32)
 else()
-link_libraries(pthread)
+link_libraries(pthread dl)
 endif()
 set(SERVER_FILES 
 		CServerSess.h CServerSess.cpp

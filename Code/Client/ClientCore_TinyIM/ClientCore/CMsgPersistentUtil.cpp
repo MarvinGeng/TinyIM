@@ -617,7 +617,7 @@ bool CMsgPersistentUtil::Get_FriendRecvFileMsgReqMsg(FriendRecvFileMsgReqMsg& ms
  * @return true 
  * @return false 
  */
-bool CMsgPersistentUtil::Update_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& msg)
+bool CMsgPersistentUtil::Update_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& /*msg*/)
 {
 	if (!m_FriendRecvFileMsgReqMsgMap.empty())
 	{
@@ -664,7 +664,7 @@ bool CMsgPersistentUtil::Get_FriendNotifyFileMsgReqMsg(FriendNotifyFileMsgReqMsg
  * @return true 
  * @return false 
  */
-bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg)
+bool CMsgPersistentUtil::Update_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& /*msg*/)
 {
 	if (m_FriendNotifyFileMsgReqMsgMap.empty())
 	{
@@ -756,7 +756,7 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_SearchFriendChatMsg(const S
 	FriendChatMsg_s rspMsg;
 	while (m_pFriendChatSelectByWord->executeStep())
 	{
-		int nColumCount = m_pFriendChatSelectByWord->getColumnCount();
+		//int nColumCount = m_pFriendChatSelectByWord->getColumnCount();
 		rspMsg.m_strChatMsgId = m_pFriendChatSelectByWord->getColumn(0).getString();
 		rspMsg.m_strSenderId = m_pFriendChatSelectByWord->getColumn(2).getString();
 		rspMsg.m_strReceiverId = m_pFriendChatSelectByWord->getColumn(3).getString();
@@ -784,7 +784,7 @@ std::vector<SendGroupTextMsgRspMsg> CMsgPersistentUtil::Get_SearchGroupChatMsg(c
 	SendGroupTextMsgRspMsg rspMsg;
 	while (m_pGroupChatSelectByWord->executeStep())
 	{
-		int nColumCount = m_pGroupChatSelectByWord->getColumnCount();
+		//int nColumCount = m_pGroupChatSelectByWord->getColumnCount();
 		rspMsg.m_strMsgId = m_pGroupChatSelectByWord->getColumn(0).getString();
 		rspMsg.m_strSenderId = m_pGroupChatSelectByWord->getColumn(2).getString();
 		rspMsg.m_strGroupId = m_pGroupChatSelectByWord->getColumn(3).getString();
@@ -1007,7 +1007,7 @@ std::vector<FriendChatMsg_s> CMsgPersistentUtil::Get_FriendChatHistoryCore(SQLit
 	FriendChatMsg_s rspMsg;
 	while (pState->executeStep())
 	{
-		int nColumCount = pState->getColumnCount();
+		//int nColumCount = pState->getColumnCount();
 		rspMsg.m_strChatMsgId = pState->getColumn(0).getString();
 		rspMsg.m_strSenderId = pState->getColumn(2).getString();
 		rspMsg.m_strReceiverId = pState->getColumn(3).getString();
@@ -1032,7 +1032,7 @@ std::vector<SendGroupTextMsgRspMsg>  CMsgPersistentUtil::Get_GroupChatHistoryCor
 	SendGroupTextMsgRspMsg rspMsg;
 	while (pState->executeStep())
 	{
-		int nColumCount = pState->getColumnCount();
+		//int nColumCount = pState->getColumnCount();
 		rspMsg.m_strMsgId = pState->getColumn(0).getString();
 		rspMsg.m_strSenderId = pState->getColumn(2).getString();
 		rspMsg.m_strGroupId = pState->getColumn(3).getString();

@@ -548,7 +548,7 @@ void CMediumServer::SetTimer(int nSeconds)
  */
 void CMediumServer::HandleFriendChatSendTextMsgRsp(const FriendChatSendTxtRspMsg& rspMsg)
 {
-
+	LOG_ERR(ms_loger,"{}",rspMsg.ToString());
 }
 
 /**
@@ -720,6 +720,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  */
 void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg& notifyMsg)
 {
+	LOG_ERR(ms_loger,"{}",notifyMsg.ToString());
+
 	/*if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
 		int nFileId = static_cast<int>(time(nullptr));
@@ -1298,7 +1300,10 @@ bool CMediumServer::HandleSendForward(FriendChatSendTxtReqMsg& reqMsg)
  */
 void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FriendChatSendTxtReqMsg& reqMsg)
 {
-	HandleSendForward(reqMsg);
+	if(pServerSess)
+	{
+		HandleSendForward(reqMsg);
+	}
 	/*{
 		ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
 		ChatMsgElemVec newVec;
@@ -1588,8 +1593,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 
 
 
-	auto item = m_fileHashMsgIdMap.find(reqMsg.m_strFileHash);
-	auto hashItem = std::find(m_fileHashTransVec.begin(), m_fileHashTransVec.end(), reqMsg.m_strFileHash);
+	//auto item = m_fileHashMsgIdMap.find(reqMsg.m_strFileHash);
+	//auto hashItem = std::find(m_fileHashTransVec.begin(), m_fileHashTransVec.end(), reqMsg.m_strFileHash);
 	if(strFileName.empty())
 	{
 		m_fileHashTransVec.push_back(reqMsg.m_strFileHash);
@@ -1772,7 +1777,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 {
 	if (rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
-		int nFileId = static_cast<int>(time(nullptr));
+		//int nFileId = static_cast<int>(time(nullptr));
 		int nFileSize = 0;
 		std::string strImageName = m_fileUtil.GetCurDir() + rspMsg.m_strUserId + "\\" + rspMsg.m_strFileName;
 		m_fileUtil.GetFileSize(nFileSize, strImageName);
@@ -1958,6 +1963,10 @@ void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>&
  */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)
 {
+	if(pClientSess)
+	{
+
+	}
 	if (ERROR_CODE_TYPE::E_CODE_SUCCEED == rspMsg.m_errCode)
 	{
 		m_userIdUdpAddrMap.erase(rspMsg.m_strUdpUserId);
@@ -2044,7 +2053,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
-	}
+	}break;
 	case E_MsgType::FileVerifyReq_Type:
 	{
 		FileVerifyReqMsg reqMsg;

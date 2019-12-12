@@ -36,7 +36,16 @@ int main(int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 {
-	if(argc < 2)
+    if(argc > 0)
+    {
+        std::cout<<argv[0]<<std::endl;
+    }
+    ParseParamResult result;
+	CFileUtil util;
+	result.m_cfgFile = util.GetCurDir() + "ClientCore.cfg";
+	RunProgram(result);
+	return 0;
+	/*if(argc < 2)
 	{
 		PrintParamOption();
 		return 0;
@@ -135,6 +144,6 @@ int main(int argc, char *argv[])
             sleep(10);
         }).daemon(worker);
     }
-    return 0;
+    return 0;*/
 }
 #endif

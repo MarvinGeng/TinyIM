@@ -45,7 +45,7 @@ int CClientSess::StartConnect()
 		auto self = shared_from_this();
 		asio::async_connect(
 			m_socket, endpoint_iterator,
-			[this, self](std::error_code ec, asio::ip::tcp::endpoint endPt) {
+			[this, self](std::error_code ec, asio::ip::tcp::endpoint /*endPt*/) {
 				if (!ec)
 				{
 					m_bConnect = ST_CONN_FINISHED;
@@ -179,8 +179,8 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 		auto self = shared_from_this();
 		asio::async_write(
 			m_socket, asio::buffer(pMsg->GetData(), pMsg->GetSize()),
-			[this, self, pMsg](std::error_code ec, std::size_t length) mutable {
-				if (ec)
+			[this, self, pMsg](std::error_code ec, std::size_t /*length*/) mutable {
+				if (ec )
 				{
 					LOG_ERR(ms_loger, "TCP Send To Server Failed: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 					StopConnect();

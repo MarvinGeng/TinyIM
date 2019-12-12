@@ -131,7 +131,7 @@ namespace ClientCore {
 			memcpy(m_sendbuf, pMsg->GetData(), pMsg->GetSize());
 			try {
 				LOG_INFO(ms_loger, "UDP SEND TO:{} MSG:{} ", EndPoint(endPt), pMsg->to_string());
-				m_udpSocket->async_send_to(asio::buffer(m_sendbuf, pMsg->GetSize()), endPt, [this](std::error_code ec, std::size_t bytes) {
+				m_udpSocket->async_send_to(asio::buffer(m_sendbuf, pMsg->GetSize()), endPt, [this](std::error_code /*ec*/, std::size_t /*bytes*/) {
 				});
 			}
 			catch (std::exception ec)
