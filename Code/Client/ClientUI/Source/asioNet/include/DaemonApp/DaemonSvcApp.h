@@ -4,13 +4,13 @@
 
 #ifndef DEV_CHK_CDAEMONAPP_H
 #define DEV_CHK_CDAEMONAPP_H
-#ifdef WIN32
+#ifdef _WIN32
 #else
 #include <functional>
 #include <string>
 #include <memory>
 #include <iostream>
-#ifdef WIN32
+#ifdef _WIN32
 
 #else
 #include <dirent.h>

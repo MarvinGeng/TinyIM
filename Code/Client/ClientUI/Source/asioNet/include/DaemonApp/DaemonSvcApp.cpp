@@ -2,7 +2,7 @@
 // Created by 王耀华 on 16/9/23.
 //
 
-#ifdef WIN32
+#ifdef _WIN32
 #else
 #include "DaemonSvcApp.h"
 #include <fstream>
