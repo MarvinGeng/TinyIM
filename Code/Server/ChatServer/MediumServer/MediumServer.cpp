@@ -38,8 +38,7 @@ void GenerateCfgFile(std::string fileName)
     write_txtfile(fileName.c_str(),strConfig);
 }
 
-#ifdef _WIN32
-int main(int argc, char *argv[])
+int FrontRun(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
@@ -93,10 +92,71 @@ int main(int argc, char *argv[])
 	IoService.run();
 	return 0;
 }
-#else
+#ifdef _WIN32
 int main(int argc, char *argv[])
 {
-	if(argc < 2)
+	FrontRun(argc,argv);
+	return 0;
+	if (argc < 2)
+	{
+		PrintParamOption();
+		return 0;
+	}
+	ParseParamResult result = ParseParam(argc, argv, GenerateCfgFile);
+	if (result.m_bReturn)
+	{
+		return 0;
+	}
+
+	std::string strcfg, errinfo;
+	load_txtfile(result.m_cfgFile.c_str(), strcfg);
+	std::cout << strcfg << std::endl;
+	//std::cout << strcfg << std::endl;
+	if (!strcfg.length()) {
+		printf("no Configure\n");
+		return 1;
+	}
+	auto cfg = json11::Json::parse(strcfg, errinfo, json11::JsonParse::COMMENTS);
+
+	auto logger = CreateLogger(cfg);
+	if (!logger)
+	{
+		std::cout << "Can not Create Logger" << std::endl;
+		return 0;
+	}
+	ChatServer::CClientSess::ms_loger = logger;
+	ChatServer::CServerSess::ms_loger = logger;
+	ChatServer::CChatServer::ms_loger = logger;
+	ChatServer::CClientSessManager::ms_loger = logger;
+	ChatServer::CUdpServer::ms_loger = logger;
+	CMySqlConnect::m_loger = logger;
+	asio::io_service IoService;
+	auto server = std::make_shared<ChatServer::CChatServer>(IoService);
+	
+	std::error_code ec;
+	server->loadConfig(cfg, ec);
+	server->start([logger](const std::error_code& ec) {
+		LOG_INFO(logger, "starting Server2 [{} {}]", __FILENAME__, __LINE__);
+		if (!ec)
+		{
+			LOG_INFO(logger, "The Service is up and running [{} {}]", __FILENAME__, __LINE__);
+		}
+		else
+		{
+			LOG_ERR(logger, "ERROR Fail to start error:{} [{} {}]", ec.message(), __FILENAME__, __LINE__);
+		}
+	});
+	IoService.run();
+	return 0;
+}
+#else
+
+int main(int argc, char *argv[])
+{
+	FrontRun(argc,argv);
+	return 0;
+}
+/*	if(argc < 2)
 	{
 		PrintParamOption();
 		return 0;
@@ -203,5 +263,5 @@ int main(int argc, char *argv[])
         }).daemon(worker);
     }
     return 0;
-}
+}*/
 #endif

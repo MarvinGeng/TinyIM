@@ -39,6 +39,7 @@ void RunProgram(ParseParamResult result)
 	ClientCore::CClientSess::ms_loger = logger;
 	ClientCore::CServerSess::ms_loger = logger;
 	ClientCore::CMediumServer::ms_loger = logger;
+	ClientCore::CHttpServer::ms_loger = logger;
 	ClientCore::CUdpClient::ms_loger = logger;
 	//MediumServer::CClientSessManager::ms_loger = logger;
 

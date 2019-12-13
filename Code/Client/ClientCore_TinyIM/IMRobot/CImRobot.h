@@ -10,6 +10,7 @@ public:
 	bool loadConfig(const std::string strCfg);
 	void Run();
 private:
+	void RegisterUser();
 	void UserLogin();
 	void UserLogout();
 

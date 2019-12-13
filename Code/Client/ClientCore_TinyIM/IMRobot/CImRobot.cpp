@@ -69,13 +69,35 @@ bool CIMRobot::loadConfig(const std::string strCfg)
 	g_httpClient = std::make_shared<HttpClient>(strAddr);
 	return true;
 }
+
+void CIMRobot::RegisterUser()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	UserRegisterRspMsg rspMsg;
+	try {
+		UserRegisterReqMsg reqMsg;
+		reqMsg.m_strMsgId=CreateMsgId();
+		reqMsg.m_strUserName = m_strUserName;
+		reqMsg.m_strPassword = m_strPassWord;
+		reqMsg.m_strNickName = m_strUserName;
+
+		auto rsp = g_httpClient->request("POST", "/register_user", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
 void CIMRobot::Run()
 {
+	RegisterUser();
 	UserLogin();
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 6;
+		int nChoice = rand() % 7;
 		switch (nChoice)
 		{
 		case 0:
@@ -101,6 +123,10 @@ void CIMRobot::Run()
 		case 5:
 		{
 			SendSingleImageMsg();
+		}break;
+		case 6:
+		{
+			RegisterUser();
 		}break;
 		/*case 4:
 		{
@@ -685,7 +711,7 @@ void CIMRobot::SearchChatMsg()
 		SearchChatHistoryReq reqMsg;
 		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
-		reqMsg.m_strSearchWord = "ÄãºÃ";
+		reqMsg.m_strSearchWord = "ï¿½ï¿½ï¿½";
 
 		auto rsp = g_httpClient->request("POST", "/search_chat_msg", reqMsg.ToString());
 		std::string strRsp = rsp->content.string();

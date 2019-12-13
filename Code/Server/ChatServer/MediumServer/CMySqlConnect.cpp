@@ -20,13 +20,14 @@ std::shared_ptr<spdlog::logger> CMySqlConnect::m_loger=nullptr;
  */
 CMySqlConnect::CMySqlConnect()
 {
-		if (NULL != mysql_init(&m_mysql)) {
+		if ((m_mysql = mysql_init(nullptr))) {
 			LOG_INFO(m_loger, "mysql_init()succeed [ {}  {}]", __FILENAME__, __LINE__);
 		}
 		else {
 			LOG_INFO(m_loger,"mysql_init()failed  [{} {}]", __FILENAME__, __LINE__);
 		}
-
+		int nResult = mysql_options(m_mysql,MYSQL_READ_DEFAULT_GROUP,"ChatServer");
+		LOG_INFO(m_loger,"mysql_options() {}  [{} {}]",nResult, __FILENAME__, __LINE__);
 		if (0 == mysql_library_init(0, NULL, NULL)) {
 			LOG_INFO(m_loger,"mysql_library_init()succeed  [{} {}]", __FILENAME__, __LINE__);
 		}
@@ -44,7 +45,7 @@ CMySqlConnect::CMySqlConnect()
  */
 CMySqlConnect::~CMySqlConnect()
 {
-    mysql_close(&m_mysql);
+    mysql_close(m_mysql);
 }
 
 /**
@@ -63,18 +64,25 @@ bool CMySqlConnect::ConnectToServer(const std::string userName,
                                     const std::string database,
                                     const std::string strHost,const int port)
 {
-		if (NULL != mysql_real_connect(&m_mysql, strHost.c_str(),userName.c_str(),passwd.c_str(), database.c_str(), port, NULL, 0))
+	try{
+		if (NULL != mysql_real_connect(m_mysql, strHost.c_str(),userName.c_str(),passwd.c_str(), database.c_str(), 0,NULL, 0))
 		{
 			LOG_INFO(m_loger, "mysql_real_connect() succeed [{} {}]", __FILENAME__, __LINE__);
-			int nResult = mysql_set_character_set(&m_mysql, "UTF8");
+			int nResult = mysql_set_character_set(m_mysql, "UTF8");
 			LOG_INFO(m_loger, "{}  succeed [{} {}]", nResult, __FILENAME__, __LINE__);
             return true;
 		}
 		else
 		{
-			LOG_INFO(m_loger, "mysql_real_connect()failed[{} {}]", __FILENAME__, __LINE__);
+			LOG_INFO(m_loger, "mysql_real_connect() {} failed[{} {}]",port,__FILENAME__, __LINE__);
             return false;
 		}
+	}
+	catch(std::exception ec)
+	{
+		LOG_INFO(m_loger,"MySql EC:{} ",ec.what());
+		return false;
+	}
 }
 
 /**
@@ -91,7 +99,7 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 	if (nullptr == m_pSelectUserByNameStmt)
 	{
 
-		m_pSelectUserByNameStmt = mysql_stmt_init(&m_mysql);
+		m_pSelectUserByNameStmt = mysql_stmt_init(m_mysql);
 		if (!m_pSelectUserByNameStmt)
 		{
 			return false;
@@ -154,16 +162,15 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 			resultBind[2].error = &error[2];
 
 			try {
-				int nResult = 0;
-				if (nResult = mysql_stmt_bind_result(m_pSelectUserByNameStmt, resultBind))
+				if (mysql_stmt_bind_result(m_pSelectUserByNameStmt, resultBind))
 				{
 					return false;
 				}
-				if (nResult = mysql_stmt_execute(m_pSelectUserByNameStmt))
+				if (mysql_stmt_execute(m_pSelectUserByNameStmt))
 				{
 					return false;
 				}
-				if (nResult = mysql_stmt_store_result(m_pSelectUserByNameStmt))
+				if (mysql_stmt_store_result(m_pSelectUserByNameStmt))
 				{
 					return false;
 				}
@@ -197,10 +204,10 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 	//constexpr char * strTemplate2 = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME='{0}';";
 	//std::string strSql = fmt::format(strTemplate2, userName);
 	//LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	//res = mysql_query(&m_mysql, strSql.c_str());
+	//res = mysql_query(m_mysql, strSql.c_str());
 	//if (!res)
 	//{
-	//	result = mysql_store_result(&m_mysql);
+	//	result = mysql_store_result(m_mysql);
 	//	if (result)
 	//	{
 	//		while (sql_row = mysql_fetch_row(result))
@@ -240,11 +247,11 @@ bool CMySqlConnect::IsUserExist(const std::string strUserId)
 	constexpr char strTemplate2[] = "SELECT F_USER_ID FROM T_USER WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql  ,__FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	bool bExist = false;
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -282,11 +289,11 @@ bool CMySqlConnect::IsFriend(const std::string userId,const std::string friendId
 	constexpr char strTemplate2[] = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, userId, friendId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	bool bExist = false;
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -320,7 +327,7 @@ bool CMySqlConnect::UpdateUser(const T_USER_BEAN& bean)
 	constexpr char strTemplate2[] = "UPDATE T_USER SET F_PASS_WORD='{0}' WHERE F_USER_NAME='{1}';";
 	std::string strSql = fmt::format(strTemplate2, bean.m_strF_PASS_WORD, bean.m_strF_USER_NAME);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 		return true;
@@ -346,7 +353,7 @@ bool CMySqlConnect::UpdateUserOnlineState(const std::string strUserId, const CLI
 	constexpr char strTemplate2[] = "UPDATE T_USER SET F_ON_LINE_STATE='{0}' WHERE F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, OnLineType(type), strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 		return true;
@@ -370,7 +377,7 @@ bool CMySqlConnect::DeleteUser(const std::string strUserId)
 	constexpr char strTemplate2[] = "DELETE FROM T_USER WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 		return true;
@@ -399,7 +406,7 @@ bool CMySqlConnect::InsertUser(const T_USER_BEAN& bean)
 		std::string strSql = fmt::format(strTemplate2, bean.m_strF_USER_ID, bean.m_strF_USER_NAME, bean.m_strF_PASS_WORD, bean.m_strF_NICK_NAME);
 
 		LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-		res = mysql_query(&m_mysql, strSql.c_str());//查询
+		res = mysql_query(m_mysql, strSql.c_str());//查询
 		if (!res)
 		{
 
@@ -443,10 +450,10 @@ FROM T_USER WHERE F_USER_ID='{0}' OR F_USER_NAME='{0}';";
 	
 	std::string strSql = fmt::format(strTemplate2, userId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -495,7 +502,7 @@ bool CMySqlConnect::UpdateUserInfo(const T_USER_INFO_BEAN& bean)
 		bean.m_strF_FACE_ID,
 		bean.m_strF_USER_NAME);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 		return true;
@@ -528,7 +535,7 @@ F_FACE_ID) VALUES('{0}','{1}','{2},'{3}','{4}','{5}','{6}');";
 	std::string strSql = fmt::format(strTemplate2, bean.m_strF_USER_NAME, bean.m_strF_ADDRESS,bean.m_strF_BIRTH_DATE,bean.m_strF_EMAIL_ADDR,bean.m_strF_NICK_NAME,bean.m_strF_SIGNATURE,bean.m_strF_FACE_ID);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 		return true;
@@ -552,7 +559,7 @@ bool CMySqlConnect::InsertFriendChatMsg(const T_USER_CHAT_MSG& chatMsg) {
 
 	if (nullptr == m_pFriendChatInsertStmt)
 	{
-		m_pFriendChatInsertStmt = mysql_stmt_init(&m_mysql); 
+		m_pFriendChatInsertStmt = mysql_stmt_init(m_mysql); 
 		if (!m_pFriendChatInsertStmt)
 		{
 			return false;
@@ -630,10 +637,10 @@ bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const 
 	constexpr char strTemplate2[] = "UPDATE T_FRIEND_CHAT_MSG SET F_READ_FLAG='{0}',F_READ_TIME=now() WHERE F_MSG_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, msgState, strMsgId);
 	
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
-		auto nRows = mysql_affected_rows(&m_mysql);
+		auto nRows = mysql_affected_rows(m_mysql);
 		LOG_INFO(m_loger, "SQL:{}  Rows:{} [{}  {} ]", strSql, nRows,__FILENAME__, __LINE__);
 		return true;
 	}
@@ -702,10 +709,10 @@ bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
 	constexpr char strTemplate2[] = "SELECT F_MSG_ID,F_MSG_TYPE,F_FROM_ID,F_TO_ID,F_MSG_CONTEXT,F_OTHER_INFO,F_CREATE_TIME FROM T_FRIEND_CHAT_MSG WHERE (F_TO_ID={0} AND F_READ_FLAG='UNREAD');";
 	std::string strSql = fmt::format(strTemplate2, strUserId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_USER_CHAT_MSG chatMsg;
@@ -741,7 +748,7 @@ bool CMySqlConnect::DeleteFriendChatMsg(const uint64_t msgId){
 	constexpr char strTemplate2[] = "DELETE FROM T_FRIEND_CHAT_MSG WHERE F_MSG_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, msgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -765,10 +772,10 @@ F_STATUS \
 FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
 	std::string strSql = fmt::format(strTemplate2, strUser);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_FRIEND_RELATION_BEAN bean;
@@ -811,10 +818,10 @@ bool CMySqlConnect::GetUserFriendList(const std::string strUserName,std::vector<
 	constexpr char strTemplate2[] = "SELECT F_FRIEND_ID FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -854,7 +861,7 @@ F_STATUS,\
 F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}',now());";
 	std::string strSql = fmt::format(strTemplate2,bean.m_strF_USER_ID,bean.m_strF_FRIEND_ID,bean.m_strF_TEAM_ID,FriendRelation(bean.m_eF_STATUS));
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -889,7 +896,7 @@ F_STATUS,F_CREATE_TIME) VALUES('{0}','{1}','10000000','{2}',now());";
 	}
 	std::string strSql = fmt::format(strTemplate2, strUser, strFriend, strRelation);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -916,7 +923,7 @@ bool CMySqlConnect::DeleteFriendRelation(const std::string strUser, const std::s
 	constexpr char strTemplate2[] = "DELETE FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_FRIEND_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUser,strFriend);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -942,7 +949,7 @@ bool CMySqlConnect::UpdateFriendRelation(const T_FRIEND_RELATION_BEAN& bean)
 	constexpr char strTemplate2[] = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_FRIEND_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,bean.m_strF_TEAM_ID,bean.m_strF_USER_ID,bean.m_strF_FRIEND_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -972,13 +979,13 @@ bool CMySqlConnect::SelectFriendRelation(const std::string strUser, const std::s
 	constexpr char strTemplate2[] = "SELECT F_STATUS FROM T_FRIEND_RELATION WHERE F_USER_NAME='{0}' AND F_FRIEND_NAME='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUser, strFriend);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	const std::string strFriendRelation = "FRIEND";
 	const std::string strBlackRelation = "BLACK";
 
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1027,7 +1034,7 @@ bool CMySqlConnect::UpdateFriendTeamId(const std::string strUser, const std::str
 	constexpr char strTemplate2[] = "UPDATE T_FRIEND_RELATION SET F_TEAM_ID='{0}' WHERE F_USER_ID='{1}' AND F_TEAM_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,strNewTeamId,strUser,strOldTeamId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1078,7 +1085,7 @@ VALUES('{0}','{1}','{2}','{3}','{4}',now());";
 								FriendStatus(msgBean.m_eF_ADD_FRIEND_STATUS),
 		                        FriendOption(msgBean.m_eF_FRIEND_OPTION));
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1107,10 +1114,10 @@ bool CMySqlConnect::SelectUnReadAddFriendMsg(const std::string strUserName, T_AD
 	constexpr char strTemplate2[] = "SELECT F_MSG_ID,F_USER_ID FROM T_ADD_FRIEND_MSG WHERE F_FRIEND_ID='{0}' AND F_ADD_FRIEND_STATUS='UN_READ';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1154,10 +1161,10 @@ bool CMySqlConnect::SelectUnNotifyAddFriendMsg(const std::string strUserName, T_
 F_FRIEND_ID,F_FRIEND_OPTION  FROM T_ADD_FRIEND_MSG WHERE F_USER_ID='{0}' AND F_ADD_FRIEND_STATUS='READ_UN_NOTIFY';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1196,7 +1203,7 @@ bool CMySqlConnect::UpdateToNotifyAddFriendMsg(const std::string strMsgId)
 	constexpr char strTemplate2[] = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='NOTIFY',F_NOTIFY_TIME=now() WHERE F_MSG_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strMsgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1222,7 +1229,7 @@ bool CMySqlConnect::UpdateToReadUnNotifyAddFriendMsg(const std::string strMsgId,
 	constexpr char strTemplate2[] = "UPDATE T_ADD_FRIEND_MSG SET F_ADD_FRIEND_STATUS='READ_UN_NOTIFY',F_FRIEND_OPTION='{0}',F_OPTION_TIME=now() WHERE F_MSG_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, FriendOption(option), strMsgId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1248,14 +1255,14 @@ bool CMySqlConnect::InsertUserTeam(const T_USER_TEAM_BEAN& teamBean)
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_USER_ID,teamBean.m_strF_TEAM_ID,teamBean.m_strF_TEAM_NAME);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
 	}
 	else
 	{
-		int nError = mysql_errno(&m_mysql);
+		int nError = mysql_errno(m_mysql);
 		LOG_INFO(m_loger, "SQL_ERROR:{} [{}  {} ]", nError, __FILENAME__, __LINE__);
 		return false;
 	}
@@ -1276,7 +1283,7 @@ bool CMySqlConnect::DeleteUserTeam(const T_USER_TEAM_BEAN& teamBean)
 	constexpr char strTemplate2[] = "DELETE FROM T_USER_TEAM WHERE F_TEAM_ID='{0}' AND F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_ID,teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1306,10 +1313,10 @@ bool CMySqlConnect::SelectUserByTeamId(const std::string strUserName, const std:
 	constexpr char strTemplate2[] = "SELECT F_FRIEND_ID,F_TEAM_ID, FROM T_FRIEND_RELATION WHERE F_USER_ID='{0}' AND F_TEAM_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName,strTeamId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_FRIEND_RELATION_BEAN bean;
@@ -1350,10 +1357,10 @@ bool CMySqlConnect::SelectUserTeams(const std::string strUserName, std::vector<T
 	constexpr char strTemplate2[] = "SELECT F_USER_ID,F_TEAM_ID,F_TEAM_NAME FROM T_USER_TEAM WHERE F_USER_ID='{0}' ORDER BY F_TEAM_ID DESC;";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_USER_TEAM_BEAN bean;
@@ -1393,7 +1400,7 @@ bool CMySqlConnect::UpdateUserTeamName(const T_USER_TEAM_BEAN& teamBean)
 	constexpr char strTemplate2[] = "UPDATE T_USER_TEAM SET F_TEAM_NAME='{0}' WHERE F_TEAM_ID='{1}' AND F_USER_ID='{2}";
 	std::string strSql = fmt::format(strTemplate2, teamBean.m_strF_TEAM_NAME,teamBean.m_strF_TEAM_ID, teamBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1420,7 +1427,7 @@ bool CMySqlConnect::InsertGroup(const T_GROUP_BEAN& groupBean)
 	std::string strSql = fmt::format(strTemplate2, groupBean.m_strF_GROUP_ID, groupBean.m_strF_GROUP_NAME, "NO INFO");
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1449,11 +1456,11 @@ bool CMySqlConnect::SelectGroupById(const std::string groupId, T_GROUP_BEAN& gro
 	constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_ID = '{0}';";
 	std::string strSql = fmt::format(strTemplate2, groupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	T_GROUP_BEAN bean;
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1489,7 +1496,7 @@ bool CMySqlConnect::DeleteGroup(const std::string strGroupId)
 	constexpr char strTemplate2[] = "DELETE FROM T_GROUP WHERE F_GROUP_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1518,11 +1525,11 @@ bool CMySqlConnect::SelectGroups(const std::string strGroupName, std::vector<T_G
 constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_GROUP_NAME FROM T_GROUP WHERE F_GROUP_NAME LIKE '{0}' OR F_GROUP_ID LIKE '{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	T_GROUP_BEAN bean;
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1560,7 +1567,7 @@ bool CMySqlConnect::InsertGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID,MemberRole(memBean.m_eRole));
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1586,7 +1593,7 @@ bool CMySqlConnect::UpdateGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 	constexpr char strTemplate2[] = "UPDATE T_GROUP_RELATION SET F_ROLE_TYPE='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2,MemberRole(memBean.m_eRole),memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1611,7 +1618,7 @@ bool CMySqlConnect::UpdateGroupRelationLastReadId(const T_GROUP_RELATION_BEAN& m
 	constexpr char strTemplate2[] = "UPDATE T_GROUP_RELATION SET F_LAST_READ_MSG_ID='{0}' WHERE F_GROUP_ID='{1}' AND F_USER_ID='{2}';";
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_LAST_READ_MSG_ID, memBean.m_strF_GROUP_ID, memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1636,7 +1643,7 @@ bool CMySqlConnect::DeleteGroupRelation(const T_GROUP_RELATION_BEAN& memBean)
 	constexpr char strTemplate2[] = "DELETE FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}' AND F_USER_ID='{1}';";
 	std::string strSql = fmt::format(strTemplate2, memBean.m_strF_GROUP_ID,memBean.m_strF_USER_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1665,10 +1672,10 @@ bool CMySqlConnect::SelectUserGroupRelation(const std::string strUserName, std::
 	constexpr char strTemplate2[] = "SELECT F_GROUP_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_USER_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strUserName);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_GROUP_RELATION_BEAN bean;
@@ -1709,10 +1716,10 @@ bool CMySqlConnect::SelectGroupRelation(const std::string strGroupId, std::vecto
 	constexpr char strTemplate2[] = "SELECT F_USER_ID,F_ROLE_TYPE,F_LAST_READ_MSG_ID FROM T_GROUP_RELATION WHERE F_GROUP_ID='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strGroupId);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			T_GROUP_RELATION_BEAN bean;
@@ -1759,10 +1766,10 @@ F_CREATE_TIME \
 FROM T_GROUP_CHAT_MSG WHERE F_GROUP_ID='{0}' AND F_MSG_ID > '{1}' LIMIT 1;";
 	std::string strSql = fmt::format(strTemplate2, chatMsg.m_strF_GROUP_ID,chatMsg.m_strF_MSG_ID);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1814,7 +1821,7 @@ F_CREATE_TIME) VALUES('{0}','{1}','{2}','{3}','{4}','{5}',now());";
 		chatMsg.m_strF_OTHER_INFO);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1848,7 +1855,7 @@ VALUES('{0}','{1}','{2}',now());";
 		hashBean.m_strF_FILE_HASH);
 
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());//查询
+	res = mysql_query(m_mysql, strSql.c_str());//查询
 	if (!res)
 	{
 
@@ -1879,11 +1886,11 @@ F_FILE_HASH \
 FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
 	std::string strSql = fmt::format(strTemplate2,strFileHash);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	bool bResult = false;
 	if (!res)
 	{
-		result = mysql_store_result(&m_mysql);
+		result = mysql_store_result(m_mysql);
 		if (result)
 		{
 			while ((sql_row = mysql_fetch_row(result)))
@@ -1914,7 +1921,7 @@ bool CMySqlConnect::DeleteFileByHash(const std::string strFileHash)
 FROM T_FILE_HASH WHERE F_FILE_HASH='{0}';";
 	std::string strSql = fmt::format(strTemplate2, strFileHash);
 	LOG_INFO(m_loger, "SQL:{} [{}  {} ]", strSql, __FILENAME__, __LINE__);
-	res = mysql_query(&m_mysql, strSql.c_str());
+	res = mysql_query(m_mysql, strSql.c_str());
 	if (!res)
 	{
 		return true;
