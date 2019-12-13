@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 22/10/2019 15:39:30
+ Date: 13/12/2019 16:29:02
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `t_add_friend_msg`  (
   `F_OPTION_TIME` datetime(0) DEFAULT NULL COMMENT '对方回复的时间',
   `F_NOTIFY_TIME` datetime(0) DEFAULT NULL COMMENT '通知发送方的时间',
   PRIMARY KEY (`F_INDEX`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 547 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_add_invate_group_relation_msg
@@ -50,6 +50,19 @@ CREATE TABLE `t_add_invate_group_relation_msg`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for t_file_hash
+-- ----------------------------
+DROP TABLE IF EXISTS `t_file_hash`;
+CREATE TABLE `t_file_hash`  (
+  `F_INDEX` int(255) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `F_USER_ID` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `F_FILE_NAME` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `F_FILE_HASH` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `F_CREATE_TIME` datetime(0) DEFAULT NULL,
+  PRIMARY KEY (`F_INDEX`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 119 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for t_friend_chat_msg
 -- ----------------------------
 DROP TABLE IF EXISTS `t_friend_chat_msg`;
@@ -65,7 +78,7 @@ CREATE TABLE `t_friend_chat_msg`  (
   `F_CREATE_TIME` timestamp(0) DEFAULT CURRENT_TIMESTAMP COMMENT '信息创建时间',
   `F_READ_TIME` timestamp(0) DEFAULT NULL COMMENT '信息读取时间',
   PRIMARY KEY (`F_INDEX`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6344 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_friend_relation
@@ -75,13 +88,12 @@ CREATE TABLE `t_friend_relation`  (
   `F_INDEX` int(255) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `F_USER_ID` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '用户ID,外键到T_USER表的F_USER_ID',
   `F_TEAM_ID` char(8) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '1000000' COMMENT '分组ID',
-  `F_TEAM_NAME` char(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '分组名',
   `F_FRIEND_ID` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '好友ID,外键到T_USER表的F_USER_ID',
   `F_STATUS` enum('FRIEND','BLACK') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '好友状态,\'FRIEND\',\'BLACK\'',
   `F_CREATE_TIME` datetime(0) DEFAULT NULL COMMENT '创建时间',
   `F_UPDATE_TIME` datetime(0) DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`F_INDEX`, `F_USER_ID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 856 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_group
@@ -94,7 +106,7 @@ CREATE TABLE `t_group`  (
   `F_CREATE_TIME` datetime(0) DEFAULT NULL COMMENT '创建时间',
   `F_GROUP_INFO` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT 'https://www.dennisthink.com' COMMENT '群组简介',
   PRIMARY KEY (`F_INDEX`, `F_GROUP_ID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 198 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_group_chat_msg
@@ -110,7 +122,7 @@ CREATE TABLE `t_group_chat_msg`  (
   `F_OTHER_INFO` char(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `F_CREATE_TIME` datetime(0) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`F_INDEX`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1592 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_group_relation
@@ -124,7 +136,7 @@ CREATE TABLE `t_group_relation`  (
   `F_LAST_READ_MSG_ID` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '00000000' COMMENT '阅读的最后一个消息的编号',
   `F_CREATE_TIME` datetime(0) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`F_INDEX`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 294 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_user
@@ -147,7 +159,7 @@ CREATE TABLE `t_user`  (
   `F_GENDER` enum('MALE','FEMALE','UN_KNOWN') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT 'UN_KNOWN' COMMENT '用户性别',
   PRIMARY KEY (`F_INDEX`, `F_USER_ID`) USING BTREE,
   UNIQUE INDEX `F_USER_NAME_INDEX`(`F_USER_NAME`) USING BTREE COMMENT '用户名做唯一索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4376 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_user_team
@@ -157,9 +169,9 @@ CREATE TABLE `t_user_team`  (
   `F_INDEX` int(255) NOT NULL AUTO_INCREMENT COMMENT '唯一ID',
   `F_USER_ID` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '用户ID',
   `F_TEAM_ID` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '分组编号',
-  `F_TEAM_NAME` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '我的好友' COMMENT '分组名称',
+  `F_TEAM_NAME` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `F_CREATE_TIME` datetime(0) DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`F_INDEX`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 122 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
