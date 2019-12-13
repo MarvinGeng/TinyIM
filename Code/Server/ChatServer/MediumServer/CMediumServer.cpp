@@ -55,6 +55,54 @@ void CChatServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 		LOG_INFO(ms_loger,"Client Config: {}  [{} {}]",clientCfg.to_string(), __FILENAME__, __LINE__);
 		m_clientCfgVec.push_back(clientCfg);
 	}
+	{
+		auto mysqlCfg = cfg["mysql"];
+		if (mysqlCfg["ip"].is_string())
+		{
+			m_dbCfg.m_strDbIp = mysqlCfg["ip"].string_value();
+		}
+		else
+		{
+
+		}
+
+		if (mysqlCfg["port"].is_number()) 
+		{
+			m_dbCfg.m_nDbPort = mysqlCfg["port"].int_value();
+		}
+		else
+		{
+
+		}
+
+		if (mysqlCfg["username"].is_string())
+		{
+			m_dbCfg.m_strUserName = mysqlCfg["username"].string_value();
+		}
+		else
+		{
+
+		}
+
+		if (mysqlCfg["password"].is_string())
+		{
+			m_dbCfg.m_strPassword = mysqlCfg["password"].string_value();
+		}
+		else
+		{
+
+		}
+
+		if (mysqlCfg["dbname"].is_string())
+		{
+			m_dbCfg.m_strDbName = mysqlCfg["dbname"].string_value();
+		}
+		else
+		{
+
+		}
+
+	}
 }
 
 /**

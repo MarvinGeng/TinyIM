@@ -117,7 +117,7 @@ public:
     
     //所有的客户端的连接客户端的IP端口设置
     std::vector<IpPortCfg> m_clientCfgVec;
-
+	MySqlCfg m_dbCfg;
     std::vector<std::shared_ptr<CServerSess>> m_listenList; //监听的套接字的列表
 
     //定时器
@@ -276,11 +276,7 @@ public:
         if (!m_timer)
         {
             m_timer = std::make_shared<asio::high_resolution_timer>(m_ioService);
-        }
-        
-        m_util.ConnectToServer("admin","admin","imdev","127.0.0.1");
-
-		
+        }	
     }
 
     void start(const std::function<void(const std::error_code &)> &callback)
@@ -348,6 +344,14 @@ public:
                     }
                 }
             }
+			{
+				m_util.ConnectToServer(m_dbCfg.m_strUserName,
+					m_dbCfg.m_strPassword,
+					m_dbCfg.m_strDbName,
+					m_dbCfg.m_strDbIp,
+					m_dbCfg.m_nDbPort);
+				//m_util.ConnectToServer(m_mysqlCfg.m_strIp,m_mysqlCfg.m)
+			}
         }
         else
         {

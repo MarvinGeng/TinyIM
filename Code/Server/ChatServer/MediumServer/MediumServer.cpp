@@ -26,9 +26,15 @@ void GenerateCfgFile(std::string fileName)
             "ip":"127.0.0.1",
             "port":9000
         }
-    ]
+    ],
+	"mysql":{
+	"ip":"127.0.0.1",
+	"port":1234,
+	"username":"dennisthink.com",
+	"password":"dennisthink.com",
+	"dbname":"dennisthink.com"
     }
-    )";
+})";
     write_txtfile(fileName.c_str(),strConfig);
 }
 

@@ -123,41 +123,63 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 
 		
 		{
+			unsigned long length[4];
+	
+			bool       is_null[4];
+			bool       error[4];
 			MYSQL_BIND resultBind[3];
-			char resultBuf[3][32] = { 0 };
+			memset(resultBind, 0, sizeof(resultBind));
+
+			char resultBuf[3][64] = { 0 };
+			
 			resultBind[0].buffer_type = MYSQL_TYPE_STRING;
 			resultBind[0].buffer = resultBuf[0];
-			resultBind[0].buffer_length = 32;
+			resultBind[0].buffer_length = 64;
+			resultBind[0].length = &length[0];
+			resultBind[0].is_null = &is_null[0];
+			resultBind[0].error = &error[0];
 
 			resultBind[1].buffer_type = MYSQL_TYPE_STRING;
-			resultBind[1].buffer = resultBuf[0];
-			resultBind[1].buffer_length = 32;
+			resultBind[1].buffer = resultBuf[1];
+			resultBind[1].buffer_length = 64;
+			resultBind[1].length = &length[1];
+			resultBind[1].is_null = &is_null[1];
+			resultBind[1].error = &error[1];
 
 			resultBind[2].buffer_type = MYSQL_TYPE_STRING;
-			resultBind[2].buffer = resultBuf[0];
-			resultBind[2].buffer_length = 32;
+			resultBind[2].buffer = resultBuf[2];
+			resultBind[2].buffer_length = 64;
+			resultBind[2].length = &length[2];
+			resultBind[2].is_null = &is_null[2];
+			resultBind[2].error = &error[2];
 
 			try {
-				if (mysql_stmt_execute(m_pSelectUserByNameStmt))
+				int nResult = 0;
+				if (nResult = mysql_stmt_bind_result(m_pSelectUserByNameStmt, resultBind))
 				{
 					return false;
 				}
-				if (mysql_stmt_bind_result(m_pSelectUserByNameStmt, resultBind))
+				if (nResult = mysql_stmt_execute(m_pSelectUserByNameStmt))
 				{
 					return false;
 				}
-				if (mysql_stmt_store_result(m_pSelectUserByNameStmt))
+				if (nResult = mysql_stmt_store_result(m_pSelectUserByNameStmt))
 				{
 					return false;
 				}
-				if (!mysql_stmt_fetch(m_pSelectUserByNameStmt)) {
-					bean.m_strF_USER_ID = std::string(static_cast<char*>(resultBind[0].buffer),resultBind[0].buffer_length);
-					bean.m_strF_USER_NAME = std::string(static_cast<char*>(resultBind[1].buffer), resultBind[1].buffer_length);
-					bean.m_strF_PASS_WORD = std::string(static_cast<char*>(resultBind[2].buffer), resultBind[2].buffer_length);
-				}
-				else
+				while (true)
 				{
-					return false;
+					int nState = mysql_stmt_fetch(m_pSelectUserByNameStmt);
+					if (nState == 1 || nState == MYSQL_NO_DATA) {
+						return false;
+					}
+					else
+					{
+						bean.m_strF_USER_ID = std::string(static_cast<char*>(resultBind[0].buffer), resultBind[0].buffer_length);
+						bean.m_strF_USER_NAME = std::string(static_cast<char*>(resultBind[1].buffer), resultBind[1].buffer_length);
+						bean.m_strF_PASS_WORD = std::string(static_cast<char*>(resultBind[2].buffer), resultBind[2].buffer_length);
+					}
+					break;
 				}
 			}
 			catch (std::exception ec)
