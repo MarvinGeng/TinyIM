@@ -7508,7 +7508,7 @@ NormalRspMsg::NormalRspMsg(): NormalRspMsg(ERROR_CODE_TYPE::E_CODE_SUCCEED)
 
 NormalRspMsg::NormalRspMsg(const ERROR_CODE_TYPE type)
 {
-	m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+	m_errCode = type;
 	m_errMsg = ErrMsg(m_errCode);
 
 }
@@ -8784,7 +8784,6 @@ std::string MsgElemVec(const ChatMsgElemVec& vec)
 {
 	using namespace json11;
 	json11::Json::array jsonArray;
-	std::size_t index = 0;
 	std::size_t Count = vec.size();
 	for (std::size_t index = 0; index < Count; index++)
 	{
@@ -8821,6 +8820,10 @@ std::string MsgElemVec(const ChatMsgElemVec& vec)
 				});
 			jsonArray.push_back(clientObj);
 		}break;
+        default:
+        {
+
+        }break;
 		}
 	}
 	Json resultJson = Json::object({
@@ -8880,6 +8883,10 @@ ChatMsgElemVec MsgElemVec(const std::string strVec)
 						result.push_back(msg);
 					}
 				}break;
+                default:
+                {
+
+                }break;
 				}
 			}
 		}

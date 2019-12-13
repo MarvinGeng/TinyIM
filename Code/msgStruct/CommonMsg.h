@@ -200,6 +200,15 @@ struct IpPortCfg
 	bool Valid();
 };
 
+struct MySqlCfg
+{
+public:
+	std::string m_strDbIp;//数据库IP地址
+	int         m_nDbPort;//数据库端口
+	std::string m_strUserName;//数据库用户名
+	std::string m_strPassword;//数据库的密码
+	std::string m_strDbName;//数据库名称
+};
 /**
  * @brief 基础消息类型，所有的消息从该类型继承
  * 
