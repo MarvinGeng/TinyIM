@@ -1,12 +1,24 @@
 ﻿#include "CFileUtil.h"
 #include <fstream>
 #include <stdio.h>
+#ifdef _WIN32
 #include  <io.h>
-#include  <stdio.h>
-#include  <stdlib.h>
 #include  <direct.h>
 #include  <Windows.h>
+#else
+#include <unistd.h>
+#define _access access
+#define _mkdir  mkdir
+#define MAX_PATH 256
+#include <iostream>
+#include <string>
+#include <sys/stat.h>
+#include <errno.h>
+#endif
+#include  <stdio.h>
+#include  <stdlib.h>
 #include "md5.h"
+
 /**
  * @brief 获取文件的大小
  * 
@@ -17,8 +29,13 @@
  */
 bool CFileUtil::GetFileSize(int& nFileSize, const std::string strFileName)
 {
-	FILE * pFile;
+	FILE * pFile=nullptr;
+#ifdef _WIN32
 	fopen_s(&pFile,strFileName.c_str(), "rb");
+#else
+	pFile = fopen(strFileName.c_str(), "rb");
+#endif
+
 	if (nullptr != pFile) {
 		fseek(pFile, 0L, SEEK_END);
 		nFileSize = ftell(pFile);
@@ -46,8 +63,13 @@ bool CFileUtil::OpenReadFile(const int nFileId, const std::string strFileName)
 	}
 	m_strFileNameMap.erase(nFileId);
 	m_strFileNameMap.insert({ nFileId, strFileName });
-	FILE * pFile;
+	FILE * pFile=nullptr;
+#ifdef _WIN32
 	fopen_s(&pFile,strFileName.c_str(), "rb");
+#else
+	pFile = fopen(strFileName.c_str(), "rb");
+#endif
+	//fopen_s(&pFile,strFileName.c_str(), "rb");
 	if (nullptr != pFile) {
 		m_ReadFileMap.insert({ nFileId,pFile });
 		return true;
@@ -74,8 +96,13 @@ bool CFileUtil::OpenWriteFile(const int nFileId, const std::string strFileName)
 	}
 	m_strFileNameMap.erase(nFileId);
 	m_strFileNameMap.insert({ nFileId, strFileName });
-	FILE * pFile;
+	FILE * pFile=nullptr;
+#ifdef _WIN32
 	fopen_s(&pFile,strFileName.c_str(), "wb");
+#else
+	pFile = fopen(strFileName.c_str(), "wb");
+#endif
+	//fopen_s(&pFile,strFileName.c_str(), "wb");
 	if (nullptr != pFile) {
 		m_WriteFileMap.insert({ nFileId,pFile });
 		return true;
@@ -100,7 +127,15 @@ bool CFileUtil::OnWriteData(const int nFileId, const char * pData, const int nDa
 	if (item != m_WriteFileMap.end())
 	{
 		auto writeSize = fwrite(pData, 1, nDataLen, item->second);
-		return true;
+		if(static_cast<int>(writeSize) == nDataLen)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
 	}
 	return false;
 }
@@ -226,6 +261,7 @@ bool CFileUtil::IsFolder(const std::string strFolder)
  */
 bool CFileUtil::CreateFolder(const std::string strFolder)
 {
+	#ifdef _WIN32
 	if(_mkdir(strFolder.c_str())==0)
 	{
 		return true;
@@ -234,6 +270,27 @@ bool CFileUtil::CreateFolder(const std::string strFolder)
 	{
 		return false;
 	}
+	#else
+	std::string strFolderNew=strFolder;
+	size_t pre=0,pos;
+    std::string dir;
+    int mdret;
+
+    if(strFolderNew[strFolderNew.size()-1]!='/'){
+        // force trailing / so we can handle everything in loop
+        strFolderNew+='/';
+    }
+	mode_t mode =0755;
+    while((pos=strFolderNew.find_first_of('/',pre))!=std::string::npos){
+        dir=strFolderNew.substr(0,pos++);
+        pre=pos;
+        if(dir.size()==0) continue; // if leading / first time is 0 length
+        if((mdret=::mkdir(dir.c_str(),mode)) && errno!=EEXIST){
+            return mdret;
+        }
+    }
+    return mdret;
+	#endif
 }
 
 
@@ -246,11 +303,19 @@ bool CFileUtil::CreateFolder(const std::string strFolder)
  */
 bool CFileUtil::RemoveFolder(const std::string strFolder)
 {
+	#ifdef _WIN32
 	if(_rmdir(strFolder.c_str()) == 0)
 	{
 		return true;
 	}
 	return false;
+	#else
+	if(unlink(strFolder.c_str()))
+	{
+		return true;
+	}
+	return false;
+	#endif
 }
 
 
@@ -262,10 +327,10 @@ bool CFileUtil::RemoveFolder(const std::string strFolder)
  * @return true 
  * @return false 
  */
-bool CFileUtil::CreateFileByName(const int nFileId, const std::string FileName)
+/*bool CFileUtil::CreateFileByName(const int nFileId, const std::string FileName)
 {
 	return false;
-}
+}*/
 
 /**
  * @brief 计算文件的HASH值
@@ -295,7 +360,11 @@ std::string CFileUtil::CalcHash(const std::string strFileName)
 std::string CFileUtil::GetCurDir()
 {
 	char chpath[MAX_PATH];
+	#ifdef _WIN32
 	GetModuleFileName(NULL, (LPSTR)chpath, sizeof(chpath));
+	#else
+	getcwd(chpath,MAX_PATH);
+	#endif
 	std::string strPath = std::string(chpath);
 	strPath = strPath.substr(0, strPath.rfind("\\") + 1);
 	return strPath;
@@ -316,6 +385,13 @@ std::string CFileUtil::GetFileName(const int nFileId)
 
 bool CFileUtil::UtilCopy(const std::string strSrcName, const std::string strDstName)
 {
+	#ifdef _WIN32
 	CopyFileA(strSrcName.c_str(), strDstName.c_str(), TRUE);
+	#else
+	if(strSrcName.empty() || strDstName.empty())
+	{
+		return false;
+	}
+	#endif
 	return true;
 }
