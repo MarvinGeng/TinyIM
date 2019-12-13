@@ -313,7 +313,11 @@ void CIMRobot::SendSingleImageMsg()
 	ChatMsgElem elem;
 	ChatMsgElemVec elemVec;
 	elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+#ifdef _WIN32
 	elem.m_strImageName = R"(C:\Users\Public\Pictures\Sample Pictures\Desert.jpg)";
+#else
+	elem.m_strImageName = R"(C:\Users\Public\Pictures\Sample Pictures\Desert.jpg)";
+#endif
 	elemVec.push_back(elem);
 	for (auto friId : m_strFriendVec)
 	{
@@ -348,6 +352,8 @@ void CIMRobot::GetRecvMsg()
 			std::string strRsp = rsp->content.string();
 			if (reqMsg.FromString(strRsp))
 			{
+				ChatMsgElemVec elemVec = MsgElemVec(reqMsg.m_chatMsg.m_strContext);
+				std::cout << "Friend:" << reqMsg.m_chatMsg.m_strSenderId << " Send an Msg" << std::endl;
 				FriendChatRecvTxtRspMsg rspMsg;
 				rspMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
 				rspMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
@@ -359,6 +365,7 @@ void CIMRobot::GetRecvMsg()
 			}
 			else
 			{
+				std::cout << "No Friend Msg" << std::endl;
 				break;
 			}
 		}
