@@ -207,7 +207,10 @@ void CChatServer::SetTimer(int nSeconds)
 
 void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, const TransBaseMsg_t* pMsg)
 {
-	LOG_INFO(ms_loger, "[ {} ] RECV: [ {} {} ]  [ {} {} ]", pSess->UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+	if (pMsg->GetType() != E_MsgType::FileRecvDataReq_Type && pMsg->GetType() != E_MsgType::FileSendDataReq_Type)
+	{
+		LOG_INFO(ms_loger, "[ {} ] RECV: [ {} {} ]  [ {} {} ]", pSess->UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+	}
 	switch (pMsg->GetType())
 	{
 	case E_MsgType::KeepAliveReq_Type:
@@ -1778,6 +1781,8 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 	rspMsg.m_strUserId = req.m_strUserId;
 	if (m_util.SelectUserTeams(req.m_strUserId, teamBeanList))
 	{
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_strErrMsg = ErrMsg(rspMsg.m_errCode);
 		if (m_util.GetUserFriendList(req.m_strUserId, friendBeanList))
 		{
 			
@@ -1830,6 +1835,11 @@ GetFriendListRspMsg CChatServer::DoGetFriendReq(const GetFriendListReqMsg& req) 
 			{
 				rspMsg.m_teamVec.push_back(item.second);
 			}
+	}
+	else
+	{
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+		rspMsg.m_strErrMsg = ErrMsg(rspMsg.m_errCode);
 	}
 
 	return rspMsg;

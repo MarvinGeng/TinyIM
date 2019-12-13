@@ -175,9 +175,9 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 					}
 					else
 					{
-						bean.m_strF_USER_ID = std::string(static_cast<char*>(resultBind[0].buffer), resultBind[0].buffer_length);
-						bean.m_strF_USER_NAME = std::string(static_cast<char*>(resultBind[1].buffer), resultBind[1].buffer_length);
-						bean.m_strF_PASS_WORD = std::string(static_cast<char*>(resultBind[2].buffer), resultBind[2].buffer_length);
+						bean.m_strF_USER_ID = std::string(static_cast<char*>(resultBind[0].buffer), *(resultBind[0].length));
+						bean.m_strF_USER_NAME = std::string(static_cast<char*>(resultBind[1].buffer), *(resultBind[1].length));
+						bean.m_strF_PASS_WORD = std::string(static_cast<char*>(resultBind[2].buffer), *(resultBind[2].length));
 					}
 					break;
 				}
