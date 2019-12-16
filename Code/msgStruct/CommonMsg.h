@@ -2260,6 +2260,31 @@ public:
 	virtual bool FromString(const std::string& strJson) override;
 };
 
+
+class GetRandomUserReqMsg :public BaseMsg 
+{
+public:
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+public:
+	GetRandomUserReqMsg();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
+
+class GetRandomUserRspMsg :public BaseMsg
+{
+public:
+	ERROR_CODE_TYPE m_errCode;//错误码
+	std::string m_errMsg;//错误消息
+	std::string m_strMsgId;//消息ID
+	std::string m_strUserId;//用户ID
+	std::string m_strFriendName;
+public:
+	GetRandomUserRspMsg();
+	virtual std::string ToString() const override;
+	virtual bool FromString(const std::string& strJson) override;
+};
 /**
  * @brief 服务器配置
  * 

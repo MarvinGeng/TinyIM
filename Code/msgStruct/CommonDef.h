@@ -347,6 +347,12 @@ FileDownLoadReq_Type,
 
 //文件下载开始回复
 FileDownLoadRsp_Type,
+
+//获取一个随机用户的请求
+GetRandomUserReq_Type,
+
+//获取随机一个用户的回复
+GetRandomUserRsp_Type,
 };
 
 //客户端会话状态

@@ -8893,3 +8893,119 @@ ChatMsgElemVec MsgElemVec(const std::string strVec)
 	}
 	return result;
 }
+
+
+GetRandomUserReqMsg::GetRandomUserReqMsg()
+{
+	m_type = E_MsgType::GetRandomUserReq_Type;
+}
+
+std::string GetRandomUserReqMsg::ToString() const
+{
+	using namespace json11;
+	Json clientObj = Json::object(
+		{
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+		});
+
+	return clientObj.dump();
+}
+
+bool GetRandomUserReqMsg::FromString(const std::string &strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
+GetRandomUserRspMsg::GetRandomUserRspMsg()
+{
+	m_type = E_MsgType::GetRandomUserRsp_Type;
+}
+
+std::string GetRandomUserRspMsg::ToString() const
+{
+	using namespace json11;
+	Json clientObj = Json::object(
+		{
+			{"Code",static_cast<int>(m_errCode)},
+			{"Message",m_errMsg},
+			{"MsgId", m_strMsgId},
+			{"UserId", m_strUserId},
+			{"FriendName",m_strFriendName},
+		});
+
+	return clientObj.dump();
+}
+
+bool GetRandomUserRspMsg::FromString(const std::string &strJson)
+{
+	std::string err;
+	using namespace json11;
+	auto json = Json::parse(strJson, err);
+	if (!err.empty())
+	{
+		return false;
+	}
+
+	if (json["Code"].is_number()) {
+		m_errCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Message"].is_string()) {
+		m_errMsg = json["Message"].string_value();
+	}
+
+	if (json["MsgId"].is_string())
+	{
+		m_strMsgId = json["MsgId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["UserId"].is_string())
+	{
+		m_strUserId = json["UserId"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["FriendName"].is_string()) {
+		m_strFriendName = json["FriendName"].string_value();
+	}
+	else {
+		return false;
+	}
+	return true;
+}
