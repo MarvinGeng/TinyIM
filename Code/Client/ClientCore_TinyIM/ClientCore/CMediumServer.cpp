@@ -1096,6 +1096,15 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 				}
 			}
 		}break;
+		case E_MsgType::GetRandomUserRsp_Type:
+		{
+			GetRandomUserRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				if (m_httpServer) {
+					m_httpServer->On_RandomUserRsp(rspMsg);
+				}
+			}
+		}break;
 		default:
 		{
 			LOG_ERR(ms_loger, "UnHandle MsgType:{} MsgContent:{} [{} {}]",MsgType(pMsg->GetType()),pMsg->to_string(), __FILENAME__, __LINE__);
@@ -1566,8 +1575,6 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		{
 			LOG_ERR(ms_loger, "Ex:{} [{} {}]", ex.what(), __FILENAME__, __LINE__);
 		}
-		
-
 	}
 }
 

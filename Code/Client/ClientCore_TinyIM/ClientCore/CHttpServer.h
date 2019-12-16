@@ -88,6 +88,8 @@ namespace ClientCore {
 
 		void On_MoveFriendToTeamRsp(const MoveFriendToTeamRspMsg& msg);
 
+		void On_RandomUserRsp(const GetRandomUserRspMsg& msg);
+
 		//Group
 		void On_GetGroupListRsp(const GetGroupListRspMsg& msg);
 		void On_FindGroupRsp(const FindGroupRspMsg& msg);
@@ -144,7 +146,7 @@ namespace ClientCore {
 		void Post_AddFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		void Post_DestroyFriendTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		void Post_MoveFriendToTeamReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
-
+		void Get_RandomUserNameReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 		//void Get_SendFileOnlineRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);
 
 		void Get_RecvFileOnlineReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request);

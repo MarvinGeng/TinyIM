@@ -152,6 +152,32 @@ namespace ClientCore
 		}
 	}
 
+	void CHttpServer::Get_RandomUserNameReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
+	{
+		std::string strUserId = GetHttpParamUserId(request);
+		if (!strUserId.empty())
+		{
+			GetRandomUserReqMsg reqMsg;
+			reqMsg.m_strMsgId = GenerateMsgId();
+			reqMsg.m_strUserId = strUserId;
+			auto pSendMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
+			auto pClientSess = m_pServer->GetClientSess(strUserId);
+			if (pClientSess)
+			{
+				pClientSess->SendMsg(pSendMsg);
+				m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, HTTP_RSP_SECOND(time(nullptr), response)));
+			}
+			else
+			{
+				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n" << "";
+			}
+		}
+		else
+		{
+			std::string strRsp = m_wrongRequestFormatRsp.ToString();
+			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
+		}
+	}
 	/**
 	 * @brief 处理接收到好友文本消息的HTTP请求
 	 * 
@@ -1592,6 +1618,19 @@ namespace ClientCore
 			return reqMsg;
 		}
 	}
+
+	void CHttpServer::On_RandomUserRsp(const GetRandomUserRspMsg& msg) {
+		if (!msg.m_strMsgId.empty()) {
+			auto item = m_httpRspMap.find(msg.m_strMsgId);
+			if (item != m_httpRspMap.end()) {
+				std::string strContent = msg.ToString();
+				(*(item->second.m_response)) << "HTTP/1.1 200 OK\r\nContent-Length: " << strContent.length() << "\r\n\r\n"
+					<< strContent;
+				m_httpRspMap.erase(msg.m_strMsgId);
+			}
+		}
+	}
+
 }
 
 
