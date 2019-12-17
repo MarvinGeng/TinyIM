@@ -45,6 +45,7 @@ public:
 	bool UpdateUserInfo(const T_USER_INFO_BEAN& bean);
 	bool UpdateUserOnlineState(const std::string strUserId, const CLIENT_ONLINE_TYPE);
 	bool InsertUserInfo(const T_USER_INFO_BEAN& bean);
+	bool GetAllUserName(std::vector<std::string>& userNameVec);
 	// 用户基本信息的操作 end
 
 	// 添加好友的操作 begin
@@ -131,6 +132,7 @@ private:
 	std::map<std::string,std::queue<T_USER_CHAT_MSG>> m_unReadChatMsg;
 	MYSQL_STMT* m_pFriendChatInsertStmt;
 	MYSQL_STMT* m_pSelectUserByNameStmt;
+	MYSQL_STMT* m_pSelectAllUserNameStmt;
 
 };
 #endif

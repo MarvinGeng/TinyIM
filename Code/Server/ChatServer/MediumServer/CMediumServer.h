@@ -148,6 +148,7 @@ public:
 	void OnUserStateCheck(const std::string strUserId);
 	void NotifyUserFriends(const std::string strUserId);
 	TransBaseMsg_S_PTR Handle_FileDataRecvRsp(const FileDataRecvRspMsg& rspMsg);
+	GetRandomUserRspMsg DoGetRandomUserReqMsg(const GetRandomUserReqMsg& reqMsg);
 	void Handle_RecvTcpMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg);
 	void CloseUserFile(const std::string strUserId);
 	TransBaseMsg_S_PTR HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg);
@@ -241,6 +242,8 @@ private:
 
 	void HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req);
 	void HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req);
+
+	void HandleGetRandomUserReq(const std::shared_ptr<CServerSess>& pSess, const GetRandomUserReqMsg& req);
 	//Group
 	void HandleCreateGroupReq(const std::shared_ptr<CServerSess>& pSess, const CreateGroupReqMsg& reqMsg);
 

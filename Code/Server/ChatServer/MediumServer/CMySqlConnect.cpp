@@ -37,6 +37,7 @@ CMySqlConnect::CMySqlConnect()
 
 		m_pFriendChatInsertStmt = nullptr;
 		m_pSelectUserByNameStmt = nullptr;
+		m_pSelectAllUserNameStmt = nullptr;
 }
 
 /**
@@ -1930,4 +1931,74 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}';";
 	{
 		return false;
 	}
+}
+
+bool CMySqlConnect::GetAllUserName(std::vector<std::string>& userNameVec)
+{
+	if (nullptr == m_pSelectAllUserNameStmt)
+	{
+
+		m_pSelectAllUserNameStmt = mysql_stmt_init(m_mysql);
+		if (!m_pSelectAllUserNameStmt)
+		{
+			return false;
+		}
+		std::string strSql = "SELECT F_USER_NAME FROM T_USER;";
+		if (mysql_stmt_prepare(m_pSelectAllUserNameStmt, strSql.c_str(), static_cast<unsigned long>(strSql.size())))
+		{
+			return false;
+		}
+	}
+
+
+
+
+	{
+		unsigned long length[1];
+
+		bool       is_null[1];
+		bool       error[1];
+		MYSQL_BIND resultBind[1];
+		memset(resultBind, 0, sizeof(resultBind));
+
+		char resultBuf[1][64] = { 0 };
+
+		resultBind[0].buffer_type = MYSQL_TYPE_STRING;
+		resultBind[0].buffer = resultBuf[0];
+		resultBind[0].buffer_length = 64;
+		resultBind[0].length = &length[0];
+		resultBind[0].is_null = &is_null[0];
+		resultBind[0].error = &error[0];
+		try {
+			if (mysql_stmt_bind_result(m_pSelectAllUserNameStmt, resultBind))
+			{
+				return false;
+			}
+			if (mysql_stmt_execute(m_pSelectAllUserNameStmt))
+			{
+				return false;
+			}
+			if (mysql_stmt_store_result(m_pSelectAllUserNameStmt))
+			{
+				return false;
+			}
+			while (true)
+			{
+				int nState = mysql_stmt_fetch(m_pSelectAllUserNameStmt);
+				if (nState == 1 || nState == MYSQL_NO_DATA) {
+					break;
+				}
+				else
+				{
+					std::string strUserName = std::string(static_cast<char*>(resultBind[0].buffer), *(resultBind[0].length));
+					userNameVec.push_back(strUserName);
+				}
+			}
+		}
+		catch (std::exception ec)
+		{
+			LOG_ERR(m_loger, "EC:{} [{} {}]", ec.what(), __FILENAME__, __LINE__);
+		}
+	}
+	return !(userNameVec.empty());
 }

@@ -118,6 +118,9 @@ void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSes
 		KeepAliveRspMsg rspMsg;
 		rspMsg.m_strClientId = reqMsg.m_strClientId;
 		pSess->SendMsg(&rspMsg);
+
+		OnAddFriendNotifyReqMsg(pSess->UserId());
+		OnAddFriendRecvReqMsg(pSess->UserId());
 	}
 }
 
@@ -502,6 +505,14 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, co
 			HandleFileDownLoadReq(pSess, reqMsg);
 		}
 	}break;
+	case E_MsgType::GetRandomUserReq_Type:
+	{
+		GetRandomUserReqMsg reqMsg;
+		if (reqMsg.FromString(pMsg->to_string())) {
+			HandleGetRandomUserReq(pSess, reqMsg);
+		}
+
+	}break;
 	default:
 	{
 		LOG_ERR(ms_loger, "User:{} Unhandle E_MsgType:{} [ {} {} ]", pSess->UserId(), MsgType(pMsg->GetType()), __FILENAME__, __LINE__);
@@ -797,8 +808,8 @@ void CChatServer::HandleUserKeepAliveReq(const std::shared_ptr<CServerSess> pSes
 		(!pSess->UserId().empty()))
 	{
 		OnUserStateCheck(pSess->UserId());
-		//OnAddFriendRecvReqMsg(pSess->UserId());
-		//OnAddFriendNotifyReqMsg(pSess->UserId());
+		OnAddFriendRecvReqMsg(pSess->UserId());
+		OnAddFriendNotifyReqMsg(pSess->UserId());
 	}
 }
 /**
@@ -2253,6 +2264,26 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 	}
 }
 
+GetRandomUserRspMsg CChatServer::DoGetRandomUserReqMsg(const GetRandomUserReqMsg& reqMsg)
+{
+	GetRandomUserRspMsg rspMsg;
+	std::vector<std::string> userNameVec;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_strUserId = reqMsg.m_strUserId;
+	if (m_util.GetAllUserName(userNameVec))
+	{
+		int index = rand() % userNameVec.size();
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_errMsg = ErrMsg(rspMsg.m_errCode);
+		rspMsg.m_strFriendName = userNameVec[index];
+	}
+	else
+	{
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_NO_SUCH_USER;
+		rspMsg.m_errMsg = ErrMsg(rspMsg.m_errCode);
+	}
+	return rspMsg;
+}
 /**
  * @brief 处理文件验证消息的回复,直接转发到文件发送者
  * 
@@ -2320,7 +2351,15 @@ void CChatServer::Handle_RecvTcpMsg(const std::shared_ptr<CServerSess>& pSess, c
 	{
 		pSess->SendMsg(pResult);
 	}
-	
+}
+
+void CChatServer::HandleGetRandomUserReq(const std::shared_ptr<CServerSess>& pSess, const GetRandomUserReqMsg& req)
+{
+	auto rspMsg = DoGetRandomUserReqMsg(req);
+	if (pSess)
+	{
+		pSess->SendMsg(&rspMsg);
+	}
 }
 /**
  * @brief 处理收到的接收文件数据回复消息
