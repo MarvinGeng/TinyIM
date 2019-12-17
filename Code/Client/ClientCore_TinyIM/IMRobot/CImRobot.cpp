@@ -1,4 +1,4 @@
-#include "CImRobot.h"
+﻿#include "CImRobot.h"
 #include <time.h>
 #include <thread>
 #include "CommonMsg.h"
@@ -97,7 +97,7 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 7;
+		int nChoice = rand() % 12;
 		switch (nChoice)
 		{
 		case 0:
@@ -127,6 +127,26 @@ void CIMRobot::Run()
 		case 6:
 		{
 			RegisterUser();
+		}break;
+		case 7:
+		{
+			GetRandomUserName();
+			SendFindFriendReq();
+			SendAddFriendReq();
+			GetRecvAddFriendReq();
+			GetAddFriendNotify();
+		}break;
+		case 8:
+		{
+			SendFindFriendReq();
+		}break;
+		case 9:
+		{
+			GetRecvAddFriendReq();
+		}break;
+		case 10:
+		{
+			GetAddFriendNotify();
 		}break;
 		/*case 4:
 		{
@@ -193,7 +213,7 @@ void CIMRobot::Run()
 		{
 
 		}break;
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
 	}
 	UserLogout();
@@ -297,6 +317,130 @@ void CIMRobot::SendMsg()
 				std::cerr << "Client Req Error " << e.what() << std::endl;
 			}
 		}
+	}
+}
+void CIMRobot::GetRandomUserName()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	GetRandomUserRspMsg rspMsg;
+	try {
+		std::string strUrl = "/get_random_user_name?UserId=" + m_strUserId;
+		auto rsp = g_httpClient->request("GET", strUrl, "");
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (rspMsg.FromString(strRsp))
+		{
+			if (rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
+			{
+				m_strFriendName = rspMsg.m_strFriendName;
+			}
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::SendFindFriendReq()
+{
+	FindFriendReqMsg reqMsg;
+	FindFriendRspMsg rspMsg;
+	try {
+		reqMsg.m_strMsgId = CreateMsgId();
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strWantedName = m_strFriendName;
+		auto rsp = g_httpClient->request("POST", "/find_friend", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (rspMsg.FromString(strRsp)) {
+			if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
+			{
+				if (!(rspMsg.m_friendInfoVec.empty()))
+				{
+					m_strFriendId = rspMsg.m_friendInfoVec.begin()->m_strUserId;
+				}
+			}
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::SendAddFriendReq()
+{
+	AddFriendSendReqMsg reqMsg;
+	AddFriendSendRspMsg rspMsg;
+	try {
+		reqMsg.m_strMsgId = CreateMsgId();
+		reqMsg.m_strUserId = m_strUserId;
+		reqMsg.m_strFriendId = m_strFriendId;
+		auto rsp = g_httpClient->request("POST", "/add_friend_req", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (rspMsg.FromString(strRsp)) {
+			if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
+			{
+			}
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+void CIMRobot::GetRecvAddFriendReq()
+{
+	AddFriendRecvReqMsg reqMsg;
+	{
+		std::cout << __FUNCTION__ << std::endl;
+		try {
+			std::string strUrl = "/get_add_friend_require?UserId=" + m_strUserId;
+			auto rsp = g_httpClient->request("GET", strUrl, "");
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+			if (reqMsg.FromString(strRsp))
+			{
+
+			}
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+
+	{
+		AddFriendRecvRspMsg rspMsg;
+		rspMsg.m_errCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_errMsg = ErrMsg(rspMsg.m_errCode);
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_strUserId = reqMsg.m_strUserId;
+		rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+		rspMsg.m_option = rand() % 2 == 0 ? E_FRIEND_OPTION::E_AGREE_ADD : E_FRIEND_OPTION::E_REFUSE_ADD;
+		try {
+			auto rsp = g_httpClient->request("POST", "/on_add_friend_require", rspMsg.ToString());
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+}
+
+void CIMRobot::GetAddFriendNotify()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	AddFriendNotifyReqMsg reqMsg;
+	try {
+		std::string strUrl = "/get_add_friend_notify?UserId=" + m_strUserId;
+		auto rsp = g_httpClient->request("GET", strUrl, "");
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+		if (reqMsg.FromString(strRsp))
+		{
+		}
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
 
@@ -711,7 +855,7 @@ void CIMRobot::SearchChatMsg()
 		SearchChatHistoryReq reqMsg;
 		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserId = m_strUserId;
-		reqMsg.m_strSearchWord = "���";
+		reqMsg.m_strSearchWord = "nihao";
 
 		auto rsp = g_httpClient->request("POST", "/search_chat_msg", reqMsg.ToString());
 		std::string strRsp = rsp->content.string();

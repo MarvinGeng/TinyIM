@@ -29,6 +29,13 @@ private:
 	void AddFriendTeam();
 	void RemoveFriendTeam();
 	void MoveFriendToTeam();
+
+	void GetRandomUserName();
+
+	void SendFindFriendReq();
+	void SendAddFriendReq();
+	void GetRecvAddFriendReq();
+	void GetAddFriendNotify();
 	//Friend End
 
 	//Group Begin
@@ -54,5 +61,8 @@ private:
 	std::string m_strUserId;
 	std::vector<std::string> m_strFriendVec;
 	std::vector<std::string> m_strGroupVec;
+	
+	std::string m_strFriendName;
+	std::string m_strFriendId;
 };
 #endif

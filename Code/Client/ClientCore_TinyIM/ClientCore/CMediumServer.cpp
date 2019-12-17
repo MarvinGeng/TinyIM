@@ -1019,9 +1019,11 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 		{
 			AddFriendRecvReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
-				//if (m_msgPersisUtil) {
-				//	m_msgPersisUtil->Save_AddFriendRecvReqMsg(reqMsg);
-				//}
+				auto pUtil = GetMsgPersisUtil(reqMsg.m_strUserId);
+				if (pUtil)
+				{
+					pUtil->Save_AddFriendRecvReqMsg(reqMsg);
+				}
 			}
 		}break;
 		case E_MsgType::FriendChatSendTxtMsgRsp_Type:
@@ -1037,9 +1039,11 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 		{
 			AddFriendNotifyReqMsg reqMsg;
 			if (reqMsg.FromString(pMsg->to_string())) {
-				//if (m_msgPersisUtil) {
-				//	m_msgPersisUtil->Save_AddFriendNotifyReqMsg(reqMsg);
-				//}
+				auto pUtil = GetMsgPersisUtil(reqMsg.m_strUserId);
+				if (pUtil)
+				{
+					pUtil->Save_AddFriendNotifyReqMsg(reqMsg);
+				}
 			}
 		}break;
 		case E_MsgType::FriendChatReceiveTxtMsgReq_Type:

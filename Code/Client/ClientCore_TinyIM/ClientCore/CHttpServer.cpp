@@ -719,7 +719,7 @@ namespace ClientCore
 		if (reqMsg.FromString(strReq))
 		{
 			{
-				auto msgUtil = m_pServer->GetMsgPersisUtil("");
+				auto msgUtil = m_pServer->GetMsgPersisUtil(reqMsg.m_strUserId);
 				AddFriendRecvReqMsg reqMsg2;
 				reqMsg2.m_strMsgId = reqMsg.m_strMsgId;
 				if (msgUtil && msgUtil->Remove_AddFriendRecvReqMsg(reqMsg2))
@@ -1525,6 +1525,9 @@ namespace ClientCore
 			this->Post_MoveFriendToTeamReq(response, request);
 		};
 
+		m_httpServer.resource["/get_random_user_name"]["GET"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+			this->Get_RandomUserNameReq(response, request);
+		};
 		//File相关
 		m_httpServer.resource["/send_file_online_to_friend_req"]["POST"] = [pSelf, this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			this->Post_SendFileOnlineReq(response, request);
