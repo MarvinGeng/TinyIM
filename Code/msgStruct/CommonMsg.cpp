@@ -4098,6 +4098,15 @@ bool AddToGroupRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+    if (json["Code"].is_number())
+    {
+        m_eErrCode = static_cast<ERROR_CODE_TYPE>(json["Code"].int_value());
+    }
+    else
+    {
+        return false;
+    }
+
     if (json["MsgId"].is_string())
     {
         m_strMsgId = json["MsgId"].string_value();
