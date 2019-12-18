@@ -370,20 +370,13 @@ std::wstring EncodeUtil::Utf8ToUnicode(const std::string& strUtf8)
     return strUnicode;
 }
 #else
-using namespace std;
-class chs_codecvt : public std::codecvt_byname<wchar_t, char, std::mbstate_t> {
-public:
-    chs_codecvt() : codecvt_byname("chs") { }//zh_CN.GBK or .936
-};
 std::wstring EncodeUtil::AnsiToUnicode(const std::string& strAnsi)
 {
-    std::wstring_convert<chs_codecvt> covertX;
-    return covertX.from_bytes(strAnsi);
+    return Utf8ToUnicode(strAnsi);
 }
 std::string EncodeUtil::UnicodeToAnsi(const std::wstring& strUnicode)
 {
-    std::wstring_convert<chs_codecvt> covertX;
-    return covertX.to_bytes(strUnicode);
+    return UnicodeToUtf8(strUnicode);
 }
 
 std::string EncodeUtil::AnsiToUtf8(const std::string& strAnsi)

@@ -534,7 +534,9 @@ TEST_CASE("AddToGroupRspMsg") {
 
 	reqMsg.m_strMsgId = "123456789";
 	reqMsg.m_strGroupId = "22222222";
-	reqMsg.m_strUserId = "UserName";
+	reqMsg.m_strUserId = "1234552";
+	reqMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+	reqMsg.m_errMsg = ErrMsg(reqMsg.m_eErrCode);
 	AddToGroupRspMsg parseMsg;
 	CHECK_EQ(true, parseMsg.FromString(reqMsg.ToString()));
 	CHECK_EQ(reqMsg.ToString(), parseMsg.ToString());
@@ -675,3 +677,11 @@ TEST_CASE("GetGroupListRspMsg") {
 	CHECK_EQ(reqMsg.ToString(), parseMsg.ToString());
 }
 
+TEST_CASE("Encode"){
+	std::string strAscii = "Nihao";
+	std::string strUtf8 = EncodeUtil::AnsiToUtf8(strAscii);
+	std::cout<<strAscii<<"   "<<strUtf8<<std::endl;
+	std::string strUtf82 = u8"你好nihao";
+	std::cout<<EncodeUtil::Utf8ToAnsi(strUtf82)<<"  "<<std::endl;
+	std::cout<<EncodeUtil::UnicodeToUtf8(EncodeUtil::Utf8ToUnicode(strUtf82))<<std::endl; 
+}

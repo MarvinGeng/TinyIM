@@ -73,11 +73,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_ADD_FRIEND SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_ADD_FRIEND SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_ADD_FRIEND has Exists");
+				LOG_INFO(m_loger, "TABLE T_ADD_FRIEND has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -123,11 +123,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_FILE_HASH SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_FILE_HASH SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_FILE_HASH has Exists");
+				LOG_INFO(m_loger, "TABLE T_FILE_HASH has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -152,11 +152,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_FRIEND_CHAT_MSG SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_FRIEND_CHAT_MSG SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_FRIEND_CHAT_MSG has Exists");
+				LOG_INFO(m_loger, "TABLE T_FRIEND_CHAT_MSG has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -179,11 +179,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_FRIEND_RELATION SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_FRIEND_RELATION SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_FRIEND_RELATION has Exists");
+				LOG_INFO(m_loger, "TABLE T_FRIEND_RELATION has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -203,11 +203,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_GROUP SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_GROUP SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_GROUP has Exists");
+				LOG_INFO(m_loger, "TABLE T_GROUP has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -228,11 +228,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_GROUP_RELATION SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_GROUP_RELATION SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_GROUP_RELATION has Exists");
+				LOG_INFO(m_loger, "TABLE T_GROUP_RELATION has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -263,11 +263,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_USER SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_USER SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_USER has Exists");
+				LOG_INFO(m_loger, "TABLE T_USER has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -287,11 +287,11 @@ bool CMySqlConnect::CreateTable()
 			std::string errMsg = mysql_error(m_mysql);
 			if (!res)
 			{
-				LOG_INFO(m_loger, "CREATE TABLE T_USER_TEAM SUCCEED");
+				LOG_INFO(m_loger, "CREATE TABLE T_USER_TEAM SUCCEED {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 			}
 			else
 			{
-				LOG_INFO(m_loger, "TABLE T_USER_TEAM has Exists");
+				LOG_INFO(m_loger, "TABLE T_USER_TEAM has Exists {} {} [{} {}]",errCode,errMsg,__FILENAME__,__LINE__);
 				
 			}
 		}
@@ -320,7 +320,7 @@ bool CMySqlConnect::ConnectToServer(const std::string userName,
 			LOG_INFO(m_loger, "mysql_real_connect() succeed [{} {}]", __FILENAME__, __LINE__);
 			int nResult = mysql_set_character_set(m_mysql, "UTF8");
 			LOG_INFO(m_loger, "{}  succeed [{} {}]", nResult, __FILENAME__, __LINE__);
-            return CreateTable();
+      return CreateTable();
 		}
 		else
 		{

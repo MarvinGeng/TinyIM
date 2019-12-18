@@ -15,12 +15,12 @@ std::string MsgId() {
 }
 TEST_CASE("DataBaseConnect") {
 	CMySqlConnect sqlUtil;
-	CHECK(sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1"));
+	CHECK(sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1"));
 }
 
 TEST_CASE("T_USER") {
 	CMySqlConnect sqlUtil;
-	CHECK(sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1"));
+	CHECK(sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1"));
 	{
 		T_USER_BEAN bean;
 		bean.m_strF_USER_ID = UserID();
@@ -51,7 +51,7 @@ TEST_CASE("T_USER") {
 
 TEST_CASE("T_FRIEND_CHAT_MSG") {
 	CMySqlConnect sqlUtil;
-	sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1");
+	sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1");
 	
 	SUBCASE("DataBaseInsertChatMsgEnglishOrg") {
 		T_USER_CHAT_MSG msgBean;
@@ -100,14 +100,14 @@ TEST_CASE("T_FRIEND_CHAT_MSG") {
 
 TEST_CASE("T_FRIEND_CHAT_MSG_CHAT") {
 	CMySqlConnect sqlUtil;
-	sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1");
+	sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1");
 	std::string strUserId = UserID();
 	std::string strFriendId = UserID();
 }
 
 TEST_CASE("T_ADD_FRIEND_MSG") {
 	CMySqlConnect sqlUtil;
-	sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1");
+	sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1");
 
 	std::string strUserId = UserID();
 	std::string strFriendId = UserID();
@@ -140,7 +140,7 @@ TEST_CASE("T_ADD_FRIEND_MSG") {
 
 TEST_CASE("T_FRIEND_RELATION") {
 	CMySqlConnect sqlUtil;
-	sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1");
+	sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1");
 
 	std::string strUserId = UserID();
 	std::string strFriendId = UserID();
@@ -165,7 +165,7 @@ TEST_CASE("T_FRIEND_RELATION") {
 
 TEST_CASE("T_GROUP_CHAT_TXT_MSG") {
 	CMySqlConnect sqlUtil;
-	sqlUtil.ConnectToServer("admin", "admin", "imdev", "127.0.0.1");
+	sqlUtil.ConnectToServer("imdev", "imdev", "imdev", "127.0.0.1");
 
 	std::string strUserId = UserID();
 	std::string strGroupId = UserID();
