@@ -27,6 +27,8 @@ public:
                          const std::string database,
                          const std::string strHost,
                          const int port=3306);
+
+	bool CreateTable();
     
 	//用户最基本的操作 begin
     bool SelectUserByName(const std::string userName,T_USER_BEAN& bean);
