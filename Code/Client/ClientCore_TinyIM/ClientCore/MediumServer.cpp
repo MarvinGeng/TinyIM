@@ -1,4 +1,15 @@
-﻿#include "MainFunc.h"
+﻿/**
+ * @file MediumServer.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief ClientCore的主程序文件
+ * @version 0.1
+ * @date 2019-12-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#include "MainFunc.h"
 #include "CFileUtil.h"
 #ifdef _WIN32
 int main(int argc, char *argv[])

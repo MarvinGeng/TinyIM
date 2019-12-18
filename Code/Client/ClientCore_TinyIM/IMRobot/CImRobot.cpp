@@ -1,4 +1,15 @@
-﻿#include "CImRobot.h"
+﻿/**
+ * @file CImRobot.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief ImRobot的实现文件
+ * @version 0.1
+ * @date 2019-12-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#include "CImRobot.h"
 #include <time.h>
 #include <thread>
 #include "CommonMsg.h"
@@ -9,17 +20,40 @@
 using HttpClient = SimpleWeb::Client<SimpleWeb::HTTP>;
 static std::shared_ptr<HttpClient> g_httpClient;
 static SnowFlake m_msgIdUtil(4,4);
+
+/**
+ * @brief Create a Msg Id object
+ * 
+ * @return std::string 
+ */
 static std::string CreateMsgId() {
 	return std::to_string(m_msgIdUtil.nextId());
 }
+
+/**
+ * @brief Construct a new CIMRobot::CIMRobot object
+ * 
+ */
 CIMRobot::CIMRobot()
 {
 
 }
 
+/**
+ * @brief Destroy the CIMRobot::CIMRobot object
+ * 
+ */
 CIMRobot::~CIMRobot()
 {
 }
+
+/**
+ * @brief 加载配置文件
+ * 
+ * @param strCfg 配置文件的字符串
+ * @return true 加载成功
+ * @return false 加载失败
+ */
 bool CIMRobot::loadConfig(const std::string strCfg)
 {
 	using namespace json11;
@@ -70,25 +104,7 @@ bool CIMRobot::loadConfig(const std::string strCfg)
 	return true;
 }
 
-void CIMRobot::RegisterUser()
-{
-	std::cout << __FUNCTION__ << std::endl;
-	UserRegisterRspMsg rspMsg;
-	try {
-		UserRegisterReqMsg reqMsg;
-		reqMsg.m_strMsgId=CreateMsgId();
-		reqMsg.m_strUserName = m_strUserName;
-		reqMsg.m_strPassword = m_strPassWord;
-		reqMsg.m_strNickName = m_strUserName;
 
-		auto rsp = g_httpClient->request("POST", "/register_user", reqMsg.ToString());
-		std::string strRsp = rsp->content.string();
-		std::cout << strRsp << std::endl;
-	}
-	catch (const SimpleWeb::system_error& e) {
-		std::cerr << "Client Req Error " << e.what() << std::endl;
-	}
-}
 
 void CIMRobot::Run()
 {
@@ -218,7 +234,34 @@ void CIMRobot::Run()
 	}
 	UserLogout();
 }
+/**
+ * @brief 注册用户
+ * 
+ */
+void CIMRobot::RegisterUser()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	UserRegisterRspMsg rspMsg;
+	try {
+		UserRegisterReqMsg reqMsg;
+		reqMsg.m_strMsgId=CreateMsgId();
+		reqMsg.m_strUserName = m_strUserName;
+		reqMsg.m_strPassword = m_strPassWord;
+		reqMsg.m_strNickName = m_strUserName;
 
+		auto rsp = g_httpClient->request("POST", "/register_user", reqMsg.ToString());
+		std::string strRsp = rsp->content.string();
+		std::cout << strRsp << std::endl;
+	}
+	catch (const SimpleWeb::system_error& e) {
+		std::cerr << "Client Req Error " << e.what() << std::endl;
+	}
+}
+
+/**
+ * @brief 用户登录
+ * 
+ */
 void CIMRobot::UserLogin()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -243,6 +286,11 @@ void CIMRobot::UserLogin()
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
+
+/**
+ * @brief 用户退出登录
+ * 
+ */
 void CIMRobot::UserLogout()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -263,6 +311,11 @@ void CIMRobot::UserLogout()
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
+
+/**
+ * @brief 获取好友列表
+ * 
+ */
 void CIMRobot::GetFriendList()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -288,6 +341,11 @@ void CIMRobot::GetFriendList()
 		std::cerr << "Client Req Error " << e.what() << std::endl;
 	}
 }
+
+/**
+ * @brief 好友聊天发送文本消息
+ * 
+ */
 void CIMRobot::SendMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -319,6 +377,11 @@ void CIMRobot::SendMsg()
 		}
 	}
 }
+
+/**
+ * @brief 获取随机用户名称
+ * 
+ */
 void CIMRobot::GetRandomUserName()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -341,6 +404,10 @@ void CIMRobot::GetRandomUserName()
 	}
 }
 
+/**
+ * @brief 发送查找好友请求
+ * 
+ */
 void CIMRobot::SendFindFriendReq()
 {
 	FindFriendReqMsg reqMsg;
@@ -367,6 +434,10 @@ void CIMRobot::SendFindFriendReq()
 	}
 }
 
+/**
+ * @brief 发送添加好友请求
+ * 
+ */
 void CIMRobot::SendAddFriendReq()
 {
 	AddFriendSendReqMsg reqMsg;
@@ -389,6 +460,10 @@ void CIMRobot::SendAddFriendReq()
 	}
 }
 
+/**
+ * @brief 获取收到的添加好友请求
+ * 
+ */
 void CIMRobot::GetRecvAddFriendReq()
 {
 	AddFriendRecvReqMsg reqMsg;
@@ -426,6 +501,10 @@ void CIMRobot::GetRecvAddFriendReq()
 	}
 }
 
+/**
+ * @brief 获取添加好友通知消息
+ * 
+ */
 void CIMRobot::GetAddFriendNotify()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -444,6 +523,10 @@ void CIMRobot::GetAddFriendNotify()
 	}
 }
 
+/**
+ * @brief 好友发送表情消息
+ * 
+ */
 void CIMRobot::SendFaceMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -475,6 +558,11 @@ void CIMRobot::SendFaceMsg()
 		}
 	}
 }
+
+/**
+ * @brief 好友发送图片消息
+ * 
+ */
 void CIMRobot::SendSingleImageMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -510,6 +598,11 @@ void CIMRobot::SendSingleImageMsg()
 		}
 	}
 }
+
+/**
+ * @brief 获取好友发送过来的消息
+ * 
+ */
 void CIMRobot::GetRecvMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -545,6 +638,11 @@ void CIMRobot::GetRecvMsg()
 	}
 }
 
+
+/**
+ * @brief 添加好友分组
+ * 
+ */
 void CIMRobot::AddFriendTeam()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -564,6 +662,10 @@ void CIMRobot::AddFriendTeam()
 	}
 }
 
+/**
+ * @brief 删除好友分组
+ * 
+ */
 void CIMRobot::RemoveFriendTeam()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -583,6 +685,10 @@ void CIMRobot::RemoveFriendTeam()
 	}
 }
 
+/**
+ * @brief 移动好友到新的分组
+ * 
+ */
 void CIMRobot::MoveFriendToTeam()
 {
 	if (!m_strFriendVec.empty())
@@ -609,7 +715,10 @@ void CIMRobot::MoveFriendToTeam()
 
 }
 
-
+/**
+ * @brief 获取群组列表
+ * 
+ */
 void CIMRobot::GetGroupList()
 {
 	GetGroupListReqMsg reqMsg;
@@ -633,6 +742,10 @@ void CIMRobot::GetGroupList()
 	}
 }
 
+/**
+ * @brief 发送群组消息
+ * 
+ */
 void CIMRobot::SendGroupMsg()
 {
 	SendGroupTextMsgRspMsg rspMsg;
@@ -657,6 +770,10 @@ void CIMRobot::SendGroupMsg()
 	}
 }
 
+/**
+ * @brief 获取接收到的群组消息
+ * 
+ */
 void CIMRobot::GetRecvGroupMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -685,6 +802,10 @@ void CIMRobot::GetRecvGroupMsg()
 	}
 }
 
+/**
+ * @brief 获取好友聊天消息记录的首页消息
+ * 
+ */
 void CIMRobot::GetFriendHistroyFirst()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -705,6 +826,10 @@ void CIMRobot::GetFriendHistroyFirst()
 	}
 }
 
+/**
+ * @brief 获取好友聊天消息记录的末页消息
+ * 
+ */
 void CIMRobot::GetFriendHistoryLast()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -725,6 +850,11 @@ void CIMRobot::GetFriendHistoryLast()
 	}
 }
 
+
+/**
+ * @brief 好友聊天记录的上一页
+ * 
+ */
 void CIMRobot::GetFriendHistoryPrev()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -745,6 +875,10 @@ void CIMRobot::GetFriendHistoryPrev()
 	}
 }
 
+/**
+ * @brief 好友聊天记录的下一页
+ * 
+ */
 void CIMRobot::GetFriendHistoryNext()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -766,7 +900,10 @@ void CIMRobot::GetFriendHistoryNext()
 }
 
 
-
+/**
+ * @brief 获取群聊消息的首页
+ * 
+ */
 void CIMRobot::GetGroupHistroyFirst()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -787,6 +924,10 @@ void CIMRobot::GetGroupHistroyFirst()
 	}
 }
 
+/**
+ * @brief 获取群聊消息的最后一页
+ * 
+ */
 void CIMRobot::GetGroupHistoryLast()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -807,6 +948,10 @@ void CIMRobot::GetGroupHistoryLast()
 	}
 }
 
+/**
+ * @brief 获取群聊消息的上一页
+ * 
+ */
 void CIMRobot::GetGroupHistoryPrev()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -827,6 +972,10 @@ void CIMRobot::GetGroupHistoryPrev()
 	}
 }
 
+/**
+ * @brief 获取群组聊天记录的下一页
+ * 
+ */
 void CIMRobot::GetGroupHistoryNext()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -847,6 +996,10 @@ void CIMRobot::GetGroupHistoryNext()
 	}
 }
 
+/**
+ * @brief 查找聊天记录
+ * 
+ */
 void CIMRobot::SearchChatMsg()
 {
 	std::cout << __FUNCTION__ << std::endl;

@@ -1,4 +1,13 @@
-
+/**
+ * @file main.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief ImRobot的主程序文件
+ * @version 0.1
+ * @date 2019-12-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include "CommonFunction.h"
 #include "CImRobot.h"
 int main(int argc, char** argv) {

@@ -152,6 +152,12 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理获取随机用户名的请求
+	 * 
+	 * @param response 
+	 * @param request 
+	 */
 	void CHttpServer::Get_RandomUserNameReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
 		std::string strUserId = GetHttpParamUserId(request);
@@ -1622,6 +1628,11 @@ namespace ClientCore
 		}
 	}
 
+	/**
+	 * @brief 处理随机获取好友用户名的回复
+	 * 
+	 * @param msg 随机获取好友用户名的回复
+	 */
 	void CHttpServer::On_RandomUserRsp(const GetRandomUserRspMsg& msg) {
 		if (!msg.m_strMsgId.empty()) {
 			auto item = m_httpRspMap.find(msg.m_strMsgId);

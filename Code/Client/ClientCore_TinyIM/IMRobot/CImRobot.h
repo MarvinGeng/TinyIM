@@ -1,3 +1,14 @@
+
+/**
+ * @file CImRobot.h
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief ImRobot的头文件
+ * @version 0.1
+ * @date 2019-12-18
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #ifndef _DENNIS_THINK_C_IM_ROBOT_H_
 #define _DENNIS_THINK_C_IM_ROBOT_H_
 #include <string>
