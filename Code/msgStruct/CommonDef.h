@@ -353,6 +353,7 @@ GetRandomUserReq_Type,
 
 //获取随机一个用户的回复
 GetRandomUserRsp_Type,
+
 };
 
 //客户端会话状态
