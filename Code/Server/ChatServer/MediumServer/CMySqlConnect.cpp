@@ -50,6 +50,12 @@ CMySqlConnect::~CMySqlConnect()
 }
 
 
+/**
+ * @brief 创建数据库对应的表格
+ * 
+ * @return true 创建成功
+ * @return false 创建失败
+ */
 bool CMySqlConnect::CreateTable()
 {
 	if (m_mysql)

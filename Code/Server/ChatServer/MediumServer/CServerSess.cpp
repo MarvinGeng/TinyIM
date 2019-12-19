@@ -46,7 +46,7 @@ void CServerSess::handle_message(const TransBaseMsg_t *hdr)
 {
 	if (m_server)
 	{
-		m_server->Handle_RecvTcpMsg(shared_from_this(), hdr);
+		m_server->DispatchRecvTcpMsg(shared_from_this(), hdr);
 	}
 }
 

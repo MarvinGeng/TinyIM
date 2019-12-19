@@ -3,11 +3,12 @@
  * zhangyl 2017.03.29
  **/
 //#include "stdafx.h"
-#include <locale.h>
+
 //#include <iconv.h>          //linux only
 #ifdef _WIN32
 #include <Windows.h>
 #else
+#include <locale.h>
 #include <locale>
 #include <codecvt>
 #include <string>

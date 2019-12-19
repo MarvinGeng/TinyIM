@@ -46,21 +46,9 @@ using tcp = asio::ip::tcp;
 class CChatServer : public std::enable_shared_from_this<CChatServer>
 {
 public:
-	void Handle_RecvTcpMsg(const std::shared_ptr<CServerSess> pSess, const TransBaseMsg_t* pMsg);
-
-	void OnSessClose(const std::shared_ptr<CServerSess>& pSess) {
-		auto item = m_UserSessVec.find(pSess->UserId());
-		if (item != m_UserSessVec.end() &&
-			item->second == pSess)
-		{
-			LOG_INFO(ms_loger, "User:{} is Closed [{} {} ]", pSess->UserId(), __FILENAME__, __LINE__);
-			m_UserSessVec.erase(pSess->UserId());
-		}
-		m_clientStateMap.erase(pSess->UserId());
-		m_clientStateMap.insert({ pSess->UserId(),CLIENT_SESS_STATE::SESS_IDLE_STATE });
-		m_util.UpdateUserOnlineState(pSess->UserId(), CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE);
-		m_userIdUdpAddrMap.erase(pSess->UserId());
-	}
+	void DispatchRecvTcpMsg(const std::shared_ptr<CServerSess> pSess, const TransBaseMsg_t* pMsg);
+	void OnSessClose(const std::shared_ptr<CServerSess>& pSess);
+	
 	
     //void HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pSess, const  & reqMsg);
 	//void HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, const UserLoginReqMsg& reqMsg);
@@ -94,6 +82,9 @@ public:
 
 	AddToGroupRspMsg DoAddToGroupReqMsg(const AddToGroupReqMsg& reqMsg);
 	QuitFromGroupRspMsg DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg);
+	TransBaseMsg_S_PTR DoFileDataRecvRsp(const FileDataRecvRspMsg& rspMsg);
+	GetRandomUserRspMsg DoGetRandomUserReqMsg(const GetRandomUserReqMsg& reqMsg);
+	TransBaseMsg_S_PTR DoFileDataSendReq(const FileDataSendReqMsg& reqMsg);
 
 	void Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg);
 
@@ -147,12 +138,11 @@ public:
 
 	void OnUserStateCheck(const std::string strUserId);
 	void NotifyUserFriends(const std::string strUserId);
-	TransBaseMsg_S_PTR Handle_FileDataRecvRsp(const FileDataRecvRspMsg& rspMsg);
-	GetRandomUserRspMsg DoGetRandomUserReqMsg(const GetRandomUserReqMsg& reqMsg);
-	void Handle_RecvTcpMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg);
+
+
 	void CloseUserFile(const std::string strUserId);
-	TransBaseMsg_S_PTR HandleFileDataSendReq(const FileDataSendReqMsg& reqMsg);
-	void HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
+
+
 private:
 	const std::size_t HASH_SALT_LENGTH = 32;//密码的哈希盐值的长度
 	std::string CreateMsgId();
@@ -175,7 +165,7 @@ private:
 
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);
 
-	void HandleRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
+	void DispatchRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
 	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& pMsg);
 
 	void CheckFileDataRsp(const std::string strUserId);
@@ -203,7 +193,6 @@ private:
 	void HandleUserKeepAliveRsp(const std::shared_ptr<CServerSess> pSess, const KeepAliveRspMsg& rspMsg);
 	void HandleUserLoginReq(const std::shared_ptr<CServerSess>& pSess, const UserLoginReqMsg& reqMsg);
 
-	void HandleUserKickOffRsp(const std::shared_ptr<CServerSess>& pSess, const UserKickOffRspMsg& reqMsg);
 
 	void HandleUserLogoutReq(const std::shared_ptr<CServerSess>& pSess, const UserLogoutReqMsg& reqMsg);
 
@@ -215,16 +204,12 @@ private:
 	void HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>& pSess, const FriendChatRecvTxtRspMsg& regMsg);
 
 	void HandleAddFriendReq(const std::shared_ptr<CServerSess>& pSess, const AddFriendSendReqMsg& regMsg);
-	void HandleAddFriendRecvRsp(const std::shared_ptr<CServerSess>& pSess, const AddFriendRecvRspMsg& rspMsg);
-	void HandleAddFriendNotifyRsp(const std::shared_ptr<CServerSess>& pSess, const AddFriendNotifyRspMsg& rspMsg);
+
 	void HandleRemoveFriendReq(const std::shared_ptr<CServerSess>& pSess, const RemoveFriendReqMsg& rspMsg);
 
 	void HandleFindFriendReq(const std::shared_ptr<CServerSess>& pSess, const FindFriendReqMsg& reqMsg);
 	void HandleGetFriendListReq(const std::shared_ptr<CServerSess>& pSess, const GetFriendListReqMsg& reqMsg);
 
-	void HandleUpdateFriendListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateFriendListNotifyRspMsg& reqMsg);
-
-	void HandleUpdateGroupListRsp(const std::shared_ptr<CServerSess>& pSess, const UpdateGroupListNotifyRspMsg& reqMsg);
 
 	void HandleAddTeamReq(const std::shared_ptr<CServerSess>& pSess, const AddTeamReqMsg& reqMsg);
 	void HandleRemoveTeamReq(const std::shared_ptr<CServerSess>& pSess, const RemoveTeamReqMsg& reqMsg);
@@ -232,7 +217,7 @@ private:
 
 
 	void HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pSess, const FriendSendFileMsgReqMsg& reqMsg);
-	void HandleFriendRecvFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendRecvFileMsgRspMsg& reqMsg);
+
 	void HandleFriendNotifyFileRsp(const std::shared_ptr<CServerSess>& pSess, const FriendNotifyFileMsgRspMsg& req);
 
 	void HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req);
@@ -241,7 +226,7 @@ private:
 	void HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSess, const FileDownLoadReqMsg& req);
 
 	void HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req);
-	void HandleFileVerifyRsp(const std::shared_ptr<CServerSess>& pSess, const FileVerifyRspMsg& req);
+
 
 	void HandleGetRandomUserReq(const std::shared_ptr<CServerSess>& pSess, const GetRandomUserReqMsg& req);
 	//Group
@@ -258,14 +243,25 @@ private:
 	void HandleSendGroupTextReq(const std::shared_ptr<CServerSess>& pSess, const SendGroupTextMsgReqMsg& reqMsg);
 
 	void HandleRecvGroupTextMsgRspMsg(const std::shared_ptr<CServerSess>& pSess, const RecvGroupTextMsgRspMsg& reqMsg);
-
 	void HandleQuitGroupReqMsg(const std::shared_ptr<CServerSess>& pSess, const QuitFromGroupReqMsg& reqMsg);
-
-	void HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& reqMsg);
-
 	void HandleFriendUnReadNotifyRspMsg(const std::shared_ptr<CServerSess>& pSess, const FriendUnReadNotifyRspMsg& rspMsg);
-
 	void HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSess, const QueryUserUdpAddrReqMsg& reqMsg);
+	void HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg);
+	void HandleFileDataRecvRsp(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg);
+
+
+	void HandleFriendRecvFileRsp(const FriendRecvFileMsgRspMsg& reqMsg);
+	void HandleFileVerifyRsp(const FileVerifyRspMsg& req);
+	void HandleFileDataRecvRspMsg(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& reqMsg);
+	void HandleUpdateFriendListRsp(const UpdateFriendListNotifyRspMsg& reqMsg);
+
+	void HandleUpdateGroupListRsp( const UpdateGroupListNotifyRspMsg& reqMsg);
+	void HandleAddFriendRecvRsp(const AddFriendRecvRspMsg& rspMsg);
+	void HandleAddFriendNotifyRsp(const AddFriendNotifyRspMsg& rspMsg);
+	void HandleUserKickOffRsp(const UserKickOffRspMsg& reqMsg);
+
+
+
 public:
 
     static std::shared_ptr<spdlog::logger> ms_loger; //日志指针
@@ -273,98 +269,9 @@ public:
 
     void SendBack(const TransBaseMsg_t *msg);
     void CheckAllConnect();
-    CChatServer(asio::io_service &io_service)
-        : m_ioService(io_service), m_socket(io_service), m_acceptor(io_service),m_MsgID_Util(1,3)
-    {
-        if (!m_timer)
-        {
-            m_timer = std::make_shared<asio::high_resolution_timer>(m_ioService);
-        }	
-    }
+	CChatServer(asio::io_service &io_service);
 
-    void start(const std::function<void(const std::error_code &)> &callback)
-    {
-        if (!m_serverCfg.Valid())
-        {
-            LOG_ERR(ms_loger, "ServerConfig Is Error {} [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
-            return;
-        }
-        LOG_INFO(ms_loger, "Server Start Service [{} {}]", __FILENAME__, __LINE__);
-        std::error_code ec;
-        asio::ip::tcp::endpoint endpoint;
-        if (m_serverCfg.m_strServerIp.length() > 0)
-        {
-            endpoint = asio::ip::tcp::endpoint(
-                asio::ip::address::from_string(m_serverCfg.m_strServerIp),
-                m_serverCfg.m_nPort);
-        }
-        else
-        {
-            endpoint =
-                asio::ip::tcp::endpoint(asio::ip::tcp::v4(), m_serverCfg.m_nPort);
-        }
-        //LOG_WARN(ms_loger, "Before Open");
-        m_acceptor.open(endpoint.protocol());
-        //LOG_WARN(ms_loger, "Before Set Option");
-        m_acceptor.set_option(asio::socket_base::reuse_address(true));
-        //LOG_WARN(ms_loger, "Before Bind");
-        m_acceptor.bind(endpoint, ec);
-        //LOG_WARN(ms_loger, "Before Listen");
-        if (!ec)
-        {
-            LOG_INFO(ms_loger, "Bind To {} Succeed [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
-            m_acceptor.listen(asio::socket_base::max_connections, ec);
-            if (!ec)
-            {
-                LOG_INFO(ms_loger, "Listen To {} Succeed [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
-            }
-            else
-            {
-                LOG_WARN(ms_loger, "Listen To {} Failed, Reason:{} {} [{} {}]",
-                     m_serverCfg.to_string(), ec.value(), ec.message(),__FILENAME__, __LINE__);
-            }
-            SetTimer(30);
-            do_accept();
-			auto pSelf = shared_from_this();
-			m_udpServer = std::make_shared<CUdpServer>(m_ioService, "127.0.0.1", 20000, [this, pSelf](const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg) {
-				HandleRecvUdpMsg(sendPt, pMsg);
-			});
-			if (m_udpServer)
-			{
-				m_udpServer->StartConnect();
-			}
-            if(0)
-			{
-                for (auto item : m_clientCfgVec)
-                {
-                    if (item.Valid())
-                    {
-                        auto pQueue = std::make_shared<CClientSessManager>(item);
-                        m_queueVec.push_back(pQueue);
-                        std::error_code ec;
-                        pQueue->Start(this, m_ioService, ec);
-                        LOG_INFO(ms_loger, "ConnectTo: {} [{} {}]", item.to_string(),__FILENAME__, __LINE__);
-                    }
-                }
-            }
-			{
-				m_util.ConnectToServer(m_dbCfg.m_strUserName,
-					m_dbCfg.m_strPassword,
-					m_dbCfg.m_strDbName,
-					m_dbCfg.m_strDbIp,
-					m_dbCfg.m_nDbPort);
-				//m_util.ConnectToServer(m_mysqlCfg.m_strIp,m_mysqlCfg.m)
-			}
-        }
-        else
-        {
-            LOG_ERR(ms_loger, "Bind To {} Failed [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
-            callback(ec);
-#ifndef WIN32
-            exit(BIND_FAILED_EXIT);
-#endif
-        }
-    }
+	void start(const std::function<void(const std::error_code &)> &callback);
 	
     void loadConfig(const json11::Json &cfg, std::error_code &ec);
     //获取server的ip和端口,
