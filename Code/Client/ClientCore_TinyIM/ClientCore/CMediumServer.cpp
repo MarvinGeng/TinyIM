@@ -102,11 +102,11 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 }
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess,const FileDataSendRspMsg& rspMsg)
 {
-	auto pMsg = HandleSendBack_SendRsp(rspMsg);
+	auto pMsg = DoSendBackFileDataSendRsp(rspMsg);
 	pClientSess->SendMsg(pMsg);
 }
 
-TransBaseMsg_S_PTR CMediumServer::HandleSendBack_SendRsp(const FileDataSendRspMsg& rspMsg)
+TransBaseMsg_S_PTR CMediumServer::DoSendBackFileDataSendRsp(const FileDataSendRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
 	{
@@ -198,7 +198,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const File
  * @param endPt 远端UDP的地址
  * @param pMsg 从UDP收到的消息
  */
-void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
+void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 {
 	if (pMsg)
 	{
@@ -2224,7 +2224,7 @@ void CMediumServer::SendFoward(const std::shared_ptr<CServerSess>& pServerSess,c
  * @param reqMsg 获取好友聊天记录的请求
  * @return GetFriendChatHistoryRsp 获取好友聊天记录的回复
  */
-GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg)
+GetFriendChatHistoryRsp CMediumServer::DoFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg)
 {
 	GetFriendChatHistoryRsp result;
 
@@ -2257,7 +2257,7 @@ GetFriendChatHistoryRsp CMediumServer::HandleFriendChatHistoryReq(const GetFrien
  * @param reqMsg 获取群组聊天记录的请求消息
  * @return GetGroupChatHistoryRsp 群组聊天记录的回复消息
  */
-GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
+GetGroupChatHistoryRsp CMediumServer::DoFriendChatHistoryReq(const GetGroupChatHistoryReq& reqMsg)
 {
 	GetGroupChatHistoryRsp result;
 	auto pMsgUtil = GetMsgPersisUtil(reqMsg.m_strUserId);
@@ -2285,7 +2285,7 @@ GetGroupChatHistoryRsp CMediumServer::HandleGroupChatHistoryReq(const GetGroupCh
  * @param reqMsg 聊天记录查找请求消息
  * @return SearchChatHistoryRsp 聊天记录查找回复消息
  */
-SearchChatHistoryRsp CMediumServer::HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg)
+SearchChatHistoryRsp CMediumServer::DoSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg)
 {
 	SearchChatHistoryRsp result;
 	auto pMsgUtil = GetMsgPersisUtil(reqMsg.m_strUserId);
@@ -2315,7 +2315,7 @@ CUdpClient_PTR CMediumServer::CreateUdpSess()
 {
 	auto pSelf = shared_from_this();
 	auto pSess = std::make_shared<CUdpClient>(m_ioService, m_udpCfg.m_strServerIp,m_udpCfg.m_nPort, [this, pSelf](const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg) {
-		Handle_UdpMsg(endPt, pMsg);
+		DispatchUdpMsg(endPt, pMsg);
 	});
 	pSess->StartConnect();
 	return pSess;

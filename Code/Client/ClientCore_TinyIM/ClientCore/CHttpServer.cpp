@@ -252,7 +252,7 @@ namespace ClientCore
 		{
 			if(m_pServer)
 			{
-				auto rsp = m_pServer->HandleFriendChatHistoryReq(reqMsg);
+				auto rsp = m_pServer->DoFriendChatHistoryReq(reqMsg);
 				std::string strRsp = rsp.ToString();
 				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 			}
@@ -279,7 +279,7 @@ namespace ClientCore
 		{
 			if(m_pServer)
 			{
-				auto rspMsg = m_pServer->HandleGroupChatHistoryReq(reqMsg);
+				auto rspMsg = m_pServer->DoFriendChatHistoryReq(reqMsg);
 				std::string strRsp = rspMsg.ToString();
 				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 			}
@@ -306,7 +306,7 @@ namespace ClientCore
 		{
 			if(m_pServer)
 			{
-				auto rspMsg = m_pServer->HandleSearchChatHistoryReq(reqMsg);
+				auto rspMsg = m_pServer->DoSearchChatHistoryReq(reqMsg);
 				std::string strRsp = rspMsg.ToString();
 				*response << "HTTP/1.1 200 OK\r\nContent-Length: " << strRsp.length() << "\r\n\r\n" << strRsp;
 			}

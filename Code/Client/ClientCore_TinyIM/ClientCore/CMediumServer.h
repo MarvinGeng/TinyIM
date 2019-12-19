@@ -80,7 +80,6 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	void HandleFileVerifyReq(const FileVerifyReqMsg& msg);
 	void HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg& reqMsg);
-	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const FileDataRecvReqMsg& reqMsg);
   public:
     static std::shared_ptr<spdlog::logger> ms_loger;
     inline IpPortCfg &config() { return m_serverCfg; }
@@ -90,9 +89,12 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void SendFoward(const std::shared_ptr<CServerSess>& pServerSess,const TransBaseMsg_t& msg);
 
 	void Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspMsg);
-	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
+	void DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataRecvReqMsg& reqMsg);
+
+
 	bool HandleSendForward(FriendChatSendTxtReqMsg& reqMsg);
     void CheckAllConnect();
 
@@ -134,10 +136,10 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
     void loadConfig(const json11::Json &cfg, std::error_code &ec);
     //获取server的ip和端口,
     std::string getServerIpPort();
-	GetFriendChatHistoryRsp HandleFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg);
-	GetGroupChatHistoryRsp HandleGroupChatHistoryReq(const GetGroupChatHistoryReq& reqMsg);
-	SearchChatHistoryRsp HandleSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
-	TransBaseMsg_S_PTR HandleSendBack_SendRsp(const FileDataSendRspMsg& rspMsg);
+	GetFriendChatHistoryRsp DoFriendChatHistoryReq(const GetFriendChatHistoryReq& reqMsg);
+	GetGroupChatHistoryRsp DoFriendChatHistoryReq(const GetGroupChatHistoryReq& reqMsg);
+	SearchChatHistoryRsp DoSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
+	TransBaseMsg_S_PTR DoSendBackFileDataSendRsp(const FileDataSendRspMsg& rspMsg);
 private:
 	CServerSess_SHARED_PTR GetSendBackSess(const std::string strUserId);
 	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
@@ -153,6 +155,7 @@ private:
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDataSendRspMsg& rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg);
+
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess,FileSendDataBeginReq& msg);
