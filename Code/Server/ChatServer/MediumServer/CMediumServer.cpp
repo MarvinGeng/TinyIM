@@ -473,7 +473,7 @@ void CChatServer::DispatchRecvTcpMsg(const std::shared_ptr<CServerSess> pSess, c
 	{
 		QueryUserUdpAddrReqMsg reqMsg;
 		if (reqMsg.FromString(pMsg->to_string())) {
-
+			HandleQueryUserUdpAddr(pSess, reqMsg);
 		}
 
 	}break;
