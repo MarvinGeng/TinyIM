@@ -66,6 +66,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	std::shared_ptr<CHttpServer> m_httpServer;
 	CClientSess_SHARED_PTR m_freeClientSess;
+	std::map<std::string, std::vector<std::string>> m_userFriendListMap;
     void SetTimer(int nSeconds);
     void OnTimer();
 	void CheckWaitMsgVec();
@@ -91,12 +92,14 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspMsg);
 	void DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendRspMsg& Msg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataRecvReqMsg& reqMsg);
-
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg);
 
 	bool HandleSendForward(FriendChatSendTxtReqMsg& reqMsg);
-    void CheckAllConnect();
+	void CheckAllConnect();
+	void CheckFriendP2PConnect();
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
 	CClientSess_SHARED_PTR CreateClientSess();
@@ -144,6 +147,7 @@ private:
 	CServerSess_SHARED_PTR GetSendBackSess(const std::string strUserId);
 	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
 	bool HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg);
+	bool HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatSendTxtRspMsg reqMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg);

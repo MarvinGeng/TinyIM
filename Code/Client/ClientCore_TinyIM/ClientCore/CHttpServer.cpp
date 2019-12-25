@@ -814,7 +814,6 @@ namespace ClientCore
 					pClientSess->SendMsg(&queryReq);
 				}
 				m_httpRspMap.insert(std::pair<std::string, HTTP_RSP_SECOND>(reqMsg.m_strMsgId, { time(nullptr), response }));
-
 			}
 			else
 			{
@@ -1455,6 +1454,7 @@ namespace ClientCore
 	 * 
 	 */
 	void CHttpServer::Init(const int port=8000) {
+		LOG_INFO(ms_loger, "Http Server On :{} ", port);
 		m_httpServer.config.port = port;
 		auto pSelf = shared_from_this();
 		

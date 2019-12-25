@@ -30,17 +30,29 @@ int main(int argc, char *argv[])
 		{
 			return 0;
 		}
+		ParseParamResult result = ParseParam(argc, argv);
+		RunProgram(result);
+		if (argc > 1)
+		{
+			::CloseHandle(singleEvent_);
+		}
 	}
-
-
-
-	ParseParamResult result;
-	CFileUtil util;
-	result.m_cfgFile = util.GetCurDir() + "ClientCore.cfg";
-	RunProgram(result);
-	if (argc > 1)
+	else
 	{
-		::CloseHandle(singleEvent_);
+		std::string singleName = "Global\\ClientCore";	// 全局唯一
+		singleEvent_ = ::CreateEvent(NULL, FALSE, FALSE, singleName.data());
+		if (!singleEvent_ || ::GetLastError() == ERROR_ALREADY_EXISTS)
+		{
+			return 0;
+		}
+		ParseParamResult result;
+		CFileUtil util;
+		result.m_cfgFile = util.GetCurDir() + "ClientCore.cfg";
+		RunProgram(result);
+		if (argc > 1)
+		{
+			::CloseHandle(singleEvent_);
+		}
 	}
 	return 0;
 }

@@ -58,20 +58,35 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 
 	{
 		auto httpCfg = cfg["httpserver"];
-		if (httpCfg.is_object())
-		{
-			m_httpCfg.m_strServerIp = httpCfg["ip"].string_value();
-			m_httpCfg.m_nPort = httpCfg["port"].int_value();
-		}
+		m_httpCfg.m_strServerIp = httpCfg["ip"].string_value();
+		m_httpCfg.m_nPort = httpCfg["port"].int_value();
+		LOG_INFO(ms_loger, "Http Server:{} {} [{} {}]", m_httpCfg.m_strServerIp, m_httpCfg.m_nPort, __FILENAME__, __LINE__);
 	}
 
 	{
 		auto udpJson = cfg["UdpServer"];
-		if (udpJson.is_object())
-		{
-			m_udpCfg.m_strServerIp = udpJson["ip"].string_value();
-			m_udpCfg.m_nPort = udpJson["port"].int_value();
-		}
+		m_udpCfg.m_strServerIp = udpJson["ip"].string_value();
+		m_udpCfg.m_nPort = udpJson["port"].int_value();
+	}
+}
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg)
+{
+	LOG_INFO(ms_loger, "P2P Line OK");
+}
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg)
+{
+	UdpP2pStartReqMsg reqMsg;
+	reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+	reqMsg.m_strUserId = Msg.m_strClientId;
+	reqMsg.m_strFriendId = Msg.m_strClientId;
+	auto pUdpSess = GetUdpSess(Msg.m_strClientId);
+	if (pUdpSess)
+	{
+		pUdpSess->send_msg(endPt, &reqMsg);
+	}
+	else
+	{
+		LOG_ERR(ms_loger, "No Udp Sess For {} [{} {}]", Msg.m_strClientId, __FILENAME__, __LINE__);
 	}
 }
 
@@ -202,12 +217,15 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 {
 	if (pMsg)
 	{
+		LOG_INFO(ms_loger, "Recv UDP Msg:{} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+
 		switch (pMsg->GetType())
 		{
 		case E_MsgType::KeepAliveRsp_Type:
 		{
 			KeepAliveRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
+				Handle_UdpMsg(endPt, rspMsg);
 				LOG_INFO(ms_loger, "{}", rspMsg.ToString());
 			}
 		}break;
@@ -233,10 +251,16 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 				Handle_UdpMsg(endPt, reqMsg);
 			}
 		}break;
-
+		case E_MsgType::UdpP2PStartRsp_Type:
+		{
+			UdpP2pStartRspMsg rspMsg;
+			if (rspMsg.FromString(pMsg->to_string())) {
+				Handle_UdpMsg(endPt, rspMsg);
+			}
+		}break;
 		default:
 		{
-
+			LOG_ERR(ms_loger, "Unhandle Msg:{} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 		}break;
 		}
 	}
@@ -289,6 +313,7 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 		}
 		SetTimer(5);
 		do_accept();
+		LOG_INFO(ms_loger, "Http Server On :{} [{} {} ]", m_httpCfg.m_nPort,__FILENAME__,__LINE__);
 		m_httpServer->Start(m_httpCfg.m_nPort);
 
 		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
@@ -321,6 +346,62 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 #endif
 	}
 }
+
+void CMediumServer::CheckFriendP2PConnect()
+{
+	for (auto userItem : m_userFriendListMap)
+	{
+		auto pUdpSess = GetUdpSess(userItem.first);
+		if (pUdpSess)
+		{
+			for (auto friItem : userItem.second)
+			{
+				auto item = m_userIdUdpAddrMap.find(friItem);
+				if (item != m_userIdUdpAddrMap.end())
+				{
+					UdpP2pStartReqMsg reqMsg;
+					reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+					reqMsg.m_strUserId = userItem.first;
+					reqMsg.m_strFriendId = friItem;
+					pUdpSess->send_msg(item->second.m_strServerIp, item->second.m_nPort, &reqMsg);
+				}
+				else
+				{
+					auto pTcpSess = GetClientSess(userItem.first);
+					if (pTcpSess)
+					{
+						QueryUserUdpAddrReqMsg reqMsg;
+						reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+						reqMsg.m_strUserId = userItem.first;
+						reqMsg.m_strUdpUserId = friItem;
+						pTcpSess->SendMsg(&reqMsg);
+					}
+				}
+			}
+		}
+		else
+		{
+
+		}
+	}
+}
+
+bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg)
+{
+	//if(m_userFriendListMap.find(pClientSess->UserId()) == m_userFriendListMap.end())
+	//{
+		m_userFriendListMap.erase(pClientSess->UserId());
+		std::vector<std::string> strFriendVec;
+		for (auto teamItem : msg.m_teamVec)
+		{
+			for (auto friItem : teamItem.m_teamUsers) {
+				strFriendVec.push_back(friItem.m_strUserId);
+			}
+		}
+		m_userFriendListMap.insert({ pClientSess->UserId(),strFriendVec });
+	//}
+		return true;
+}
 /**
  * @brief 检查所有的socket连接
  * 
@@ -339,7 +420,7 @@ void CMediumServer::CheckAllConnect()
 		reqMsg.m_strClientId = item.first;
 		item.second->sendToServer(&reqMsg);
 	}
-
+	CheckFriendP2PConnect();
 }
 
 /**
@@ -487,14 +568,13 @@ void CMediumServer::OnTimer()
 		m_httpServer->OnTimer();
 	}
 	m_timeCount++;
+	CheckAllConnect();
 	if (m_timeCount % 60 == 0)
 	{
 		if (!m_BackSessMap.empty())
 		{
-			CheckAllConnect();
-			CheckWaitMsgVec();
 
-			
+			CheckWaitMsgVec();
 		}
 		else
 		{
@@ -2182,6 +2262,13 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	case E_MsgType::FileVerifyRsp_Type:
 	{
 		FileVerifyRspMsg rspMsg;
+		if (rspMsg.FromString(msg.to_string())) {
+			HandleSendBack(pClientSess, rspMsg);
+		}
+	}break;
+	case E_MsgType::GetFriendListRsp_Type:
+	{
+		GetFriendListRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
