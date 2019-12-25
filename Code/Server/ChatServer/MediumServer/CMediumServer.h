@@ -167,6 +167,8 @@ private:
 
 	void DispatchRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const TransBaseMsg_t* pMsg);
 	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const FileDataRecvRspMsg& pMsg);
+	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const UdpP2pStartReqMsg& pMsg);
+	void Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const KeepAliveReqMsg& pMsg);
 
 	void CheckFileDataRsp(const std::string strUserId);
 

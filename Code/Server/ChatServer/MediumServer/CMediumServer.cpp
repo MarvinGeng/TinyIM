@@ -534,43 +534,8 @@ void CChatServer::DispatchRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const
 		case E_MsgType::KeepAliveReq_Type:
 		{
 			KeepAliveReqMsg reqMsg;
-			if (reqMsg.FromString(pMsg->to_string()))
-			{
-				KeepAliveRspMsg rspMsg;
-				rspMsg.m_strClientId = reqMsg.m_strClientId;
-				m_udpServer->sendMsg(sendPt, &rspMsg);
-				auto item = m_UserSessVec.find(reqMsg.m_strClientId);
-				if (item != m_UserSessVec.end())
-				{
-					auto udpItem = m_userIdUdpAddrMap.find(reqMsg.m_strClientId);
-					if(udpItem != m_userIdUdpAddrMap.end())
-					{
-						IpPortCfg udpIp;
-						udpIp.m_strServerIp = sendPt.address().to_string();
-						udpIp.m_nPort = sendPt.port();
-						if (udpItem->second.m_strServerIp == udpIp.m_strServerIp && 
-							udpItem->second.m_nPort == udpIp.m_nPort )
-						{
-
-						}
-						else
-						{
-							m_userIdUdpAddrMap.erase(reqMsg.m_strClientId);
-							m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
-						}
-					}
-					else
-					{
-						IpPortCfg udpIp;
-						udpIp.m_strServerIp = sendPt.address().to_string();
-						udpIp.m_nPort = sendPt.port();
-						m_userIdUdpAddrMap.insert({ reqMsg.m_strClientId,udpIp });
-					}
-				}
-			}
-			else
-			{
-
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_RecvUdpMsg(sendPt, reqMsg);
 			}
 		}break;
 		case E_MsgType::FileSendDataReq_Type:
@@ -587,14 +552,64 @@ void CChatServer::DispatchRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const
 				Handle_RecvUdpMsg(sendPt, rspMsg);
 			}
 		}break;
+		case E_MsgType::UdpP2PStartReq_Type:
+		{
+			UdpP2pStartReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_RecvUdpMsg(sendPt, reqMsg);
+			}
+		}break;
 		default:
 		{
-
+			LOG_ERR(ms_loger, "UnHandle Udp Msg {} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 		}break;
 		}
 	}
 }
 
+void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const UdpP2pStartReqMsg& pMsg)
+{
+	UdpP2pStartRspMsg rspMsg;
+	rspMsg.m_strFriendId = pMsg.m_strFriendId;
+	rspMsg.m_strUserId = pMsg.m_strUserId;
+	rspMsg.m_strMsgId = pMsg.m_strMsgId;
+	m_udpServer->sendMsg(sendPt, &rspMsg);
+	auto item = m_UserSessVec.find(pMsg.m_strUserId);
+	if (item != m_UserSessVec.end())
+	{
+		auto udpItem = m_userIdUdpAddrMap.find(pMsg.m_strUserId);
+		if (udpItem != m_userIdUdpAddrMap.end())
+		{
+			IpPortCfg udpIp;
+			udpIp.m_strServerIp = sendPt.address().to_string();
+			udpIp.m_nPort = sendPt.port();
+			if (udpItem->second.m_strServerIp == udpIp.m_strServerIp &&
+				udpItem->second.m_nPort == udpIp.m_nPort)
+			{
+
+			}
+			else
+			{
+				m_userIdUdpAddrMap.erase(pMsg.m_strUserId);
+				m_userIdUdpAddrMap.insert({ pMsg.m_strUserId,udpIp });
+			}
+		}
+		else
+		{
+			IpPortCfg udpIp;
+			udpIp.m_strServerIp = sendPt.address().to_string();
+			udpIp.m_nPort = sendPt.port();
+			m_userIdUdpAddrMap.insert({ pMsg.m_strUserId,udpIp });
+		}
+	}
+}
+void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const KeepAliveReqMsg& reqMsg)
+{
+	KeepAliveRspMsg rspMsg;
+	rspMsg.m_strClientId = reqMsg.m_strClientId;
+	m_udpServer->sendMsg(sendPt, &rspMsg);
+	
+}
 /**
  * @brief 获取Listen的服务器的IP和端口
  * 
