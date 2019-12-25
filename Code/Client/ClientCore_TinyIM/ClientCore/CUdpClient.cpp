@@ -35,7 +35,7 @@ namespace ClientCore {
 				if (!ec && bytes > 0)
 				{
 					TransBaseMsg_t trans(m_recvbuf);
-					LOG_INFO(this->ms_loger, "UDP RECV FROM:{} MSG:{} ", EndPoint(m_recvFromPt), trans.to_string());
+					LOG_INFO(this->ms_loger, "UDP RECV FROM:{} MSG:{} {} [{} {}]", EndPoint(m_recvFromPt),MsgType(trans.GetType()), trans.to_string(),__FILENAME__,__LINE__);
 					if (bytes >= trans.GetSize())
 					{
 						handle_msg(m_recvFromPt, &trans);
@@ -54,10 +54,6 @@ namespace ClientCore {
 	 */
 	void CUdpClient::handle_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
-		if (ms_loger && pMsg)
-		{
-			LOG_INFO(ms_loger, "{}:{} Send :{}", endPt.address().to_string(),endPt.port(), pMsg->to_string());
-		}
 		m_callBack(endPt, pMsg);
 	}
 	
@@ -69,7 +65,6 @@ namespace ClientCore {
 	 */
 	void CUdpClient::sendToServer(const BaseMsg* pMsg)
 	{
-		LOG_INFO(ms_loger, "UDP : SEND TO {}:{} MSG:{}", m_udpServerIp, m_udpServerPort, pMsg->ToString());
 		send_msg(m_udpServerIp,m_udpServerPort, pMsg);
 	}
 
@@ -130,7 +125,7 @@ namespace ClientCore {
 		{
 			memcpy(m_sendbuf, pMsg->GetData(), pMsg->GetSize());
 			try {
-				LOG_INFO(ms_loger, "UDP SEND TO:{} MSG:{} ", EndPoint(endPt), pMsg->to_string());
+				LOG_INFO(ms_loger, "UDP SEND TO:{} Msg:{} {} [{} {}]", EndPoint(endPt),MsgType(pMsg->GetType()),pMsg->to_string(),__FILENAME__,__LINE__);
 				m_udpSocket->async_send_to(asio::buffer(m_sendbuf, pMsg->GetSize()), endPt, [this](std::error_code /*ec*/, std::size_t /*bytes*/) {
 				});
 			}

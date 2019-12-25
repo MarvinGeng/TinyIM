@@ -28,14 +28,14 @@ std::shared_ptr<spdlog::logger> CMediumServer::ms_loger;
 void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec) 
 {
 	auto serverCfg = cfg["server"];
-	LOG_INFO(ms_loger,"loadConfig");
+	LOG_INFO(ms_loger,"loadConfig [{} {}]",__FILENAME__,__LINE__);
     ec.clear();
     m_serverCfg.m_strServerIp=serverCfg["ip"].string_value();
     m_serverCfg.m_nPort=(uint16_t)serverCfg["port"].int_value();
-    LOG_INFO(ms_loger,"ServerIp: {}",m_serverCfg.to_string());
+    LOG_INFO(ms_loger,"ServerIp: {} [{} {}]",m_serverCfg.to_string(),__FILENAME__, __LINE__);
     if(!m_serverCfg.Valid())
 	{
-		LOG_ERR(ms_loger,"Config Error {}",m_serverCfg.to_string());
+		LOG_ERR(ms_loger,"Config Error {} [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
         return;
     }
 
@@ -51,7 +51,7 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 			IpPortCfg clientCfg;
 			clientCfg.m_strServerIp = item["ip"].string_value();
 			clientCfg.m_nPort = item["port"].int_value();
-			LOG_INFO(ms_loger, "Client Config: {}", clientCfg.to_string());
+			LOG_INFO(ms_loger, "Client Config: {} [{} {}]", clientCfg.to_string(),__FILENAME__, __LINE__);
 			m_clientCfgVec.push_back(clientCfg);
 		}
 	}
@@ -73,7 +73,14 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Udp
 {
 	if (m_userKeepAliveMap.find(reqMsg.m_strUserId) != m_userKeepAliveMap.end())
 	{
-		LOG_INFO(ms_loger, "P2P Line OK");
+		if (reqMsg.m_strUserId == reqMsg.m_strFriendId)
+		{
+			LOG_INFO(ms_loger, "User:{} UDP Server Connect Succeed [{} {}]", reqMsg.m_strUserId, __FILENAME__, __LINE__);
+		}
+		else
+		{
+			LOG_INFO(ms_loger, "User:{} Friend:{} UDP P2P OK [{} {}]", reqMsg.m_strUserId, reqMsg.m_strFriendId, __FILENAME__, __LINE__)
+		}
 	}
 	else
 	{
@@ -240,8 +247,6 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 {
 	if (pMsg)
 	{
-		LOG_INFO(ms_loger, "Recv UDP Msg:{} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
-
 		switch (pMsg->GetType())
 		{
 		case E_MsgType::KeepAliveRsp_Type:
@@ -249,7 +254,6 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 			KeepAliveRspMsg rspMsg;
 			if (rspMsg.FromString(pMsg->to_string())) {
 				Handle_UdpMsg(endPt, rspMsg);
-				LOG_INFO(ms_loger, "{}", rspMsg.ToString());
 			}
 		}break;
 		case E_MsgType::FileSendDataReq_Type:
@@ -290,7 +294,7 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 		}break;
 		default:
 		{
-			LOG_ERR(ms_loger, "Unhandle Msg:{} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+			LOG_ERR(ms_loger, "Unhandle UDP Msg:{} {} [{} {}]", MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 		}break;
 		}
 	}
@@ -1226,6 +1230,10 @@ void CMediumServer::OnHttpRsp(std::shared_ptr<TransBaseMsg_t> pMsg)
 					m_httpServer->On_RandomUserRsp(rspMsg);
 				}
 			}
+		}break;
+		case E_MsgType::KeepAliveRsp_Type:
+		{
+
 		}break;
 		default:
 		{
@@ -2232,6 +2240,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 				pClientSess->SendMsg(pSendMsg);
 			}
 		}
+		return true;
 	}break;
 	case E_MsgType::KeepAliveRsp_Type:
 	{
@@ -2271,6 +2280,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
 		}
+		return true;
 	}break;
 	case E_MsgType::FriendUnReadMsgNotifyReq_Type:
 	{
