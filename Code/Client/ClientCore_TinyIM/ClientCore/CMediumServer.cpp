@@ -71,22 +71,45 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 }
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg)
 {
-	LOG_INFO(ms_loger, "P2P Line OK");
-}
-void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg)
-{
-	UdpP2pStartReqMsg reqMsg;
-	reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-	reqMsg.m_strUserId = Msg.m_strClientId;
-	reqMsg.m_strFriendId = Msg.m_strClientId;
-	auto pUdpSess = GetUdpSess(Msg.m_strClientId);
-	if (pUdpSess)
+	if (m_userKeepAliveMap.find(reqMsg.m_strUserId) != m_userKeepAliveMap.end())
 	{
-		pUdpSess->send_msg(endPt, &reqMsg);
+		LOG_INFO(ms_loger, "P2P Line OK");
 	}
 	else
 	{
-		LOG_ERR(ms_loger, "No Udp Sess For {} [{} {}]", Msg.m_strClientId, __FILENAME__, __LINE__);
+		m_userKeepAliveMap.insert({ reqMsg.m_strUserId,time(nullptr) });
+	}
+}
+
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartReqMsg& reqMsg)
+{
+	UdpP2pStartRspMsg rspMsg;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_strUserId = reqMsg.m_strFriendId;
+	rspMsg.m_strFriendId = reqMsg.m_strUserId;
+	auto pUdpSess = GetUdpSess(reqMsg.m_strFriendId);
+	if (pUdpSess)
+	{
+		pUdpSess->send_msg(endPt,&rspMsg);
+	}
+}
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg)
+{
+	if (m_userKeepAliveMap.find(Msg.m_strClientId) == m_userKeepAliveMap.end())
+	{
+		UdpP2pStartReqMsg reqMsg;
+		reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+		reqMsg.m_strUserId = Msg.m_strClientId;
+		reqMsg.m_strFriendId = Msg.m_strClientId;
+		auto pUdpSess = GetUdpSess(Msg.m_strClientId);
+		if (pUdpSess)
+		{
+			pUdpSess->send_msg(endPt, &reqMsg);
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "No Udp Sess For {} [{} {}]", Msg.m_strClientId, __FILENAME__, __LINE__);
+		}
 	}
 }
 
@@ -251,6 +274,13 @@ void CMediumServer::DispatchUdpMsg(const asio::ip::udp::endpoint endPt, TransBas
 				Handle_UdpMsg(endPt, reqMsg);
 			}
 		}break;
+		case E_MsgType::UdpP2PStartReq_Type:
+		{
+			UdpP2pStartReqMsg reqMsg;
+			if (reqMsg.FromString(pMsg->to_string())) {
+				Handle_UdpMsg(endPt, reqMsg);
+			}
+		}break;
 		case E_MsgType::UdpP2PStartRsp_Type:
 		{
 			UdpP2pStartRspMsg rspMsg;
@@ -349,6 +379,14 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 
 void CMediumServer::CheckFriendP2PConnect()
 {
+	if (m_userFriendListMap.empty())
+	{
+		LOG_ERR(ms_loger, "CheckFriendP2PConnect No User");
+	}
+	else
+	{
+		LOG_INFO(ms_loger, "CheckFriendP2PConnect Begin");
+	}
 	for (auto userItem : m_userFriendListMap)
 	{
 		auto pUdpSess = GetUdpSess(userItem.first);
@@ -1966,6 +2004,12 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			}
 		}
 		m_userClientSessMap.erase(rspMsg.m_strUserName);
+		{
+			GetFriendListReqMsg reqMsg;
+			reqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+			reqMsg.m_strUserId = rspMsg.m_strUserId;
+			pClientSess->SendMsg(&reqMsg);
+		}
 	}
 
 }

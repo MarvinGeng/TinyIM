@@ -67,6 +67,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	std::shared_ptr<CHttpServer> m_httpServer;
 	CClientSess_SHARED_PTR m_freeClientSess;
 	std::map<std::string, std::vector<std::string>> m_userFriendListMap;
+	std::map<std::string, time_t> m_userKeepAliveMap;
     void SetTimer(int nSeconds);
     void OnTimer();
 	void CheckWaitMsgVec();
@@ -95,6 +96,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataSendReqMsg& reqMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const FileDataRecvReqMsg& reqMsg);
+	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartReqMsg& reqMsg);
 	void Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg);
 
 	bool HandleSendForward(FriendChatSendTxtReqMsg& reqMsg);
