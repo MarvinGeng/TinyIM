@@ -21,6 +21,7 @@ public:
 	bool loadConfig(const std::string strCfg);
 	void Run();
 private:
+	void GetVersion();
 	void RegisterUser();
 	void UserLogin();
 	void UserLogout();

@@ -29,7 +29,10 @@ static SnowFlake m_msgIdUtil(4,4);
 static std::string CreateMsgId() {
 	return std::to_string(m_msgIdUtil.nextId());
 }
+void CIMRobot::GetVersion()
+{
 
+}
 /**
  * @brief Construct a new CIMRobot::CIMRobot object
  * 
