@@ -32,13 +32,12 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
     ec.clear();
     m_serverCfg.m_strServerIp=serverCfg["ip"].string_value();
     m_serverCfg.m_nPort=(uint16_t)serverCfg["port"].int_value();
-    LOG_INFO(ms_loger,"ServerIp: {} [{} {}]",m_serverCfg.to_string(),__FILENAME__, __LINE__);
+    LOG_INFO(ms_loger,"TCP BIND: {} [{} {}]",m_serverCfg.to_string(),__FILENAME__, __LINE__);
     if(!m_serverCfg.Valid())
 	{
 		LOG_ERR(ms_loger,"Config Error {} [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
         return;
     }
-
 	{
 		auto clientsCfg = cfg["clients"];
 		if (!clientsCfg.is_array())
@@ -51,7 +50,7 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 			IpPortCfg clientCfg;
 			clientCfg.m_strServerIp = item["ip"].string_value();
 			clientCfg.m_nPort = item["port"].int_value();
-			LOG_INFO(ms_loger, "Client Config: {} [{} {}]", clientCfg.to_string(),__FILENAME__, __LINE__);
+			LOG_INFO(ms_loger, "TCP Connect: {} [{} {}]", clientCfg.to_string(),__FILENAME__, __LINE__);
 			m_clientCfgVec.push_back(clientCfg);
 		}
 	}
@@ -60,13 +59,14 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 		auto httpCfg = cfg["httpserver"];
 		m_httpCfg.m_strServerIp = httpCfg["ip"].string_value();
 		m_httpCfg.m_nPort = httpCfg["port"].int_value();
-		LOG_INFO(ms_loger, "Http Server:{} {} [{} {}]", m_httpCfg.m_strServerIp, m_httpCfg.m_nPort, __FILENAME__, __LINE__);
+		LOG_INFO(ms_loger, "HTTP BIND:{} [{} {}]", m_httpCfg.to_string(), __FILENAME__, __LINE__);
 	}
 
 	{
 		auto udpJson = cfg["UdpServer"];
 		m_udpCfg.m_strServerIp = udpJson["ip"].string_value();
 		m_udpCfg.m_nPort = udpJson["port"].int_value();
+		LOG_INFO(ms_loger, "UDP CONNECT:{} [{} {}]", m_udpCfg.to_string(), __FILENAME__, __LINE__);
 	}
 }
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg)
@@ -311,7 +311,7 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 		LOG_ERR(ms_loger, "ServerConfig Is Error {}", m_serverCfg.to_string());
 		return;
 	}
-	LOG_INFO(ms_loger, "Server Start Service");
+	LOG_INFO(ms_loger, "Server Start Service [{} {}]",__FILENAME__,__LINE__);
 	std::error_code ec;
 	asio::ip::tcp::endpoint endpoint;
 	if (m_serverCfg.m_strServerIp.length() > 0)
@@ -325,13 +325,9 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 		endpoint =
 			asio::ip::tcp::endpoint(asio::ip::tcp::v4(), m_serverCfg.m_nPort);
 	}
-	LOG_WARN(ms_loger, "Before Open [ {} {} ]",__FILENAME__,__LINE__);
 	m_acceptor.open(endpoint.protocol());
-	LOG_WARN(ms_loger, "Before Set Option [ {} {} ]", __FILENAME__, __LINE__);
 	m_acceptor.set_option(asio::socket_base::reuse_address(true));
-	LOG_WARN(ms_loger, "Before Bind [ {} {} ]", __FILENAME__, __LINE__);
 	m_acceptor.bind(endpoint, ec);
-	LOG_WARN(ms_loger, "Before Listen [ {} {} ]", __FILENAME__, __LINE__);
 	if (!ec)
 	{
 		LOG_WARN(ms_loger, "Bind To {} Succeed [{} {}]", m_serverCfg.to_string(),__FILENAME__,__LINE__);
@@ -345,37 +341,24 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 			LOG_WARN(ms_loger, "Listen To {} Failed, Reason:{} {} [{} {}]",
 				m_serverCfg.to_string(), ec.value(), ec.message(), __FILENAME__, __LINE__);
 		}
-		SetTimer(5);
+		SetTimer(1);
 		do_accept();
 		LOG_INFO(ms_loger, "Http Server On :{} [{} {} ]", m_httpCfg.m_nPort,__FILENAME__,__LINE__);
 		m_httpServer->Start(m_httpCfg.m_nPort);
+		if (!m_clientCfgVec.empty())
+		{
+			m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
+				m_clientCfgVec[0].m_strServerIp,
+				m_clientCfgVec[0].m_nPort, this);
 
-		m_freeClientSess = std::make_shared<CClientSess>(m_ioService,
-			m_clientCfgVec[0].m_strServerIp,
-			m_clientCfgVec[0].m_nPort, this);
-
-		m_freeClientSess->StartConnect();
-
-
-		/*{
-			for (auto item : m_clientCfgVec)
-			{
-				if (item.Valid())
-				{
-					auto pQueue = std::make_shared<CClientSessManager>(item);
-					m_queueVec.push_back(pQueue);
-					std::error_code ec;
-					pQueue->Start(this, m_ioService, ec);
-					LOG_INFO(ms_loger, "ConnectTo: {}", item.to_string());
-				}
-			}
-		}*/
+			m_freeClientSess->StartConnect();
+		}
 	}
 	else
 	{
 		LOG_WARN(ms_loger, "Bind To {} Failed [{} {}]", m_serverCfg.to_string(), __FILENAME__, __LINE__);
 		callback(ec);
-#ifndef WIN32
+#ifndef _WIN32
 		exit(BIND_FAILED_EXIT);
 #endif
 	}
@@ -385,11 +368,11 @@ void CMediumServer::CheckFriendP2PConnect()
 {
 	if (m_userFriendListMap.empty())
 	{
-		LOG_ERR(ms_loger, "CheckFriendP2PConnect No User");
+		LOG_INFO(ms_loger, "CheckFriendP2PConnect No User [{} {}]", __FILENAME__, __LINE__);
 	}
 	else
 	{
-		LOG_INFO(ms_loger, "CheckFriendP2PConnect Begin");
+		LOG_INFO(ms_loger, "CheckFriendP2PConnect Begin   [{} {}]",__FILENAME__,__LINE__);
 	}
 	for (auto userItem : m_userFriendListMap)
 	{
@@ -450,19 +433,22 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  */
 void CMediumServer::CheckAllConnect()
 {
-	for (auto& item : m_userClientSessMap)
+	if (m_timeCount % 30 == 0)
 	{
-		item.second->StartConnect();
-		item.second->SendKeepAlive();
-	}
+		for (auto& item : m_userClientSessMap)
+		{
+			item.second->StartConnect();
+			item.second->SendKeepAlive();
+		}
 
-	for (auto& item : m_userUdpSessMap)
-	{
-		KeepAliveReqMsg reqMsg;
-		reqMsg.m_strClientId = item.first;
-		item.second->sendToServer(&reqMsg);
+		for (auto& item : m_userUdpSessMap)
+		{
+			KeepAliveReqMsg reqMsg;
+			reqMsg.m_strClientId = item.first;
+			item.second->sendToServer(&reqMsg);
+		}
+		CheckFriendP2PConnect();
 	}
-	CheckFriendP2PConnect();
 }
 
 /**
@@ -615,7 +601,6 @@ void CMediumServer::OnTimer()
 	{
 		if (!m_BackSessMap.empty())
 		{
-
 			CheckWaitMsgVec();
 		}
 		else
@@ -633,6 +618,10 @@ void CMediumServer::OnTimer()
  */
 void CMediumServer::SetTimer(int nSeconds)
 {
+	if (m_timeCount % 30 == 0)
+	{
+		LOG_INFO(this->ms_loger, "On Timer at MediumServer {} [{} {}]", __FILENAME__, __LINE__);
+	}
 	if(m_timer && m_nNoSessTimeCount < 30)
 	{
 		m_timer->expires_from_now(std::chrono::seconds(nSeconds));
@@ -640,7 +629,6 @@ void CMediumServer::SetTimer(int nSeconds)
 		m_timer->async_wait([this,nSeconds,self](const std::error_code& ec){
 			if(!ec)
 			{
-				LOG_INFO(this->ms_loger,"On Timer at MediumServer [{} {}]",__FILENAME__, __LINE__);
 				this->OnTimer();
 				this->SetTimer(nSeconds);
 			}
@@ -917,7 +905,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
 	{
 		m_fileUtil.OnWriteData(reqMsg.m_nFileId + 1, reqMsg.m_szData, reqMsg.m_nDataLength);
-		LOG_INFO(ms_loger, "WriteData ", reqMsg.m_nFileId);
+		LOG_INFO(ms_loger, "WriteData:File ID {} [{} {}]", reqMsg.m_nFileId, __FILENAME__,__LINE__);
 		FileDataRecvRspMsg rspMsg;
 		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 		rspMsg.m_nFileId = reqMsg.m_nFileId;
@@ -1347,11 +1335,11 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 		std::string strNewFileName = m_fileUtil.GetCurDir()  + reqMsg.m_strUserId + "\\" + reqMsg.m_strFileName;
 		if (m_fileUtil.UtilCopy(strOldFileName, strNewFileName))
 		{
-			LOG_INFO(ms_loger, "CopyFile Succeed {} {}", strOldFileName, strNewFileName);
+			LOG_INFO(ms_loger, "CopyFile Succeed {} {} [{} {}]", strOldFileName, strNewFileName,__FILENAME__,__LINE__);
 		}
 		else
 		{
-			LOG_ERR(ms_loger, "CopyFile Failed {} {}", strOldFileName, strNewFileName);
+			LOG_ERR(ms_loger, "CopyFile Failed {} {} [{} {}]", strOldFileName, strNewFileName, __FILENAME__, __LINE__);
 		}
 	}
 	//对于原始消息，原封不动的转发
@@ -1691,14 +1679,14 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		}
 
 		try {
-			auto pMsgUtil = GetMsgPersisUtil(newRspMsg.m_chatMsg.m_strReceiverId);
+			auto pMsgUtil = GetMsgPersisUtil(newRspMsg.m_chatMsg.m_strSenderId);
 			if (pMsgUtil)
 			{
 				pMsgUtil->Save_FriendChatSendTxtRspMsg(newRspMsg.m_chatMsg);
 			}
 			else
 			{
-				LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", newRspMsg.m_chatMsg.m_strReceiverId, __FILENAME__, __LINE__);
+				LOG_ERR(ms_loger, "UserId {} No Msg Util [{} {}] ", newRspMsg.m_chatMsg.m_strSenderId, __FILENAME__, __LINE__);
 			}
 		}
 		catch (std::exception ex)
@@ -1984,6 +1972,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 			if (pUdpSess == nullptr)
 			{
 				auto pNewUdp = CreateUdpSess();
+				pNewUdp->SetUserId(rspMsg.m_strUserId);
 				m_userUdpSessMap.insert({ rspMsg.m_strUserId,pNewUdp });
 			}
 		}
@@ -2329,7 +2318,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	}break;
 	default:
 	{
-		LOG_ERR(ms_loger, "UnHandle MsgType:{} Content:{} [{} {}]", MsgType(msg.GetType()), msg.to_string(), __FILENAME__, __LINE__);
+		LOG_WARN(ms_loger, "UnHandle MsgType:{} Content:{} [{} {}]", MsgType(msg.GetType()), msg.to_string(), __FILENAME__, __LINE__);
 	}break;
 	}
 	return false;

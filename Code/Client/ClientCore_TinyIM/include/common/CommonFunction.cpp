@@ -144,7 +144,9 @@ ParseParamResult ParseParam(int argc,char * argv[])
             result.m_cmd=ServerCmd::CMD_INFO;
         } else if(!strcmp(argv[i],"-v")){
             std::cout<<g_SERVER_VERSION<<std::endl;
-	        std::cout<<"Debug: "<<DEBUG<<std::endl;
+			std::cout <<"https://www.dennisthink.com/" << std::endl;
+			std::cout <<" Email: dennismi1024@gmail.com" << std::endl;
+	        std::cout<<" Debug: "<<DEBUG<<std::endl;
             result.m_bReturn = true;	
 		} else if(!strcmp(argv[i],"-start"))
 		{

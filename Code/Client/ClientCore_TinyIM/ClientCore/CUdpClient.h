@@ -19,6 +19,13 @@ namespace ClientCore {
 		asio::ip::udp::endpoint GetServerEndPt() {
 			return m_udpServerPt;
 		}
+		void SetUserId(const std::string strUserId) {
+			m_strUserId = strUserId;
+		}
+
+		std::string UserId()const {
+			return m_strUserId;
+		}
 	public:
 		static std::shared_ptr<spdlog::logger> ms_loger;
 	private:
@@ -37,6 +44,7 @@ namespace ClientCore {
 		char m_recvbuf[max_msg_length_udp];
 
 		UDP_CALL_BACK m_callBack;
+		std::string m_strUserId;
 	};
 	using CUdpClient_PTR = std::shared_ptr< CUdpClient>;
 }

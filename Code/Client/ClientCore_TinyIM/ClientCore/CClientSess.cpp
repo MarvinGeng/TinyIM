@@ -50,10 +50,10 @@ int CClientSess::StartConnect()
 				{
 					m_bConnect = ST_CONN_FINISHED;
 					{
-						m_connectInfo.clear();
-						m_connectInfo = m_socket.local_endpoint().address().to_v4().to_string() + ":" + std::to_string(m_socket.local_endpoint().port());
-						m_connectInfo += "--->";
-						m_connectInfo = m_connectInfo + m_socket.remote_endpoint().address().to_v4().to_string() + ":" + std::to_string(m_socket.remote_endpoint().port());
+						//m_connectInfo.clear();
+						//m_connectInfo = m_socket.local_endpoint().address().to_v4().to_string() + ":" + std::to_string(m_socket.local_endpoint().port());
+						//m_connectInfo += "--->";
+						//m_connectInfo = m_connectInfo + m_socket.remote_endpoint().address().to_v4().to_string() + ":" + std::to_string(m_socket.remote_endpoint().port());
 					}
 					{
 						if (m_queue)
@@ -116,7 +116,7 @@ void CClientSess::handle_message(const TransBaseMsg_t& hdr)
 {
 	if (hdr.GetType() != E_MsgType::FileRecvDataReq_Type && hdr.GetType() != E_MsgType::FileSendDataReq_Type)
 	{
-		LOG_INFO(ms_loger, "TCP Recv From Server: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(hdr.GetType()), hdr.to_string(), __FILENAME__, __LINE__);
+		LOG_INFO(ms_loger, "[{}] TCP Recv: {} Msg:{} {} [{} {}]",UserId(), GetConnectInfo(), MsgType(hdr.GetType()), hdr.to_string(), __FILENAME__, __LINE__);
 	}
 	if (m_queue)
 	{
@@ -185,14 +185,14 @@ bool CClientSess::SendMsg(std::shared_ptr<TransBaseMsg_t> pMsg)
 			[this, self, pMsg](std::error_code ec, std::size_t /*length*/) mutable {
 				if (ec )
 				{
-					LOG_ERR(ms_loger, "TCP Send To Server Failed: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+					LOG_ERR(ms_loger, "[{}] TCP Send: {} Msg:{}{} [{} {}]", UserId(), GetConnectInfo(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 					StopConnect();
 				}
 				else
 				{
 					if (pMsg->GetType() != E_MsgType::FileRecvDataReq_Type && pMsg->GetType() != E_MsgType::FileSendDataReq_Type)
 					{
-						LOG_INFO(ms_loger, "TCP Send To Server Succeed: UserId:{} MsgType:{} Recv:{} [{} {}]", UserId(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+						LOG_INFO(ms_loger, "[{}] TCP Send: {} Msg:{} {} [{} {}]",UserId(),GetConnectInfo(), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 					}
 				}
 			});

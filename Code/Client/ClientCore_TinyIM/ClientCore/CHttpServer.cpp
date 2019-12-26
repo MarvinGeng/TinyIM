@@ -576,7 +576,6 @@ namespace ClientCore
 	 */
 	void CHttpServer::Get_RecvGroupTextMsgReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
-		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		RecvGroupTextMsgReqMsg reqMsg;
 		std::string strUserId = GetHttpParamUserId(request);
 		auto msgUtil = m_pServer->GetMsgPersisUtil(strUserId);
@@ -601,7 +600,6 @@ namespace ClientCore
 	 */
 	void CHttpServer::Get_FriendListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
-		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		std::string strUserId = GetHttpParamUserId(request);
 		if (strUserId.length() > 0)
 		{
@@ -636,7 +634,6 @@ namespace ClientCore
 	 */
 	void CHttpServer::Post_RecvGroupTextMsgRsp(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
-		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		std::string  strReq = request->content.string();
 		RecvGroupTextMsgRspMsg reqMsg;
 		if (reqMsg.FromString(strReq))
@@ -984,7 +981,6 @@ namespace ClientCore
 	 */
 	void CHttpServer::Get_GroupListReq(std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request)
 	{
-		LOG_INFO(ms_loger, " {} {}", __FUNCTION__, __FILENAME__);
 		std::string strUserId = GetHttpParamUserId(request);
 		if (strUserId.length() > 0)
 		{
@@ -1454,7 +1450,6 @@ namespace ClientCore
 	 * 
 	 */
 	void CHttpServer::Init(const int port=8000) {
-		LOG_INFO(ms_loger, "Http Server On :{} ", port);
 		m_httpServer.config.port = port;
 		auto pSelf = shared_from_this();
 		
