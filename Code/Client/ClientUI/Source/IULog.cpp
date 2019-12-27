@@ -2,12 +2,18 @@
 #include "IULog.h"
 #include <vector>
 #include "Path.h"
+#include "EncodingUtil.h"
 static std::shared_ptr<spdlog::logger> g_loger = nullptr;
 std::shared_ptr<spdlog::logger> CreateLogger()
 {
 	if (nullptr == g_loger)
 	{
-		std::string strDebug = Hootina::CPath::GetAppPathAscii() + "\\Logs\\";
+		std::wstring strPath = Hootina::CPath::GetAppPath() + _T("\\Logs\\");
+		if (!Hootina::CPath::IsDirectoryExist(strPath.data()))
+		{
+			Hootina::CPath::CreateDirectoryW(strPath.data());
+		}
+		std::string strDebug = EncodeUtil::UnicodeToAnsi(strPath);
 		std::vector<spdlog::sink_ptr> sinks;
 		srand(static_cast<unsigned int>(time(nullptr)));
 		auto debugFile = std::make_shared<spdlog::sinks::daily_file_sink_st>(strDebug+std::to_string(rand()) + ".txt", 00, 00, true);

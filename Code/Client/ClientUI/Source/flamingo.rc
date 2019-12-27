@@ -1145,23 +1145,23 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAIN_FRAME          ICON                    "res\\flamingo.ico"
+IDR_MAIN_FRAME          ICON                    "res\flamingo.ico"
 
-IDI_BUDDY_CHAT_DLG_16   ICON                    "res\\BCF_Title16.ico"
+IDI_BUDDY_CHAT_DLG_16   ICON                    "res\BCF_Title16.ico"
 
-IDI_BUDDY_CHAT_DLG_32   ICON                    "res\\BCF_Title32.ico"
+IDI_BUDDY_CHAT_DLG_32   ICON                    "res\BCF_Title32.ico"
 
-IDI_GROUP_CHAT_DLG_32   ICON                    "res\\Group32.ico"
+IDI_GROUP_CHAT_DLG_32   ICON                    "res\Group32.ico"
 
-IDI_GROUP_CHAT_DLG_16   ICON                    "res\\Group16.ico"
+IDI_GROUP_CHAT_DLG_16   ICON                    "res\Group16.ico"
 
-IDI_SYS                 ICON                    "res\\sys.ico"
+IDI_SYS                 ICON                    "res\sys.ico"
 
 IDI_BUDDY               ICON                    "res\\100.ico"
 
-IDI_MULTI_CHAT_DLG_16   ICON                    "res\\Multi16.ico"
+IDI_MULTI_CHAT_DLG_16   ICON                    "res\Multi16.ico"
 
-IDI_MULTI_CHAT_DLG_32   ICON                    "res\\Multi32.ico"
+IDI_MULTI_CHAT_DLG_32   ICON                    "res\Multi32.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
