@@ -1,4 +1,15 @@
-﻿#include "CServerSess.h"
+﻿/**
+ * @file CServerSess.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief 接受ClientGUI的TCP连接的类
+ * @version 0.1
+ * @date 2019-12-27
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#include "CServerSess.h"
 #include "CMediumServer.h"
 namespace ClientCore
 {

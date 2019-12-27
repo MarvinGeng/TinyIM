@@ -1,4 +1,15 @@
-﻿#include "CUdpClient.h"
+﻿/**
+ * @file CUdpClient.cpp
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief UDP的收发数据的类实现文件
+ * @version 0.1
+ * @date 2019-12-27
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
+#include "CUdpClient.h"
 namespace ClientCore {
 	std::shared_ptr<spdlog::logger> CUdpClient::ms_loger;
 	

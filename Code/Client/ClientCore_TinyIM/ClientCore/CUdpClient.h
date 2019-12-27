@@ -1,3 +1,14 @@
+
+/**
+ * @file CUdpClient.h
+ * @author DennisMi (https://www.dennisthink.com/)
+ * @brief UDP收发数据的类头文件
+ * @version 0.1
+ * @date 2019-12-27
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #ifndef _DENNIS_THINK_C_UDP_CLIENT_H_
 #define _DENNIS_THINK_C_UDP_CLIENT_H_
 #include "CommonMsg.h"
