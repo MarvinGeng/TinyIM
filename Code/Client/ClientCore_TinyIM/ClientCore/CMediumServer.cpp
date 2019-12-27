@@ -69,6 +69,13 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
 		LOG_INFO(ms_loger, "UDP CONNECT:{} [{} {}]", m_udpCfg.to_string(), __FILENAME__, __LINE__);
 	}
 }
+
+/**
+ * @brief UDP消息处理,处理P2P开始的回复消息
+ * 
+ * @param endPt 远端的UDP地址
+ * @param reqMsg P2P开始回复消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg)
 {
 	if (m_userKeepAliveMap.find(reqMsg.m_strUserId) != m_userKeepAliveMap.end())
@@ -88,6 +95,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Udp
 	}
 }
 
+
+/**
+ * @brief UDP消息处理,处理收到的P2P开始消息
+ * 
+ * @param endPt 发送UDP消息的地址
+ * @param reqMsg P2P开始消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartReqMsg& reqMsg)
 {
 	UdpP2pStartRspMsg rspMsg;
@@ -100,6 +114,13 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Udp
 		pUdpSess->send_msg(endPt,&rspMsg);
 	}
 }
+
+/**
+ * @brief UDP消息处理,处理收到的KeepAlive消息
+ * 
+ * @param endPt 发送UDP消息的远端地址
+ * @param Msg 心跳回复消息
+ */
 void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const KeepAliveRspMsg& Msg)
 {
 	if (m_userKeepAliveMap.find(Msg.m_strClientId) == m_userKeepAliveMap.end())
@@ -145,12 +166,25 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		}
 	}
 }
+
+/**
+ * @brief TCP消息处理,处理收到的文件数据回复消息
+ * 
+ * @param pClientSess 收到消息的Sess
+ * @param rspMsg 文件数据回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess,const FileDataSendRspMsg& rspMsg)
 {
 	auto pMsg = DoSendBackFileDataSendRsp(rspMsg);
 	pClientSess->SendMsg(pMsg);
 }
 
+/**
+ * @brief 实际处理文件数据发送的回复消息
+ * 
+ * @param rspMsg 文件数据发送的回复消息
+ * @return TransBaseMsg_S_PTR 待发送的消息
+ */
 TransBaseMsg_S_PTR CMediumServer::DoSendBackFileDataSendRsp(const FileDataSendRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
@@ -185,8 +219,9 @@ TransBaseMsg_S_PTR CMediumServer::DoSendBackFileDataSendRsp(const FileDataSendRs
 		return pResult;
 	}
 }
+
 /**
- * @brief 处理从UDP收到的文件数据发送回复消息
+ * @brief UDP消息处理,处理从UDP收到的文件数据发送回复消息
  * 
  * @param endPt UDP消息的来源地址
  * @param rspMsg 文件数据发送回复消息
@@ -364,6 +399,10 @@ void CMediumServer::start(const std::function<void(const std::error_code &)> &ca
 	}
 }
 
+/**
+ * @brief 定时检查UDP的P2P 连接
+ * 
+ */
 void CMediumServer::CheckFriendP2PConnect()
 {
 	if (m_userFriendListMap.empty())
@@ -411,6 +450,14 @@ void CMediumServer::CheckFriendP2PConnect()
 	}
 }
 
+/**
+ * @brief 处理收到的好友列表回复消息
+ * 
+ * @param pClientSess 用户连接
+ * @param msg 好友列表回复消息
+ * @return true 处理成功
+ * @return false 处理失败
+ */
 bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg)
 {
 	//if(m_userFriendListMap.find(pClientSess->UserId()) == m_userFriendListMap.end())
@@ -811,6 +858,12 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 
 }
 
+/**
+ * @brief TCP消息处理,处理文件校验回复消息
+ * 
+ * @param pClientSess 用户会话
+ * @param rspMsg 文件校验回复消息
+ */
 void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg)
 {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
@@ -873,6 +926,13 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 	}*/
 }
 
+
+/**
+ * @brief TCP消息处理,处理文件数据接收请求消息
+ * 
+ * @param pClientSess 用户会话
+ * @param reqMsg 文件数据接收请求消息
+ */
 void CMediumServer::Handle_TcpMsg(const std::shared_ptr<CClientSess>& pClientSess, const FileDataRecvReqMsg& reqMsg)
 {
 	if (reqMsg.m_nDataIndex <= reqMsg.m_nDataTotalCount)
@@ -1351,6 +1411,13 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	}
 }
 
+/**
+ * @brief 处理发往服务器的好友聊天消息
+ * 
+ * @param reqMsg 好友聊天请求消息
+ * @return true 成功
+ * @return false 失败
+ */
 bool CMediumServer::HandleSendForward(FriendChatSendTxtReqMsg& reqMsg)
 {
 	ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
@@ -1431,70 +1498,6 @@ void CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
 	{
 		HandleSendForward(reqMsg);
 	}
-	/*{
-		ChatMsgElemVec msgVec = MsgElemVec(reqMsg.m_strContext);
-		ChatMsgElemVec newVec;
-		std::string strFileHash;
-		bool bHaveImage = false;
-		for (const auto item : msgVec)
-		{
-			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
-			{
-				bHaveImage = true;
-				FileSendDataBeginReq beginReqMsg;
-				{
-					beginReqMsg.m_nFileId = rand();
-					beginReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-					beginReqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(item.m_strImageName);
-					beginReqMsg.m_strUserId = reqMsg.m_strSenderId;
-					beginReqMsg.m_strFriendId = reqMsg.m_strReceiverId;
-					beginReqMsg.m_strFileHash = m_fileUtil.CalcHash(item.m_strImageName);
-					strFileHash = beginReqMsg.m_strFileHash;
-					std::string strNewFileName = m_fileUtil.GetCurDir() + reqMsg.m_strSenderId + "\\" + beginReqMsg.m_strFileName;
-					if (m_fileUtil.UtilCopy(item.m_strImageName, strNewFileName))
-					{
-
-					}
-					else
-					{
-						LOG_ERR(ms_loger, "CopyFile Failed {} {}", item.m_strImageName, strNewFileName);
-					}
-					auto item = m_ForwardSessMap.find(pServerSess);
-					if (item != m_ForwardSessMap.end())
-					{
-						auto pMsg = std::make_shared<TransBaseMsg_t>(beginReqMsg.GetMsgType(), beginReqMsg.ToString());
-						item->second->SendMsg(pMsg);
-					}
-				}
-				ChatMsgElem elem;
-				elem.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
-				elem.m_strImageName = beginReqMsg.m_strFileName;
-				newVec.push_back(elem);
-			}
-			else
-			{
-				newVec.push_back(item);
-			}
-		}
-
-
-
-		if (bHaveImage)
-		{
-			reqMsg.m_strContext = MsgElemVec(newVec);
-			m_SendWaitMsgMap.insert({ strFileHash,reqMsg });
-		}
-		else
-		{
-			auto item = m_ForwardSessMap.find(pServerSess);
-			if (item != m_ForwardSessMap.end())
-			{
-				auto pMsg = std::make_shared<TransBaseMsg_t>(reqMsg.GetMsgType(), reqMsg.ToString());
-				item->second->SendMsg(pMsg);
-			}
-		}
-	}*/
-
 }
 
 /**
