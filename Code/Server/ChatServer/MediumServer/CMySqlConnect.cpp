@@ -908,6 +908,14 @@ bool CMySqlConnect::UpdateFriendChatMsgState(const std::string& strMsgId, const 
 
 }
 
+/**
+ * @brief 从队列中获取未读消息
+ * 
+ * @param strUserId 用户ID
+ * @param chatMsg 未读消息
+ * @return true 获取成功
+ * @return false 获取失败
+ */
 bool CMySqlConnect::UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG& chatMsg)
 {
 	auto item = m_unReadChatMsg.find(strUserId);
@@ -923,6 +931,13 @@ bool CMySqlConnect::UnReadFromQueue(const std::string strUserId, T_USER_CHAT_MSG
 	return false;
 }
 
+/**
+ * @brief 判断用户是否有好友未读消息
+ * 
+ * @param strUserId 用户ID
+ * @return true 有未读消息
+ * @return false 没有未读消息
+ */
 bool CMySqlConnect::HaveUnReadMsg(const std::string strUserId)
 {
 	auto item = m_unReadChatMsg.find(strUserId);
@@ -955,6 +970,14 @@ bool CMySqlConnect::SelectUnReadFriendChatMsg(const std::string& strToID, T_USER
 	}
 	return UnReadFromQueue(strToID, chatMsgNew);
 }
+
+/**
+ * @brief 从数据库中读取未读消息保存到未读队列
+ * 
+ * @param strUserId 用户ID
+ * @return true 保存成功
+ * @return false 保存失败
+ */
 bool CMySqlConnect::SaveMsgToQueue(const std::string strUserId)
 {
 	std::queue<T_USER_CHAT_MSG> chatMsgQueue;
@@ -1016,6 +1039,14 @@ bool CMySqlConnect::DeleteFriendChatMsg(const uint64_t msgId){
 	return true;
 }
 
+/**
+ * @brief 获取用户的好友列表
+ * 
+ * @param strUser 用户ID
+ * @param friendList 好友列表
+ * @return true 获取成功
+ * @return false 回去失败
+ */
 bool CMySqlConnect::GetUserFriendList(const std::string strUser, std::vector<T_FRIEND_RELATION_BEAN>& friendList)
 {
 	bool bResult = false;
@@ -2170,6 +2201,13 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}' LIMIT 1;";
 	return bResult;
 }
 
+/**
+ * @brief 删除hash值对应的文件记录
+ * 
+ * @param strFileHash 文件Hash值
+ * @return true 删除成功
+ * @return false 删除失败
+ */
 bool CMySqlConnect::DeleteFileByHash(const std::string strFileHash)
 {
 	int res = 0;
@@ -2188,6 +2226,13 @@ FROM T_FILE_HASH WHERE F_FILE_HASH='{0}';";
 	}
 }
 
+/**
+ * @brief 获取数据库中保存的所有用户名
+ * 
+ * @param userNameVec 所有用户名列表
+ * @return true 获取成功
+ * @return false 获取失败
+ */
 bool CMySqlConnect::GetAllUserName(std::vector<std::string>& userNameVec)
 {
 	if (nullptr == m_pSelectAllUserNameStmt)

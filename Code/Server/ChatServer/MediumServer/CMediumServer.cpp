@@ -210,6 +210,12 @@ void CChatServer::SetTimer(int nSeconds)
 	}
 }
 
+/**
+ * @brief TCP消息处理,根据消息类型分发收到的TCP消息
+ * 
+ * @param pSess 用户会话
+ * @param pMsg TCP消息
+ */
 void CChatServer::DispatchRecvTcpMsg(const std::shared_ptr<CServerSess> pSess, const TransBaseMsg_t* pMsg)
 {
 	if (pMsg->GetType() != E_MsgType::FileRecvDataReq_Type && pMsg->GetType() != E_MsgType::FileSendDataReq_Type)
@@ -567,6 +573,12 @@ void CChatServer::DispatchRecvUdpMsg(const asio::ip::udp::endpoint sendPt, const
 	}
 }
 
+/**
+ * @brief UDP消息处理,处理P2P开始请求消息
+ * 
+ * @param sendPt 发送UDP消息的地址
+ * @param pMsg P2P开始请求消息
+ */
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const UdpP2pStartReqMsg& pMsg)
 {
 	UdpP2pStartRspMsg rspMsg;
@@ -603,6 +615,13 @@ void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const 
 		}
 	}
 }
+
+/**
+ * @brief UDP消息处理,处理收到的心跳请求消息
+ * 
+ * @param sendPt 发送UDP消息的远端地址
+ * @param reqMsg 心跳请求消息
+ */
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint sendPt, const KeepAliveReqMsg& reqMsg)
 {
 	KeepAliveRspMsg rspMsg;
@@ -633,6 +652,12 @@ void CChatServer::SendBack(const TransBaseMsg_t *msg)
 	}
 }
 
+/**
+ * @brief 好友聊天数据的数据库类型转为消息类型
+ * 
+ * @param msgBean 好友聊天消息的数据库类型
+ * @return FriendChatMsg_s 好友聊天消息的消息类型
+ */
 FriendChatMsg_s DbBeanToMsgBean(const T_USER_CHAT_MSG& msgBean)
 {
 	FriendChatMsg_s result;
@@ -685,6 +710,13 @@ bool CChatServer::OnUserReceiveMsg(const std::string strUserId) {
 		return false;
 	}
 }
+
+
+/**
+ * @brief 响应会话关闭
+ * 
+ * @param pSess 断开的TCP会话
+ */
 void CChatServer::OnSessClose(const std::shared_ptr<CServerSess>& pSess) {
 	auto item = m_UserSessVec.find(pSess->UserId());
 	if (item != m_UserSessVec.end() &&
@@ -698,6 +730,12 @@ void CChatServer::OnSessClose(const std::shared_ptr<CServerSess>& pSess) {
 	m_util.UpdateUserOnlineState(pSess->UserId(), CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE);
 	m_userIdUdpAddrMap.erase(pSess->UserId());
 }
+
+/**
+ * @brief 启动服务
+ * 
+ * @param callback 回调函数 
+ */
 void CChatServer::start(const std::function<void(const std::error_code &)> &callback)
 {
 	if (!m_serverCfg.Valid())
@@ -782,6 +820,11 @@ void CChatServer::start(const std::function<void(const std::error_code &)> &call
 	}
 }
 
+/**
+ * @brief Construct a new CChatServer::CChatServer object
+ * 
+ * @param io_service asio的IOService
+ */
 CChatServer::CChatServer(asio::io_service &io_service)
 	: m_ioService(io_service), m_socket(io_service), m_acceptor(io_service), m_MsgID_Util(1, 3)
 {
@@ -982,7 +1025,12 @@ void CChatServer::HandleUserUnRegisterReq(const std::shared_ptr<CServerSess>& pS
 }
 
 
-
+/**
+ * @brief TCP消息处理,处理文件发送数据开始请求消息
+ * 
+ * @param pSess 发送TCP消息的会话
+ * @param req 文件发送数据开始请求消息
+ */
 void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginReq& req)
 {
 	std::string strFolder = m_fileUtil.GetCurDir() + req.m_strUserId + "\\";
@@ -1046,6 +1094,12 @@ void CChatServer::HandleFileSendDataBeginReq(const std::shared_ptr<CServerSess>&
 
 }
 
+/**
+ * @brief TCP消息处理,处理文件下载请求消息
+ * 
+ * @param pSess 发送TCP消息的会话
+ * @param req 文件下载请求消息
+ */
 void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSess, const FileDownLoadReqMsg& req)
 {
 	if (pSess)
@@ -1090,6 +1144,13 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 		}
 	}
 }
+
+/**
+ * @brief TCP消息处理,处理文件发送数据开始回复消息
+ * 
+ * @param pSess 发送TCP消息的会话
+ * @param req 文件发送数据开始回复消息
+ */
 void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>& pSess, const FileSendDataBeginRsp& req)
 {
 	if (req.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
@@ -1461,6 +1522,8 @@ void CChatServer::NotifyUserFriends(const std::string strUserId)
 	}
 	
 }
+
+
 /**
  * @brief 处理获取群组请求
  * 
@@ -2408,6 +2471,7 @@ GetRandomUserRspMsg CChatServer::DoGetRandomUserReqMsg(const GetRandomUserReqMsg
 	}
 	return rspMsg;
 }
+
 /**
  * @brief 处理文件验证消息的回复,直接转发到文件发送者
  * 
@@ -2425,6 +2489,13 @@ void CChatServer::HandleFileVerifyRsp(const FileVerifyRspMsg& req)
 	}
 }
 
+
+/**
+ * @brief 实际处理文件数据接收回复消息
+ * 
+ * @param rspMsg 文件数据接收回复消息
+ * @return TransBaseMsg_S_PTR 需要发送的消息(文件数据请求消息,文件校验请求消息)
+ */
 TransBaseMsg_S_PTR CChatServer::DoFileDataRecvRsp(const FileDataRecvRspMsg& rspMsg)
 {
 	if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
@@ -2468,6 +2539,12 @@ TransBaseMsg_S_PTR CChatServer::DoFileDataRecvRsp(const FileDataRecvRspMsg& rspM
 	}
 }
 
+/**
+ * @brief TCP消息处理,处理文件数据接收回复消息
+ * 
+ * @param pSess 用户会话
+ * @param rspMsg 文件数据接收回复消息
+ */
 void CChatServer::HandleFileDataRecvRsp(const std::shared_ptr<CServerSess>& pSess, const FileDataRecvRspMsg& rspMsg)
 {
 	auto pResult = DoFileDataRecvRsp(rspMsg);
@@ -2491,6 +2568,8 @@ void CChatServer::HandleGetRandomUserReq(const std::shared_ptr<CServerSess>& pSe
 		pSess->SendMsg(&rspMsg);
 	}
 }
+
+
 /**
  * @brief 处理收到的接收文件数据回复消息
  * 
@@ -2782,6 +2861,11 @@ void CChatServer::HandleUserKickOffRsp(const UserKickOffRspMsg& reqMsg)
 	}
 }
 
+/**
+ * @brief 创建消息ID
+ * 
+ * @return std::string 
+ */
 std::string CChatServer::CreateMsgId()
 {
 	return std::to_string(m_MsgID_Util.nextId());
@@ -2879,6 +2963,13 @@ std::string CChatServer::GetFolderByUserId(const std::string strUserId)
 	return strFolder;
 }
 
+/**
+ * @brief 根据文件Hash判断是否正在接收
+ * 
+ * @param strFileHash 文件HASH值
+ * @return true 正在接收
+ * @return false 没有在接收
+ */
 bool CChatServer::IsFileRecving(const std::string strFileHash)
 {
 	auto item = std::find(m_strRecvFileHashVec.begin(), m_strRecvFileHashVec.end(), strFileHash);
@@ -2891,6 +2982,14 @@ bool CChatServer::IsFileRecving(const std::string strFileHash)
 		return false;
 	}
 }
+
+/**
+ * @brief 根据文件HASH判断文件是否正在发送中
+ * 
+ * @param strFileHash 文件Hash值
+ * @return true 正在发生
+ * @return false 没有在发送
+ */
 bool CChatServer::IsFileSending(const std::string strFileHash)
 {
 	auto item = std::find(m_strSendFileHashVec.begin(), m_strSendFileHashVec.end(), strFileHash);
@@ -2904,7 +3003,13 @@ bool CChatServer::IsFileSending(const std::string strFileHash)
 	}
 }
 
-
+/**
+ * @brief 保存接收状态
+ * 
+ * @param strFileHash 文件hash值
+ * @return true 保存成功
+ * @return false 保存失败
+ */
 bool CChatServer::SaveRecvingState(const std::string strFileHash)
 {
 	if (IsFileRecving(strFileHash))
@@ -2918,6 +3023,14 @@ bool CChatServer::SaveRecvingState(const std::string strFileHash)
 	}
 }
 
+
+/**
+ * @brief 移除接收状态
+ * 
+ * @param strFileHash 文件hash值
+ * @return true 移除成功
+ * @return false 移除失败
+ */
 bool CChatServer::RemoveRecvingState(const std::string strFileHash)
 {
 	if (IsFileRecving(strFileHash))
@@ -2929,6 +3042,13 @@ bool CChatServer::RemoveRecvingState(const std::string strFileHash)
 	return false;
 }
 
+/**
+ * @brief 保存文件的发送状态
+ * 
+ * @param strFileHash 文件hash值
+ * @return true 保存成功
+ * @return false 保存失败
+ */
 bool CChatServer::SaveSendingState(const std::string strFileHash)
 {
 	if (IsFileSending(strFileHash))
@@ -2942,6 +3062,13 @@ bool CChatServer::SaveSendingState(const std::string strFileHash)
 	}
 }
 
+/**
+ * @brief 移除文件发送状态
+ * 
+ * @param strFileHash 文件Hash值
+ * @return true 移除成功
+ * @return false 移除失败
+ */
 bool CChatServer::RemoveSendingState(const std::string strFileHash)
 {
 	if (IsFileSending(strFileHash))
@@ -2955,6 +3082,11 @@ bool CChatServer::RemoveSendingState(const std::string strFileHash)
 	}
 }
 
+/**
+ * @brief 
+ * @TODO:
+ * @param strUserId 
+ */
 void CChatServer::CheckFileDataRsp(const std::string strUserId)
 {
 	auto item = m_fileDataRspMap.find(strUserId);
@@ -2971,6 +3103,11 @@ void CChatServer::CheckFileDataRsp(const std::string strUserId)
 	}
 }
 
+/**
+ * @brief 
+ * TODO:
+ * @param reqMsg 
+ */
 void CChatServer::CheckFileVerifyReq(const FileVerifyReqMsg& reqMsg)
 {
 	auto item = m_fileDataRspMap.find(reqMsg.m_strUserId);
@@ -2979,6 +3116,12 @@ void CChatServer::CheckFileVerifyReq(const FileVerifyReqMsg& reqMsg)
 		item->second.erase(reqMsg.m_nFileId);
 	}
 }
+
+/**
+ * @brief 保存发送文件回复消息
+ * TODO:
+ * @param rspMsg 文件数据发送回复消息
+ */
 void CChatServer::SaveFileDataRsp(const FileDataSendRspMsg& rspMsg)
 {
 	auto item = m_fileDataRspMap.find(rspMsg.m_strUserId);
@@ -2995,6 +3138,11 @@ void CChatServer::SaveFileDataRsp(const FileDataSendRspMsg& rspMsg)
 	}
 }
 
+/**
+ * @brief 关闭某个用户正在发生和接收的文件,用户断开连接的时候调用
+ * 
+ * @param strUserId 用户ID
+ */
 void CChatServer::CloseUserFile(const std::string strUserId)
 {
 	auto item = m_fileDataRspMap.find(strUserId);
@@ -3009,6 +3157,13 @@ void CChatServer::CloseUserFile(const std::string strUserId)
 	}
 }
 
+
+/**
+ * @brief 实际处理文件数据发送请求消息
+ * 
+ * @param reqMsg 文件数据发送请求消息
+ * @return TransBaseMsg_S_PTR 文件数据发送回复消息
+ */
 TransBaseMsg_S_PTR CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqMsg)
 {
 	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
@@ -3028,6 +3183,13 @@ TransBaseMsg_S_PTR CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqM
 		return pResult;
 	}
 }
+
+/**
+ * @brief TCP消息处理,处理文件数据请求消息
+ * 
+ * @param pSess 用户会话
+ * @param reqMsg 文件数据请求消息
+ */
 void CChatServer::HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg)
 {
 	auto pMsg = DoFileDataSendReq(reqMsg);
