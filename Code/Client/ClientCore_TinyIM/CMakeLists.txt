@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+project(ClientCore_TinyIM)
 add_subdirectory(./include/thirdparty/zlib1.2.11/)
 add_subdirectory(ClientCore)
 add_subdirectory(UnitTest)
