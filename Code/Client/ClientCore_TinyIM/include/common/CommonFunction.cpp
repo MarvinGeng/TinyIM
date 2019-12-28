@@ -166,7 +166,7 @@ std::shared_ptr<spdlog::logger> CreateLogger(json11::Json& cfg)
     std::vector<spdlog::sink_ptr> sinks;
 	auto logDir=cfg["LogDir"].string_value();
 
-	if(std::string(logDir).length() <= 0)
+	if(logDir.length() <= 0)
 	{
 		printf("Please Config your [LogDir] in Config File \n");
 		return nullptr;

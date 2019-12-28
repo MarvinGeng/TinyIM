@@ -29,7 +29,12 @@ void RunProgram(ParseParamResult result)
 		return;
 	}
 	auto cfg = json11::Json::parse(strcfg, errinfo, json11::JsonParse::COMMENTS);
-
+	if (!errinfo.empty())
+	{
+		std::cout << "Config Error:" << errinfo << std::endl;
+		return;
+	}
+	
 	auto logger = CreateLogger(cfg);
 	if (!logger)
 	{
