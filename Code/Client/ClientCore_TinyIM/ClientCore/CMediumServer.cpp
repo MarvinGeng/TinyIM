@@ -76,7 +76,7 @@ void CMediumServer::loadConfig(const json11::Json &cfg, std::error_code& ec)
  * @param endPt 远端的UDP地址
  * @param reqMsg P2P开始回复消息
  */
-void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const UdpP2pStartRspMsg& reqMsg)
+void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint /*endPt*/, const UdpP2pStartRspMsg& reqMsg)
 {
 	if (m_userKeepAliveMap.find(reqMsg.m_strUserId) != m_userKeepAliveMap.end())
 	{
@@ -86,7 +86,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Udp
 		}
 		else
 		{
-			LOG_INFO(ms_loger, "User:{} Friend:{} UDP P2P OK [{} {}]", reqMsg.m_strUserId, reqMsg.m_strFriendId, __FILENAME__, __LINE__)
+			LOG_INFO(ms_loger, "User:{} Friend:{} UDP P2P OK [{} {}]", reqMsg.m_strUserId, reqMsg.m_strFriendId, __FILENAME__, __LINE__);
 		}
 	}
 	else
