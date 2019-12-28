@@ -6,6 +6,7 @@ Build()
 	cmake ..
 	make 
 	cd ..
+        rm -rf Linux
 }
 
 Clean()
