@@ -424,6 +424,11 @@ enum class CLIENT_ONLINE_TYPE {
 	C_ONLINE_TYPE_INVISIBLE,
 };
 
+enum class FILE_TRANS_TYPE {
+	TCP_MODE,//TCP传送
+	UDP_MEDIUM_MODE,//UDP的中继传递模式
+	UDP_P2P_MODE,//UDP的P2P模式
+};
 //操作返回的错误代码
 enum class ERROR_CODE_TYPE {
 	E_CODE_SUCCEED = 0,//成功

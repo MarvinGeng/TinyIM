@@ -1518,6 +1518,7 @@ public:
 	std::string m_strToId;//接收方ID
 	std::string m_strFileName;//文件名
 	CLIENT_ONLINE_TYPE m_eOnlineType;//是否是在线文件
+	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendSendFileMsgReqMsg();
 
@@ -1542,6 +1543,7 @@ public:
 	std::string m_strToId;//接受者ID
 	std::string m_strFileName;//文件名称
 	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
+	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendSendFileMsgRspMsg();
 
@@ -1563,6 +1565,7 @@ public:
 	std::string m_strToId;//接收方Id
 	std::string m_strFileName;//文件名称
 	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
+	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendRecvFileMsgReqMsg();
 	
@@ -1587,6 +1590,7 @@ public:
 	int m_nFileId;
 	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
 	E_FRIEND_OPTION m_eOption;//用户选择
+	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendRecvFileMsgRspMsg();
 
@@ -1610,6 +1614,7 @@ public:
 	int m_nFileId;
 	CLIENT_ONLINE_TYPE m_eOnlineType;
 	E_FRIEND_OPTION m_eOption;
+	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendNotifyFileMsgReqMsg();
 

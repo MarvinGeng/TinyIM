@@ -5601,6 +5601,7 @@ bool RecvGroupTextMsgRspMsg::FromString(const std::string &strJson)
 FriendSendFileMsgReqMsg::FriendSendFileMsgReqMsg()
 {
     m_type = E_MsgType::FriendSendFileMsgReq_Type;
+	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
 }
 
 std::string FriendSendFileMsgReqMsg::ToString() const
@@ -5614,6 +5615,7 @@ std::string FriendSendFileMsgReqMsg::ToString() const
         {"ToId", m_strToId},
         {"FileName", m_strFileName},
         {"OnLineType", static_cast<int>(m_eOnlineType)},
+		{"TransMode",static_cast<int>(m_transMode)},
     });
     return clientObj.dump();
 }
@@ -5673,12 +5675,22 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["TransMode"].is_number())
+	{
+		m_transMode = static_cast<FILE_TRANS_TYPE>(json["TransMode"].int_value());
+	}
+	else
+	{
+		m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+	}
+
     return true;
 }
 
 FriendSendFileMsgRspMsg::FriendSendFileMsgRspMsg()
 {
     m_type = E_MsgType::FriendSendFileMsgRsp_Type;
+	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
 }
 
 std::string FriendSendFileMsgRspMsg::ToString() const
@@ -5694,6 +5706,7 @@ std::string FriendSendFileMsgRspMsg::ToString() const
         {"ToId", m_strToId},
         {"FileName", m_strFileName},
         {"OnLineType", static_cast<int>(m_eOnlineType)},
+		{"TransMode",static_cast<int>(m_transMode)},
     });
     return clientObj.dump();
 }
@@ -5775,6 +5788,14 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["TransMode"].is_number())
+	{
+		m_transMode = static_cast<FILE_TRANS_TYPE>(json["TransMode"].int_value());
+	}
+	else
+	{
+		return false;
+	}
 
     return true;
 }
@@ -5784,6 +5805,7 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
 FriendRecvFileMsgReqMsg::FriendRecvFileMsgReqMsg()
 {
     m_type = E_MsgType::FriendRecvFileMsgReq_Type;
+	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
 }
 
 std::string FriendRecvFileMsgReqMsg::ToString() const
@@ -5797,6 +5819,8 @@ std::string FriendRecvFileMsgReqMsg::ToString() const
         {"ToId", m_strToId},
         {"FileName", m_strFileName},
         {"OnLineType", static_cast<int>(m_eOnlineType)},
+		{"TransMode",static_cast<int>(m_transMode)},
+
     });
     return clientObj.dump();
 }
@@ -5856,6 +5880,14 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["TransMode"].is_number())
+	{
+		m_transMode = static_cast<FILE_TRANS_TYPE>(json["TransMode"].int_value());
+	}
+	else
+	{
+		return false;
+	}
     return true;
 }
 
@@ -5863,6 +5895,7 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
 FriendRecvFileMsgRspMsg::FriendRecvFileMsgRspMsg()
 {
     m_type = E_MsgType::FriendRecvFileMsgRsp_Type;
+	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
 }
 
 std::string FriendRecvFileMsgRspMsg::ToString() const
@@ -5878,6 +5911,8 @@ std::string FriendRecvFileMsgRspMsg::ToString() const
         {"FileId", m_nFileId},
         {"OnLineType", static_cast<int>(m_eOnlineType)},
         {"Option", static_cast<int>(m_eOption)},
+		{"TransMode",static_cast<int>(m_transMode)},
+
     });
     return clientObj.dump();
 }
@@ -5956,6 +5991,15 @@ bool FriendRecvFileMsgRspMsg::FromString(const std::string &strJson)
         return false;
     }
 
+	if (json["TransMode"].is_number())
+	{
+		m_transMode = static_cast<FILE_TRANS_TYPE>(json["TransMode"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+
     return true;
 }
 
@@ -5979,6 +6023,8 @@ std::string FriendNotifyFileMsgReqMsg::ToString() const
         {"FileId", m_nFileId},
         {"OnLineType", static_cast<int>(m_eOnlineType)},
         {"Option", static_cast<int>(m_eOption)},
+		{"TransMode",static_cast<int>(m_transMode)},
+
     });
     return clientObj.dump();
 }
@@ -6055,6 +6101,15 @@ bool FriendNotifyFileMsgReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
+
+	if (json["TransMode"].is_number())
+	{
+		m_transMode = static_cast<FILE_TRANS_TYPE>(json["TransMode"].int_value());
+	}
+	else
+	{
+		return false;
+	}
 
     return true;
 }
