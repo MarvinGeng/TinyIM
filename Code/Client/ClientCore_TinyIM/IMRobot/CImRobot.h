@@ -48,6 +48,10 @@ private:
 	void SendAddFriendReq();
 	void GetRecvAddFriendReq();
 	void GetAddFriendNotify();
+
+	void SendFriendFile();
+	void GetRecvFriendFileReq();
+	void GetFriendFileNotify();
 	//Friend End
 
 	//Group Begin

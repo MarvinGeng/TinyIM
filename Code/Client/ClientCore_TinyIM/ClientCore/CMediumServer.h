@@ -161,6 +161,7 @@ private:
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDataSendRspMsg& rspMsg);
 	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg);
+	void HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendRecvFileMsgReqMsg reqMsg);
 
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetFriendChatHistoryReq& msg);
 	void HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const GetGroupChatHistoryReq& msg);

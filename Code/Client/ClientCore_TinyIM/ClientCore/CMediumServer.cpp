@@ -885,7 +885,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 {
 	LOG_ERR(ms_loger,"{}",notifyMsg.ToString());
 
-	/*if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
+	if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
 		int nFileId = static_cast<int>(time(nullptr));
 		std::string strFileName = notifyMsg.m_strFileName;
@@ -894,8 +894,8 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 		if (m_fileUtil.OpenReadFile(notifyMsg.m_nFileId, strFileName)) {
 			FileDataSendReqMsg sendReqMsg;
 			sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-			sendReqMsg.m_strFromId = notifyMsg.m_strToId;
-			sendReqMsg.m_strToId = notifyMsg.m_strFromId;
+			sendReqMsg.m_strUserId = notifyMsg.m_strToId;
+			sendReqMsg.m_strFriendId = notifyMsg.m_strFromId;
 			sendReqMsg.m_nFileId = notifyMsg.m_nFileId;
 
 			sendReqMsg.m_nDataTotalCount =  nFileSize / 1024 + (nFileSize%1024 == 0 ? 0 : 1);
@@ -904,11 +904,12 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 			m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
 			
 			{
-				auto pUdpSess = GetUdpSess(sendReqMsg.m_strFromId);
+				auto pUdpSess = GetUdpSess(sendReqMsg.m_strUserId);
+				//if(notifyMsg.m_trans)
 				if (pUdpSess)
 				{
-					auto udpItem = m_userIdUdpAddrMap.find(sendReqMsg.m_strToId);
-					if (udpItem != m_userIdUdpAddrMap.end())
+					auto udpItem = m_userIdUdpAddrMap.find(sendReqMsg.m_strUserId);
+					if (notifyMsg.m_transMode == FILE_TRANS_TYPE::UDP_P2P_MODE &&  udpItem != m_userIdUdpAddrMap.end())
 					{
 						pUdpSess->send_msg(udpItem->second.m_strServerIp, udpItem->second.m_nPort, &sendReqMsg);
 					}
@@ -919,11 +920,11 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 				}
 				else
 				{
-					LOG_ERR(ms_loger, "UDP Sess Failed:{}", sendReqMsg.m_strFromId);
+					LOG_ERR(ms_loger, "UDP Sess Failed:{}", sendReqMsg.m_strFriendId);
 				}
 			}
 		}
-	}*/
+	}
 }
 
 
@@ -2090,6 +2091,18 @@ void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>&
 	}
 }
 
+void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendRecvFileMsgReqMsg reqMsg)
+{
+	FriendRecvFileMsgRspMsg rspMsg;
+	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+	rspMsg.m_strFromId = reqMsg.m_strToId;
+	rspMsg.m_strToId = reqMsg.m_strFromId;
+	rspMsg.m_strFileName = reqMsg.m_strFileName;
+	rspMsg.m_eOnlineType = reqMsg.m_eOnlineType;
+	rspMsg.m_eOption = E_FRIEND_OPTION::E_AGREE_ADD;
+	rspMsg.m_transMode = reqMsg.m_transMode;
+	pClientSess->SendMsg(&rspMsg);
+}
 /**
  * @brief 处理查询UDP地址的回复消息
  * 
@@ -2219,6 +2232,13 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		FileDownLoadRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess,rspMsg);
+		}
+	}break;
+	case E_MsgType::FriendRecvFileMsgReq_Type:
+	{
+		FriendRecvFileMsgReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			HandleSendBack(pClientSess, reqMsg);
 		}
 	}break;
 	case E_MsgType::NetRecoverReport_Type: {

@@ -718,6 +718,104 @@ void CIMRobot::MoveFriendToTeam()
 
 }
 
+
+void CIMRobot::SendFriendFile()
+{
+	if (!m_strFriendVec.empty())
+	{
+		std::cout << __FUNCTION__ << std::endl;
+		try {
+			FriendSendFileMsgReqMsg reqMsg;
+			reqMsg.m_strMsgId = CreateMsgId();
+			reqMsg.m_strFromId = m_strUserId;
+			reqMsg.m_strToId = *(m_strFriendVec.begin());
+			reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
+			reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_P2P_MODE;
+			reqMsg.m_strFileName = R"(C:\Users\Public\Pictures\Sample Pictures\Hydrangeas.jpg)";
+
+
+			auto rsp = g_httpClient->request("POST", "/send_file_online_to_friend_req", reqMsg.ToString());
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+}
+
+void CIMRobot::GetRecvFriendFileReq()
+{
+	FriendRecvFileMsgReqMsg reqMsg;
+	{
+		std::cout << __FUNCTION__ << std::endl;
+		try {
+			std::string strUrl = "/recv_file_online_from_friend_req?UserId=" + m_strUserId;
+			auto rsp = g_httpClient->request("GET", strUrl, "");
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+			if (reqMsg.FromString(strRsp))
+			{
+
+			}
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+
+	{
+		FriendRecvFileMsgRspMsg rspMsg;
+		rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+		rspMsg.m_errMsg = ErrMsg(rspMsg.m_eErrCode);
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		rspMsg.m_strFromId = reqMsg.m_strToId;
+		rspMsg.m_strToId = reqMsg.m_strFromId;
+		rspMsg.m_eOption = rand() % 2 == 0 ? E_FRIEND_OPTION::E_AGREE_ADD : E_FRIEND_OPTION::E_REFUSE_ADD;
+		rspMsg.m_transMode = reqMsg.m_transMode;
+		rspMsg.m_strFileName = reqMsg.m_strFileName;
+		try {
+			auto rsp = g_httpClient->request("POST", "/on_recv_file_online_from_friend_rsp", rspMsg.ToString());
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+}
+
+void CIMRobot::GetFriendFileNotify()
+{
+	FriendNotifyFileMsgReqMsg reqMsg;
+	{
+		std::cout << __FUNCTION__ << std::endl;
+		try {
+			std::string strUrl = "/send_file_online_to_friend_notify?UserId=" + m_strUserId;
+			auto rsp = g_httpClient->request("GET", strUrl, "");
+			std::string strRsp = rsp->content.string();
+			std::cout << strRsp << std::endl;
+			if (reqMsg.FromString(strRsp))
+			{
+
+			}
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+
+	{
+		FriendNotifyFileMsgRspMsg rspMsg;
+		rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+		try {
+			auto rsp = g_httpClient->request("POST", "/on_recv_file_online_from_friend_rsp", rspMsg.ToString());
+		}
+		catch (const SimpleWeb::system_error& e) {
+			std::cerr << "Client Req Error " << e.what() << std::endl;
+		}
+	}
+}
+
+
 /**
  * @brief 获取群组列表
  * 
