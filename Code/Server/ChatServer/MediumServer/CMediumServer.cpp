@@ -1425,21 +1425,22 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			//接收方在线
 			{
 				FriendSendFileMsgRspMsg rspMsg;
-
+				rspMsg.m_transMode = reqMsg.m_transMode;
 				rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 				rspMsg.m_strFromId = reqMsg.m_strFromId;
 				rspMsg.m_strToId = reqMsg.m_strToId;
 				pSess->SendMsg(&rspMsg);
 			}
-
 			{
 				FriendRecvFileMsgReqMsg recvMsg;
 				recvMsg.m_strMsgId = reqMsg.m_strMsgId;
 				recvMsg.m_strFromId = reqMsg.m_strFromId;
 				recvMsg.m_strToId = reqMsg.m_strToId;
 				recvMsg.m_strFileName = reqMsg.m_strFileName;
-				pSess->SendMsg(&recvMsg);
+				recvMsg.m_transMode = reqMsg.m_transMode;
+				item->second->SendMsg(&recvMsg);
+				//pSess->SendMsg(&recvMsg);
 			}
 		}
 		else
@@ -1450,6 +1451,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 			rspMsg.m_strFromId = reqMsg.m_strFromId;
 			rspMsg.m_strToId = reqMsg.m_strToId;
+			rspMsg.m_transMode = reqMsg.m_transMode;
 			pSess->SendMsg(&rspMsg);
 		}
 	}
