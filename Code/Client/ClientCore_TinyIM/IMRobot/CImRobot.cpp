@@ -116,57 +116,22 @@ void CIMRobot::Run()
 	srand(static_cast<unsigned int>(time(nullptr)));
 	while (true)
 	{
-		int nChoice = rand() % 12;
-		switch (nChoice)
-		{
-		case 0:
-		{
-			SendMsg();
-		}break;
-		case 1:
-		{
-			GetRecvMsg();
-		}break;
-		case 2:
-		{
-			GetFriendList();
-		}break;
-		case 3:
-		{
-			UserLogin();
-		}break;
-		case 4:
-		{
-			SendFaceMsg();
-		}break;
-		case 5:
-		{
-			SendSingleImageMsg();
-		}break;
-		case 6:
-		{
-			RegisterUser();
-		}break;
-		case 7:
-		{
-			GetRandomUserName();
-			SendFindFriendReq();
-			SendAddFriendReq();
-			GetRecvAddFriendReq();
-			GetAddFriendNotify();
-		}break;
-		case 8:
-		{
-			SendFindFriendReq();
-		}break;
-		case 9:
-		{
-			GetRecvAddFriendReq();
-		}break;
-		case 10:
-		{
-			GetAddFriendNotify();
-		}break;
+		UserLogin();
+		GetFriendList();
+		GetRecvMsg();
+		SendMsg();
+		
+		
+		SendFaceMsg();
+		
+		SendSingleImageMsg();
+	
+		GetRandomUserName();
+		SendFindFriendReq();
+		SendAddFriendReq();
+		GetRecvAddFriendReq();
+
+		
 		/*case 4:
 		{
 			GetGroupList();
@@ -227,13 +192,8 @@ void CIMRobot::Run()
 		{
 
 		}break;*/
-		
-		default:
-		{
-
-		}break;
-		std::this_thread::sleep_for(std::chrono::seconds(5));
-		}
+		//std::chrono::seconds sec = 5s;
+		std::this_thread::sleep_for(std::chrono::duration<int>(5));
 	}
 	UserLogout();
 }
@@ -271,7 +231,7 @@ void CIMRobot::UserLogin()
 	UserLoginRspMsg rspMsg;
 	try {
 		UserLoginReqMsg reqMsg;
-		reqMsg.m_strMsgId = "1234567890";
+		reqMsg.m_strMsgId = CreateMsgId();
 		reqMsg.m_strUserName = m_strUserName;
 		reqMsg.m_strPassword = m_strPassWord;
 		reqMsg.m_eNetType = CLIENT_NET_TYPE::C_NET_TYPE_WIFI;
@@ -284,6 +244,7 @@ void CIMRobot::UserLogin()
 		{
 			m_strUserId = rspMsg.m_strUserId;
 		}
+		std::cout << "User ID :   " << rspMsg.m_strUserId;
 	}
 	catch (const SimpleWeb::system_error& e) {
 		std::cerr << "Client Req Error " << e.what() << std::endl;
