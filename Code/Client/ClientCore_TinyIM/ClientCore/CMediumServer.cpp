@@ -725,23 +725,23 @@ std::string CMediumServer::getServerIpPort()
  */
 void CMediumServer::SendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg)
 {
-	if (HandleSendBack(pClientSess, msg))
-	{
 
-	}
-	else
+	auto pMsg = std::make_shared<TransBaseMsg_t>(msg.GetType(), msg.to_string());
+	auto item = m_BackSessMap.find(pClientSess);
+	if (item != m_BackSessMap.end())
 	{
-		auto pMsg = std::make_shared<TransBaseMsg_t>(msg.GetType(), msg.to_string());
-		auto item = m_BackSessMap.find(pClientSess);
-		if (item != m_BackSessMap.end())
+		if (HandleSendBack(pClientSess, msg))
 		{
-			item->second->SendMsg(pMsg);
 		}
 		else
 		{
-			OnHttpRsp(pMsg);
+			item->second->SendMsg(pMsg);
 		}
-
+	}
+	else
+	{
+		HandleSendBack(pClientSess, msg);
+		OnHttpRsp(pMsg);
 	}
 }
 
