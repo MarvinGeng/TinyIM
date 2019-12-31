@@ -326,11 +326,11 @@ bool CMySqlConnect::ConnectToServer(const std::string userName,
 			LOG_INFO(m_loger, "mysql_real_connect() succeed [{} {}]", __FILENAME__, __LINE__);
 			int nResult = mysql_set_character_set(m_mysql, "UTF8");
 			LOG_INFO(m_loger, "{}  succeed [{} {}]", nResult, __FILENAME__, __LINE__);
-      return CreateTable();
+			return CreateTable();
 		}
 		else
 		{
-			LOG_INFO(m_loger, "mysql_real_connect() {} failed[{} {}]",port,__FILENAME__, __LINE__);
+			LOG_ERR(m_loger, "mysql_real_connect() {} failed[{} {}]",port,__FILENAME__, __LINE__);
             return false;
 		}
 	}
@@ -363,6 +363,7 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 		std::string strSql = "SELECT F_USER_ID,F_USER_NAME,F_PASS_WORD FROM T_USER WHERE F_USER_NAME=?;";
 		if (mysql_stmt_prepare(m_pSelectUserByNameStmt, strSql.c_str(), static_cast<unsigned long>(strSql.size())))
 		{
+			LOG_WARN(m_loger, "{} {} [{} {}]", mysql_stmt_error(m_pSelectUserByNameStmt), mysql_stmt_errno(m_pSelectUserByNameStmt), __FILENAME__, __LINE__);
 			return false;
 		}
 	}
@@ -382,6 +383,7 @@ bool CMySqlConnect::SelectUserByName(const std::string userName, T_USER_BEAN& be
 
 		if (mysql_stmt_bind_param(m_pSelectUserByNameStmt, paramBind))
 		{
+			LOG_WARN(m_loger, "{} {} [{} {}]", mysql_stmt_error(m_pSelectUserByNameStmt), mysql_stmt_errno(m_pSelectUserByNameStmt),__FILENAME__,__LINE__);
 			return false;
 		}
 
