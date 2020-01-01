@@ -119,19 +119,71 @@ void CIMRobot::Run()
 		UserLogin();
 		GetFriendList();
 		GetRecvMsg();
-		SendMsg();
 		
-		
-		SendFaceMsg();
-		
-		SendSingleImageMsg();
+		//给好友发送消息
+		{
+			SendMsg();
+			SendFaceMsg();
+			SendSingleImageMsg();
+		}
 	
-		GetRandomUserName();
-		SendFindFriendReq();
-		SendAddFriendReq();
-		GetRecvAddFriendReq();
+		//添加好友
+		{
+			GetRandomUserName();
+			SendFindFriendReq();
+			SendAddFriendReq();
+			GetRecvAddFriendReq();
+		}
 
+		//发送群聊消息
+		{
+			GetGroupList();
+			SendGroupMsg();
+			GetRecvGroupMsg();
+		}
 		
+		//好友分组操作
+		{
+			AddFriendTeam();
+			RemoveFriendTeam();
+			MoveFriendToTeam();
+		}
+
+		//好友历史消息的相关操作
+		{
+
+			GetFriendHistoryLast();
+
+			GetFriendHistoryNext();
+
+			GetFriendHistoryPrev();
+
+			GetFriendHistroyFirst();
+
+		}
+
+		//群聊历史消息的相关操作
+		{
+
+			GetGroupHistoryLast();
+	
+			GetGroupHistoryNext();
+
+			GetGroupHistoryPrev();
+
+			GetGroupHistroyFirst();
+		}
+
+		//查找聊天记录
+		{
+			SearchChatMsg();
+		}
+
+		//SendFile
+		{
+			SendFriendFile();
+			GetFriendFileNotify();
+		}
 		/*case 4:
 		{
 			GetGroupList();
