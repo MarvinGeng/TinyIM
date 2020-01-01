@@ -426,8 +426,9 @@ enum class CLIENT_ONLINE_TYPE {
 
 enum class FILE_TRANS_TYPE {
 	TCP_MODE,//TCP传送
-	UDP_MEDIUM_MODE,//UDP的中继传递模式
+	UDP_MEDIUM_MODE,//UDP的中继传递模式,UDP的P2P失败的时候使用
 	UDP_P2P_MODE,//UDP的P2P模式
+	UDP_SERVER_SAVE_MODE,//UDP的服务器保存模式，
 };
 //操作返回的错误代码
 enum class ERROR_CODE_TYPE {
