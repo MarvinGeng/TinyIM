@@ -1418,6 +1418,7 @@ void CChatServer::HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>&
 void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pSess, const FriendSendFileMsgReqMsg& reqMsg)
 {
 	//For Sender 对于发送者
+	if(reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
 	{
 		auto item = m_UserSessVec.find(reqMsg.m_strToId);
 		if (item != m_UserSessVec.end())
@@ -1453,6 +1454,31 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			rspMsg.m_strToId = reqMsg.m_strToId;
 			rspMsg.m_transMode = reqMsg.m_transMode;
 			pSess->SendMsg(&rspMsg);
+		}
+	}
+	else if (reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
+	{
+		{
+			FriendSendFileMsgRspMsg rspMsg;
+			rspMsg.m_transMode = reqMsg.m_transMode;
+			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
+			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
+			rspMsg.m_strFromId = reqMsg.m_strFromId;
+			rspMsg.m_strToId = reqMsg.m_strToId;
+			pSess->SendMsg(&rspMsg);
+		}
+
+		{
+			FriendNotifyFileMsgReqMsg sendReqMsg;
+			sendReqMsg.m_transMode = reqMsg.m_transMode;
+			sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+			sendReqMsg.m_strFromId = reqMsg.m_strFromId;
+			sendReqMsg.m_strToId = reqMsg.m_strToId;
+			sendReqMsg.m_strFileName = reqMsg.m_strFileName;
+			sendReqMsg.m_nFileId = rand();
+			sendReqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
+			sendReqMsg.m_eOption = E_FRIEND_OPTION::E_AGREE_ADD;
+			pSess->SendMsg(&sendReqMsg);
 		}
 	}
 }
