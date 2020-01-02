@@ -84,7 +84,7 @@ public:
 	QuitFromGroupRspMsg DoQuitFromGroup(const QuitFromGroupReqMsg& reqMsg);
 	TransBaseMsg_S_PTR DoFileDataRecvRsp(const FileDataRecvRspMsg& rspMsg);
 	GetRandomUserRspMsg DoGetRandomUserReqMsg(const GetRandomUserReqMsg& reqMsg);
-	TransBaseMsg_S_PTR DoFileDataSendReq(const FileDataSendReqMsg& reqMsg);
+	FileDataSendRspMsg DoFileDataSendReq(const FileDataSendReqMsg& reqMsg);
 
 	void Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg);
 

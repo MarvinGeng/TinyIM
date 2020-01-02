@@ -1479,7 +1479,17 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			sendReqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
 			sendReqMsg.m_eOption = E_FRIEND_OPTION::E_AGREE_ADD;
 			pSess->SendMsg(&sendReqMsg);
+
+			//
+			{
+				std::string strCurDir = m_fileUtil.GetCurDir();
+				std::string strFileDir = strCurDir + "\\File\\";
+				m_fileUtil.CreateFolder(strFileDir);
+				std::string strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
+				m_fileUtil.OpenWriteFile(sendReqMsg.m_nFileId, strFileDir + strFileName);
+			}
 		}
+
 	}
 }
 
@@ -2384,47 +2394,10 @@ void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSe
  * TODO: 此处需要修改,以方便用于接收群组的文件消息
  * @param reqMsg 文件数据发送请求消息
  */
-void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint /*sendPt*/,const FileDataSendReqMsg& reqMsg)
+void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg)
 {
-	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
-	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
-	{
-		m_fileUtil.OnCloseFile(reqMsg.m_nFileId);
-	}
-	//auto item = m_userIdUdpAddrMap.find(reqMsg.m_strToId);
-	//if (item != m_userIdUdpAddrMap.end())
-	//{
-	//	FileDataRecvReqMsg sendReqMsg;
-	//	sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-	//	sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-	//	sendReqMsg.m_strToId = reqMsg.m_strToId;
-	//	sendReqMsg.m_nFileId = reqMsg.m_nFileId;
-	//	sendReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-	//	sendReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
-	//	sendReqMsg.m_nDataLength = reqMsg.m_nDataLength;
-	//	memcpy(sendReqMsg.m_szData, reqMsg.m_szData, reqMsg.m_nDataLength);
-	//	m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
-	//}
-	//else
-	{
-		FileDataSendRspMsg sendRsp;
-		sendRsp.m_strMsgId = reqMsg.m_strMsgId;
-		sendRsp.m_strUserId = reqMsg.m_strUserId;
-		sendRsp.m_strFriendId = reqMsg.m_strFriendId;
-		sendRsp.m_nFileId = reqMsg.m_nFileId;
-		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
-		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
-		{
-			auto pSess = m_UserSessVec.find(reqMsg.m_strUserId);
-			if (pSess != m_UserSessVec.end())
-			{
-				pSess->second->SendMsg(&sendRsp);
-			}
-		}
-		//m_udpServer->sendMsg(sendPt,&sendRsp);
-
-		//SaveFileDataRsp(sendRsp);
-	}
+	auto rspMsg = DoFileDataSendReq(reqMsg);
+	m_udpServer->sendMsg(sendPt, &rspMsg);
 }
 
 /**
@@ -3192,7 +3165,7 @@ void CChatServer::CloseUserFile(const std::string strUserId)
  * @param reqMsg 文件数据发送请求消息
  * @return TransBaseMsg_S_PTR 文件数据发送回复消息
  */
-TransBaseMsg_S_PTR CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqMsg)
+FileDataSendRspMsg CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqMsg)
 {
 	m_fileUtil.OnWriteData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength);
 	if (reqMsg.m_nDataIndex == reqMsg.m_nDataTotalCount)
@@ -3207,8 +3180,7 @@ TransBaseMsg_S_PTR CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqM
 		sendRsp.m_nFileId = reqMsg.m_nFileId;
 		sendRsp.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
 		sendRsp.m_nDataIndex = reqMsg.m_nDataIndex;
-		auto pResult = std::make_shared<TransBaseMsg_t>(sendRsp.GetMsgType(), sendRsp.ToString());
-		return pResult;
+		return sendRsp;
 	}
 }
 
@@ -3221,7 +3193,7 @@ TransBaseMsg_S_PTR CChatServer::DoFileDataSendReq(const FileDataSendReqMsg& reqM
 void CChatServer::HandleFileDataSendReq(const std::shared_ptr<CServerSess>& pSess, const FileDataSendReqMsg& reqMsg)
 {
 	auto pMsg = DoFileDataSendReq(reqMsg);
-	pSess->SendMsg(pMsg);
+	pSess->SendMsg(&pMsg);
 }
 
 }
