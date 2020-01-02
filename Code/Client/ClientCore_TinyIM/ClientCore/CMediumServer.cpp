@@ -1624,7 +1624,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		ChatMsgElemVec elemVec = MsgElemVec(reqMsg.m_chatMsg.m_strContext);
 		for (const auto item : elemVec)
 		{
-			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE)
+			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE || item.m_eType == CHAT_MSG_TYPE::E_CHAT_FILE_TYPE)
 			{
 				FileDownLoadReqMsg downMsg;
 				downMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
@@ -2082,6 +2082,7 @@ void CMediumServer::ServerSessClose(const CServerSess_SHARED_PTR pServerSess)
 			m_userIdUdpAddrMap.erase(strUserId);
 			m_userUdpSessMap.erase(strUserId);
 			m_userClientSessMap.erase(strUserId);
+			m_userKeepAliveMap.erase(strUserId);
 		}
 		//Clear UserName
 		{
