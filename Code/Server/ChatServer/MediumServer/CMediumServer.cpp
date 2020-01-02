@@ -1487,6 +1487,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 				m_fileUtil.CreateFolder(strFileDir);
 				std::string strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
 				m_fileUtil.OpenWriteFile(sendReqMsg.m_nFileId, strFileDir + strFileName);
+				m_fileTransMap.insert({ sendReqMsg.m_nFileId,CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE });
 			}
 		}
 
@@ -2409,10 +2410,35 @@ void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sen
 void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess, const FileVerifyReqMsg& req)
 {
 
+	
+	{
+		auto item = m_fileTransMap.find(req.m_nFileId);
+		if (item != m_fileTransMap.end()) {
+			if (item->second == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
+			{
+				T_USER_CHAT_MSG chatMsg;
+				{
+					ChatMsgElem elem;
+					elem.m_eType = CHAT_MSG_TYPE::E_CHAT_FILE_TYPE;
+					elem.m_strImageName = m_fileUtil.GetFileName(req.m_nFileId);
+					ChatMsgElemVec elemVec;
+					elemVec.push_back(elem);
+					chatMsg.m_strF_MSG_ID = CreateMsgId();
+					chatMsg.m_strF_MSG_CONTEXT = MsgElemVec(elemVec);
+					chatMsg.m_strF_FROM_ID = req.m_strUserId;
+					chatMsg.m_strF_TO_ID = req.m_strFriendId;
+					chatMsg.m_eChatMsgType = CHAT_MSG_TYPE::E_CHAT_TEXT_TYPE;
+					FontInfo_s fontInfo;
+					chatMsg.m_strF_OTHER_INFO = fontInfo.ToString();
+				}
+				m_util.InsertFriendChatMsg(chatMsg);
+			}
+			m_fileTransMap.erase(req.m_nFileId);
+		}
+	}
 	{
 		m_fileUtil.OnCloseFile(req.m_nFileId);
 	}
-
 	{
 		std::string strFileName = GetFilePathByUserIdAndFileName(req.m_strUserId, req.m_strFileName);
 		std::string strNewFileName = GetFilePathByUserIdAndFileName(req.m_strFriendId, req.m_strFileName);
@@ -2428,6 +2454,9 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 			m_fileUtil.UtilCopy(strFileName, strNewFileName);
 			rspMsg.m_strFileHash = strFileHash;
+			
+			//判断离线文件消息，插入聊天消息
+			
 		}
 		else
 		{

@@ -161,6 +161,7 @@ private:
 
 	std::shared_ptr<CUdpServer> m_udpServer;
 	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
+	std::map<int, CLIENT_ONLINE_TYPE> m_fileTransMap;
 	std::string GenerateUserId();
 
 	void HandleReLogin(std::string strUserId, std::shared_ptr<CServerSess> pSess);
