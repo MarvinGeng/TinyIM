@@ -885,7 +885,30 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 {
 	LOG_ERR(ms_loger,"{}",notifyMsg.ToString());
 
-	if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
+	//离线同意
+	if (notifyMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE && notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
+	{
+		bool bResult = m_fileUtil.OpenReadFile(notifyMsg.m_nFileId, notifyMsg.m_strFileName);
+		int nFileSize = 0;
+		m_fileUtil.GetFileSize(nFileSize, notifyMsg.m_strFileName);
+		auto pSess = GetUdpSess(notifyMsg.m_strFromId);
+		if (pSess)
+		{
+			FileDataSendReqMsg reqMsg;
+			reqMsg.m_nDataIndex = 1;
+			reqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0:1);
+			reqMsg.m_nFileId = notifyMsg.m_nFileId;
+			reqMsg.m_strFriendId = notifyMsg.m_strToId;
+			reqMsg.m_strUserId = notifyMsg.m_strFromId;
+			m_fileUtil.OnReadData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength, 1024);
+			pSess->sendToServer(&reqMsg);
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "{} No Udp Sess", notifyMsg.m_strFromId);
+		}
+	}
+	else if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
 		int nFileId = static_cast<int>(time(nullptr));
 		std::string strFileName = notifyMsg.m_strFileName;
@@ -2337,6 +2360,13 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		GetFriendListRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
 			HandleSendBack(pClientSess, rspMsg);
+		}
+	}break;
+	case E_MsgType::FriendNotifyFileMsgReq_Type:
+	{
+		FriendNotifyFileMsgReqMsg reqMsg;
+		if (reqMsg.FromString(msg.to_string())) {
+			HandleFriendNotifyFileMsgReq(reqMsg);
 		}
 	}break;
 	default:

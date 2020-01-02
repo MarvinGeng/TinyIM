@@ -132,11 +132,14 @@ namespace ClientCore {
 	 */
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
 	{
+		if (pMsg->GetType() != E_MsgType::FileSendDataReq_Type || pMsg->GetType() != E_MsgType::FileRecvDataReq_Type)
+		{
+			LOG_INFO(ms_loger, "[{}] UDP SEND: {} Msg:{} {} [{} {}]", UserId(), EndPoint(endPt), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
+		}
 		if (m_udpSocket)
 		{
 			memcpy(m_sendbuf, pMsg->GetData(), pMsg->GetSize());
 			try {
-				LOG_INFO(ms_loger, "[{}] UDP SEND: {} Msg:{} {} [{} {}]",UserId(),EndPoint(endPt),MsgType(pMsg->GetType()),pMsg->to_string(),__FILENAME__,__LINE__);
 				m_udpSocket->async_send_to(asio::buffer(m_sendbuf, pMsg->GetSize()), endPt, [this](std::error_code /*ec*/, std::size_t /*bytes*/) {
 				});
 			}
