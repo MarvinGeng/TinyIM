@@ -1486,7 +1486,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			//
 			{
 				std::string strCurDir = m_fileUtil.GetCurDir();
-				std::string strFileDir = strCurDir + "\\File\\";
+				std::string strFileDir = strCurDir + "\\"+reqMsg.m_strToId+"\\";
 				m_fileUtil.CreateFolder(strFileDir);
 				std::string strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
 				m_fileUtil.OpenWriteFile(sendReqMsg.m_nFileId, strFileDir + strFileName);
@@ -2423,7 +2423,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 				{
 					ChatMsgElem elem;
 					elem.m_eType = CHAT_MSG_TYPE::E_CHAT_FILE_TYPE;
-					elem.m_strImageName = m_fileUtil.GetFileName(req.m_nFileId);
+					elem.m_strImageName = m_fileUtil.GetFileNameFromPath(req.m_strFileName);
 					ChatMsgElemVec elemVec;
 					elemVec.push_back(elem);
 					chatMsg.m_strF_MSG_ID = CreateMsgId();
