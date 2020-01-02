@@ -2360,7 +2360,7 @@ BOOL CBuddyChatDlg::SendOfflineFile(PCTSTR pszFileName)
 {
 	auto pSess = CMsgProto::GetInstance();
 	std::string strStdFileName = EncodeUtil::UnicodeToAnsi(pszFileName);
-	pSess->SendFriendOnLineFile(this->m_strFriendId, strStdFileName);
+	pSess->SendFriendOffLineFile(this->m_strFriendId, strStdFileName);
 
 	if(false)
 	{
@@ -2873,18 +2873,18 @@ BOOL CBuddyChatDlg::InitTopToolBar()
 	
 	
 	{
-		//nIndex = m_tbTop.AddItem(IDC_BTN_SEND_FILE, STBI_STYLE_DROPDOWN);
-		//m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
-		//m_tbTop.SetItemPadding(nIndex, 1);
-		//m_tbTop.SetItemToolTipText(nIndex, _T("传送文件"));
-		//m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
-		//	_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
-		//m_tbTop.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"),
-		//	_T("aio_toolbar_leftdown.png"), CRect(0, 0, 0, 0));
-		//m_tbTop.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"),
-		//	_T("aio_toolbar_rightdown.png"), CRect(0, 0, 0, 0));
-		//m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
-		//m_tbTop.SetItemIconPic(nIndex, _T("BuddyTopToolBar\\sendfile.png"));
+		nIndex = m_tbTop.AddItem(IDC_BTN_SEND_FILE, STBI_STYLE_DROPDOWN);
+		m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
+		m_tbTop.SetItemPadding(nIndex, 1);
+		m_tbTop.SetItemToolTipText(nIndex, _T("传送文件"));
+		m_tbTop.SetItemBgPic(nIndex, NULL, _T("aio_toolbar_highligh.png"),
+			_T("aio_toolbar_down.png"), CRect(3, 3, 3, 3));
+		m_tbTop.SetItemLeftBgPic(nIndex, _T("aio_toolbar_leftnormal.png"),
+			_T("aio_toolbar_leftdown.png"), CRect(0, 0, 0, 0));
+		m_tbTop.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"),
+			_T("aio_toolbar_rightdown.png"), CRect(0, 0, 0, 0));
+		m_tbTop.SetItemArrowPic(nIndex, _T("aio_littletoolbar_arrow.png"));
+		m_tbTop.SetItemIconPic(nIndex, _T("BuddyTopToolBar\\sendfile.png"));
 		/*
 		nIndex = m_tbTop.AddItem(ID_BUDDY_DLG_REMOTE_DESKTOP_BTN, STBI_STYLE_BUTTON);
 		m_tbTop.SetItemSize(nIndex, 38, 28, 28, 10);
