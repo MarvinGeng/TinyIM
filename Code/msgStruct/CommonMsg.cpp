@@ -8884,6 +8884,16 @@ std::string MsgElemVec(const ChatMsgElemVec& vec)
 				});
 			jsonArray.push_back(clientObj);
 		}break;
+		case CHAT_MSG_TYPE::E_CHAT_FILE_TYPE:
+		{
+			Json clientObj = Json::object(
+				{
+					{"Index",static_cast<int>(index)},
+					{"Type",static_cast<int>(item.m_eType)},
+					{"Data",item.m_strImageName},
+				});
+			jsonArray.push_back(clientObj);
+		}break;
         default:
         {
 
@@ -8941,6 +8951,16 @@ ChatMsgElemVec MsgElemVec(const std::string strVec)
 				{
 					ChatMsgElem msg;
 					msg.m_eType = CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE;
+					if (jsonItem["Data"].is_string())
+					{
+						msg.m_strImageName = jsonItem["Data"].string_value();
+						result.push_back(msg);
+					}
+				}break;
+				case CHAT_MSG_TYPE::E_CHAT_FILE_TYPE:
+				{
+					ChatMsgElem msg;
+					msg.m_eType = CHAT_MSG_TYPE::E_CHAT_FILE_TYPE;
 					if (jsonItem["Data"].is_string())
 					{
 						msg.m_strImageName = jsonItem["Data"].string_value();
