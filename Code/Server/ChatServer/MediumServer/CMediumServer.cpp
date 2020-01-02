@@ -1113,7 +1113,10 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 		{
 
 			std::string strFileName = m_fileUtil.GetCurDir() + req.m_strFriendId + "\\" + req.m_strFileName;
-			
+			if (m_fileUtil.IsFileExist(req.m_strFileName))
+			{
+				strFileName = req.m_strFileName;
+			}
 			rspMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
 			if (!m_fileUtil.IsFileExist(strFileName))
 			{
