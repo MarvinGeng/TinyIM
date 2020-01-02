@@ -671,7 +671,7 @@ void CMediumServer::SetTimer(int nSeconds)
 {
 	if (m_timeCount % 30 == 0)
 	{
-		LOG_INFO(this->ms_loger, "On Timer at MediumServer {} [{} {}]", __FILENAME__, __LINE__);
+		LOG_INFO(this->ms_loger, "On Timer at MediumServer [{} {}]", __FILENAME__, __LINE__);
 	}
 	if(m_timer && m_nNoSessTimeCount < 30)
 	{
