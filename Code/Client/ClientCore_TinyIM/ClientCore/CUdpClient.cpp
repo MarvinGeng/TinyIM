@@ -95,8 +95,9 @@ namespace ClientCore {
 
 		if (!endpoints.empty())
 		{
-			TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
-			send_msg(*endpoints.begin(), &trans);
+			
+			auto pSend = std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
+			send_msg(*endpoints.begin(), pSend);
 		}
 	}
 	
@@ -120,8 +121,8 @@ namespace ClientCore {
 	 */
 	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, const BaseMsg* pMsg)
 	{
-		TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
-		send_msg(endPt, &trans);
+		auto pSend= std::make_shared<TransBaseMsg_t>(pMsg->GetMsgType(), pMsg->ToString());
+		send_msg(endPt, pSend);
 	}
 
 	/**
@@ -130,12 +131,18 @@ namespace ClientCore {
 	 * @param endPt 
 	 * @param pMsg 
 	 */
-	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)
+	void CUdpClient::send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_S_PTR pMsg)
 	{
-		if (pMsg->GetType() != E_MsgType::FileSendDataReq_Type || pMsg->GetType() != E_MsgType::FileRecvDataReq_Type)
+		if (pMsg->GetType() != E_MsgType::FileSendDataReq_Type && pMsg->GetType() != E_MsgType::FileRecvDataReq_Type)
 		{
 			LOG_INFO(ms_loger, "[{}] UDP SEND: {} Msg:{} {} [{} {}]", UserId(), EndPoint(endPt), MsgType(pMsg->GetType()), pMsg->to_string(), __FILENAME__, __LINE__);
 		}
+		//m_sendQueue.push({ endPt,pMsg });
+		/*if (!m_bDoSend) {
+			m_bDoSend = true;
+			do_SendMsg();
+		}*/
+		
 		if (m_udpSocket)
 		{
 			memcpy(m_sendbuf, pMsg->GetData(), pMsg->GetSize());
@@ -149,4 +156,37 @@ namespace ClientCore {
 			}
 		}
 	}
+	void CUdpClient::DoSend() {
+		//if (!m_bDoSend) {
+		//	m_bDoSend = true;
+		//	do_SendMsg();
+		//}
+	}
+	void CUdpClient::do_SendMsg() {
+		if (!m_sendQueue.empty()) {
+			if (m_udpSocket)
+			{
+				auto item = m_sendQueue.front();
+				memcpy(m_sendbuf, item.msgToSend->GetData(), item.msgToSend->GetSize());
+				try {
+					auto pSelf = shared_from_this();
+					m_udpSocket->async_send_to(asio::buffer(m_sendbuf, item.msgToSend->GetSize()), item.endPt, [this, pSelf](std::error_code ec, std::size_t bytes) {
+						if (!ec && bytes > 0) {
+							m_sendQueue.pop();
+							do_SendMsg();
+						}
+					});
+				}
+				catch (std::exception ec)
+				{
+					LOG_INFO(ms_loger, "{}", ec.what());
+				}
+			}
+		}
+		else
+		{
+			m_bDoSend = false;
+		}
+	}
+
 }

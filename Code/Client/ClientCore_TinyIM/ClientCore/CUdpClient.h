@@ -15,6 +15,12 @@
 #include "asio_common.h"
 #include "Log.h"
 #include <memory>
+#include <queue>
+struct WaitSendMsg{
+	asio::ip::udp::endpoint endPt;
+	TransBaseMsg_S_PTR msgToSend;
+};
+
 using UDP_CALL_BACK = std::function<void(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg)>;
 namespace ClientCore {
 	class CUdpClient : public std::enable_shared_from_this<CUdpClient>
@@ -23,9 +29,10 @@ namespace ClientCore {
 		CUdpClient(asio::io_context& ioService, const std::string strIp, const int port,UDP_CALL_BACK&& callBack);
 		void StartConnect();
 		void SendKeepAlive();
-		void send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_t* pMsg);
+		void send_msg(const asio::ip::udp::endpoint endPt, TransBaseMsg_S_PTR pMsg);
 		void send_msg(const asio::ip::udp::endpoint endPt,const BaseMsg* pMsg);
 		void send_msg(const std::string strIp, const int port, const BaseMsg* pMsg);
+		void DoSend();
 		void sendToServer(const BaseMsg* pMsg);
 		asio::ip::udp::endpoint GetServerEndPt() {
 			return m_udpServerPt;
@@ -56,6 +63,9 @@ namespace ClientCore {
 
 		UDP_CALL_BACK m_callBack;
 		std::string m_strUserId;
+		std::atomic_bool m_bDoSend{ false };
+		std::queue<WaitSendMsg> m_sendQueue;
+		void do_SendMsg();
 	};
 	using CUdpClient_PTR = std::shared_ptr< CUdpClient>;
 }

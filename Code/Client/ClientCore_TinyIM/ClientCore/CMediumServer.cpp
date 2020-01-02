@@ -112,6 +112,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Udp
 	if (pUdpSess)
 	{
 		pUdpSess->send_msg(endPt,&rspMsg);
+		pUdpSess->DoSend();
 	}
 }
 
@@ -133,6 +134,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Kee
 		if (pUdpSess)
 		{
 			pUdpSess->send_msg(endPt, &reqMsg);
+			pUdpSess->DoSend();
 		}
 		else
 		{
@@ -163,6 +165,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		if (pSess)
 		{
 			pSess->send_msg(endPt, &rspMsg);
+			pSess->DoSend();
 		}
 	}
 }
@@ -428,6 +431,7 @@ void CMediumServer::CheckFriendP2PConnect()
 					reqMsg.m_strUserId = userItem.first;
 					reqMsg.m_strFriendId = friItem;
 					pUdpSess->send_msg(item->second.m_strServerIp, item->second.m_nPort, &reqMsg);
+					pUdpSess->DoSend();
 				}
 				else
 				{
@@ -895,13 +899,19 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 		if (pSess)
 		{
 			FileDataSendReqMsg reqMsg;
-			reqMsg.m_nDataIndex = 1;
-			reqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0:1);
-			reqMsg.m_nFileId = notifyMsg.m_nFileId;
-			reqMsg.m_strFriendId = notifyMsg.m_strToId;
-			reqMsg.m_strUserId = notifyMsg.m_strFromId;
-			m_fileUtil.OnReadData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength, 1024);
-			pSess->sendToServer(&reqMsg);
+			reqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
+			int nIndex = 1;
+			//while (nIndex <= reqMsg.m_nDataTotalCount)
+			//{
+				reqMsg.m_nDataIndex = nIndex;
+				reqMsg.m_nFileId = notifyMsg.m_nFileId;
+				reqMsg.m_strFriendId = notifyMsg.m_strToId;
+				reqMsg.m_strUserId = notifyMsg.m_strFromId;
+				m_fileUtil.OnReadData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength, 1024);
+				pSess->sendToServer(&reqMsg);
+			//	nIndex++;
+			//}
+			//pSess->DoSend();
 		}
 		else
 		{
@@ -935,6 +945,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 					if (notifyMsg.m_transMode == FILE_TRANS_TYPE::UDP_P2P_MODE &&  udpItem != m_userIdUdpAddrMap.end())
 					{
 						pUdpSess->send_msg(udpItem->second.m_strServerIp, udpItem->second.m_nPort, &sendReqMsg);
+						pUdpSess->DoSend();
 					}
 					else
 					{
@@ -1001,6 +1012,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 		if (pUdpSess)
 		{
 			pUdpSess->send_msg(endPt,&rspMsg);
+			pUdpSess->DoSend();
 		}
 		else
 		{
