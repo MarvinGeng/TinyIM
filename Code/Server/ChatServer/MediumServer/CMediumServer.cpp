@@ -1111,7 +1111,6 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 		rspMsg.m_strFileName = req.m_strFileName;
 		rspMsg.m_strRelateMsgId = req.m_strRelateMsgId;
 		{
-
 			std::string strFileName = m_fileUtil.GetCurDir() + req.m_strFriendId + "\\" + req.m_strFileName;
 			if (m_fileUtil.IsFileExist(req.m_strFileName))
 			{
@@ -1159,6 +1158,10 @@ void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>&
 	if (req.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
 		std::string strFileName = m_fileUtil.GetCurDir() + "\\" + req.m_strFriendId + "\\" + req.m_strFileName;
+		if (m_fileUtil.IsFileExist(req.m_strFileName))
+		{
+			strFileName = req.m_strFileName;
+		}
 		int nFileSize = 0;
 		m_fileUtil.GetFileSize(nFileSize, strFileName);
 		if (m_fileUtil.OpenReadFile(req.m_nFileId, strFileName)) {
