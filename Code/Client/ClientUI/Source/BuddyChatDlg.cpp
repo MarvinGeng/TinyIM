@@ -2296,7 +2296,7 @@ void CBuddyChatDlg::OnMenu_SendFile(UINT uNotifyCode, int nID, CWindow wndCtl)
 		m_RightTabCtrl.SetCurSel(1);
 		m_richMsgLog.ShowWindow(SW_HIDE);
 		ShowFileTransferCtrl(TRUE);
-		m_staSendFileDesc.SetWindowText(Hootina::CPath::GetFileName(strSavePath).c_str());
+		//m_staSendFileDesc.SetWindowText(Hootina::CPath::GetFileName(strSavePath).c_str());
 
 		SendFileOnLine(strSavePath);
 	}

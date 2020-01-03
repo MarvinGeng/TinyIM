@@ -749,11 +749,11 @@ BEGIN
     END
     POPUP "传送文件"
     BEGIN
-        MENUITEM "发送文件在线文件(UDP中转)",             IDM_SEND_FILE, GRAYED
+        MENUITEM "发送文件在线文件(UDP中转)",             IDM_SEND_FILE
         MENUITEM "发送离线文件",                      IDM_SEND_OFF_LINE_FILE
         MENUITEM "发送文件夹",                       IDM_SEND_DIRECTORY, GRAYED
         MENUITEM "传文件设置",                       IDM_SEND_FILE_SETTINGS, GRAYED
-        MENUITEM "发送在线文件(P2P)",                 33123
+        MENUITEM "发送在线文件(P2P)",			     IDM_SEND_FILE_P2P
     END
     POPUP "举报"
     BEGIN
