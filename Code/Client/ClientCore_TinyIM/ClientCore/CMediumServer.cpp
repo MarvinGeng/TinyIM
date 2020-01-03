@@ -1770,6 +1770,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		rspMsg.m_nFileId = reqMsg.m_nFileId;
 		pClientSess->SendMsg(&rspMsg);
 		std::string strFileName = m_fileUtil.GetCurDir() + pClientSess->UserId() + "\\";
+		m_fileUtil.CreateFolder(strFileName);
 		strFileName += m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
 		if (m_fileUtil.OpenWriteFile(reqMsg.m_nFileId + 1, strFileName))
 		{
