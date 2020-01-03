@@ -131,7 +131,7 @@ namespace ChatServer
 	 */
 	void CUdpServer::HandleRecvMsg(const asio::ip::udp::endpoint senderPt, const TransBaseMsg_t* msg)
 	{
-		if (msg)
+		if (msg->GetType() != E_MsgType::FileSendDataReq_Type && msg->GetType() != E_MsgType::FileRecvDataReq_Type)
 		{
 			LOG_INFO(ms_loger, "Udp Recv From: {}  Msg:{} [{} {}]",EndPoint(senderPt), msg->to_string(),__FILENAME__,__LINE__);
 		}
