@@ -693,7 +693,7 @@ bool CMsgProto::SendFriendOffLineFile(const std::string strFriendId, std::string
  * @return true 
  * @return false 
  */
-bool CMsgProto::SendFriendOnLineFile(const std::string strFriendId, std::string strFileName)
+bool CMsgProto::SendFriendOnLineFileP2PMode(const std::string strFriendId, std::string strFileName)
 {
 	auto pSess = SourceServer::CSessManager::GetManager();
 	FriendSendFileMsgReqMsg reqMsg;
@@ -703,6 +703,28 @@ bool CMsgProto::SendFriendOnLineFile(const std::string strFriendId, std::string 
 	reqMsg.m_strFileName = strFileName;
 	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
 	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_P2P_MODE;
+	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
+	return pSess->SendMsg(&trans);
+}
+
+/**
+ * @brief 发送 发送文件 请求
+ *
+ * @param strFriendId 好友ID
+ * @param strFileName 文件名
+ * @return true
+ * @return false
+ */
+bool CMsgProto::SendFriendOnLineFileMediumTransMode(const std::string strFriendId, std::string strFileName)
+{
+	auto pSess = SourceServer::CSessManager::GetManager();
+	FriendSendFileMsgReqMsg reqMsg;
+	reqMsg.m_strMsgId = "22222222";
+	reqMsg.m_strFromId = m_strUserId;
+	reqMsg.m_strToId = strFriendId;
+	reqMsg.m_strFileName = strFileName;
+	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
+	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_MEDIUM_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
 }

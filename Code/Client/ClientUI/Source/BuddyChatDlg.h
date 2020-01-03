@@ -120,6 +120,7 @@ public:
 		COMMAND_ID_HANDLER_EX(IDM_DELETE_SELECT_MSG_LOG, OnMenu_DeleteSelectMsgLog)//删除选中消息记录
 		COMMAND_ID_HANDLER_EX(IDM_SEND_FILE, OnMenu_SendFile)					//发送文件
 		COMMAND_ID_HANDLER_EX(IDM_SEND_OFF_LINE_FILE, OnMenu_SendOfflineFile)		//发送离线文件
+		COMMAND_ID_HANDLER_EX(IDM_SEND_FILE_P2P, OnSendFileP2p)
 		COMMAND_ID_HANDLER_EX(IDM_SEND_DIRECTORY, OnMenu_SendDirectory)			//发送文件夹
 		COMMAND_ID_HANDLER_EX(IDM_SEND_FILE_SETTINGS, OnMenu_SendFileSettings)	//发送文件设置
 
@@ -280,7 +281,8 @@ private:
 	void ReCaculateCtrlPostion(long nMouseY);
 
 	//Dennis Begin
-	void SendFile(CString strFileName);
+	void SendFileOnLine(CString strFileName);
+	void SendFileOnLineP2P(CString strFileName);
 	//Dennis End
 public:
 	std::shared_ptr<CMsgProto> m_pSess; 			//协议类实例
@@ -382,5 +384,7 @@ private:
 
     time_t              m_nLastSendShakeWindowTime; //最近一次发送窗口抖动的的时间
 	CUserConfig&		m_userConfig;
+public:
+	LRESULT OnSendFileP2p(UINT uNotifyCode, int nID, CWindow wndCtl);
 };
 #endif

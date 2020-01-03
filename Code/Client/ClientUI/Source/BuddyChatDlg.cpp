@@ -2245,14 +2245,20 @@ void CBuddyChatDlg::OnMenu_ClearMsgLog(UINT uNotifyCode, int nID, CWindow wndCtl
 	//m_MsgLogger.DelBuddyMsgLog(m_nUTalkUin);
 }
 
-void CBuddyChatDlg::SendFile(CString strFileName)
+void CBuddyChatDlg::SendFileOnLine(CString strFileName)
 {
 	std::string strStdFileName = EncodeUtil::UnicodeToAnsi(strFileName.GetBuffer());
 	auto pSess = CMsgProto::GetInstance();
-	pSess->SendFriendOnLineFile(this->m_strFriendId ,strStdFileName);
+	pSess->SendFriendOnLineFileMediumTransMode(this->m_strFriendId ,strStdFileName);
 	strFileName.ReleaseBuffer();
 }
-
+void CBuddyChatDlg::SendFileOnLineP2P(CString strFileName) 
+{
+	std::string strStdFileName = EncodeUtil::UnicodeToAnsi(strFileName.GetBuffer());
+	auto pSess = CMsgProto::GetInstance();
+	pSess->SendFriendOnLineFileP2PMode(this->m_strFriendId, strStdFileName);
+	strFileName.ReleaseBuffer();
+}
 /**
  * @brief 响应"发送文件"菜单
  * 
@@ -2292,7 +2298,7 @@ void CBuddyChatDlg::OnMenu_SendFile(UINT uNotifyCode, int nID, CWindow wndCtl)
 		ShowFileTransferCtrl(TRUE);
 		m_staSendFileDesc.SetWindowText(Hootina::CPath::GetFileName(strSavePath).c_str());
 
-		SendFile(strSavePath);
+		SendFileOnLine(strSavePath);
 	}
 }
 
@@ -4477,4 +4483,42 @@ void CBuddyChatDlg::ReCaculateCtrlPostion(long nMouseY)
 
 	::GetWindowRect(m_richSend, &m_rtRichSend);
 	::ScreenToClient(m_hWnd, m_rtRichSend);
+}
+
+LRESULT CBuddyChatDlg::OnSendFileP2p(UINT uNotifyCode, int nID, CWindow wndCtl)
+{
+	// TODO: 在此添加命令处理程序代码
+	TCHAR	cFileName[MAX_PATH] = { 0 };
+	BOOL	bOpenFileDialog = TRUE;
+	LPCTSTR lpszDefExt = NULL;
+	LPCTSTR lpszFileName = _T("选择文件");
+	LPCTSTR lpszFilter = _T("所有文件(*.)\0\0");
+	DWORD	dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR | OFN_EXTENSIONDIFFERENT;
+	HWND	hWndParent = m_hWnd;
+
+	CFileDialog fileDlg(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, hWndParent);
+	if (fileDlg.DoModal() == IDOK)
+	{
+		CString strSavePath = fileDlg.m_ofn.lpstrFile;
+		CString strExtName = (Hootina::CPath::GetExtension(strSavePath)).c_str();
+
+		CString strFileTypeThumbs = Hootina::CPath::GetAppPath().c_str();
+		strFileTypeThumbs += _T("\\Skins\\Skin0\\fileTypeThumbs\\");
+		strFileTypeThumbs += strExtName;
+		strFileTypeThumbs += _T(".png");
+		m_SendFileThumbPicture.SetBitmap(strFileTypeThumbs);
+		if (!m_bMsgLogWindowVisible)
+		{
+			::SendMessage(m_btnMsgLog.m_hWnd, BM_CLICK, 0, 0);
+			m_bMsgLogWindowVisible = TRUE;
+		}
+		//::SendMessage(m_btnMsgLog.m_hWnd, BM_CLICK, 0, 0);
+		m_RightTabCtrl.SetCurSel(1);
+		m_richMsgLog.ShowWindow(SW_HIDE);
+		ShowFileTransferCtrl(TRUE);
+		//m_staSendFileDesc.SetWindowText(Hootina::CPath::GetFileName(strSavePath).c_str());
+
+		SendFileOnLineP2P(strSavePath);
+	}
+	return 0;
 }

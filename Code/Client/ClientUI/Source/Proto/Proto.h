@@ -82,7 +82,8 @@ public:
 	bool GetFriendList();
 	
 	bool SendRemoveFriend(const std::string strFriendId);
-	bool SendFriendOnLineFile(const std::string strFriendId, std::string strFileName);
+	bool SendFriendOnLineFileP2PMode(const std::string strFriendId, std::string strFileName);
+	bool SendFriendOnLineFileMediumTransMode(const std::string strFriendId, std::string strFileName);
 	bool SendFriendOffLineFile(const std::string strFriendId, std::string strFileName);
 	bool SendFriendRecvFileRsp(const C_WND_MSG_FileRecvReq& reqMsg, const E_FRIEND_OPTION eOption);
 	bool SendFileDataBeginReq(const std::string strFriendId, const std::string strFileName);
