@@ -1624,14 +1624,23 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		ChatMsgElemVec elemVec = MsgElemVec(reqMsg.m_chatMsg.m_strContext);
 		for (const auto item : elemVec)
 		{
-			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE || item.m_eType == CHAT_MSG_TYPE::E_CHAT_FILE_TYPE)
+			FileDownLoadReqMsg downMsg;
+			downMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
+			downMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
+			downMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+			downMsg.m_strRelateMsgId = reqMsg.m_chatMsg.m_strChatMsgId;
+			if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_IMAGE_TYPE) 
 			{
-				FileDownLoadReqMsg downMsg;
-				downMsg.m_strUserId = reqMsg.m_chatMsg.m_strReceiverId;
-				downMsg.m_strFriendId = reqMsg.m_chatMsg.m_strSenderId;
-				downMsg.m_strMsgId = m_httpServer->GenerateMsgId();
 				downMsg.m_strFileName = item.m_strImageName;
-				downMsg.m_strRelateMsgId = reqMsg.m_chatMsg.m_strChatMsgId;
+				downMsg.m_eFileType = FILE_TYPE::FILE_TYPE_IMAGE;
+				LOG_INFO(ms_loger, "Download File {} Begin [{} {}]", item.m_strImageName, __FILENAME__, __LINE__);
+				pClientSess->SendMsg(&downMsg);
+				bWaitImage = true;
+			}
+			else if (item.m_eType == CHAT_MSG_TYPE::E_CHAT_FILE_TYPE)
+			{
+				downMsg.m_strFileName = item.m_strImageName;
+				downMsg.m_eFileType = FILE_TYPE::FILE_TYPE_FILE;
 				LOG_INFO(ms_loger, "Download File {} Begin [{} {}]", item.m_strImageName, __FILENAME__, __LINE__);
 				pClientSess->SendMsg(&downMsg);
 				bWaitImage = true;
@@ -1768,6 +1777,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		rspMsg.m_strUserId = reqMsg.m_strUserId;
 		rspMsg.m_strFriendId = reqMsg.m_strFriendId;
 		rspMsg.m_nFileId = reqMsg.m_nFileId;
+		rspMsg.m_eFileType = reqMsg.m_eFileType;
 		pClientSess->SendMsg(&rspMsg);
 		std::string strFileName = m_fileUtil.GetCurDir() + pClientSess->UserId() + "\\";
 		m_fileUtil.CreateFolder(strFileName);
@@ -1790,6 +1800,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 		rspMsg.m_strUserId = reqMsg.m_strUserId;
 		rspMsg.m_strFriendId = reqMsg.m_strFriendId;
 		rspMsg.m_nFileId = reqMsg.m_nFileId;
+		rspMsg.m_eFileType = reqMsg.m_eFileType;
 		pClientSess->SendMsg(&rspMsg);
 
 		auto hashItem = m_fileHashMsgIdMap.find(reqMsg.m_strFileHash);

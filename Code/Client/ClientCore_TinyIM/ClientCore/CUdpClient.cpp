@@ -46,7 +46,10 @@ namespace ClientCore {
 				if (!ec && bytes > 0)
 				{
 					TransBaseMsg_t trans(m_recvbuf);
-					LOG_INFO(this->ms_loger, "[{}] UDP RECV: {} MSG:{} {} [{} {}]",UserId(), EndPoint(m_recvFromPt),MsgType(trans.GetType()), trans.to_string(),__FILENAME__,__LINE__);
+					if (trans.GetType() != E_MsgType::FileSendDataReq_Type && trans.GetType() != E_MsgType::FileRecvDataReq_Type)
+					{
+						LOG_INFO(this->ms_loger, "[{}] UDP RECV: {} MSG:{} {} [{} {}]", UserId(), EndPoint(m_recvFromPt), MsgType(trans.GetType()), trans.to_string(), __FILENAME__, __LINE__);
+					}
 					if (bytes >= trans.GetSize())
 					{
 						handle_msg(m_recvFromPt, &trans);
