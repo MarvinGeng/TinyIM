@@ -1110,6 +1110,7 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 		rspMsg.m_strFriendId = req.m_strFriendId;
 		rspMsg.m_strFileName = req.m_strFileName;
 		rspMsg.m_strRelateMsgId = req.m_strRelateMsgId;
+		rspMsg.m_eFileType = req.m_eFileType;
 		{
 			std::string strFileName = m_fileUtil.GetCurDir() + req.m_strFriendId + "\\" + req.m_strFileName;
 			if (m_fileUtil.IsFileExist(req.m_strFileName))
@@ -1141,6 +1142,7 @@ void CChatServer::HandleFileDownLoadReq(const std::shared_ptr<CServerSess>& pSes
 			reqMsg.m_nFileId = rand();
 			reqMsg.m_strFileHash = rspMsg.m_strFileHash;
 			reqMsg.m_strMsgId = CreateMsgId();
+			reqMsg.m_eFileType = req.m_eFileType;
 			pSess->SendMsg(&reqMsg);
 			SaveSendingState(reqMsg.m_strFileHash);
 		}
@@ -1175,7 +1177,18 @@ void CChatServer::HandleFileSendDataBeginRsp(const std::shared_ptr<CServerSess>&
 			sendReqMsg.m_nDataIndex = 1;
 			sendReqMsg.m_nDataLength = 0;
 			m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024);
-			pSess->SendMsg(&sendReqMsg);
+			if (req.m_eFileType == FILE_TYPE::FILE_TYPE_IMAGE)
+			{
+				pSess->SendMsg(&sendReqMsg);
+			}
+			else if (req.m_eFileType == FILE_TYPE::FILE_TYPE_FILE)
+			{
+				auto udpAddr = m_userIdUdpAddrMap.find(sendReqMsg.m_strUserId);
+				if (udpAddr != m_userIdUdpAddrMap.end())
+				{
+					m_udpServer->sendMsg(udpAddr->second.m_strServerIp,udpAddr->second.m_nPort, &sendReqMsg);
+				}
+			}
 		}
 	}
 }

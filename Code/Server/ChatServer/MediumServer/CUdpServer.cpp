@@ -96,6 +96,10 @@ namespace ChatServer
 			auto pSelf = shared_from_this();
 			TransBaseMsg_t trans(pMsg->GetMsgType(), pMsg->ToString());
 			memcpy(m_sendbuf, trans.GetData(), trans.GetSize());
+			if (pMsg->GetMsgType() != E_MsgType::FileSendDataReq_Type && pMsg->GetMsgType() != E_MsgType::FileRecvDataReq_Type)
+			{
+				LOG_INFO(ms_loger, "UDP SEND TO: {}  Msg:{} [{} {}]", EndPoint(senderPt), pMsg->ToString(), __FILENAME__, __LINE__);
+			}
 			std::string strMsg = trans.to_string();
 			m_socket->async_send_to(asio::buffer(m_sendbuf, trans.GetSize()),senderPt,
 				[this, pSelf, senderPt, strMsg](std::error_code ec, std::size_t /*bytes_recvd*/) {
@@ -105,7 +109,6 @@ namespace ChatServer
 				}
 				else
 				{
-					LOG_INFO(ms_loger, "UDP Send To:{} Msg:{} [{} {}]", EndPoint(senderPt), strMsg, __FILENAME__, __LINE__);
 				}
 			});
 		}
