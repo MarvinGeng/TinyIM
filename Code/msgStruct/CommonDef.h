@@ -430,6 +430,10 @@ enum class FILE_TRANS_TYPE {
 	UDP_P2P_MODE,//UDP的P2P模式
 	UDP_SERVER_SAVE_MODE,//UDP的服务器保存模式，
 };
+enum class FILE_TYPE {
+	FILE_TYPE_FILE,//文件
+	FILE_TYPE_IMAGE,//图片
+};
 //操作返回的错误代码
 enum class ERROR_CODE_TYPE {
 	E_CODE_SUCCEED = 0,//成功

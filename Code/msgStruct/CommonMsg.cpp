@@ -8446,6 +8446,7 @@ std::string FileSendDataBeginReq::ToString() const
 		{"FileName",m_strFileName},
 		{"FileId",m_nFileId},
 		{"FileHash",m_strFileHash},
+		{"FileType",static_cast<int>(m_eFileType)},
 		});
 	return msgJson.dump();
 }
@@ -8509,6 +8510,14 @@ bool FileSendDataBeginReq::FromString(const std::string& strJson)
 	{
 		return false;
 	}
+	if (json["FileType"].is_number())
+	{
+		m_eFileType = static_cast<FILE_TYPE>(json["FileType"].int_value());
+	}
+	else
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -8529,6 +8538,7 @@ std::string FileSendDataBeginRsp::ToString() const
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
 		{"FileId",m_nFileId},
+		{"FileType",static_cast<int>(m_eFileType)},
 	});
 	return msgJson.dump();
 }
@@ -8599,6 +8609,14 @@ bool FileSendDataBeginRsp::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["FileType"].is_number())
+	{
+		m_eFileType = static_cast<FILE_TYPE>(json["FileType"].int_value());
+	}
+	else
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -8689,6 +8707,7 @@ std::string FileDownLoadReqMsg::ToString() const
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
 		{"RelateMsgId",m_strRelateMsgId},
+		{"FileType",static_cast<int>(m_eFileType)},
 		});
 	return msgJson.dump();
 }
@@ -8743,6 +8762,13 @@ bool FileDownLoadReqMsg::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["FileType"].is_number()) {
+		m_eFileType = static_cast<FILE_TYPE>(json["FileType"].int_value());
+	}
+	else {
+		return false;
+	}
+
 	return true;
 }
 
@@ -8763,7 +8789,8 @@ std::string FileDownLoadRspMsg::ToString() const
 		{"FriendId",m_strFriendId},
 		{"FileName",m_strFileName},
 		{"FileHash",m_strFileHash},
-		{"RelateMsgId",m_strRelateMsgId}
+		{"RelateMsgId",m_strRelateMsgId},
+		{"FileType",static_cast<int>(m_eFileType)},
 		});
 	return msgJson.dump();
 }
@@ -8840,6 +8867,15 @@ bool FileDownLoadRspMsg::FromString(const std::string& strJson)
 	{
 		return false;
 	}
+	
+	if (json["FileType"].is_number()) {
+		m_eFileType = static_cast<FILE_TYPE>(json["FileType"].int_value());
+	}
+	else
+	{
+		return false;
+	}
+	
 	return true;
 }
 

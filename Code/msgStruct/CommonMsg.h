@@ -2188,6 +2188,7 @@ public:
 	std::string m_strFileName;//文件名
 	int m_nFileId;//文件Id
 	std::string m_strFileHash;//文件的Hash值
+	FILE_TYPE   m_eFileType;
 public:
 	FileSendDataBeginReq();
 	virtual std::string ToString() const override;
@@ -2209,6 +2210,7 @@ public:
 	std::string m_strFriendId;//好友ID
 	std::string m_strFileName;//文件名
 	int m_nFileId;//文件ID
+	FILE_TYPE   m_eFileType;
 public:
 	FileSendDataBeginRsp();
 	virtual std::string ToString() const override;
@@ -2242,6 +2244,7 @@ public:
 	std::string m_strFriendId;//好友ID
 	std::string m_strFileName;//文件名
 	std::string m_strRelateMsgId;//相关的MsgId(由哪个MsgId发起的)
+	FILE_TYPE m_eFileType;
 public:
 	FileDownLoadReqMsg();
 	virtual std::string ToString() const override;
@@ -2259,6 +2262,7 @@ public:
 	std::string m_strFileName;//文件名
 	std::string m_strFileHash;
 	std::string m_strRelateMsgId;
+	FILE_TYPE m_eFileType;
 public:
 	FileDownLoadRspMsg();
 	virtual std::string ToString() const override;
