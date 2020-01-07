@@ -176,7 +176,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
  * @param pClientSess 收到消息的Sess
  * @param rspMsg 文件数据回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess,const FileDataSendRspMsg& rspMsg)
+void CMediumServer::HandleSendBack_FileDataSendRsp(const std::shared_ptr<CClientSess>& pClientSess,const FileDataSendRspMsg& rspMsg)
 {
 	auto pMsg = DoSendBackFileDataSendRsp(rspMsg);
 	pClientSess->SendMsg(pMsg);
@@ -462,7 +462,7 @@ void CMediumServer::CheckFriendP2PConnect()
  * @return true 处理成功
  * @return false 处理失败
  */
-bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg)
+bool CMediumServer::HandleSendBack_GetFriendListRsp(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg)
 {
 	//if(m_userFriendListMap.find(pClientSess->UserId()) == m_userFriendListMap.end())
 	//{
@@ -868,7 +868,7 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
  * @param pClientSess 用户会话
  * @param rspMsg 文件校验回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg)
+void CMediumServer::HandleSendBack_FileVerifyRsp(const std::shared_ptr<CClientSess>& pClientSess, const FileVerifyRspMsg& rspMsg)
 {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
@@ -1617,7 +1617,7 @@ CServerSess_SHARED_PTR CMediumServer::GetSendBackSess(const std::string strUserI
  * @param pClientSess 和服务器的连接
  * @param reqMsg 收到的好友聊天消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg)
+void CMediumServer::HandleSendBack_FriendChatRecvTxtReq(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatRecvTxtReqMsg reqMsg)
 {
 	{
 		bool bWaitImage = false;
@@ -1697,7 +1697,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接
  * @param rspMsg 好友聊天消息的回复
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatSendTxtRspMsg rspMsg)
+void CMediumServer::HandleSendBack_FriendChatSendTxtRsp(const std::shared_ptr<CClientSess>& pClientSess, const FriendChatSendTxtRspMsg rspMsg)
 {
 	{
 		ChatMsgElemVec oldVec = MsgElemVec(rspMsg.m_chatMsg.m_strContext);
@@ -1750,7 +1750,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接
  * @param reqMsg 发送文件数据开始消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg)
+void CMediumServer::HandleSendBack_FileSendDataBeginReq(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginReq reqMsg)
 {
 	FileSendDataBeginRsp rspMsg;
 	std::string strFileName;
@@ -1850,7 +1850,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 客户端连接
  * @param rspMsg 文件下载回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg)
+void CMediumServer::HandleSendBack_FileDownLoadRsp(const std::shared_ptr<CClientSess>& pClientSess, const FileDownLoadRspMsg rspMsg)
 {
 	if(rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
@@ -1949,7 +1949,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接会话
  * @param rspMsg 发送文件数据开始回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginRsp rspMsg)
+void CMediumServer::HandleSendBack_FileSendDataBeginRsp(const std::shared_ptr<CClientSess>& pClientSess, const FileSendDataBeginRsp rspMsg)
 {
 	if (rspMsg.m_errCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
@@ -1997,7 +1997,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接会话
  * @param rspMsg 登录回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLoginRspMsg rspMsg) {
+void CMediumServer::HandleSendBack_UserLoginRsp(const std::shared_ptr<CClientSess>& pClientSess, const UserLoginRspMsg rspMsg) {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED)
 	{
 		pClientSess->SetUserId(rspMsg.m_strUserId);
@@ -2068,7 +2068,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接
  * @param rspMsg 用户退出登录回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg) {
+void CMediumServer::HandleSendBack_UserLogoutRsp(const std::shared_ptr<CClientSess>& pClientSess, const UserLogoutRspMsg rspMsg) {
 	if (rspMsg.m_eErrCode == ERROR_CODE_TYPE::E_CODE_SUCCEED) {
 		m_userClientSessMap.erase(rspMsg.m_strUserName);
 		m_userStateMap.erase(pClientSess->UserId());
@@ -2139,9 +2139,9 @@ void CMediumServer::HandleSendBack_NetFailed(const std::shared_ptr<CClientSess>&
 	}
 }
 
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const FriendRecvFileMsgReqMsg reqMsg)
+void CMediumServer::HandleSendBack_FriendRecvFileMsgReq(const std::shared_ptr<CClientSess>& pClientSess, const FriendRecvFileMsgReqMsg reqMsg)
 {
-	FriendRecvFileMsgRspMsg rspMsg;
+	/*FriendRecvFileMsgRspMsg rspMsg;
 	rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 	rspMsg.m_strFromId = reqMsg.m_strToId;
 	rspMsg.m_strToId = reqMsg.m_strFromId;
@@ -2149,7 +2149,8 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	rspMsg.m_eOnlineType = reqMsg.m_eOnlineType;
 	rspMsg.m_eOption = E_FRIEND_OPTION::E_AGREE_ADD;
 	rspMsg.m_transMode = reqMsg.m_transMode;
-	pClientSess->SendMsg(&rspMsg);
+	pClientSess->SendMsg(&rspMsg);*/
+
 }
 /**
  * @brief 处理查询UDP地址的回复消息
@@ -2157,7 +2158,7 @@ void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
  * @param pClientSess 和服务器的连接
  * @param rspMsg UDP地址回复消息
  */
-void CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)
+void CMediumServer::HandleSendBack_QueryUserUdpAddrRsp(const std::shared_ptr<CClientSess>& pClientSess, const QueryUserUdpAddrRspMsg rspMsg)
 {
 	if(pClientSess)
 	{
@@ -2204,7 +2205,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FriendChatRecvTxtReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, reqMsg);
+			HandleSendBack_FriendChatRecvTxtReq(pClientSess, reqMsg);
 		}
 		return true;
 	}break;
@@ -2212,7 +2213,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FriendChatSendTxtRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_FriendChatSendTxtRsp(pClientSess, rspMsg);
 			return true;
 		}
 	}break;
@@ -2239,7 +2240,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileSendDataBeginReq reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, reqMsg);
+			HandleSendBack_FileSendDataBeginReq(pClientSess, reqMsg);
 		}
 		return true;
 	}break;
@@ -2247,7 +2248,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileSendDataBeginRsp rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_FileSendDataBeginRsp(pClientSess, rspMsg);
 		}
 	}break;
 	case E_MsgType::FileVerifyReq_Type:
@@ -2261,14 +2262,14 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		UserLoginRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_UserLoginRsp(pClientSess, rspMsg);
 		}
 	}break;
 	case E_MsgType::UserLogoutRsp_Type:
 	{
 		UserLogoutRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_UserLogoutRsp(pClientSess, rspMsg);
 		}
 	}break;
 	case E_MsgType::NetFailedReport_Type:
@@ -2279,14 +2280,14 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileDownLoadRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess,rspMsg);
+			HandleSendBack_FileDownLoadRsp(pClientSess,rspMsg);
 		}
 	}break;
 	case E_MsgType::FriendRecvFileMsgReq_Type:
 	{
 		FriendRecvFileMsgReqMsg reqMsg;
 		if (reqMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, reqMsg);
+			HandleSendBack_FriendRecvFileMsgReq(pClientSess, reqMsg);
 		}
 	}break;
 	case E_MsgType::NetRecoverReport_Type: {
@@ -2338,7 +2339,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		QueryUserUdpAddrRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_QueryUserUdpAddrRsp(pClientSess, rspMsg);
 		}
 		return true;
 	}break;
@@ -2362,7 +2363,7 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileDataSendRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess,rspMsg);
+			HandleSendBack_FileDataSendRsp(pClientSess,rspMsg);
 		}
 	}break;
 	case E_MsgType::FileRecvDataReq_Type:
@@ -2377,14 +2378,14 @@ bool CMediumServer::HandleSendBack(const std::shared_ptr<CClientSess>& pClientSe
 	{
 		FileVerifyRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_FileVerifyRsp(pClientSess, rspMsg);
 		}
 	}break;
 	case E_MsgType::GetFriendListRsp_Type:
 	{
 		GetFriendListRspMsg rspMsg;
 		if (rspMsg.FromString(msg.to_string())) {
-			HandleSendBack(pClientSess, rspMsg);
+			HandleSendBack_GetFriendListRsp(pClientSess, rspMsg);
 		}
 	}break;
 	case E_MsgType::FriendNotifyFileMsgReq_Type:
