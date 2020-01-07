@@ -1436,13 +1436,14 @@ void CChatServer::HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>&
  */
 void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pSess, const FriendSendFileMsgReqMsg& reqMsg)
 {
-	//For Sender 对于发送者
+	//在线文件请求
 	if(reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
 	{
 		auto item = m_UserSessVec.find(reqMsg.m_strToId);
+		//接收方在线
 		if (item != m_UserSessVec.end())
 		{
-			//接收方在线
+
 			{
 				FriendSendFileMsgRspMsg rspMsg;
 				rspMsg.m_transMode = reqMsg.m_transMode;
@@ -1475,6 +1476,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			pSess->SendMsg(&rspMsg);
 		}
 	}
+	//离线文件请求
 	else if (reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
 	{
 		{
@@ -1523,7 +1525,18 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
  */
 void CChatServer::HandleFriendRecvFileRsp(const FriendRecvFileMsgRspMsg& reqMsg)
 {
-	//
+	//保存传输模式
+	{
+		auto item = m_fileTranModeMap.find(reqMsg.m_nFileId);
+		if (item != m_fileTranModeMap.end()) {
+			LOG_ERR(ms_loger, "FileId:{} Is In Use [{} {}]", reqMsg.m_nFileId, __FILENAME__, __LINE__);
+		}
+		else
+		{
+			m_fileTranModeMap.insert({ reqMsg.m_nFileId,reqMsg.m_transMode });
+		}
+	}
+	//通知文件发送方
 	{
 		auto item = m_UserSessVec.find(reqMsg.m_strToId);
 		if (item != m_UserSessVec.end())
@@ -2416,8 +2429,51 @@ void CChatServer::HandleQueryUserUdpAddr(const std::shared_ptr<CServerSess>& pSe
  */
 void CChatServer::Handle_UdpFileDataSendReqMsg(const asio::ip::udp::endpoint sendPt,const FileDataSendReqMsg& reqMsg)
 {
-	auto rspMsg = DoFileDataSendReq(reqMsg);
-	m_udpServer->sendMsg(sendPt, &rspMsg);
+	auto item = m_fileTranModeMap.find(reqMsg.m_nFileId);
+	if(item != m_fileTranModeMap.end())
+	{
+		switch (item->second)
+		{
+		case FILE_TRANS_TYPE::UDP_OFFLINE_MODE:
+		{
+			auto rspMsg = DoFileDataSendReq(reqMsg);
+			m_udpServer->sendMsg(sendPt, &rspMsg);
+		}break;
+		case FILE_TRANS_TYPE::UDP_ONLINE_MEDIUM_MODE:
+		{
+			auto buddyUdp = m_userIdUdpAddrMap.find(reqMsg.m_strFriendId);
+			if (buddyUdp != m_userIdUdpAddrMap.end())
+			{
+				FileDataRecvReqMsg recvReqMsg;
+
+				{
+					recvReqMsg.m_strMsgId = reqMsg.m_strMsgId;
+					recvReqMsg.m_strUserId = reqMsg.m_strFriendId;
+					recvReqMsg.m_strFriendId = reqMsg.m_strUserId;
+					recvReqMsg.m_nFileId = reqMsg.m_nFileId;
+					recvReqMsg.m_nDataTotalCount = reqMsg.m_nDataTotalCount;
+					recvReqMsg.m_nDataIndex = reqMsg.m_nDataIndex;
+					recvReqMsg.m_nDataLength = reqMsg.m_nDataLength;
+					memcpy(recvReqMsg.m_szData, reqMsg.m_szData, recvReqMsg.m_nDataLength);
+				}
+
+				m_udpServer->sendMsg(buddyUdp->second.m_strServerIp, buddyUdp->second.m_nPort, &recvReqMsg);
+			}
+			else
+			{
+				LOG_ERR(ms_loger, "User:{} No Udp Addr [{} {}]", __FILENAME__, __LINE__);
+			}
+		}break;
+		default:
+		{
+			LOG_ERR(ms_loger, "User:{} Send File Data Mode Error Mode:{} [{} {}]", reqMsg.m_strUserId,static_cast<int>(item->second), __FILENAME__, __LINE__);
+		}break;
+		}
+	}
+	else
+	{
+		LOG_ERR(ms_loger, "User:{} Send File Data Error:No File Mode [{} {}]", reqMsg.m_strUserId, __FILENAME__, __LINE__);
+	}
 }
 
 /**
@@ -2628,49 +2684,86 @@ void CChatServer::HandleGetRandomUserReq(const std::shared_ptr<CServerSess>& pSe
  */
 void CChatServer::Handle_RecvUdpMsg(const asio::ip::udp::endpoint /*sendPt*/, const FileDataRecvRspMsg& rspMsg)
 {
-	if(rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
+	auto fileTransMode = m_fileTranModeMap.find(rspMsg.m_nFileId);
+	if (fileTransMode != m_fileTranModeMap.end())
 	{
+		if (fileTransMode->second == FILE_TRANS_TYPE::UDP_OFFLINE_MODE)
 		{
-			FileDataRecvReqMsg sendReqMsg;
-			sendReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
-			sendReqMsg.m_strUserId = rspMsg.m_strUserId;
-			sendReqMsg.m_strFriendId = rspMsg.m_strFriendId;
-			sendReqMsg.m_nFileId = rspMsg.m_nFileId;
-
-			sendReqMsg.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
-			sendReqMsg.m_nDataIndex = rspMsg.m_nDataIndex+1;
-			sendReqMsg.m_nDataLength = 0;
-			if (m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024))
+			//UDP Server SAVE Mode
+			if (rspMsg.m_nDataIndex < rspMsg.m_nDataTotalCount)
 			{
-				auto item = m_userIdUdpAddrMap.find(rspMsg.m_strUserId);
-				if (item != m_userIdUdpAddrMap.end())
 				{
-					m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
-				}
-				else
-				{
-					LOG_ERR(ms_loger, "Can not find {} ", rspMsg.m_strUserId);
+					FileDataRecvReqMsg sendReqMsg;
+					sendReqMsg.m_strMsgId = std::to_string(m_MsgID_Util.nextId());
+					sendReqMsg.m_strUserId = rspMsg.m_strUserId;
+					sendReqMsg.m_strFriendId = rspMsg.m_strFriendId;
+					sendReqMsg.m_nFileId = rspMsg.m_nFileId;
+
+					sendReqMsg.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+					sendReqMsg.m_nDataIndex = rspMsg.m_nDataIndex + 1;
+					sendReqMsg.m_nDataLength = 0;
+					if (m_fileUtil.OnReadData(sendReqMsg.m_nFileId, sendReqMsg.m_szData, sendReqMsg.m_nDataLength, 1024))
+					{
+						auto item = m_userIdUdpAddrMap.find(rspMsg.m_strUserId);
+						if (item != m_userIdUdpAddrMap.end())
+						{
+							m_udpServer->sendMsg(item->second.m_strServerIp, item->second.m_nPort, &sendReqMsg);
+						}
+						else
+						{
+							LOG_ERR(ms_loger, "Can not find {} ", rspMsg.m_strUserId);
+						}
+					}
 				}
 			}
+			else
+			{
+				std::string strFileName = m_fileUtil.GetFileName(rspMsg.m_nFileId);
+				FileVerifyReqMsg reqMsg;
+				reqMsg.m_nFileId = rspMsg.m_nFileId;
+				reqMsg.m_strMsgId = CreateMsgId();
+				reqMsg.m_strUserId = rspMsg.m_strUserId;
+				reqMsg.m_strFriendId = rspMsg.m_strFriendId;
+				reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(strFileName);
+				reqMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
+				m_fileUtil.GetFileSize(reqMsg.m_nFileSize, strFileName);
+
+				auto item = m_UserSessVec.find(reqMsg.m_strUserId);
+				if (item != m_UserSessVec.end() && item->second->IsConnected())
+				{
+					item->second->SendMsg(&reqMsg);
+				}
+			}
+		}
+		else if (fileTransMode->second == FILE_TRANS_TYPE::UDP_ONLINE_MEDIUM_MODE)
+		{
+			FileDataSendRspMsg sendRspMsg;
+			{
+				sendRspMsg.m_strMsgId = rspMsg.m_strMsgId;
+				sendRspMsg.m_strUserId = rspMsg.m_strFriendId;
+				sendRspMsg.m_strFriendId = rspMsg.m_strUserId;
+				sendRspMsg.m_nFileId = rspMsg.m_nFileId;
+				sendRspMsg.m_nDataIndex = rspMsg.m_nDataIndex;
+				sendRspMsg.m_nDataTotalCount = rspMsg.m_nDataTotalCount;
+			}
+			auto buddyUdp = m_userIdUdpAddrMap.find(rspMsg.m_strFriendId);
+			if (buddyUdp != m_userIdUdpAddrMap.end())
+			{
+				m_udpServer->sendMsg(buddyUdp->second.m_strServerIp, buddyUdp->second.m_nPort, &sendRspMsg);
+			}
+			else
+			{
+				LOG_ERR(ms_loger, "User:{} No Udp Addr [{} {}]", rspMsg.m_strFriendId, __FILENAME__, __LINE__);
+			}
+		}
+		else
+		{
+			LOG_ERR(ms_loger, "User:{} Friend:{} Wrong TransMode [{} {}]", rspMsg.m_strUserId, rspMsg.m_strFriendId, __FILENAME__, __LINE__);
 		}
 	}
 	else
 	{
-		std::string strFileName = m_fileUtil.GetFileName(rspMsg.m_nFileId);
-		FileVerifyReqMsg reqMsg;
-		reqMsg.m_nFileId = rspMsg.m_nFileId;
-		reqMsg.m_strMsgId = CreateMsgId();
-		reqMsg.m_strUserId = rspMsg.m_strUserId;
-		reqMsg.m_strFriendId = rspMsg.m_strFriendId;
-		reqMsg.m_strFileName = m_fileUtil.GetFileNameFromPath(strFileName);
-		reqMsg.m_strFileHash = m_fileUtil.CalcHash(strFileName);
-		m_fileUtil.GetFileSize(reqMsg.m_nFileSize,strFileName);
-		
-		auto item = m_UserSessVec.find(reqMsg.m_strUserId);
-		if (item != m_UserSessVec.end() && item->second->IsConnected())
-		{
-			item->second->SendMsg(&reqMsg);
-		}
+		LOG_ERR(ms_loger, "User:{} Friend:{} No File TransMode [{} {}]",rspMsg.m_strUserId,rspMsg.m_strFriendId, __FILENAME__, __LINE__);
 	}
 }
 
