@@ -798,7 +798,7 @@ namespace ClientCore
 		FriendSendFileMsgReqMsg reqMsg;
 		if (reqMsg.FromString(strReq))
 		{
-			reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_P2P_MODE;
+			reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_P2P_MODE;
 			reqMsg.m_strMsgId = GenerateMsgId();
 			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strFromId);
 			if (pClientSess)
