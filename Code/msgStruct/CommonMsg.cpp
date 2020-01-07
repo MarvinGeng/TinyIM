@@ -5601,7 +5601,7 @@ bool RecvGroupTextMsgRspMsg::FromString(const std::string &strJson)
 FriendSendFileMsgReqMsg::FriendSendFileMsgReqMsg()
 {
     m_type = E_MsgType::FriendSendFileMsgReq_Type;
-	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+	m_transMode = FILE_TRANS_TYPE::TCP_OFFLINE_MODE;
 }
 
 std::string FriendSendFileMsgReqMsg::ToString() const
@@ -5681,7 +5681,7 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
 	}
 	else
 	{
-		m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+		m_transMode = FILE_TRANS_TYPE::TCP_OFFLINE_MODE;
 	}
 
     return true;
@@ -5690,7 +5690,7 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
 FriendSendFileMsgRspMsg::FriendSendFileMsgRspMsg()
 {
     m_type = E_MsgType::FriendSendFileMsgRsp_Type;
-	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+	m_transMode = FILE_TRANS_TYPE::TCP_OFFLINE_MODE;
 }
 
 std::string FriendSendFileMsgRspMsg::ToString() const
@@ -5805,7 +5805,7 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
 FriendRecvFileMsgReqMsg::FriendRecvFileMsgReqMsg()
 {
     m_type = E_MsgType::FriendRecvFileMsgReq_Type;
-	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+	m_transMode = FILE_TRANS_TYPE::TCP_OFFLINE_MODE;
 }
 
 std::string FriendRecvFileMsgReqMsg::ToString() const
@@ -5895,7 +5895,7 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
 FriendRecvFileMsgRspMsg::FriendRecvFileMsgRspMsg()
 {
     m_type = E_MsgType::FriendRecvFileMsgRsp_Type;
-	m_transMode = FILE_TRANS_TYPE::TCP_MODE;
+	m_transMode = FILE_TRANS_TYPE::TCP_OFFLINE_MODE;
 }
 
 std::string FriendRecvFileMsgRspMsg::ToString() const
