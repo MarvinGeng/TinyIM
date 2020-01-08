@@ -410,12 +410,23 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 	{
 		HandleGetGroupChatHistory(pOrgMsg);
 	}break;
+	case E_MsgType::FileTransProgressNotifyReq_Type:
+	{
+		FileTransProgressNotifyReqMsg reqMsg;
+		if (reqMsg.FromString(pOrgMsg->to_string())) {
+			HandleFileTransProcessNotifyReq(reqMsg);
+		}
+	}break;
 	default: {
 		ERR(ms_loger, "Unhandle MsgType:{} Msg:{} [{} {}]", MsgType(pOrgMsg->GetType()), pOrgMsg->to_string(), __FILENAME__, __LINE__);
 	}break;
 	}
 }
 
+void CMsgProto::HandleFileTransProcessNotifyReq(const FileTransProgressNotifyReqMsg& reqMsg)
+{
+
+}
 /**
  * @brief 获取和某个好友的聊天消息，显示历史消息记录的时候使用
  * 

@@ -158,7 +158,7 @@ private:
 	void HandleNetRecoverReportMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 	void HandleNetFailedMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 
-
+	void HandleFileTransProcessNotifyReq(const FileTransProgressNotifyReqMsg& reqMsg);
 	
 	void HandleCreateGroupRspMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg);
 
