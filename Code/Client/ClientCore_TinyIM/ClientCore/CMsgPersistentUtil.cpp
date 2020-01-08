@@ -590,7 +590,7 @@ bool CMsgPersistentUtil::Update_RecvGroupTextMsgReqMsg(const RecvGroupTextMsgReq
  */
 bool CMsgPersistentUtil::Save_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgReqMsg& msg)
 {
-	m_FriendRecvFileMsgReqMsgMap.insert(std::pair<std::string,FriendRecvFileMsgReqMsg>(msg.m_strToId,msg));
+	m_FriendRecvFileMsgReqMsgMap.insert(std::pair<std::string,FriendRecvFileMsgReqMsg>(msg.m_strUserId,msg));
 	return true;
 }
 
@@ -636,7 +636,7 @@ bool CMsgPersistentUtil::Update_FriendRecvFileMsgReqMsg(const FriendRecvFileMsgR
  */
 bool CMsgPersistentUtil::Save_FriendNotifyFileMsgReqMsg(const FriendNotifyFileMsgReqMsg& msg)
 {
-	m_FriendNotifyFileMsgReqMsgMap.insert({msg.m_strToId, msg});
+	m_FriendNotifyFileMsgReqMsgMap.insert({msg.m_strUserId, msg});
 	return false;
 }
 

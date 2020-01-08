@@ -889,7 +889,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 {
 	LOG_ERR(ms_loger,"{}",notifyMsg.ToString());
 	//离线
-	if (notifyMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
+	if(notifyMsg.m_transMode == FILE_TRANS_TYPE::TCP_OFFLINE_MODE)
 	{
 		//同意
 		if (notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
@@ -897,7 +897,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 			bool bResult = m_fileUtil.OpenReadFile(notifyMsg.m_nFileId, notifyMsg.m_strFileName);
 			int nFileSize = 0;
 			m_fileUtil.GetFileSize(nFileSize, notifyMsg.m_strFileName);
-			auto pSess = GetUdpSess(notifyMsg.m_strFromId);
+			auto pSess = GetUdpSess(notifyMsg.m_strUserId);
 			if (pSess)
 			{
 				FileDataSendReqMsg reqMsg;
@@ -907,8 +907,8 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 				//{
 				reqMsg.m_nDataIndex = nIndex;
 				reqMsg.m_nFileId = notifyMsg.m_nFileId;
-				reqMsg.m_strFriendId = notifyMsg.m_strToId;
-				reqMsg.m_strUserId = notifyMsg.m_strFromId;
+				reqMsg.m_strFriendId = notifyMsg.m_strFriendId;
+				reqMsg.m_strUserId = notifyMsg.m_strUserId;
 				m_fileUtil.OnReadData(reqMsg.m_nFileId, reqMsg.m_szData, reqMsg.m_nDataLength, 1024);
 				pSess->sendToServer(&reqMsg);
 				//	nIndex++;
@@ -917,7 +917,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 			}
 			else
 			{
-				LOG_ERR(ms_loger, "{} No Udp Sess", notifyMsg.m_strFromId);
+				LOG_ERR(ms_loger, "{} No Udp Sess", notifyMsg.m_strUserId);
 			}
 		}
 		//拒绝
@@ -926,7 +926,7 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 
 		}
 	}
-	if (notifyMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
+	else 
 	{
 		if(notifyMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 		{
@@ -937,8 +937,8 @@ void CMediumServer::HandleFriendNotifyFileMsgReq(const FriendNotifyFileMsgReqMsg
 			if (m_fileUtil.OpenReadFile(notifyMsg.m_nFileId, strFileName)) {
 				FileDataSendReqMsg sendReqMsg;
 				sendReqMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-				sendReqMsg.m_strUserId = notifyMsg.m_strToId;
-				sendReqMsg.m_strFriendId = notifyMsg.m_strFromId;
+				sendReqMsg.m_strUserId = notifyMsg.m_strUserId;
+				sendReqMsg.m_strFriendId = notifyMsg.m_strFriendId;
 				sendReqMsg.m_nFileId = notifyMsg.m_nFileId;
 
 				sendReqMsg.m_nDataTotalCount = nFileSize / 1024 + (nFileSize % 1024 == 0 ? 0 : 1);
@@ -1349,7 +1349,7 @@ void CMediumServer::Handle_RecvFileOnlineRsp(const FriendRecvFileMsgRspMsg& rspM
 {
 	if (rspMsg.m_eOption == E_FRIEND_OPTION::E_AGREE_ADD)
 	{
-		m_fileUtil.OpenWriteFile(rspMsg.m_nFileId+1, rspMsg.m_strFromId+"_"+std::to_string(rand())+"_"+m_fileUtil.GetFileNameFromPath(rspMsg.m_strFileName));
+		m_fileUtil.OpenWriteFile(rspMsg.m_nFileId+1, rspMsg.m_strUserId+"_"+std::to_string(rand())+"_"+m_fileUtil.GetFileNameFromPath(rspMsg.m_strFileName));
 	}
 }
 

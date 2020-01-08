@@ -800,15 +800,15 @@ namespace ClientCore
 		{
 			reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_P2P_MODE;
 			reqMsg.m_strMsgId = GenerateMsgId();
-			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strFromId);
+			auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserId);
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(&reqMsg);
 				{
 					QueryUserUdpAddrReqMsg queryReq;
 					queryReq.m_strMsgId = GenerateMsgId();
-					queryReq.m_strUserId = reqMsg.m_strFromId;
-					queryReq.m_strUdpUserId = reqMsg.m_strToId;
+					queryReq.m_strUserId = reqMsg.m_strUserId;
+					queryReq.m_strUdpUserId = reqMsg.m_strFriendId;
 					pClientSess->SendMsg(&queryReq);
 				}
 				m_httpRspMap.insert(std::pair<std::string, HTTP_RSP_SECOND>(reqMsg.m_strMsgId, { time(nullptr), response }));
@@ -866,14 +866,14 @@ namespace ClientCore
 		{
 			rspMsg.m_nFileId = static_cast<int>(time(nullptr));
 			auto pSendMsg = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-			auto pClientSess = m_pServer->GetClientSess(rspMsg.m_strFromId);
+			auto pClientSess = m_pServer->GetClientSess(rspMsg.m_strUserId);
 			if (pClientSess)
 			{
 				pClientSess->SendMsg(pSendMsg);
 			}
 			else
 			{
-				LOG_ERR(ms_loger, "{} ", rspMsg.m_strFromId);
+				LOG_ERR(ms_loger, "{} ", rspMsg.m_strUserId);
 			}
 			*response << "HTTP/1.1 200 OK\r\nContent-Length: " << 0 << "\r\n\r\n";
 			//m_httpRspMap.insert(HTTP_RSP_MAP_PAIR(reqMsg.m_strMsgId, response));
@@ -1375,7 +1375,7 @@ namespace ClientCore
 				FriendNotifyFileMsgRspMsg rspMsg;
 				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
 				auto pSendMsg = std::make_shared<TransBaseMsg_t>(rspMsg.GetMsgType(), rspMsg.ToString());
-				auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strToId);
+				auto pClientSess = m_pServer->GetClientSess(reqMsg.m_strUserId);
 				if (pClientSess)
 				{
 					pClientSess->SendMsg(pSendMsg);
