@@ -146,7 +146,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	SearchChatHistoryRsp DoSearchChatHistoryReq(const SearchChatHistoryReq& reqMsg);
 	TransBaseMsg_S_PTR DoSendBackFileDataSendRsp(const FileDataSendRspMsg& rspMsg);
 private:
-	CServerSess_SHARED_PTR GetSendBackSess(const std::string strUserId);
+	CServerSess_SHARED_PTR Get_GUI_Sess(const std::string strUserId);
 	bool HandleSendForward(const std::shared_ptr<CServerSess>& pServerSess, const TransBaseMsg_t& msg);
 	bool HandleSendBack(const std::shared_ptr<CClientSess>& pClientSess, const TransBaseMsg_t& msg);
 	bool HandleSendBack_GetFriendListRsp(const std::shared_ptr<CClientSess>& pClientSess, const GetFriendListRspMsg& msg);

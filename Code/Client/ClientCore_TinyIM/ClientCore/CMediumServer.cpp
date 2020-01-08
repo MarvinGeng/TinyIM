@@ -167,6 +167,23 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 			pSess->send_msg(endPt, &rspMsg);
 			pSess->DoSend();
 		}
+		//File Process
+		{
+			FileTransProgressNotifyReqMsg notifyMsg;
+			notifyMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+			notifyMsg.m_strUserId = reqMsg.m_strUserId;
+			notifyMsg.m_strFileName = m_fileUtil.GetFileName(reqMsg.m_nFileId);
+			notifyMsg.m_strOtherId = reqMsg.m_strFriendId;
+			if (reqMsg.m_nDataTotalCount != 0)
+			{
+				notifyMsg.m_nTransPercent = 100 * reqMsg.m_nDataIndex / reqMsg.m_nDataTotalCount;
+			}
+			auto pGuiSess = Get_GUI_Sess(notifyMsg.m_strUserId);
+			if (pGuiSess)
+			{
+				pGuiSess->SendMsg(&notifyMsg);
+			}
+		}
 	}
 }
 
@@ -790,7 +807,7 @@ void CMediumServer::HandleFileVerifyReq(const FileVerifyReqMsg& msg)
 						}
 					}
 					msgItem->second.m_chatMsg.m_strContext = MsgElemVec(newVec);
-					auto pSess = GetSendBackSess(msgItem->second.m_chatMsg.m_strReceiverId);
+					auto pSess = Get_GUI_Sess(msgItem->second.m_chatMsg.m_strReceiverId);
 					if (pSess)
 					{
 						pSess->SendMsg(&(msgItem->second));
@@ -1602,7 +1619,7 @@ bool CMediumServer::HandleSendForward(const std::shared_ptr<CServerSess>& pServe
  * @param strUserId 用户ID
  * @return CServerSess_SHARED_PTR 
  */
-CServerSess_SHARED_PTR CMediumServer::GetSendBackSess(const std::string strUserId)
+CServerSess_SHARED_PTR CMediumServer::Get_GUI_Sess(const std::string strUserId)
 {
 	auto pSess = GetClientSess(strUserId);
 	if (pSess)
@@ -1672,7 +1689,7 @@ void CMediumServer::HandleSendBack_FriendChatRecvTxtReq(const std::shared_ptr<CC
 		}
 		else
 		{
-			auto pSess = GetSendBackSess(reqMsg.m_chatMsg.m_strReceiverId);
+			auto pSess = Get_GUI_Sess(reqMsg.m_chatMsg.m_strReceiverId);
 			if (pSess)
 			{
 				pSess->SendMsg(&reqMsg);
