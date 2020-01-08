@@ -8584,7 +8584,7 @@ std::string FileTransProgressNotifyReqMsg::ToString() const
 		{"UserId",m_strUserId},
 		{"OtherId",m_strOtherId},
 		{"FileName",m_strFileName},
-		{"TransPercent",m_fTransPercent},
+		{"TransPercent",m_nTransPercent},
 		{"TransSpeed",m_nTransSpeed},
 	});
 	
@@ -8626,7 +8626,7 @@ bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
 	}
 
 	if (json["TransPercent"].is_number()) {
-		m_fTransPercent = json["TransPercent"].int_value();
+		m_nTransPercent = json["TransPercent"].int_value();
 	}
 	else
 	{

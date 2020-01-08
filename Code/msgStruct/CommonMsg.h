@@ -2223,7 +2223,7 @@ public:
 	std::string m_strUserId;//用户ID
 	std::string m_strOtherId;//好友ID或者群组ID
 	std::string m_strFileName;//文件名
-	double m_fTransPercent;//传输百分比
+	int    m_nTransPercent;//传输百分比
 	int	   m_nTransSpeed;//传输速度
 public:
 	FileTransProgressNotifyReqMsg();
