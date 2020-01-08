@@ -161,7 +161,6 @@ private:
 
 	std::shared_ptr<CUdpServer> m_udpServer;
 	std::map<std::string, IpPortCfg> m_userIdUdpAddrMap;
-	std::map<int, CLIENT_ONLINE_TYPE> m_fileTransMap;
 	std::map<int, FILE_TRANS_TYPE> m_fileTranModeMap;
 	std::string GenerateUserId();
 

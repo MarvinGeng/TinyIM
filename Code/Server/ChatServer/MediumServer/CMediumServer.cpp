@@ -1511,7 +1511,7 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 				m_fileUtil.CreateFolder(strFileDir);
 				std::string strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
 				m_fileUtil.OpenWriteFile(sendReqMsg.m_nFileId, strFileDir + strFileName);
-				m_fileTransMap.insert({ sendReqMsg.m_nFileId,CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE });
+				m_fileTranModeMap.insert({ sendReqMsg.m_nFileId,reqMsg.m_transMode });
 			}
 		}
 
@@ -2489,9 +2489,9 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 
 	
 	{
-		auto item = m_fileTransMap.find(req.m_nFileId);
-		if (item != m_fileTransMap.end()) {
-			if (item->second == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
+		auto item = m_fileTranModeMap.find(req.m_nFileId);
+		if (item != m_fileTranModeMap.end()) {
+			if (item->second == FILE_TRANS_TYPE::TCP_OFFLINE_MODE)
 			{
 				T_USER_CHAT_MSG chatMsg;
 				{
@@ -2510,7 +2510,7 @@ void CChatServer::HandleFileVerifyReq(const std::shared_ptr<CServerSess>& pSess,
 				}
 				m_util.InsertFriendChatMsg(chatMsg);
 			}
-			m_fileTransMap.erase(req.m_nFileId);
+			m_fileTranModeMap.erase(req.m_nFileId);
 		}
 	}
 	{
