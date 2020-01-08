@@ -2368,7 +2368,7 @@ BOOL CBuddyChatDlg::SendOfflineFile(PCTSTR pszFileName)
 	std::string strStdFileName = EncodeUtil::UnicodeToAnsi(pszFileName);
 	pSess->SendFriendOffLineFile(this->m_strFriendId, strStdFileName);
 
-	if(false)
+	if(true)
 	{
 		if (pszFileName == NULL)
 		{
@@ -2644,7 +2644,7 @@ void CBuddyChatDlg::OnFileSendRspMsg(C_WND_MSG_FileSendRsp * pMsg)
 			CString strToName = EncodeUtil::AnsiToUnicode(pMsg->m_szFriendId);
 			CString strContext;
 			strContext.Format(_T("%s 发送 %s 给 %s 成功"), strSendName, strFileName, strToName);
-			MessageBox(strContext, _T("发送文件请求"));
+			//MessageBox(strContext, _T("发送文件请求"));
 		}
 		else
 		{
@@ -2653,7 +2653,7 @@ void CBuddyChatDlg::OnFileSendRspMsg(C_WND_MSG_FileSendRsp * pMsg)
 			CString strToName = EncodeUtil::AnsiToUnicode(pMsg->m_szFriendId);
 			CString strContext;
 			strContext.Format(_T("%s 发送 %s 给 %s 失败 "), strSendName, strFileName, strToName);
-			MessageBox(strContext, _T("发送文件请求"));
+			//MessageBox(strContext, _T("发送文件请求"));
 		}
 	}
 }
@@ -2667,7 +2667,7 @@ void CBuddyChatDlg::OnFileNotifyReqMsg(C_WND_MSG_FileNotifyReq* pMsg)
 		CString strToName = EncodeUtil::AnsiToUnicode(pMsg->m_szFriendId);
 		CString strContext;
 		strContext.Format(_T("%s 已经接收了 %s 的文件 %s"), strToName, strSendName, strFileName);
-		MessageBox(strContext, _T("接收文件通知"));
+		//MessageBox(strContext, _T("接收文件通知"));
 	}
 	{
 		auto pSess = CMsgProto::GetInstance();

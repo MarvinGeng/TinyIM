@@ -680,7 +680,7 @@ bool CMsgProto::SendFriendOffLineFile(const std::string strFriendId, std::string
 	reqMsg.m_strToId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
 	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
-	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_SERVER_SAVE_MODE;
+	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_OFFLINE_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
 }
@@ -702,7 +702,7 @@ bool CMsgProto::SendFriendOnLineFileP2PMode(const std::string strFriendId, std::
 	reqMsg.m_strToId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
 	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
-	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_P2P_MODE;
+	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_P2P_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
 }
@@ -724,7 +724,7 @@ bool CMsgProto::SendFriendOnLineFileMediumTransMode(const std::string strFriendI
 	reqMsg.m_strToId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
 	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
-	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_MEDIUM_MODE;
+	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_MEDIUM_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
 }
