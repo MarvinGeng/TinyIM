@@ -676,10 +676,9 @@ bool CMsgProto::SendFriendOffLineFile(const std::string strFriendId, std::string
 	auto pSess = SourceServer::CSessManager::GetManager();
 	FriendSendFileMsgReqMsg reqMsg;
 	reqMsg.m_strMsgId = "22222222";
-	reqMsg.m_strFromId = m_strUserId;
-	reqMsg.m_strToId = strFriendId;
+	reqMsg.m_strUserId = m_strUserId;
+	reqMsg.m_strFriendId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
-	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
 	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_OFFLINE_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
@@ -698,10 +697,9 @@ bool CMsgProto::SendFriendOnLineFileP2PMode(const std::string strFriendId, std::
 	auto pSess = SourceServer::CSessManager::GetManager();
 	FriendSendFileMsgReqMsg reqMsg;
 	reqMsg.m_strMsgId = "22222222";
-	reqMsg.m_strFromId = m_strUserId;
-	reqMsg.m_strToId = strFriendId;
+	reqMsg.m_strUserId = m_strUserId;
+	reqMsg.m_strFriendId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
-	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
 	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_P2P_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
@@ -720,10 +718,9 @@ bool CMsgProto::SendFriendOnLineFileMediumTransMode(const std::string strFriendI
 	auto pSess = SourceServer::CSessManager::GetManager();
 	FriendSendFileMsgReqMsg reqMsg;
 	reqMsg.m_strMsgId = "22222222";
-	reqMsg.m_strFromId = m_strUserId;
-	reqMsg.m_strToId = strFriendId;
+	reqMsg.m_strUserId = m_strUserId;
+	reqMsg.m_strFriendId = strFriendId;
 	reqMsg.m_strFileName = strFileName;
-	reqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
 	reqMsg.m_transMode = FILE_TRANS_TYPE::UDP_ONLINE_MEDIUM_MODE;
 	TransBaseMsg_t trans(reqMsg.GetMsgType(), reqMsg.ToString());
 	return pSess->SendMsg(&trans);
@@ -742,8 +739,8 @@ bool CMsgProto::SendFriendRecvFileRsp(const C_WND_MSG_FileRecvReq& reqMsg, const
 	auto pSess = SourceServer::CSessManager::GetManager();
 	FriendRecvFileMsgRspMsg rspMsg;
 	rspMsg.m_strMsgId = reqMsg.m_szMsgId;
-	rspMsg.m_strFromId = m_strUserId;
-	rspMsg.m_strToId = reqMsg.m_szFriendId;
+	rspMsg.m_strUserId = m_strUserId;
+	rspMsg.m_strFriendId = reqMsg.m_szFriendId;
 	rspMsg.m_eOption = eOption;
 	rspMsg.m_strFileName = reqMsg.m_szFileName;
 	TransBaseMsg_t trans(rspMsg.GetMsgType(), rspMsg.ToString());
@@ -843,8 +840,8 @@ void CMsgProto::HandleFriendSendFileRsp(const std::shared_ptr<TransBaseMsg_t> pO
 		C_WND_MSG_FileSendRsp * pResult = new C_WND_MSG_FileSendRsp();
 		pResult->m_eErrCode = rspMsg.m_eErrCode;
 		strcpy_s(pResult->m_szMsgId, rspMsg.m_strMsgId.c_str());
-		strcpy_s(pResult->m_szUserId, rspMsg.m_strFromId.c_str());
-		strcpy_s(pResult->m_szFriendId, rspMsg.m_strToId.c_str());
+		strcpy_s(pResult->m_szUserId, rspMsg.m_strUserId.c_str());
+		strcpy_s(pResult->m_szFriendId, rspMsg.m_strFriendId.c_str());
 		strcpy_s(pResult->m_szFileName, rspMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
@@ -865,8 +862,8 @@ void CMsgProto::HandleFriendRecvFileReq(const std::shared_ptr<TransBaseMsg_t> pO
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 		C_WND_MSG_FileRecvReq * pResult = new C_WND_MSG_FileRecvReq();
 		strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
-		strcpy_s(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
-		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szUserId, reqMsg.m_strUserId.c_str());
+		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFriendId.c_str());
 		strcpy_s(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
@@ -887,8 +884,8 @@ void CMsgProto::HandleFriendNotifyFileReq(const std::shared_ptr<TransBaseMsg_t> 
 		auto item = m_msgMap.find(pOrgMsg->GetType());
 		C_WND_MSG_FileNotifyReq * pResult = new C_WND_MSG_FileNotifyReq();
 		strcpy_s(pResult->m_szMsgId, reqMsg.m_strMsgId.c_str());
-		strcpy_s(pResult->m_szUserId, reqMsg.m_strFromId.c_str());
-		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFromId.c_str());
+		strcpy_s(pResult->m_szUserId, reqMsg.m_strUserId.c_str());
+		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFriendId.c_str());
 		strcpy_s(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
 		if (item != m_msgMap.end())
 		{
