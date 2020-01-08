@@ -1437,9 +1437,10 @@ void CChatServer::HandleFriendChatRecvMsgRsp(const std::shared_ptr<CServerSess>&
 void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pSess, const FriendSendFileMsgReqMsg& reqMsg)
 {
 	//在线文件请求
-	if(reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE)
+	if(reqMsg.m_transMode == FILE_TRANS_TYPE::UDP_ONLINE_MEDIUM_MODE || 
+	   reqMsg.m_transMode == FILE_TRANS_TYPE::UDP_ONLINE_P2P_MODE )
 	{
-		auto item = m_UserSessVec.find(reqMsg.m_strToId);
+		auto item = m_UserSessVec.find(reqMsg.m_strFriendId);
 		//接收方在线
 		if (item != m_UserSessVec.end())
 		{
@@ -1449,15 +1450,15 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 				rspMsg.m_transMode = reqMsg.m_transMode;
 				rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 				rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-				rspMsg.m_strFromId = reqMsg.m_strFromId;
-				rspMsg.m_strToId = reqMsg.m_strToId;
+				rspMsg.m_strUserId = reqMsg.m_strUserId;
+				rspMsg.m_strFriendId = reqMsg.m_strFriendId;
 				pSess->SendMsg(&rspMsg);
 			}
 			{
 				FriendRecvFileMsgReqMsg recvMsg;
 				recvMsg.m_strMsgId = reqMsg.m_strMsgId;
-				recvMsg.m_strFromId = reqMsg.m_strFromId;
-				recvMsg.m_strToId = reqMsg.m_strToId;
+				recvMsg.m_strUserId = reqMsg.m_strUserId;
+				recvMsg.m_strFriendId = reqMsg.m_strFriendId;
 				recvMsg.m_strFileName = reqMsg.m_strFileName;
 				recvMsg.m_transMode = reqMsg.m_transMode;
 				item->second->SendMsg(&recvMsg);
@@ -1470,22 +1471,24 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 
 			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_USER_OFF_LINE;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_strFromId;
-			rspMsg.m_strToId = reqMsg.m_strToId;
+			rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+			rspMsg.m_strUserId = reqMsg.m_strUserId;
 			rspMsg.m_transMode = reqMsg.m_transMode;
 			pSess->SendMsg(&rspMsg);
 		}
 	}
 	//离线文件请求
-	else if (reqMsg.m_eOnlineType == CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE)
+	else if (reqMsg.m_transMode == FILE_TRANS_TYPE::TCP_OFFLINE_MODE || 
+		     reqMsg.m_transMode == FILE_TRANS_TYPE::UDP_OFFLINE_MODE)
 	{
 		{
 			FriendSendFileMsgRspMsg rspMsg;
 			rspMsg.m_transMode = reqMsg.m_transMode;
 			rspMsg.m_eErrCode = ERROR_CODE_TYPE::E_CODE_SUCCEED;
 			rspMsg.m_strMsgId = reqMsg.m_strMsgId;
-			rspMsg.m_strFromId = reqMsg.m_strFromId;
-			rspMsg.m_strToId = reqMsg.m_strToId;
+			rspMsg.m_strUserId = reqMsg.m_strUserId;
+			rspMsg.m_strFriendId = reqMsg.m_strFriendId;
+			rspMsg.m_transMode = reqMsg.m_transMode;
 			pSess->SendMsg(&rspMsg);
 		}
 
@@ -1493,18 +1496,18 @@ void CChatServer::HandleFriendSendFileReq(const std::shared_ptr<CServerSess>& pS
 			FriendNotifyFileMsgReqMsg sendReqMsg;
 			sendReqMsg.m_transMode = reqMsg.m_transMode;
 			sendReqMsg.m_strMsgId = reqMsg.m_strMsgId;
-			sendReqMsg.m_strFromId = reqMsg.m_strFromId;
-			sendReqMsg.m_strToId = reqMsg.m_strToId;
+			sendReqMsg.m_strUserId = reqMsg.m_strUserId;
+			sendReqMsg.m_strFriendId = reqMsg.m_strFriendId;
 			sendReqMsg.m_strFileName = reqMsg.m_strFileName;
 			sendReqMsg.m_nFileId = rand();
-			sendReqMsg.m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
 			sendReqMsg.m_eOption = E_FRIEND_OPTION::E_AGREE_ADD;
+			sendReqMsg.m_transMode = reqMsg.m_transMode;
 			pSess->SendMsg(&sendReqMsg);
 
 			//
 			{
 				std::string strCurDir = m_fileUtil.GetCurDir();
-				std::string strFileDir = strCurDir + "\\"+reqMsg.m_strToId+"\\";
+				std::string strFileDir = strCurDir + "\\"+reqMsg.m_strFriendId+"\\";
 				m_fileUtil.CreateFolder(strFileDir);
 				std::string strFileName = m_fileUtil.GetFileNameFromPath(reqMsg.m_strFileName);
 				m_fileUtil.OpenWriteFile(sendReqMsg.m_nFileId, strFileDir + strFileName);
@@ -1538,15 +1541,14 @@ void CChatServer::HandleFriendRecvFileRsp(const FriendRecvFileMsgRspMsg& reqMsg)
 	}
 	//通知文件发送方
 	{
-		auto item = m_UserSessVec.find(reqMsg.m_strToId);
+		auto item = m_UserSessVec.find(reqMsg.m_strUserId);
 		if (item != m_UserSessVec.end())
 		{
 			FriendNotifyFileMsgReqMsg sendMsg;
 			sendMsg.m_strMsgId = reqMsg.m_strMsgId;
-			sendMsg.m_eOnlineType = reqMsg.m_eOnlineType;
 			sendMsg.m_eOption = reqMsg.m_eOption;
-			sendMsg.m_strFromId = reqMsg.m_strFromId;
-			sendMsg.m_strToId = reqMsg.m_strToId;
+			sendMsg.m_strFriendId = reqMsg.m_strUserId;
+			sendMsg.m_strUserId = reqMsg.m_strFriendId;
 			sendMsg.m_strFileName = reqMsg.m_strFileName;
 			sendMsg.m_nFileId = reqMsg.m_nFileId;
 			item->second->SendMsg(&sendMsg);
