@@ -5611,10 +5611,9 @@ std::string FriendSendFileMsgReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileName", m_strFileName},
-        {"OnLineType", static_cast<int>(m_eOnlineType)},
 		{"TransMode",static_cast<int>(m_transMode)},
     });
     return clientObj.dump();
@@ -5630,18 +5629,18 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -5666,14 +5665,6 @@ bool FriendSendFileMsgReqMsg::FromString(const std::string &strJson)
         return false;
     }
 
-    if (json["OnLineType"].is_number())
-    {
-        m_eOnlineType = static_cast<CLIENT_ONLINE_TYPE>(json["OnLineType"].int_value());
-    }
-    else
-    {
-        return false;
-    }
 
 	if (json["TransMode"].is_number())
 	{
@@ -5702,10 +5693,9 @@ std::string FriendSendFileMsgRspMsg::ToString() const
 		{"Code",static_cast<int>(m_eErrCode)},
 		{"Message",m_errMsg},
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileName", m_strFileName},
-        {"OnLineType", static_cast<int>(m_eOnlineType)},
 		{"TransMode",static_cast<int>(m_transMode)},
     });
     return clientObj.dump();
@@ -5750,9 +5740,9 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
     }
 
 
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
@@ -5760,9 +5750,9 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
     }
 
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -5772,16 +5762,7 @@ bool FriendSendFileMsgRspMsg::FromString(const std::string &strJson)
 
     if (json["FileName"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-    if (json["OnLineType"].is_number())
-    {
-        m_eOnlineType = static_cast<CLIENT_ONLINE_TYPE>(json["OnLineType"].int_value());
+        m_strFileName = json["FileName"].string_value();
     }
     else
     {
@@ -5815,10 +5796,9 @@ std::string FriendRecvFileMsgReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileName", m_strFileName},
-        {"OnLineType", static_cast<int>(m_eOnlineType)},
 		{"TransMode",static_cast<int>(m_transMode)},
 
     });
@@ -5835,18 +5815,18 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+		m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -5865,15 +5845,6 @@ bool FriendRecvFileMsgReqMsg::FromString(const std::string &strJson)
     if (json["MsgId"].is_string())
     {
         m_strMsgId = json["MsgId"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-    if (json["OnLineType"].is_number())
-    {
-        m_eOnlineType = static_cast<CLIENT_ONLINE_TYPE>(json["OnLineType"].int_value());
     }
     else
     {
@@ -5905,11 +5876,10 @@ std::string FriendRecvFileMsgRspMsg::ToString() const
     Json clientObj = Json::object(
 	{
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileName", m_strFileName},
         {"FileId", m_nFileId},
-        {"OnLineType", static_cast<int>(m_eOnlineType)},
         {"Option", static_cast<int>(m_eOption)},
 		{"TransMode",static_cast<int>(m_transMode)},
 
@@ -5938,9 +5908,9 @@ bool FriendRecvFileMsgRspMsg::FromString(const std::string &strJson)
     }
 
 
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
@@ -5948,9 +5918,9 @@ bool FriendRecvFileMsgRspMsg::FromString(const std::string &strJson)
     }
 
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -5972,15 +5942,6 @@ bool FriendRecvFileMsgRspMsg::FromString(const std::string &strJson)
         m_nFileId = json["FileId"].int_value();
     }
 
-
-    if (json["OnLineType"].is_number())
-    {
-        m_eOnlineType = static_cast<CLIENT_ONLINE_TYPE>(json["OnLineType"].int_value());
-    }
-    else
-    {
-        return false;
-    }
 
     if (json["Option"].is_number())
     {
@@ -6017,11 +5978,10 @@ std::string FriendNotifyFileMsgReqMsg::ToString() const
     Json clientObj = Json::object(
     {
         {"MsgId", m_strMsgId},
-        {"FromId", m_strFromId},
-        {"ToId", m_strToId},
+        {"UserId", m_strUserId},
+        {"FriendId", m_strFriendId},
         {"FileName", m_strFileName},
         {"FileId", m_nFileId},
-        {"OnLineType", static_cast<int>(m_eOnlineType)},
         {"Option", static_cast<int>(m_eOption)},
 		{"TransMode",static_cast<int>(m_transMode)},
 
@@ -6039,18 +5999,18 @@ bool FriendNotifyFileMsgReqMsg::FromString(const std::string &strJson)
     {
         return false;
     }
-    if (json["FromId"].is_string())
+    if (json["UserId"].is_string())
     {
-        m_strFromId = json["FromId"].string_value();
+        m_strUserId = json["UserId"].string_value();
     }
     else
     {
         return false;
     }
 
-    if (json["ToId"].is_string())
+    if (json["FriendId"].is_string())
     {
-        m_strToId = json["ToId"].string_value();
+        m_strFriendId = json["FriendId"].string_value();
     }
     else
     {
@@ -6078,15 +6038,6 @@ bool FriendNotifyFileMsgReqMsg::FromString(const std::string &strJson)
     if (json["MsgId"].is_string())
     {
         m_strMsgId = json["MsgId"].string_value();
-    }
-    else
-    {
-        return false;
-    }
-
-    if (json["OnLineType"].is_number())
-    {
-        m_eOnlineType = static_cast<CLIENT_ONLINE_TYPE>(json["OnLineType"].int_value());
     }
     else
     {

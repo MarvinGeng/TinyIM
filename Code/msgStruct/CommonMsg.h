@@ -1514,10 +1514,9 @@ class FriendSendFileMsgReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送方ID
-	std::string m_strToId;//接收方ID
+	std::string m_strUserId;//发送方ID
+	std::string m_strFriendId;//接收方ID
 	std::string m_strFileName;//文件名
-	CLIENT_ONLINE_TYPE m_eOnlineType;//是否是在线文件
 	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendSendFileMsgReqMsg();
@@ -1539,10 +1538,9 @@ public:
 	ERROR_CODE_TYPE m_eErrCode;//错误码
 	std::string m_errMsg;//错误信息
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送者ID
-	std::string m_strToId;//接受者ID
+	std::string m_strUserId;//发送者ID
+	std::string m_strFriendId;//接受者ID
 	std::string m_strFileName;//文件名称
-	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
 	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendSendFileMsgRspMsg();
@@ -1561,10 +1559,9 @@ class FriendRecvFileMsgReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//发送方ID
-	std::string m_strToId;//接收方Id
+	std::string m_strUserId;//发送方ID
+	std::string m_strFriendId;//接收方Id
 	std::string m_strFileName;//文件名称
-	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
 	FILE_TRANS_TYPE m_transMode;
 public:
 	FriendRecvFileMsgReqMsg();
@@ -1584,11 +1581,10 @@ public:
 	ERROR_CODE_TYPE m_eErrCode;//错误代码
 	std::string m_errMsg;//错误信息
 	std::string m_strMsgId;//消息ID
-	std::string m_strFromId;//文件发送者ID
-	std::string m_strToId;//文件接收者ID
+	std::string m_strUserId;//文件发送者ID
+	std::string m_strFriendId;//文件接收者ID
 	std::string m_strFileName;//文件名
 	int m_nFileId;
-	CLIENT_ONLINE_TYPE m_eOnlineType;//在线类型
 	E_FRIEND_OPTION m_eOption;//用户选择
 	FILE_TRANS_TYPE m_transMode;
 public:
@@ -1608,11 +1604,10 @@ class FriendNotifyFileMsgReqMsg :public BaseMsg
 {
 public:
 	std::string m_strMsgId;
-	std::string m_strFromId;
-	std::string m_strToId;
+	std::string m_strUserId;
+	std::string m_strFriendId;
 	std::string m_strFileName;
 	int m_nFileId;
-	CLIENT_ONLINE_TYPE m_eOnlineType;
 	E_FRIEND_OPTION m_eOption;
 	FILE_TRANS_TYPE m_transMode;
 public:
