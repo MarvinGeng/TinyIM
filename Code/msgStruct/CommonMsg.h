@@ -2225,6 +2225,7 @@ public:
 	std::string m_strFileName;//文件名
 	int    m_nTransPercent;//传输百分比
 	int	   m_nTransSpeed;//传输速度
+	FILE_TRANS_DIRECTION m_eDirection;
 public:
 	FileTransProgressNotifyReqMsg();
 	virtual std::string ToString() const override;

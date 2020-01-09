@@ -508,6 +508,13 @@ enum class CHAT_MSG_TYPE
 	E_CHAT_IMAGE_TYPE,//图片消息
 };
 
+//文件传输方向，是发送还是接收
+enum class FILE_TRANS_DIRECTION
+{
+	E_SEND_FILE,
+	E_RECV_FILE,
+};
+
 //消息记录的方向
 enum class HISTORY_DIRECTION
 {

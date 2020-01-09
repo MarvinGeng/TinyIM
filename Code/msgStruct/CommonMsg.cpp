@@ -8586,6 +8586,7 @@ std::string FileTransProgressNotifyReqMsg::ToString() const
 		{"FileName",m_strFileName},
 		{"TransPercent",m_nTransPercent},
 		{"TransSpeed",m_nTransSpeed},
+		{"Direction",static_cast<int>(m_eDirection)},
 	});
 	
 	return objJson.dump();
@@ -8625,6 +8626,14 @@ bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
 		return false;
 	}
 
+	if (json["FileName"].is_string()) {
+		m_strFileName = json["FileName"].string_value();
+	}
+	else
+	{
+		return false;
+	}
+
 	if (json["TransPercent"].is_number()) {
 		m_nTransPercent = json["TransPercent"].int_value();
 	}
@@ -8635,6 +8644,14 @@ bool FileTransProgressNotifyReqMsg::FromString(const std::string& strJson)
 
 	if (json["TransSpeed"].is_number()) {
 		m_nTransSpeed = json["TransSpeed"].int_value();
+	}
+	else
+	{
+		return false;
+	}
+
+	if (json["Direction"].is_number()) {
+		m_eDirection = static_cast<FILE_TRANS_DIRECTION>(json["Direction"].int_value());
 	}
 	else
 	{
