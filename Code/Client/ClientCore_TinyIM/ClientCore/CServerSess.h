@@ -105,6 +105,14 @@ public:
 	std::string UserId() const {
 		return m_strUserId;
 	}
+
+	void SetUserName(const std::string strUserName) {
+		m_strUserName = strUserName;
+	}
+
+	std::string UserName() const {
+		return m_strUserName;
+	}
     
     virtual ~CServerSess(){
     }
@@ -159,6 +167,7 @@ private:
 private:
 	std::string m_connectInfo;
 	std::string m_strUserId;
+	std::string m_strUserName;
 };
 using CServerSess_SHARED_PTR = std::shared_ptr<CServerSess>;
 }

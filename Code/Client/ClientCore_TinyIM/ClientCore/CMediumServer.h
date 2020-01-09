@@ -53,13 +53,17 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 	CFileUtil m_fileUtil;
 
     
-	std::vector<std::shared_ptr<CServerSess>> m_listenList; //监听的套接字的列表
+	//std::vector<std::shared_ptr<CServerSess>> m_GuiSessList; //监听的套接字的列表
+	//std::vector<std::shared_ptr<CClientSess>> m_ConnectSessList; //连接到服务器的套接字列表
+
 
 	std::map<std::shared_ptr<CServerSess>, std::shared_ptr<CClientSess>> m_ForwardSessMap;
 	std::map<std::shared_ptr<CClientSess>, std::shared_ptr<CServerSess>> m_BackSessMap;
 
-	std::map<std::string, std::shared_ptr<CClientSess>> m_userClientSessMap;
+
+	std::map<std::string, std::shared_ptr<CClientSess>> m_userId_ClientSessMap;
 	std::map<std::string, std::shared_ptr<CServerSess>> m_userId_ServerSessMap;
+
 	std::map<std::string, std::string> m_userId_UserNameMap;
 	std::map<std::string, FriendChatRecvTxtReqMsg> m_waitImageMsgMap;
     std::shared_ptr<asio::high_resolution_timer> m_timer = nullptr;
@@ -105,7 +109,7 @@ class CMediumServer : public std::enable_shared_from_this<CMediumServer>
 
 	CClientSess_SHARED_PTR GetClientSess(const std::string strUserId);
 	CClientSess_SHARED_PTR CreateClientSess();
-	CClientSess_SHARED_PTR CreateClientSess(const std::string strUserName);
+	//CClientSess_SHARED_PTR CreateClientSess(const std::string strUserName);
 	CUdpClient_PTR CreateUdpSess();
 	CUdpClient_PTR GetUdpSess(const std::string strUserId);
 
