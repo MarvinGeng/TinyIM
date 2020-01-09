@@ -32,88 +32,6 @@
 #include <UtilTime.h>
 
 
-/**
- * @brief 处理窗口抖动消息
- * 
- * @param p 
- * @param strText 
- * @param arrContent 
- * @return BOOL 
- */
-BOOL CBuddyChatDlg::HandleShake(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
-{
-	WString strTemp = GetBetweenString(p, _T("["), _T("]")).c_str();
-	if (!strTemp.empty())
-	{
-		if(strTemp == _T("\"1\""))
-		{	
-			strText = _T("发送了一个窗口抖动。");
-		}
-		if (!strText.empty())
-		{
-			C_UI_Content* lpContent = new C_UI_Content;
-			if (lpContent != NULL)
-			{
-				lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-				lpContent->m_strText = strText;
-				arrContent.push_back(lpContent);
-			}
-			strText = _T("");
-		}
-
-		p = _tcsstr(p+2, _T("\"]"));
-		p++;
-		return TRUE;
-	}
-	return FALSE;
-}
-
-
-/* 
- * @brief 处理文件传输消息
- * 
- * @param p 
- * @param strText 
- * @param arrContent 
- * @return BOOL 
- */
-
-BOOL CBuddyChatDlg::HandleFile(LPCTSTR& p, WString& strText, std::vector<C_UI_Content*>& arrContent)
-{
-	WString strFileName = GetBetweenString(p+2, _T("[\""), _T("\"]"));
-	if (!strFileName.empty())
-	{
-		if (!strText.empty())
-		{
-			C_UI_Content* lpContent = new C_UI_Content;
-			if (lpContent != NULL)
-			{
-				lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT;
-				lpContent->m_strText = strText;
-				arrContent.push_back(lpContent);
-			}
-			strText = _T("");
-		}
-
-		C_UI_Content* lpContent = new C_UI_Content;
-		if (lpContent != NULL)
-		{
-			lpContent->m_nType = E_UI_CONTENT_TYPE::CONTENT_TYPE_FILE;
-			lpContent->m_CFaceInfo.m_strFilePath = strFileName;
-			lpContent->m_CFaceInfo.m_strName = Hootina::CPath::GetFileName(strFileName.c_str());
-			lpContent->m_CFaceInfo.m_strFileName = lpContent->m_CFaceInfo.m_strName;
-			arrContent.push_back(lpContent);
-		}
-
-		p = _tcsstr(p+2, _T("\"]"));
-		p++;
-		return TRUE;
-	}
-	return FALSE;
-}
-
-
-
 
 
 
@@ -126,6 +44,10 @@ void CBuddyChatDlg::DataMatchInit()
 	m_strBuddyName.Format(_T("%s"), EncodeUtil::AnsiToUnicode(m_strFriendName).data());
 }
 
+/**
+ * @brief Construct a new CBuddyChatDlg::CBuddyChatDlg object
+ * 
+ */
 CBuddyChatDlg::CBuddyChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 {
 	m_lpFaceList = NULL;
@@ -168,6 +90,10 @@ CBuddyChatDlg::CBuddyChatDlg(void):m_userConfig(CUserConfig::GetInstance())
 	m_pSess = CMsgProto::GetInstance();
 }
 
+/**
+ * @brief Destroy the CBuddyChatDlg::CBuddyChatDlg object
+ * 
+ */
 CBuddyChatDlg::~CBuddyChatDlg(void)
 {
 
@@ -244,6 +170,12 @@ BOOL CBuddyChatDlg::PreTranslateMessage(MSG* pMsg)
 }
 
 
+/**
+ * @brief 响应收到消息设置到具体的窗口
+ * 
+ * @param recvHandle 具体控件Handle
+ * @param msg 聊天消息
+ */
 void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiMsg& msg)
 {
 	if (msg.m_eMsgType == E_UI_CONTENT_TYPE::CONTENT_TYPE_TEXT)
@@ -339,6 +271,11 @@ void CBuddyChatDlg::OnRecvMsgToHandle(const HWND recvHandle, const CBuddyChatUiM
 	}
 }
 
+/**
+ * @brief 响应收到好友聊天消息
+ * 
+ * @param msg 好友聊天消息
+ */
 void CBuddyChatDlg::OnRecvMsg(const CBuddyChatUiMsg& msg)
 {
 	m_richRecv.Invalidate(TRUE);
@@ -346,6 +283,11 @@ void CBuddyChatDlg::OnRecvMsg(const CBuddyChatUiMsg& msg)
 }
 
 
+/**
+ * @brief 响应好友聊天记录消息
+ * 
+ * @param msg 好友聊天记录消息
+ */
 void CBuddyChatDlg::OnRecvLogMsg(const CBuddyChatUiMsg& msg)
 {
 	m_richMsgLog.ShowWindow(SW_SHOW);
@@ -569,7 +511,7 @@ BOOL CBuddyChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	//PostMessage(WM_SET_DLG_INIT_FOCUS, 0, 0);		// 设置对话框初始焦点
 	SetTimer(1001, 300, NULL);
 	
-	CalculateMsgLogCountAndOffset();
+	//CalculateMsgLogCountAndOffset();
 
 	//Dennis Mask
 	//if(m_userConfig.IsEnableShowLastMsgInChatDlg())
@@ -581,47 +523,7 @@ BOOL CBuddyChatDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 
 
 /**
- * @brief 计算消息日志的数量以及偏移
- * 
- */
-void CBuddyChatDlg::CalculateMsgLogCountAndOffset()
-{
-	//读取消息记录个数
-	//Dennis Mask
-	/*CString strMsgFile = m_lpFMGClient->GetMsgLogFullName().c_str();
-	strMsgFile.Replace(_T("\\"), _T("/"));
-	m_MsgLogger.SetMsgLogFileName(strMsgFile);
-	long nTotal = m_MsgLogger.GetBuddyMsgLogCount(m_nUTalkUin);
-	
-	long nPageCount = nTotal/10;
-	if(nTotal%10 != 0)
-		++nPageCount;
-
-	m_nMsgLogRecordOffset = 1;
-	m_nMsgLogCurrentPageIndex = 1;
-	while(TRUE)
-	{
-		m_nMsgLogRecordOffset += 10;
-		++m_nMsgLogCurrentPageIndex;
-		if(m_nMsgLogCurrentPageIndex > nPageCount)
-		{
-			m_nMsgLogRecordOffset -= 10;
-			--m_nMsgLogCurrentPageIndex;
-			break;
-		}
-	}
-	CString strInfo;
-	if(nPageCount > 0)
-		strInfo.Format(_T("%d/%d"), m_nMsgLogCurrentPageIndex, nPageCount);
-	else
-		strInfo = _T("0/0");
-
-	m_staMsgLogPage.SetWindowText(strInfo);
-	m_staMsgLogPage.Invalidate(FALSE);*/
-}
-
-/**
- * @brief 响应拷贝数据
+ * @brief 响应拷贝数据到发送对话框
  * 
  * @param wnd 
  * @param pCopyDataStruct 
@@ -4232,7 +4134,7 @@ void CBuddyChatDlg::CloseMsgLogBrowser()
 
 	ShowMsgLogButtons(FALSE);
 
-	CalculateMsgLogCountAndOffset();
+	//CalculateMsgLogCountAndOffset();
 }
 
 /**
@@ -4530,6 +4432,15 @@ void CBuddyChatDlg::ReCaculateCtrlPostion(long nMouseY)
 	::ScreenToClient(m_hWnd, m_rtRichSend);
 }
 
+
+/**
+ * @brief 响应以P2P方式发送文件的菜单
+ * 
+ * @param uNotifyCode 
+ * @param nID 
+ * @param wndCtl 
+ * @return LRESULT 
+ */
 LRESULT CBuddyChatDlg::OnSendFileP2p(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	// TODO: 在此添加命令处理程序代码

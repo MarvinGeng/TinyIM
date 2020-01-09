@@ -257,7 +257,7 @@ private:
 
 	void OpenMsgLogBrowser();			// 打开消息记录浏览窗口
 	void CloseMsgLogBrowser();			// 关闭消息记录浏览窗口
-	void CalculateMsgLogCountAndOffset();
+	//void CalculateMsgLogCountAndOffset();
 
 	BOOL GetImageDisplaySizeInRichEdit(PCTSTR pszFileName, HWND hWnd, long& nWidth, long& nHeight);	//获取富文本控件中图片的显示的尺寸
 	void ResizeImageInRecvRichEdit();
