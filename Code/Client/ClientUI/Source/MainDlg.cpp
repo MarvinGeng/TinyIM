@@ -6549,6 +6549,21 @@ LRESULT CMainDlg::OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
+LRESULT CMainDlg::OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	C_WND_MSG_FileProcessMsg * pMsg = (C_WND_MSG_FileProcessMsg*)(lParam);
+	if (nullptr != pMsg)
+	{
+		auto item = m_mapBuddyChatDlg.find(pMsg->m_szFriendId);
+		if (item != m_mapBuddyChatDlg.end())
+		{
+			item->second->OnRecvFileProcess(pMsg);
+		}
+	}
+	return 0;
+}
+
 /**
  * @brief 响应登录结果消息()
  * 

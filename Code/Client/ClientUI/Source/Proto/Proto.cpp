@@ -895,6 +895,14 @@ void CMsgProto::HandleFriendRecvFileReq(const std::shared_ptr<TransBaseMsg_t> pO
 		strcpy_s(pResult->m_szUserId, reqMsg.m_strUserId.c_str());
 		strcpy_s(pResult->m_szFriendId, reqMsg.m_strFriendId.c_str());
 		strcpy_s(pResult->m_szFileName, reqMsg.m_strFileName.c_str());
+		if (reqMsg.m_transMode == FILE_TRANS_TYPE::UDP_OFFLINE_MODE)
+		{
+			pResult->m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_OFFLINE;
+		}
+		else
+		{
+			pResult->m_eOnlineType = CLIENT_ONLINE_TYPE::C_ONLINE_TYPE_ONLINE;
+		}
 		if (item != m_msgMap.end())
 		{
 			::PostMessage(item->second, FMG_MSG_FRIEND_FILE_RECV_REQ, 0, (LPARAM)pResult);

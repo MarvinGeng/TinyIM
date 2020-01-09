@@ -333,8 +333,8 @@ private:
 	CSkinPictureBox		m_SendFileThumbPicture;		//文件图标
 	CSkinStatic			m_staSendFileDesc;			//文件描述（文件名+大小）
 	//CProgressBarCtrl	m_ProgressSendFile;			//文件进度条
-	CSkinHyperLink		m_lnkSendOffline;			//转离线发送按钮
-	CSkinHyperLink		m_lnkSendFileCancel;		//取消发送按钮
+	//CSkinHyperLink		m_lnkSendOffline;			//转离线发送按钮
+	//CSkinHyperLink		m_lnkSendFileCancel;		//取消发送按钮
 
 	CFileTransferCtrl	m_FileTransferCtrl; //文件传输控件
 

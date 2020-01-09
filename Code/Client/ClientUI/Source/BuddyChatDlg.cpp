@@ -2623,14 +2623,23 @@ void CBuddyChatDlg::OnFileRecvReqMsg(C_WND_MSG_FileRecvReq * pMsg)
 		CString strFileName = EncodeUtil::AnsiToUnicode(pMsg->m_szFileName);
 		CString strSendName = EncodeUtil::AnsiToUnicode(pMsg->m_szUserId);
 		CString strToName = EncodeUtil::AnsiToUnicode(pMsg->m_szFriendId);
-		CString strContext;
-		strContext.Format(_T("%s 发送 %s 给 %s"), strSendName, strFileName, strToName);
-		MessageBox(strContext, _T("接收文件请求"));
+		if (m_FileTransferCtrl.IsWindow())
+		{
+			m_FileTransferCtrl.ShowWindow(SW_SHOW);
+			long nId = m_FileTransferCtrl.AddItem();
+			m_FileTransferCtrl.SetItemDownloadNameByID(nId, pMsg->m_szFileName);
+			m_FileTransferCtrl.SetAcceptButtonVisibleByID(nId, TRUE);
+			m_FileTransferCtrl.SetSaveAsButtonVisibleByID(nId, TRUE);
+			m_FileTransferCtrl.SetCancelButtonVisibleByID(nId, TRUE);
+		}
+		//CString strContext;
+		//strContext.Format(_T("%s 发送 %s 给 %s"), strSendName, strFileName, strToName);
+		//MessageBox(strContext, _T("接收文件请求"));
 	}
-	{
-		auto pSess = CMsgProto::GetInstance();
-		pSess->SendFriendRecvFileRsp(*pMsg, E_FRIEND_OPTION::E_AGREE_ADD);
-	}
+	//{
+	//	auto pSess = CMsgProto::GetInstance();
+	//	pSess->SendFriendRecvFileRsp(*pMsg, E_FRIEND_OPTION::E_AGREE_ADD);
+	//}
 }
 
 void CBuddyChatDlg::OnFileSendRspMsg(C_WND_MSG_FileSendRsp * pMsg)
@@ -3052,16 +3061,16 @@ BOOL CBuddyChatDlg::InitMidToolBar()
 	//m_tbMid.SetItemSize(nIndex, 4, 27);
 	//m_tbMid.SetItemPadding(nIndex, 1);
 	//m_tbMid.SetItemSepartorPic(nIndex, _T("aio_qzonecutline_normal.png"));
-	//{
-	//	nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, STBI_STYLE_BUTTON);
-	//	m_nMsgLogIndexInToolbar = nIndex;
-	//	m_tbMid.SetItemSize(nIndex, 90, 27, 27, 0);
-	//	m_tbMid.SetItemPadding(nIndex, 1);
-	//	m_tbMid.SetItemMargin(nIndex, CHAT_DLG_WIDTH - 235, 0);
-	//	m_tbMid.SetItemText(nIndex, _T(">>"));
-	//	m_tbMid.SetItemToolTipText(nIndex, _T("点击查看消息记录"));
-	//	m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_msglog.png"));
-	//}
+	{
+		nIndex = m_tbMid.AddItem(ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, STBI_STYLE_BUTTON);
+		m_nMsgLogIndexInToolbar = nIndex;
+		m_tbMid.SetItemSize(nIndex, 90, 27, 27, 0);
+		m_tbMid.SetItemPadding(nIndex, 1);
+		m_tbMid.SetItemMargin(nIndex, CHAT_DLG_WIDTH - 235, 0);
+		m_tbMid.SetItemText(nIndex, _T(">>"));
+		m_tbMid.SetItemToolTipText(nIndex, _T("点击查看消息记录"));
+		m_tbMid.SetItemIconPic(nIndex, _T("MidToolBar\\aio_quickbar_msglog.png"));
+	}
 	//m_tbMid.SetItemLeftBgPic(nIndex, _T("MidToolBar\\aio_quickbar_msglog.png"), _T("MidToolBar\\aio_quickbar_msglog.png"), CRect(3,3,3,3));
 	//m_tbMid.SetItemLeftBgPic(nIndex, _T("Button\\btn_msglog_down.png"), _T("Button\\btn_msglog_down.png"), CRect(1,0,0,0));
 	//m_tbMid.SetItemRightBgPic(nIndex, _T("aio_toolbar_rightnormal.png"), 
@@ -3252,7 +3261,14 @@ void CBuddyChatDlg::OnSendFileProcess(C_WND_MSG_FileProcessMsg* pMsg)
 
 void CBuddyChatDlg::OnRecvFileProcess(C_WND_MSG_FileProcessMsg* pMsg)
 {
-
+	//TODO: 需要区分具体的文件
+	{
+		if (m_FileTransferCtrl.IsWindow())
+		{
+			long nID = m_FileTransferCtrl.GetItemIDByFullName(pMsg->m_szFilePath);
+			m_FileTransferCtrl.SetItemProgressPercentByID(nID, pMsg->m_nTransPercent);
+		}
+	}
 }
 
 /**
@@ -3308,15 +3324,15 @@ void CBuddyChatDlg::DestroyFileTransferCtrl()
 		m_ProgressSendFile.DestroyWindow();
 	}	*/
 
-	if(m_lnkSendOffline.IsWindow())
-	{
-		m_lnkSendOffline.DestroyWindow();
-	}	
+	//if(m_lnkSendOffline.IsWindow())
+	//{
+	//	m_lnkSendOffline.DestroyWindow();
+	//}	
 
-	if(m_lnkSendFileCancel.IsWindow())
-	{
-		m_lnkSendFileCancel.DestroyWindow();
-	}	
+	//if(m_lnkSendFileCancel.IsWindow())
+	//{
+	//	m_lnkSendFileCancel.DestroyWindow();
+	//}	
 }
 
 
