@@ -167,23 +167,7 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt, const Fil
 			pSess->send_msg(endPt, &rspMsg);
 			pSess->DoSend();
 		}
-		//File Process
-		{
-			FileTransProgressNotifyReqMsg notifyMsg;
-			notifyMsg.m_strMsgId = m_httpServer->GenerateMsgId();
-			notifyMsg.m_strUserId = reqMsg.m_strUserId;
-			notifyMsg.m_strFileName = m_fileUtil.GetFileName(reqMsg.m_nFileId);
-			notifyMsg.m_strOtherId = reqMsg.m_strFriendId;
-			if (reqMsg.m_nDataTotalCount != 0)
-			{
-				notifyMsg.m_nTransPercent = 100 * reqMsg.m_nDataIndex / reqMsg.m_nDataTotalCount;
-			}
-			auto pGuiSess = Get_GUI_Sess(notifyMsg.m_strUserId);
-			if (pGuiSess)
-			{
-				pGuiSess->SendMsg(&notifyMsg);
-			}
-		}
+		
 	}
 }
 
@@ -268,6 +252,27 @@ void CMediumServer::Handle_UdpMsg(const asio::ip::udp::endpoint endPt,const File
 			else
 			{
 				LOG_ERR(ms_loger, "UDP Sess Failed:{}", reqMsg.m_strUserId);
+			}
+		}
+		//Send File Process
+		{
+			//File Process
+			{
+				FileTransProgressNotifyReqMsg notifyMsg;
+				notifyMsg.m_strMsgId = m_httpServer->GenerateMsgId();
+				notifyMsg.m_strUserId = reqMsg.m_strUserId;
+				notifyMsg.m_strFileName = m_fileUtil.GetFileName(reqMsg.m_nFileId);
+				notifyMsg.m_strOtherId = reqMsg.m_strFriendId;
+				notifyMsg.m_eDirection = FILE_TRANS_DIRECTION::E_SEND_FILE;
+				if (reqMsg.m_nDataTotalCount != 0)
+				{
+					notifyMsg.m_nTransPercent = 100 * reqMsg.m_nDataIndex / reqMsg.m_nDataTotalCount;
+				}
+				auto pGuiSess = Get_GUI_Sess(notifyMsg.m_strUserId);
+				if (pGuiSess)
+				{
+					pGuiSess->SendMsg(&notifyMsg);
+				}
 			}
 		}
 	}
