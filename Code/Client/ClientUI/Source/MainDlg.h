@@ -212,6 +212,10 @@ public:
 		MESSAGE_HANDLER_EX(FMG_MSG_FRIEND_FILE_NOTIFY_REQ, OnNotifyFriendFileReqMsg)
 		MESSAGE_HANDLER_EX(FMT_MSG_FRIEND_CHAT_HISTORY,OnRecvFriendHistoryMsg)
 		MESSAGE_HANDLER_EX(FMT_MSG_GROUP_CHAT_HISTORY,OnRecvGroupHistoryMsg)
+
+		MESSAGE_HANDLER_EX(FMG_MSG_SEND_FILE_PROGRESS, OnSendFileProgress)
+		//MESSAGE_HANDLER_EX(FMG_MSG_SEND_FILE_RESULT, OnSendFileResult)
+		//MESSAGE_HANDLER_EX(FMG_MSG_RECV_FILE_PROGRESS, OnRecvFileProgress)
 		//Dennis Think End
 
 		MESSAGE_HANDLER_EX(WM_TRAYICON_NOTIFY, OnTrayIconNotify)
@@ -368,6 +372,7 @@ private:
 	LRESULT OnSendFriendFileRspMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件请求消息
 	LRESULT OnRecvFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件回复消息
 	LRESULT OnNotifyFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lParam);//收到的文件回复消息
+	LRESULT OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam);  //发送文件的进度
 	//Dennis End
 
 	//

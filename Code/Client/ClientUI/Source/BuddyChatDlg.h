@@ -133,6 +133,8 @@ public:
 	void OnFileRecvReqMsg(C_WND_MSG_FileRecvReq * pMsg);
 	void OnFileSendRspMsg(C_WND_MSG_FileSendRsp * pMsg);
 	void OnFileNotifyReqMsg(C_WND_MSG_FileNotifyReq * pMsg);							// 接收好友消息
+	void OnSendFileProcess(C_WND_MSG_FileProcessMsg* pMsg);
+	void OnRecvFileProcess(C_WND_MSG_FileProcessMsg* pMsg);
 	void OnUpdateBuddyNumber();													// 更新好友号码通知
 	void OnUpdateBuddySign();													// 更新好友签名通知
 	void OnUpdateBuddyHeadPic();												// 更新好友头像通知
@@ -181,9 +183,9 @@ private:
 	LRESULT OnSetDlgInitFocus(UINT uMsg, WPARAM wParam, LPARAM lParam);			// 设置对话框初始焦点
 
 	LRESULT OnSendChatMsgResult(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT OnSendFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//LRESULT OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//LRESULT OnSendFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	//LRESULT OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnRecvFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnTabCtrlDropDown(LPNMHDR pnmh);
 	LRESULT OnTabCtrlSelChange(LPNMHDR pnmh);
@@ -330,7 +332,7 @@ private:
 	//文件传输“窗口”控件
 	CSkinPictureBox		m_SendFileThumbPicture;		//文件图标
 	CSkinStatic			m_staSendFileDesc;			//文件描述（文件名+大小）
-	CProgressBarCtrl	m_ProgressSendFile;			//文件进度条
+	//CProgressBarCtrl	m_ProgressSendFile;			//文件进度条
 	CSkinHyperLink		m_lnkSendOffline;			//转离线发送按钮
 	CSkinHyperLink		m_lnkSendFileCancel;		//取消发送按钮
 

@@ -425,7 +425,26 @@ void CMsgProto::HandleMsg(const std::shared_ptr<TransBaseMsg_t> pOrgMsg) {
 
 void CMsgProto::HandleFileTransProcessNotifyReq(const FileTransProgressNotifyReqMsg& reqMsg)
 {
-
+	C_WND_MSG_FileProcessMsg * pResult = new C_WND_MSG_FileProcessMsg();
+	{
+		strcpy_s(pResult->m_szUserId, reqMsg.m_strUserId.c_str());
+		strcpy_s(pResult->m_szFriendId, reqMsg.m_strOtherId.c_str());
+		pResult->m_nTransPercent = reqMsg.m_nTransPercent;
+		pResult->m_dTransSpeed = reqMsg.m_nTransSpeed;
+		EncodeUtil::AnsiToUnicode(reqMsg.m_strFileName.c_str(), pResult->m_szFilePath, MAX_PATH);
+	}
+	auto item = m_msgMap.find(reqMsg.GetMsgType());
+	if (item != m_msgMap.end())
+	{
+		if (reqMsg.m_eDirection == FILE_TRANS_DIRECTION::E_SEND_FILE)
+		{
+			::PostMessage(item->second, FMG_MSG_SEND_FILE_PROGRESS, 0, (LPARAM)(pResult));
+		}
+		else
+		{
+			::PostMessage(item->second, FMG_MSG_RECV_FILE_PROGRESS, 0, (LPARAM)(pResult));
+		}
+	}
 }
 /**
  * @brief 获取和某个好友的聊天消息，显示历史消息记录的时候使用

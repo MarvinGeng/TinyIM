@@ -3225,6 +3225,35 @@ void CBuddyChatDlg::InitFileTransferCtrl()
 	ShowFileTransferCtrl(FALSE);
 }
 
+//LRESULT CBuddyChatDlg::OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
+//{
+//
+//}
+//LRESULT CBuddyChatDlg::OnSendFileResult(UINT uMsg, WPARAM wParam, LPARAM lParam)
+//{
+//
+//}
+//LRESULT CBuddyChatDlg::OnRecvFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
+//{
+//
+//}
+
+void CBuddyChatDlg::OnSendFileProcess(C_WND_MSG_FileProcessMsg* pMsg)
+{
+	//TODO: 需要区分具体的文件
+	{
+		if (m_FileTransferCtrl.IsWindow())
+		{
+			long nID = m_FileTransferCtrl.GetItemIDByFullName(pMsg->m_szFilePath);
+			m_FileTransferCtrl.SetItemProgressPercentByID(nID, pMsg->m_nTransPercent);
+		}
+	}
+}
+
+void CBuddyChatDlg::OnRecvFileProcess(C_WND_MSG_FileProcessMsg* pMsg)
+{
+
+}
 
 /**
  * @brief 显示文件传输控件
@@ -3274,10 +3303,10 @@ void CBuddyChatDlg::DestroyFileTransferCtrl()
 		m_staSendFileDesc.DestroyWindow();
 	}	
 
-	if(m_ProgressSendFile.IsWindow())
+	/*if(m_ProgressSendFile.IsWindow())
 	{
 		m_ProgressSendFile.DestroyWindow();
-	}	
+	}	*/
 
 	if(m_lnkSendOffline.IsWindow())
 	{

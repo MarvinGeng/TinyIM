@@ -550,6 +550,17 @@ public:
 //    UINT        m_targetId;
 //};
 
+/*
+文件传输速率消息
+*/
+class C_WND_MSG_FileProcessMsg :public CWndMsgBase {
+public:
+	char			m_szUserId[16];
+	char            m_szFriendId[16];
+	TCHAR			m_szFilePath[MAX_PATH];		//文件全饰路径（用于上传，上传时必填, 下载时作为目标文件路径）
+	int             m_nTransPercent;//传输百分比
+	double	        m_dTransSpeed;//传输速率
+};
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////

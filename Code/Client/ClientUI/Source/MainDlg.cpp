@@ -6535,6 +6535,20 @@ LRESULT CMainDlg::OnNotifyFriendFileReqMsg(UINT uMsg, WPARAM wParam, LPARAM lPar
 	return 1;
 }
 
+
+LRESULT CMainDlg::OnSendFileProgress(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	C_WND_MSG_FileProcessMsg * pMsg = (C_WND_MSG_FileProcessMsg*)(lParam);
+	if (nullptr != pMsg)
+	{
+		auto item = m_mapBuddyChatDlg.find(pMsg->m_szFriendId);
+		if (item != m_mapBuddyChatDlg.end())
+		{
+			item->second->OnSendFileProcess(pMsg);
+		}
+	}
+	return 0;
+}
 /**
  * @brief 响应登录结果消息()
  * 
@@ -6749,6 +6763,7 @@ void CMainDlg::InitMsgTypeMap()
 		m_netProto->AddMap(E_MsgType::RecvGroupTextMsgRsp_Type, m_hWnd);
 		m_netProto->AddMap(E_MsgType::GetFriendChatHistoryRsp_Type, m_hWnd);
 		m_netProto->AddMap(E_MsgType::GetGroupChatHistoryRsp_Type, m_hWnd);
+		m_netProto->AddMap(E_MsgType::FileTransProgressNotifyReq_Type, m_hWnd);
 	}
 }
 
