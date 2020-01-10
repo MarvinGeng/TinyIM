@@ -42,7 +42,6 @@ SET(FLAMING_GO_CLIENT_SOURCE
 ./Source/AddFriendConfirmDlg.h ./Source/AddFriendConfirmDlg.cpp
 ./Source/BuddyChatDlg.h ./Source/BuddyChatDlg.cpp
 ./Source/BuddyInfoDlg.h ./Source/BuddyInfoDlg.cpp
-./Source/BuddyInfoFloatWnd.h ./Source/BuddyInfoFloatWnd.cpp
 ./Source/BuddyListCtrl.h ./Source/BuddyListCtrl.cpp
 ./Source/Buffer.h ./Source/Buffer.cpp
 ./Source/UI_Core_Convert.h ./Source/UI_Core_Convert.cpp
@@ -96,8 +95,6 @@ SET(FLAMING_GO_CLIENT_SOURCE
 ./Source/ModifyMarkNameDlg.h ./Source/ModifyMarkNameDlg.cpp
 ./Source/ModifyPasswordDlg.h ./Source/ModifyPasswordDlg.cpp
 ./Source/MsgTipDlg.h ./Source/MsgTipDlg.cpp
-./Source/MultiChatDlg.h ./Source/MultiChatDlg.cpp
-./Source/MultiChatMemberSelectionDlg.h ./Source/MultiChatMemberSelectionDlg.cpp
 ./Source/Path.h ./Source/Path.cpp  
 ./Source/PerformanceCounter.h ./Source/PerformanceCounter.cpp  
 ./Source/PicBarDlg.h ./Source/PicBarDlg.cpp  
