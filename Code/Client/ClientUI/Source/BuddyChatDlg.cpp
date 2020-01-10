@@ -637,186 +637,190 @@ void CBuddyChatDlg::OnMove(CPoint ptPos)
  */
 void CBuddyChatDlg::OnSize(UINT nType, CSize size)
 {
-	//这个函数有点臃肿，大体思路是：
-	//如果用户通过拖拽发送框调整了窗口尺寸，则恢复后的窗口各控件的位置设置为调整后的位置
-	//反之，各控件使用默认位置
-	if (!m_bMsgLogWindowVisible && !m_bFileTransferVisible)
 	{
-		if (m_tbTop.IsWindow())
-		{
-			m_tbTop.MoveWindow(3, 70, size.cx-5, 32, TRUE);
-		}
 
-		if(m_staPicUploadProgress.IsWindow())
-			m_staPicUploadProgress.MoveWindow(10, size.cy-25, 380, 25, FALSE);
-		
-		if (m_btnClose.IsWindow())
-			m_btnClose.MoveWindow(size.cx-190, size.cy-30, 77, 25, TRUE);
+		//这个函数有点臃肿，大体思路是：
+		//如果用户通过拖拽发送框调整了窗口尺寸，则恢复后的窗口各控件的位置设置为调整后的位置
+		//反之，各控件使用默认位置
+		//if (!m_bMsgLogWindowVisible && !m_bFileTransferVisible)
+		//{
+		//	if (m_tbTop.IsWindow())
+		//	{
+		//		m_tbTop.MoveWindow(3, 70, size.cx-5, 32, TRUE);
+		//	}
 
-		if (m_btnSend.IsWindow())
-			m_btnSend.MoveWindow(size.cx-110, size.cy-30, 77, 25, TRUE);
+		//	if(m_staPicUploadProgress.IsWindow())
+		//		m_staPicUploadProgress.MoveWindow(10, size.cy-25, 380, 25, FALSE);
+		//	
+		//	if (m_btnClose.IsWindow())
+		//		m_btnClose.MoveWindow(size.cx-190, size.cy-30, 77, 25, TRUE);
 
-		if (m_btnArrow.IsWindow())
-			m_btnArrow.MoveWindow(size.cx-33, size.cy-30, 28, 25, TRUE);
+		//	if (m_btnSend.IsWindow())
+		//		m_btnSend.MoveWindow(size.cx-110, size.cy-30, 77, 25, TRUE);
 
-
-		if (m_richRecv.IsWindow())
-		{
-			if(m_bDraged)
-			{
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_richRecv.MoveWindow(6, 106, size.cx-8, m_rtRichRecv.bottom-m_rtRichRecv.top-32);
-				else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-					m_richRecv.MoveWindow(6, 106, size.cx-8, m_rtRichRecv.bottom-m_rtRichRecv.top);
-
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_FontSelDlg.MoveWindow(2, m_rtRichRecv.bottom-32, size.cx-20, 32, TRUE);
-			}
-			else
-			{
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_richRecv.MoveWindow(6, 106, size.cx-8, size.cy-305, TRUE);
-				else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-					m_richRecv.MoveWindow(6, 106, size.cx-8, size.cy-273, TRUE);
-
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_FontSelDlg.MoveWindow(2, size.cy-197, size.cx-20, 32, TRUE);
-			}
-		}
-
-		if (m_tbMid.IsWindow())
-		{
-			if(m_bDraged)
-				m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx-5, 31, TRUE);
-			else
-				m_tbMid.MoveWindow(3, size.cy-167, size.cx-5, 31, TRUE);
-			//消息记录按钮始终靠边
-			m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-240, 0);
-		}
-		
-		if(m_SplitterCtrl.IsWindow())
-		{
-			if(m_bDraged)
-				m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx-8, 5, TRUE);
-			else
-				m_SplitterCtrl.MoveWindow(6, size.cy-135, size.cx-8, 5, TRUE);
-		}
+		//	if (m_btnArrow.IsWindow())
+		//		m_btnArrow.MoveWindow(size.cx-33, size.cy-30, 28, 25, TRUE);
 
 
-		if (m_richSend.IsWindow())
-		{
-			if(m_bDraged)
-				m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx-8, size.cy-m_rtRichSend.top-35, FALSE);
-			else
-				m_richSend.MoveWindow(6, size.cy-130, size.cx-8, 95, FALSE);
-		}
+		//	if (m_richRecv.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//		{
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-8, m_rtRichRecv.bottom-m_rtRichRecv.top-32);
+		//			else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-8, m_rtRichRecv.bottom-m_rtRichRecv.top);
 
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_FontSelDlg.MoveWindow(2, m_rtRichRecv.bottom-32, size.cx-20, 32, TRUE);
+		//		}
+		//		else
+		//		{
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-8, size.cy-305, TRUE);
+		//			else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-8, size.cy-273, TRUE);
+
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_FontSelDlg.MoveWindow(2, size.cy-197, size.cx-20, 32, TRUE);
+		//		}
+		//	}
+
+		//	if (m_tbMid.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//			m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx-5, 31, TRUE);
+		//		else
+		//			m_tbMid.MoveWindow(3, size.cy-167, size.cx-5, 31, TRUE);
+		//		//消息记录按钮始终靠边
+		//		m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-240, 0);
+		//	}
+		//	
+		//	if(m_SplitterCtrl.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//			m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx-8, 5, TRUE);
+		//		else
+		//			m_SplitterCtrl.MoveWindow(6, size.cy-135, size.cx-8, 5, TRUE);
+		//	}
+
+
+		//	if (m_richSend.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//			m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx-8, size.cy-m_rtRichSend.top-35, FALSE);
+		//		else
+		//			m_richSend.MoveWindow(6, size.cy-130, size.cx-8, 95, FALSE);
+		//	}
+
+		//}
+		//else
+		//{	
+		//	if(m_staPicUploadProgress.IsWindow())
+		//		m_staPicUploadProgress.MoveWindow(10, size.cy-25, 380, 25, TRUE);
+		//	
+		//	if (m_btnClose.IsWindow())
+		//		m_btnClose.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-190, size.cy-30, 77, 25, TRUE);
+
+		//	if (m_btnSend.IsWindow())
+		//		m_btnSend.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-110, size.cy-30, 77, 25, TRUE);
+
+		//	if (m_btnArrow.IsWindow())
+		//		m_btnArrow.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-33, size.cy-30, 28, 25, TRUE);
+		//	
+		//	//聊天记录翻页四个按钮
+		//	if (m_btnFirstMsgLog.IsWindow())
+		//		m_btnFirstMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+110, size.cy-30, 28, 25, TRUE);
+
+		//	if (m_btnPrevMsgLog.IsWindow())
+		//		m_btnPrevMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+140, size.cy-30, 28, 25, TRUE);
+
+		//	if (m_staMsgLogPage.IsWindow())
+		//		m_staMsgLogPage.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+180, size.cy-24, 60, 25, TRUE);
+
+		//	if (m_btnNextMsgLog.IsWindow())
+		//		m_btnNextMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+240, size.cy-30, 28, 25, TRUE);
+
+		//	if (m_btnLastMsgLog.IsWindow())
+		//		m_btnLastMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+270, size.cy-30, 28, 25, TRUE);
+
+		//	if (m_tbTop.IsWindow())
+		//		m_tbTop.MoveWindow(3, 70, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 32, TRUE);
+
+		//	if (m_richRecv.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//		{		
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, m_rtRichRecv.bottom-m_rtRichRecv.top-32);	
+		//			else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, m_rtRichRecv.bottom-m_rtRichRecv.top);
+
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_FontSelDlg.MoveWindow(2, m_rtRichRecv.bottom-32, size.cx-RIGHT_CHAT_WINDOW_WIDTH-20, 32);
+		//
+		//		}
+		//		else
+		//		{	
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-305);	
+		//			else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
+		//				m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-273);
+
+		//			if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
+		//				m_FontSelDlg.MoveWindow(2, size.cy-RIGHT_CHAT_WINDOW_WIDTH-197, size.cx-20, 32, TRUE);
+		//		}
+		//	}
+
+		//	if (m_tbMid.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//			m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 31, TRUE);
+		//		else
+		//			m_tbMid.MoveWindow(3, size.cy-167, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 31, TRUE);
+		//		//消息记录按钮始终靠边
+		//		m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-RIGHT_CHAT_WINDOW_WIDTH-240, 0);
+		//	}
+
+		//	if(m_SplitterCtrl.IsWindow())
+		//	{
+		//		if(m_bDraged)
+		//			m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 5, TRUE);
+		//		else
+		//			m_SplitterCtrl.MoveWindow(6, size.cy-135, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 5, TRUE);
+		//	}
+
+		//	if (m_richSend.IsWindow()) 
+		//	{
+		//		if(m_bDraged)
+		//			m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-m_rtRichSend.top-35, TRUE);
+		//		else
+		//			m_richSend.MoveWindow(6, size.cy-130, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 95, TRUE);
+		//	}
+
+		//	if(m_TabMgr.IsWindow())
+		//	{
+		//		//CRect rcTabMgr(CHATDLG_WIDTH-1, 69, CHATDLG_WIDTH+RIGHT_CHAT_WINDOW_WIDTH-2, 101);
+		//		m_TabMgr.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH, 69, RIGHT_CHAT_WINDOW_WIDTH-2, 32);
+		//	}
+		//	
+		//	if (m_richMsgLog.IsWindow())
+		//	{
+		//		m_richMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+4, 106, RIGHT_CHAT_WINDOW_WIDTH-6, size.cy-140);	
+		//	}
+
+		//	if(m_bFileTransferVisible)
+		//	{
+		//		if (m_FileTransferCtrl.IsWindow())
+		//		{
+		//			m_FileTransferCtrl.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+4, 106, RIGHT_CHAT_WINDOW_WIDTH-6, size.cy-140);	
+		//		}
+		//	}
+		//	
+		//}
 	}
-	else
-	{	
-		if(m_staPicUploadProgress.IsWindow())
-			m_staPicUploadProgress.MoveWindow(10, size.cy-25, 380, 25, TRUE);
-		
-		if (m_btnClose.IsWindow())
-			m_btnClose.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-190, size.cy-30, 77, 25, TRUE);
 
-		if (m_btnSend.IsWindow())
-			m_btnSend.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-110, size.cy-30, 77, 25, TRUE);
-
-		if (m_btnArrow.IsWindow())
-			m_btnArrow.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH-33, size.cy-30, 28, 25, TRUE);
-		
-		//聊天记录翻页四个按钮
-		if (m_btnFirstMsgLog.IsWindow())
-			m_btnFirstMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+110, size.cy-30, 28, 25, TRUE);
-
-		if (m_btnPrevMsgLog.IsWindow())
-			m_btnPrevMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+140, size.cy-30, 28, 25, TRUE);
-
-		if (m_staMsgLogPage.IsWindow())
-			m_staMsgLogPage.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+180, size.cy-24, 60, 25, TRUE);
-
-		if (m_btnNextMsgLog.IsWindow())
-			m_btnNextMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+240, size.cy-30, 28, 25, TRUE);
-
-		if (m_btnLastMsgLog.IsWindow())
-			m_btnLastMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+270, size.cy-30, 28, 25, TRUE);
-
-		if (m_tbTop.IsWindow())
-			m_tbTop.MoveWindow(3, 70, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 32, TRUE);
-
-		if (m_richRecv.IsWindow())
-		{
-			if(m_bDraged)
-			{		
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, m_rtRichRecv.bottom-m_rtRichRecv.top-32);	
-				else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-					m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, m_rtRichRecv.bottom-m_rtRichRecv.top);
-
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_FontSelDlg.MoveWindow(2, m_rtRichRecv.bottom-32, size.cx-RIGHT_CHAT_WINDOW_WIDTH-20, 32);
-	
-			}
-			else
-			{	
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-305);	
-				else if((m_FontSelDlg.IsWindow()&&!m_FontSelDlg.IsWindowVisible()) || !m_FontSelDlg.IsWindow())
-					m_richRecv.MoveWindow(6, 106, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-273);
-
-				if (m_FontSelDlg.IsWindow() && m_FontSelDlg.IsWindowVisible())
-					m_FontSelDlg.MoveWindow(2, size.cy-RIGHT_CHAT_WINDOW_WIDTH-197, size.cx-20, 32, TRUE);
-			}
-		}
-
-		if (m_tbMid.IsWindow())
-		{
-			if(m_bDraged)
-				m_tbMid.MoveWindow(3, m_rtMidToolBar.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 31, TRUE);
-			else
-				m_tbMid.MoveWindow(3, size.cy-167, size.cx-RIGHT_CHAT_WINDOW_WIDTH-5, 31, TRUE);
-			//消息记录按钮始终靠边
-			m_tbMid.SetItemMargin(m_nMsgLogIndexInToolbar, size.cx-RIGHT_CHAT_WINDOW_WIDTH-240, 0);
-		}
-
-		if(m_SplitterCtrl.IsWindow())
-		{
-			if(m_bDraged)
-				m_SplitterCtrl.MoveWindow(6, m_rtSplitter.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 5, TRUE);
-			else
-				m_SplitterCtrl.MoveWindow(6, size.cy-135, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 5, TRUE);
-		}
-
-		if (m_richSend.IsWindow()) 
-		{
-			if(m_bDraged)
-				m_richSend.MoveWindow(6, m_rtRichSend.top, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, size.cy-m_rtRichSend.top-35, TRUE);
-			else
-				m_richSend.MoveWindow(6, size.cy-130, size.cx-RIGHT_CHAT_WINDOW_WIDTH-8, 95, TRUE);
-		}
-
-		if(m_TabMgr.IsWindow())
-		{
-			//CRect rcTabMgr(CHATDLG_WIDTH-1, 69, CHATDLG_WIDTH+RIGHT_CHAT_WINDOW_WIDTH-2, 101);
-			m_TabMgr.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH, 69, RIGHT_CHAT_WINDOW_WIDTH-2, 32);
-		}
-		
-		if (m_richMsgLog.IsWindow())
-		{
-			m_richMsgLog.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+4, 106, RIGHT_CHAT_WINDOW_WIDTH-6, size.cy-140);	
-		}
-
-		if(m_bFileTransferVisible)
-		{
-			if (m_FileTransferCtrl.IsWindow())
-			{
-				m_FileTransferCtrl.MoveWindow(size.cx-RIGHT_CHAT_WINDOW_WIDTH+4, 106, RIGHT_CHAT_WINDOW_WIDTH-6, size.cy-140);	
-			}
-		}
-		
-	}
-	
+	OnSizeShowHistory();
 	ResizeImageInRecvRichEdit();
 
 
@@ -1234,63 +1238,63 @@ void CBuddyChatDlg::OnBtn_MsgLog(UINT uNotifyCode, int nID, CWindow wndCtl)
  */
 void CBuddyChatDlg::DisplayFileTransfer(BOOL bShow)
 {
-	if(bShow)
-	{
-		m_TabMgr.Active(m_FileTransferCtrl.m_hWnd);
-	}	
-	//文件传输界面已经存在了，则激活文件传输窗口
-	if(bShow && m_bFileTransferVisible)	
-	{
-		return;
-	}	
+	//if(bShow)
+	//{
+	//	m_TabMgr.Active(m_FileTransferCtrl.m_hWnd);
+	//}	
+	////文件传输界面已经存在了，则激活文件传输窗口
+	//if(bShow && m_bFileTransferVisible)	
+	//{
+	//	return;
+	//}	
 
-	m_bFileTransferVisible = bShow;
+	//m_bFileTransferVisible = bShow;
 
-	//获取当前窗口在屏幕的位置	
-	CRect rtWindow;
-	GetWindowRect(&rtWindow);
+	////获取当前窗口在屏幕的位置	
+	//CRect rtWindow;
+	//GetWindowRect(&rtWindow);
 
-	if(m_bFileTransferVisible)
-	{
-		m_SkinDlg.SetBgPic(CHAT_EXPAND_BG_IMAGE_NAME, CRect(4, 100, 445, 32));
-		
-		if(m_TabMgr.GetItemCount() <= 0)
-		{
-			::SetWindowPos(m_SkinDlg.m_hWnd,
-							NULL,
-							0, 
-							0, 
-							rtWindow.Width()+RIGHT_CHAT_WINDOW_WIDTH, 
-							rtWindow.Height(), 
-							SWP_NOMOVE|SWP_NOZORDER);
-		}	
-		
-		//m_tbMid.SetItemText(m_nMsgLogIndexInToolbar, _T("<<"));
-		m_TabMgr.AddItem(_T("传送文件"), m_FileTransferCtrl.m_hWnd, FALSE);
-		//m_TabMgr.ShowWindow(SW_SHOW);
-		ShowFileTransferCtrl(TRUE);
-	}
-	else
-	{
-		//m_tbMid.SetItemText(m_nMsgLogIndexInToolbar, _T(">>"));
-		//如果文件队列中已经没有文件在传输了，则隐藏文件传输控件
-		if(m_FileTransferCtrl.GetItemCount() == 0)
-		{
-			m_TabMgr.RemoveItem(m_FileTransferCtrl.m_hWnd);
-			ShowFileTransferCtrl(FALSE);
-		}
+	//if(m_bFileTransferVisible)
+	//{
+	//	m_SkinDlg.SetBgPic(CHAT_EXPAND_BG_IMAGE_NAME, CRect(4, 100, 445, 32));
+	//	
+	//	if(m_TabMgr.GetItemCount() <= 0)
+	//	{
+	//		::SetWindowPos(m_SkinDlg.m_hWnd,
+	//						NULL,
+	//						0, 
+	//						0, 
+	//						rtWindow.Width()+RIGHT_CHAT_WINDOW_WIDTH, 
+	//						rtWindow.Height(), 
+	//						SWP_NOMOVE|SWP_NOZORDER);
+	//	}	
+	//	
+	//	//m_tbMid.SetItemText(m_nMsgLogIndexInToolbar, _T("<<"));
+	//	m_TabMgr.AddItem(_T("传送文件"), m_FileTransferCtrl.m_hWnd, FALSE);
+	//	//m_TabMgr.ShowWindow(SW_SHOW);
+	//	ShowFileTransferCtrl(TRUE);
+	//}
+	//else
+	//{
+	//	//m_tbMid.SetItemText(m_nMsgLogIndexInToolbar, _T(">>"));
+	//	//如果文件队列中已经没有文件在传输了，则隐藏文件传输控件
+	//	if(m_FileTransferCtrl.GetItemCount() == 0)
+	//	{
+	//		m_TabMgr.RemoveItem(m_FileTransferCtrl.m_hWnd);
+	//		ShowFileTransferCtrl(FALSE);
+	//	}
 
-		m_SkinDlg.SetBgPic(CHAT_BG_IMAGE_NAME, CRect(4, 100, 4, 32));
-		//AtlTrace(_T("rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH=%d\n"), rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH);
-		if(m_TabMgr.GetItemCount() <= 0)
-		{
-			m_bMsgLogWindowVisible = TRUE;	
-			SendMessage(WM_COMMAND, ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, 0);
-			//::SetWindowPos(m_SkinDlg.m_hWnd, NULL, 0, 0, rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH, rtWindow.Height(), SWP_NOMOVE|SWP_NOZORDER);
-			m_bMsgLogWindowVisible = FALSE;
-		}
+	//	m_SkinDlg.SetBgPic(CHAT_BG_IMAGE_NAME, CRect(4, 100, 4, 32));
+	//	//AtlTrace(_T("rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH=%d\n"), rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH);
+	//	if(m_TabMgr.GetItemCount() <= 0)
+	//	{
+	//		m_bMsgLogWindowVisible = TRUE;	
+	//		SendMessage(WM_COMMAND, ID_BUDDY_DLG_SHOW_LOG_MSG_BTN, 0);
+	//		//::SetWindowPos(m_SkinDlg.m_hWnd, NULL, 0, 0, rtWindow.Width()-RIGHT_CHAT_WINDOW_WIDTH, rtWindow.Height(), SWP_NOMOVE|SWP_NOZORDER);
+	//		m_bMsgLogWindowVisible = FALSE;
+	//	}
 
-	}
+	//}
 }
 
 /**
@@ -2257,6 +2261,321 @@ void CBuddyChatDlg::OnMenu_SendFileSettings(UINT uNotifyCode, int nID, CWindow w
 
 }
 
+bool CBuddyChatDlg::IsShowHistory()
+{
+	return m_bMsgLogWindowVisible;
+}
+
+bool CBuddyChatDlg::IsShowFileTrans()
+{
+	return IsFilesTransferring() && m_bFileTransferVisible;
+}
+
+void CBuddyChatDlg::OnSizeSetWindowSize()
+{
+	if (IsWindow())
+	{
+		if (IsShowFileTrans() || IsShowHistory())
+		{
+			CRect oldWndRect;
+
+			GetWindowRect(&oldWndRect);
+			CRect newWndRect = oldWndRect;
+			if (oldWndRect.Width() < GROUP_CHAT_DLG_EXTEND_WIDTH)
+			{
+				newWndRect.left = (oldWndRect.left + oldWndRect.right) / 2 - GROUP_CHAT_DLG_EXTEND_WIDTH / 2;
+				newWndRect.right = newWndRect.left + GROUP_CHAT_DLG_EXTEND_WIDTH;
+			}
+
+			if (oldWndRect.Height() < GROUP_DLG_MIN_HEIGHT)
+			{
+				newWndRect.top = (oldWndRect.top + oldWndRect.bottom) / 2 - GROUP_DLG_MIN_HEIGHT / 2;
+				newWndRect.bottom = newWndRect.top + GROUP_DLG_MIN_HEIGHT;
+			}
+			MoveWindow(&newWndRect, TRUE);
+		}
+		else
+		{
+			CenterWindow();
+
+			CRect oldWndRect;
+
+			GetWindowRect(&oldWndRect);
+			CRect newWndRect = oldWndRect;
+			if (oldWndRect.Width() < CHAT_DLG_WIDTH)
+			{
+				newWndRect.left = (oldWndRect.left + oldWndRect.right) / 2 - CHAT_DLG_WIDTH / 2;
+				newWndRect.right = newWndRect.left + CHAT_DLG_WIDTH;
+			}
+
+			if (oldWndRect.Height() < CHAT_DLG_HEIGHT)
+			{
+				newWndRect.top = (oldWndRect.top + oldWndRect.bottom) / 2 - CHAT_DLG_HEIGHT / 2;
+				newWndRect.bottom = newWndRect.top + CHAT_DLG_HEIGHT;
+			}
+			MoveWindow(&newWndRect, TRUE);
+		}
+	}
+}
+void CBuddyChatDlg::OnSizeShowLeftArea(const CRect& rcLeftShowArea)
+{
+	//左边显示区域分解
+	//顶部工具栏区域
+	CRect rcTopToolBar(
+		CPoint(rcLeftShowArea.left,
+			rcLeftShowArea.top),
+
+		CSize(rcLeftShowArea.Width(),
+			GROUP_DLG_TOOL_BAR_HEIGHT));
+	{
+		if (m_tbTop.IsWindow())
+		{
+			m_tbTop.MoveWindow(rcTopToolBar, TRUE);
+		}
+	}
+	{
+		//消息接收区
+		long recvEditHeight = static_cast<long>(rcLeftShowArea.Height()*GROUP_DLG_RECV_EDIT_PERCENT) - 2;
+		CRect rcRecvEdit(
+			CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+				rcLeftShowArea.top),
+			CSize(rcLeftShowArea.Width(),
+				recvEditHeight));
+		{
+			if (m_richRecv.IsWindow())
+			{
+				m_richRecv.MoveWindow(rcRecvEdit, TRUE);
+			}
+		}
+
+		//字体选择等工具栏
+		CRect rcMidToolBar(
+			CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+				rcRecvEdit.bottom),
+			CSize(rcLeftShowArea.Width() - GROUP_DLG_OUT_BORDER_WIDTH,
+				GROUP_DLG_TOOL_BAR_HEIGHT));
+		{
+			//字体工具栏
+			CRect rcFontToolBar(
+				CPoint(rcMidToolBar.left,
+					rcMidToolBar.top - GROUP_DLG_TOOL_BAR_HEIGHT),
+				rcMidToolBar.Size());
+
+			if (m_FontSelDlg.IsWindow())
+			{
+				if (m_tbMid.GetItemCheckState(0))
+				{
+					m_FontSelDlg.MoveWindow(rcFontToolBar, TRUE);
+				}
+				else
+				{
+					m_FontSelDlg.MoveWindow(rcFontToolBar, TRUE);
+					m_FontSelDlg.ShowWindow(HIDE_WINDOW);
+				}
+			}
+
+			if (m_tbMid.IsWindow())
+			{
+				m_tbMid.MoveWindow(rcMidToolBar, TRUE);
+			}
+		}
+
+
+		
+		{
+			//消息发送区域
+			CRect rcSendEdit(
+				CPoint(rcLeftShowArea.left + GROUP_DLG_OUT_BORDER_WIDTH,
+					rcMidToolBar.bottom),
+				CSize(rcLeftShowArea.Width() - GROUP_DLG_OUT_BORDER_WIDTH,
+					rcLeftShowArea.Height() - rcRecvEdit.Height() - GROUP_DLG_TOOL_BAR_HEIGHT * 2));
+			if (m_richSend.IsWindow())
+			{
+				m_richSend.MoveWindow(rcSendEdit, TRUE);
+			}
+		}
+
+		{
+			//从右到左计算
+			const long GROUP_DLG_ARROW_BTN_WIDTH = 77;  //按钮宽度
+			const long GROUP_DLG_ARROW_BTN_HEIGHT = 25; //按钮高度
+			const long GROUP_DLG_BTN_DISTANCE = 10;     //按钮间距
+
+			//底部工具栏区域
+			CRect rcBottomToolBar(
+				CPoint(rcLeftShowArea.left,
+					rcLeftShowArea.bottom - GROUP_DLG_TOOL_BAR_HEIGHT),
+				CSize(rcLeftShowArea.Width(),
+					GROUP_DLG_TOOL_BAR_HEIGHT));
+
+			CRect rcBtnArrow(
+				CPoint(rcBottomToolBar.right - GROUP_DLG_BTN_DISTANCE - GROUP_DLG_ARROW_BTN_WIDTH,
+					rcBottomToolBar.top + (rcTopToolBar.Height() - GROUP_DLG_ARROW_BTN_HEIGHT) / 2),
+				CSize(static_cast<int>(GROUP_DLG_BTN_DISTANCE * 1.5), GROUP_DLG_ARROW_BTN_HEIGHT));
+
+			CRect rcBtnSend(
+				CPoint(rcBtnArrow.left - GROUP_DLG_ARROW_BTN_WIDTH,
+					rcBtnArrow.top),
+				CSize(GROUP_DLG_ARROW_BTN_WIDTH, GROUP_DLG_ARROW_BTN_HEIGHT));
+
+
+			CRect rcBtnClose(
+				CPoint(rcBtnSend.left - GROUP_DLG_BTN_DISTANCE - GROUP_DLG_ARROW_BTN_WIDTH,
+					rcBtnArrow.top),
+				CSize(GROUP_DLG_ARROW_BTN_WIDTH, GROUP_DLG_ARROW_BTN_HEIGHT));
+
+			if (m_btnArrow.IsWindow())
+			{
+				m_btnArrow.MoveWindow(rcBtnArrow, TRUE);
+			}
+
+
+			if (m_btnSend.IsWindow())
+			{
+				m_btnSend.MoveWindow(rcBtnSend, TRUE);
+			}
+
+			if (m_btnClose.IsWindow())
+			{
+				m_btnClose.MoveWindow(rcBtnClose, TRUE);
+			}
+		}
+	}
+}
+void CBuddyChatDlg::OnSizeShowRightArea(const CRect& rcRightShowArea)
+{
+	{
+		if (m_TabMgr.IsWindow())
+		{
+			m_TabMgr.MoveWindow(rcRightShowArea, TRUE);
+			//历史消息
+			{
+				if (IsShowHistory())
+				{
+					m_TabMgr.AddItem(_T("聊天记录"), m_richMsgLog.m_hWnd, TRUE);
+					CRect rcMsgLog(
+						CPoint(rcRightShowArea.left, rcRightShowArea.top + GROUP_DLG_TOOL_BAR_HEIGHT),
+						CSize(rcRightShowArea.Width(),
+							rcRightShowArea.Height() - GROUP_DLG_TOOL_BAR_HEIGHT * 2));
+					if (m_richMsgLog.IsWindow())
+					{
+						m_richMsgLog.MoveWindow(rcMsgLog, TRUE);
+					}
+					CRect rcMsgToolBar(
+						CPoint(rcRightShowArea.left, rcMsgLog.bottom),
+						CSize(rcRightShowArea.Width(), GROUP_DLG_TOOL_BAR_HEIGHT));
+					{
+						CSize btnSize(28, 25);
+						const int BTN_DISTANCE = 40;
+						//聊天记录翻页四个按钮
+						CRect rcFirstBtn(
+							CPoint(rcMsgToolBar.left + BTN_DISTANCE,
+								rcMsgToolBar.top + 5),
+							btnSize);
+						if (m_btnFirstMsgLog.IsWindow())
+						{
+							m_btnFirstMsgLog.ShowWindow(SW_SHOW);
+							m_btnFirstMsgLog.MoveWindow(rcFirstBtn, TRUE);
+						}
+
+						CRect rcPrevBtn(
+							CPoint(rcMsgToolBar.left + BTN_DISTANCE * 2,
+								rcMsgToolBar.top + 5),
+							btnSize);
+						if (m_btnPrevMsgLog.IsWindow())
+						{
+							m_btnPrevMsgLog.ShowWindow(SW_SHOW);
+							m_btnPrevMsgLog.MoveWindow(rcPrevBtn, TRUE);
+						}
+
+						//if (m_staMsgLogPage.IsWindow())
+						//	m_staMsgLogPage.MoveWindow(rcRightShowArea.left +  180, rcMsgToolBar.top, 60, 25, TRUE);
+
+						CRect rcNextBtn(
+							CPoint(rcMsgToolBar.left + BTN_DISTANCE * 3,
+								rcMsgToolBar.top + 5),
+							btnSize);
+						if (m_btnNextMsgLog.IsWindow())
+						{
+							m_btnNextMsgLog.ShowWindow(SW_SHOW);
+							m_btnNextMsgLog.MoveWindow(rcNextBtn, TRUE);
+						}
+
+						CRect rcLastBtn(
+							CPoint(rcMsgToolBar.left + BTN_DISTANCE * 4,
+								rcMsgToolBar.top + 5),
+							btnSize);
+						if (m_btnLastMsgLog.IsWindow())
+						{
+							m_btnLastMsgLog.ShowWindow(SW_SHOW);
+							m_btnLastMsgLog.MoveWindow(rcLastBtn, TRUE);
+						}
+					}
+				}
+			}
+
+			//文件传输
+			{
+				if (IsFilesTransferring())
+				{
+					m_TabMgr.AddItem(_T("文件传输"), m_FileTransferCtrl.m_hWnd, TRUE);
+					DisplayFileTransfer(TRUE);
+					ShowFileTransferCtrl(TRUE);
+				}
+			}
+		}
+	}
+}
+void CBuddyChatDlg::OnSizeShowHistory()
+{
+	OnSizeSetWindowSize();
+
+	SetMsgHandled(FALSE);
+
+	CRect rcClient;
+	GetClientRect(&rcClient);
+	//标题栏区域
+	CRect rcTitle(rcClient.TopLeft(),
+		CSize(rcClient.Width(),
+			GROUP_DLG_TITLE_HEIGHT));
+
+	
+
+	//显示区域
+	CRect rcShowArea(
+		CPoint(rcClient.left,
+			rcTitle.bottom),
+		CSize(rcClient.Width(),
+			rcClient.Height() - GROUP_DLG_TITLE_HEIGHT));
+
+	if(IsShowFileTrans()||IsShowHistory())
+	{
+		//左边显示区域
+
+		CRect rcLeftShowArea(
+			CPoint(rcShowArea.left,
+				rcShowArea.top),
+			CSize(rcShowArea.Width() - GROUP_DLG_MSG_LOG_WIDTH - GROUP_DLG_IN_BORDER_WIDTH,
+				rcShowArea.Height()));
+
+		OnSizeShowLeftArea(rcLeftShowArea);
+
+		//右边显示区域
+		CRect rcRightShowArea(
+			CPoint(rcLeftShowArea.right + GROUP_DLG_IN_BORDER_WIDTH,
+				rcShowArea.top),
+			CSize(GROUP_DLG_MSG_LOG_WIDTH,
+				rcShowArea.Height() - GROUP_DLG_OUT_BORDER_WIDTH));
+
+		OnSizeShowRightArea(rcRightShowArea);
+		//OnSizeHideRightArea();
+	}
+	else
+	{
+		OnSizeShowLeftArea(rcShowArea);
+		OnSizeHideRightArea();
+	}
+}
 
 /**
  * @brief 响应发送离线文件
@@ -2529,11 +2848,18 @@ void CBuddyChatDlg::OnFileRecvReqMsg(C_WND_MSG_FileRecvReq * pMsg)
 		{
 			m_FileTransferCtrl.ShowWindow(SW_SHOW);
 			long nId = m_FileTransferCtrl.AddItem();
-			m_FileTransferCtrl.SetItemDownloadNameByID(nId, pMsg->m_szFileName);
+			BOOL bResult = m_FileTransferCtrl.SetItemDownloadNameByID(nId, pMsg->m_szFileName);
 			m_FileTransferCtrl.SetAcceptButtonVisibleByID(nId, TRUE);
 			m_FileTransferCtrl.SetSaveAsButtonVisibleByID(nId, TRUE);
 			m_FileTransferCtrl.SetCancelButtonVisibleByID(nId, TRUE);
+			if (bResult)
+			{
+			}
 		}
+		OnSizeShowHistory();
+		//ShowFileTransferCtrl(TRUE);
+		//OpenMsgLogBrowser();
+
 		//CString strContext;
 		//strContext.Format(_T("%s 发送 %s 给 %s"), strSendName, strFileName, strToName);
 		//MessageBox(strContext, _T("接收文件请求"));
@@ -3180,7 +3506,7 @@ void CBuddyChatDlg::OnRecvFileProcess(C_WND_MSG_FileProcessMsg* pMsg)
  */
 void CBuddyChatDlg::ShowFileTransferCtrl(BOOL bShow)
 {
-	DWORD dwFlag = (bShow ? SW_SHOW : SW_HIDE);
+	/*DWORD dwFlag = (bShow ? SW_SHOW : SW_HIDE);
 
 	if(bShow)
 	{
@@ -3195,7 +3521,7 @@ void CBuddyChatDlg::ShowFileTransferCtrl(BOOL bShow)
 	}
 
 	m_FileTransferCtrl.ShowWindow(dwFlag);
-	m_bFileTransferVisible = bShow;
+	m_bFileTransferVisible = bShow;*/
 	//m_RightTabCtrl.SetItemVisible(1, bShow);
 }
 
@@ -4307,7 +4633,43 @@ void CBuddyChatDlg::ShowLastMsgInRecvRichEdit()
 	
 }
 
+void CBuddyChatDlg::OnSizeHideRightArea()
+{
+	if(m_TabMgr.IsWindow())
+	{
+		m_TabMgr.ShowWindow(SW_HIDE);
+	}
 
+	if (m_FileTransferCtrl.IsWindow())
+	{
+		m_FileTransferCtrl.ShowWindow(SW_HIDE);
+	}
+
+	if (m_richMsgLog.IsWindow())
+	{
+		m_richMsgLog.ShowWindow(SW_HIDE);
+	}
+
+	if (m_btnFirstMsgLog.IsWindow())
+	{
+		m_btnFirstMsgLog.ShowWindow(SW_HIDE);
+	}
+	
+	if (m_btnPrevMsgLog.IsWindow())
+	{
+		m_btnPrevMsgLog.ShowWindow(SW_HIDE);
+	}
+
+	if (m_btnNextMsgLog.IsWindow())
+	{
+		m_btnNextMsgLog.ShowWindow(SW_HIDE);
+	}
+
+	if (m_btnLastMsgLog.IsWindow())
+	{
+		m_btnLastMsgLog.ShowWindow(SW_HIDE);
+	}
+}
 
 /**
  * @brief 记录窗口大小

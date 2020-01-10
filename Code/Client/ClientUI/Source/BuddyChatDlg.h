@@ -285,6 +285,16 @@ private:
 	//Dennis Begin
 	void SendFileOnLine(CString strFileName);
 	void SendFileOnLineP2P(CString strFileName);
+
+	void OnSizeShowHistory();
+	void OnSizeSetWindowSize();
+	void OnSizeShowLeftArea(const CRect& rcLeftShowArea);
+	void OnSizeShowRightArea(const CRect& rcRightShowArea);
+	void OnSizeHideRightArea();
+	void OnSizeNotShowHistory();
+
+	bool IsShowHistory();
+	bool IsShowFileTrans();
 	//Dennis End
 public:
 	std::shared_ptr<CMsgProto> m_pSess; 			//协议类实例
