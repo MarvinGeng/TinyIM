@@ -29,7 +29,6 @@
 #include "GDIFactory.h"
 #include "IULog.h"
 #include "Startup.h"
-#include "MultiChatMemberSelectionDlg.h"
 #include "ChatDlgCommon.h"
 #include "EncodingUtil.h"
 #include "UIText.h"
@@ -223,7 +222,6 @@ BOOL CMainDlg::OnInitDialog(CWindow wndFocus, LPARAM lInitParam)
 	ModifyStyle(0, WS_CLIPCHILDREN);
 	ModifyStyleEx(WS_EX_APPWINDOW, 0);
 
-	m_MultiChatDlg.m_lpFaceList = &m_FaceList;
 	m_BuddyListCtrl.SetStyle(BLCTRL_STYLE::BLC_BIG_ICON_STYLE);
 	InitMsgTypeMap();
 	return TRUE;
@@ -1134,10 +1132,6 @@ void CMainDlg::UninitUI()
 		m_staNickName.DestroyWindow();
 	}
 
-	if (m_MultiChatDlg.IsWindow())
-	{
-		m_MultiChatDlg.DestroyWindow();
-	}
 }
 
 // 
@@ -1584,40 +1578,6 @@ void CMainDlg::OnBtn_MainMenu(UINT uNotifyCode, int nId, CWindow wndCtl)
 	}
 }
 
-
-/**
- * @brief 响应群聊
- * 
- * @param uNotifyCode 
- * @param nId 
- * @param wndCtl 
- */
-void CMainDlg::OnBtn_MultiChat(UINT uNotifyCode, int nId, CWindow wndCtl)
-{
-	CMultiChatMemberSelectionDlg multiChatMemberSelectionDlg;
-	multiChatMemberSelectionDlg.m_netProto = m_netProto;
-	if (multiChatMemberSelectionDlg.DoModal(NULL, NULL) != IDOK)
-	{
-		return;
-	}
-
-	//弹出群发聊天窗口
-	if (multiChatMemberSelectionDlg.m_setSelectedIDs.empty())
-	{
-		return;
-	}
-
-	if(m_MultiChatDlg.IsWindow())
-	{
-		m_MultiChatDlg.DestroyWindow();	
-	}
-	m_MultiChatDlg.m_setTargetIDs = multiChatMemberSelectionDlg.m_setSelectedIDs;
-	m_MultiChatDlg.Create(NULL);
-	m_MultiChatDlg.ShowWindow(SW_NORMAL);
-	::SetForegroundWindow(m_MultiChatDlg.m_hWnd);
-	m_MultiChatDlg.SetFocus();
-}
-
 /**
  * @brief 弹出添加好友对话框,点击添加好友按钮后的操作
  * 
@@ -1843,94 +1803,6 @@ LRESULT CMainDlg::OnBuddyListRButtonUp(LPNMHDR pnmh)
 
 	return 1;
 }
-
-
-//
-/**
- * @brief 响应用户鼠标移动到好友列表上,(UI)
- * 
- * @param pnmh 
- * @return LRESULT 
- */
-LRESULT CMainDlg::OnBuddyListHover(LPNMHDR pnmh)
-{
-    RECT rtBuddyInfoFloatWnd;
-    ::GetWindowRect(m_BuddyInfoFloatWnd.m_hWnd, &rtBuddyInfoFloatWnd);
-    
-    BLNMHDREx* hdr = (BLNMHDREx*)pnmh;
-    if (hdr == NULL || hdr->nTeamIndex < 0 || hdr->nItemIndex < 0)
-    {
-        //鼠标不在好友列表上，且不在浮动信息窗口上才隐藏浮动信息窗口
-        POINT ptCursor;
-        ::GetCursorPos(&ptCursor);
-        //算上左右边距的rect
-        RECT rtBuddyInfoFloatWndPlusGap;
-        rtBuddyInfoFloatWndPlusGap.top = rtBuddyInfoFloatWnd.top;
-        rtBuddyInfoFloatWndPlusGap.bottom = rtBuddyInfoFloatWnd.bottom;
-        rtBuddyInfoFloatWndPlusGap.left = rtBuddyInfoFloatWnd.left;
-        rtBuddyInfoFloatWndPlusGap.right = rtBuddyInfoFloatWnd.right + 15;
-        if (!::PtInRect(&rtBuddyInfoFloatWndPlusGap, ptCursor))
-        {
-			//TO DO: Crash
-           // m_BuddyInfoFloatWnd.ShowWindow(SW_HIDE);
-            return 0;
-        }
-      
-        return 0;
-    }
-
-    RECT rtMainDlg;
-    ::GetWindowRect(m_hWnd, &rtMainDlg);
-	if (!m_BuddyInfoFloatWnd.IsWindowVisible())
-	{
-		m_BuddyInfoFloatWnd.ShowWindow(SW_SHOW);
-	}
-
-    int xLeftBuddyInfoFloatWnd = rtMainDlg.left - rtBuddyInfoFloatWnd.right + rtBuddyInfoFloatWnd.left;
-
-    CString strHeadImg = m_BuddyListCtrl.GetBuddyItemHeadPic(hdr->nTeamIndex, hdr->nItemIndex);
-    UINT nBuddyID = m_BuddyListCtrl.GetBuddyItemID(hdr->nTeamIndex, hdr->nItemIndex);
-    m_BuddyInfoFloatWnd.SetHeadImg(strHeadImg);
-    if (nBuddyID >= 0)
-    {
-		/*C_UI_BuddyInfo* pBuddyInfo = m_userMgr.m_BuddyList.GetBuddy(nBuddyID);
-        if (pBuddyInfo != NULL)
-        {
-            m_BuddyInfoFloatWnd.SetDataText(pBuddyInfo->m_strNickName.c_str(),
-                pBuddyInfo->m_strSign.c_str(),
-                pBuddyInfo->m_strEmail.c_str(),
-                pBuddyInfo->m_strAddress.c_str());
-        }      */
-    }
-
-    POINT itemStart;
-    itemStart.x = hdr->rtItem.left;
-    itemStart.y = hdr->rtItem.top;
-    ::ClientToScreen(m_BuddyListCtrl.m_hWnd, &itemStart);
-
-    //TODO: 分组高度25和列表项高度55暂且写死,后面改成根据列表显示模式下计算出来
-    //::SetWindowPos(m_BuddyInfoFloatWnd.m_hWnd,
-    //               m_hWnd,
-    //               xLeftBuddyInfoFloatWnd,
-    //               rtMainDlg.top + 200 + (hdr->nTeamIndex + 1) * 25 + hdr->nItemIndex * 55,
-    //               0,
-    //               0,
-    //               SWP_NOSIZE | SWP_SHOWWINDOW);
-
-    ::SetWindowPos(m_BuddyInfoFloatWnd.m_hWnd,
-        m_hWnd,
-        xLeftBuddyInfoFloatWnd,
-        itemStart.y,
-        0,
-        0,
-        SWP_NOSIZE | SWP_SHOWWINDOW);
-
-
-
-
-    return 1;
-}
-
 
 /**
  * @brief 群组聊天双击
@@ -6193,12 +6065,6 @@ void CMainDlg::CloseAllDlg()
 	if (m_LogonUserInfoDlg.IsWindow())
 	{
 		m_LogonUserInfoDlg.DestroyWindow();
-	}
-
-    //好友信息浮窗
-	if (m_BuddyInfoFloatWnd.IsWindow())
-	{
-		m_BuddyInfoFloatWnd.DestroyWindow();
 	}
 }
 

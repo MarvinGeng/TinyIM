@@ -26,8 +26,6 @@
 #include "MsgTipDlg.h"
 #include "LogonUserInfoDlg.h"
 #include "ModifyPasswordDlg.h"
-#include "MultiChatDlg.h"
-#include "BuddyInfoFloatWnd.h"
 #include "IUProtocolData.h"
 #include "IULog.h"
 #include "Proto.h"
@@ -115,13 +113,11 @@ public:
 		COMMAND_ID_HANDLER_EX(IDM_MODIFY_PASS_WORD, OnBtn_ModifyPassword)			//修改密码
         COMMAND_ID_HANDLER_EX(IDC_BTN_MAIL, OnBtn_OpenMail)      
 		COMMAND_ID_HANDLER_EX(ID_BTN_MAIN_MENU, OnBtn_MainMenu)					//主菜单按钮
-		COMMAND_ID_HANDLER_EX(ID_BTN_MULTI_CHAT, OnBtn_MultiChat)				//群发按钮
 		COMMAND_HANDLER_EX(ID_BTN_CANCEL, BN_CLICKED, OnBtn_Cancel)				//取消登录
 		NOTIFY_HANDLER_EX(ID_TAB_CTRL_MAIN, TCN_DROPDOWN, OnTabCtrlDropDown)
 		NOTIFY_HANDLER_EX(ID_TAB_CTRL_MAIN, TCN_SELCHANGE, OnTabCtrlSelChange)
 		NOTIFY_HANDLER_EX(ID_LIST_CTRL_BUDDY, NM_DBLCLK, OnBuddyListDblClk)		 //双击好友列表中的好友
 		NOTIFY_HANDLER_EX(ID_LIST_CTRL_BUDDY, NM_RCLICK, OnBuddyListRButtonUp)	 //右键好友列表中的好友
-        NOTIFY_HANDLER_EX(ID_LIST_CTRL_BUDDY, NM_HOVER, OnBuddyListHover)	     //鼠标在好友列表项上悬停
 		NOTIFY_HANDLER_EX(ID_LIST_CTRL_GROUP, NM_DBLCLK, OnGroupListDblClk)
 		NOTIFY_HANDLER_EX(ID_LIST_CTRL_GROUP, NM_RCLICK, OnGroupListRButtonUp)
 		NOTIFY_HANDLER_EX(ID_LIST_CTRL_RECENT, NM_DBLCLK, OnRecentListDblClk)
@@ -464,7 +460,6 @@ private:
 	CMsgTipDlg				m_MsgTipDlg;
 	CLogonUserInfoDlg       m_LogonUserInfoDlg;						
 	CModifyPasswordDlg		m_ModifyPasswordDlg;							//修改密码的对话框
-	CMultiChatDlg			m_MultiChatDlg;									//群发消息窗口                           //远程桌面窗口
 
 	CSkinButton				m_btnMainMenu;									//主界面菜单按钮
 	CSkinMenu				m_SkinMenu;										//左下角带头像的菜单
@@ -489,9 +484,6 @@ private:
 	CRecentListCtrl			m_RecentListCtrl;//最近聊天列表
 	CBuddyListCtrl			m_BuddyListCtrl;//好友列表
 	CBuddyListCtrl			m_GroupListCtrl;//群组列表
-
-    CBuddyInfoFloatWnd      m_BuddyInfoFloatWnd;                //鼠标放在好友列表项上显示的提示窗口
-	
 
 	CSkinPictureBox			m_picLogining;//登录中的图片
 	CSkinStatic				m_staUTalkNum;
